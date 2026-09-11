@@ -1,0 +1,137 @@
+{
+  "id": "w1-l3",
+  "worldId": "w1",
+  "order": 3,
+  "title": "The Gatekeeper",
+  "codeName": "Level 1-3",
+  "board": "uno",
+  "startBoard": "uno",
+  "boardSwitcher": "locked",
+  "boardMode": "half",
+  "xp": 110,
+  "estimatedMinutes": 6,
+  "summary": "Drop a pushbutton into the LED's current path so the light only appears while you hold it down. Your first piece of interactive hardware.",
+  "concepts": ["series circuit", "switches", "open and closed contacts", "current path"],
+  "briefing": [
+    { "mood": "happy", "text": "Your LED glows, but it never stops. Time to give it a gatekeeper that only opens when you press it." },
+    { "mood": "thinking", "text": "A pushbutton is just a wire that appears when you press it. Break the loop anywhere and drop the button into the gap." },
+    { "mood": "alert", "text": "Careful with the legs: the two on the left are already joined, and so are the two on the right. Bridge across the gap, not along it." }
+  ],
+  "learn": {
+    "title": "A switch is a resistor with two values",
+    "body": "A pushbutton has only two states, and the circuit equation is the same one you already know:\n\n    I = (Vsrc - Vf) / (R + Rswitch + rOn)\n\nReleased, Rswitch is effectively infinite — the loop is broken and I = 0, so the LED is dark. Pressed, Rswitch is about 0.1 Ohm, which is nothing next to your 220 Ohm resistor, so the current is unchanged at roughly 13.9 mA.\n\nThat is why a switch can sit anywhere in a series loop: before the resistor, after the LED, it makes no difference. Current is the same everywhere in a series circuit, so breaking it at any single point stops all of it.\n\nThe four-leg package is one switch, not two. The left pair is permanently joined, the right pair is permanently joined, and pressing connects left to right. Straddle the breadboard's centre channel, or place the pairs in different rows, so the button bridges two separate strips.",
+    "links": []
+  },
+  "starterCircuit": {
+    "version": 1,
+    "boardMode": "half",
+    "breadboards": [{ "id": "bb1", "type": "half", "x": 0, "y": 0 }],
+    "mcu": "uno",
+    "components": [
+      { "id": "c_uno", "type": "uno", "props": {}, "rotation": 0, "position": { "x": 0, "y": -552 } },
+      { "id": "c_r1", "type": "resistor", "props": { "ohms": 220 }, "rotation": 0, "anchor": { "board": "bb1", "hole": "a6" } },
+      { "id": "c_led1", "type": "led", "props": { "color": "red" }, "rotation": 0, "anchor": { "board": "bb1", "hole": "e10" } }
+    ],
+    "wires": [
+      { "id": "w_1", "from": "c_uno:5V", "to": "bb1:TP1", "color": "red" },
+      { "id": "w_2", "from": "c_uno:GND", "to": "bb1:TN1", "color": "black" },
+      { "id": "w_3", "from": "bb1:TP5", "to": "bb1:b6", "color": "red" },
+      { "id": "w_4", "from": "bb1:a11", "to": "bb1:TN5", "color": "black" }
+    ],
+    "meta": { "name": "The Gatekeeper" }
+  },
+  "starterCode": "// Still no firmware. The button does the switching all by itself.\nvoid setup() {\n\n}\n\nvoid loop() {\n\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": ["uno", "led", "resistor", "pushbutton"],
+  "objectives": [
+    {
+      "id": "rails_powered",
+      "text": "Keep the rails fed from the Uno",
+      "rules": [
+        { "type": "net_has", "net": { "mcuPin": "5V" }, "contains": { "terminal": "bb1:TP1" } },
+        { "type": "net_has", "net": { "mcuPin": "GND" }, "contains": { "terminal": "bb1:TN1" } }
+      ],
+      "hints": {
+        "tier1": "Nothing changes about power this level — 5V to the red rail, GND to the blue rail.",
+        "tier2": { "mcuPins": ["5V", "GND"], "terminals": ["bb1:TP1", "bb1:TN1"], "text": "Both power jumpers must stay connected." },
+        "tier3": true
+      }
+    },
+    {
+      "id": "resistor_protects",
+      "text": "Keep the 220 Ohm resistor between the rail and the LED anode",
+      "rules": [
+        { "type": "path", "from": { "mcuPin": "5V" }, "to": { "componentType": "led", "pin": "anode" }, "through": [{ "componentType": "resistor", "props": { "ohms": 220 } }] }
+      ],
+      "hints": {
+        "tier1": "Adding a button does not remove the need for a resistor — the LED still needs its shield.",
+        "tier2": { "componentTypes": ["resistor", "led"], "mcuPins": ["5V"], "text": "The resistor stays in series between 5 V and the anode." },
+        "tier3": true
+      }
+    },
+    {
+      "id": "button_in_path",
+      "text": "Put the pushbutton in the loop between the LED cathode and ground",
+      "rules": [
+        { "type": "component_present", "componentType": "pushbutton" },
+        { "type": "path", "from": { "componentType": "led", "pin": "cathode" }, "to": { "mcuPin": "GND" }, "through": [{ "componentType": "pushbutton" }] }
+      ],
+      "hints": {
+        "tier1": "Cut the wire that runs from the LED back to ground, and let the button be the missing piece.",
+        "tier2": { "componentTypes": ["pushbutton", "led"], "mcuPins": ["GND"], "text": "Cathode row to one side of the button, the other side of the button to the blue rail." },
+        "tier3": true
+      }
+    },
+    {
+      "id": "lights_on_press",
+      "text": "Hold the button down and the LED lights",
+      "rules": [
+        { "type": "all_of", "rules": [
+          { "type": "control_state", "componentType": "pushbutton", "field": "pressed", "equals": true },
+          { "type": "led_lit", "minBrightness": 0.5 }
+        ] }
+      ],
+      "hints": {
+        "tier1": "Press and hold the button on the canvas. If the LED stays dark, the two legs you wired are probably the pair that is already joined inside the package.",
+        "tier2": { "componentTypes": ["pushbutton"], "text": "The button's left pair and right pair must land in two different breadboard rows." },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [{ "type": "max_components", "max": 3, "excludeTypes": ["uno"] }],
+    "threeText": "Three parts only: resistor, LED and button"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "half",
+      "breadboards": [{ "id": "bb1", "type": "half", "x": 0, "y": 0 }],
+      "mcu": "uno",
+      "components": [
+        { "id": "c_uno", "type": "uno", "props": {}, "rotation": 0, "position": { "x": 0, "y": -552 } },
+        { "id": "c_r1", "type": "resistor", "props": { "ohms": 220 }, "rotation": 0, "anchor": { "board": "bb1", "hole": "a6" } },
+        { "id": "c_led1", "type": "led", "props": { "color": "red" }, "rotation": 0, "anchor": { "board": "bb1", "hole": "e10" } },
+        { "id": "c_btn1", "type": "pushbutton", "props": {}, "rotation": 0, "anchor": { "board": "bb1", "hole": "c15" } }
+      ],
+      "wires": [
+        { "id": "w_1", "from": "c_uno:5V", "to": "bb1:TP1", "color": "red" },
+        { "id": "w_2", "from": "c_uno:GND", "to": "bb1:TN1", "color": "black" },
+        { "id": "w_3", "from": "bb1:TP5", "to": "bb1:b6", "color": "red" },
+        { "id": "w_4", "from": "bb1:b11", "to": "bb1:b15", "color": "yellow" },
+        { "id": "w_5", "from": "bb1:b17", "to": "bb1:TN9", "color": "black" }
+      ],
+      "meta": { "name": "The Gatekeeper" }
+    },
+    "code": "// The Gatekeeper is a pure hardware level: the button breaks and remakes the\n// series loop, so no firmware is involved at all.\n\nvoid setup() {\n}\n\nvoid loop() {\n}\n",
+    "blocklyXml": null,
+    "actions": [
+      { "atMs": 500, "select": { "componentType": "pushbutton" }, "patch": { "pressed": true } },
+      { "atMs": 1500, "select": { "componentType": "pushbutton" }, "patch": { "pressed": false } }
+    ]
+  },
+  "solutionRunMs": 3000,
+  "successText": "Press, glow, release, dark. You just built a circuit that answers to a human — and you did it without writing a single line of code.",
+  "chipOnSmoke": "Smoke means the current found a shortcut past the resistor. Trace the loop from 5 V: resistor, LED, button, ground, in that order."
+}

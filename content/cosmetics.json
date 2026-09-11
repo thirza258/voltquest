@@ -1,0 +1,36 @@
+{
+  "skins": [
+    {
+      "id": "classic",
+      "name": "Classic",
+      "unlockLevel": 1,
+      "description": "The stock lab bench: warm beige breadboard, slate holes, nothing to distract you from the circuit."
+    },
+    {
+      "id": "mint",
+      "name": "Mint Lab",
+      "unlockLevel": 3,
+      "description": "A cool mint breadboard with teal rails — easier on the eyes during long debugging sessions."
+    },
+    {
+      "id": "slate",
+      "name": "Slate Bench",
+      "unlockLevel": 6,
+      "description": "Graphite board and bright hole rings. Wire colours pop, which helps once your builds get busy."
+    }
+  ],
+  "wirePalettes": [
+    {
+      "id": "standard",
+      "name": "Standard",
+      "unlockLevel": 1,
+      "description": "Workshop colour code: red for power, black for ground, and six signal colours."
+    },
+    {
+      "id": "neon",
+      "name": "Neon",
+      "unlockLevel": 4,
+      "description": "High-contrast neon jumpers. Same eight slots, turned all the way up."
+    }
+  ]
+}

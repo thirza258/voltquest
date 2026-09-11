@@ -1,0 +1,29 @@
+# VoltQuest without PostgreSQL: the API keeps its SQLite file in a named volume.
+# Handy for classrooms and single-machine demos:  docker compose -f docker-compose.lite.yml up --build
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      DATABASE_URL: sqlite:////data/voltquest.db
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-change-me}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8080,http://localhost:5173}
+      CONTENT_DIR: /content
+    volumes:
+      - api-data:/data
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  api-data:

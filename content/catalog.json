@@ -1,0 +1,838 @@
+{
+  "resistor_100": {
+    "name": "100 Ω resistor (1/4 W, 5 %)",
+    "unitPriceUsd": 0.1,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=100+ohm+resistor"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=100+ohm+resistor"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=100+ohm+resistor+1%2F4W+carbon+film"
+      }
+    ],
+    "notes": "Carbon film, axial, ±5 % — sold in packs of 100 in most stores."
+  },
+  "resistor_220": {
+    "name": "220 Ω resistor (1/4 W, 5 %)",
+    "unitPriceUsd": 0.1,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=220+ohm+resistor"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=220+ohm+resistor"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=220+ohm+resistor+1%2F4W+carbon+film"
+      }
+    ],
+    "notes": "Carbon film, axial, ±5 % — sold in packs of 100 in most stores."
+  },
+  "resistor_330": {
+    "name": "330 Ω resistor (1/4 W, 5 %)",
+    "unitPriceUsd": 0.1,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=330+ohm+resistor"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=330+ohm+resistor"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=330+ohm+resistor+1%2F4W+carbon+film"
+      }
+    ],
+    "notes": "Carbon film, axial, ±5 % — sold in packs of 100 in most stores."
+  },
+  "resistor_470": {
+    "name": "470 Ω resistor (1/4 W, 5 %)",
+    "unitPriceUsd": 0.1,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=470+ohm+resistor"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=470+ohm+resistor"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=470+ohm+resistor+1%2F4W+carbon+film"
+      }
+    ],
+    "notes": "Carbon film, axial, ±5 % — sold in packs of 100 in most stores."
+  },
+  "resistor_1000": {
+    "name": "1 kΩ resistor (1/4 W, 5 %)",
+    "unitPriceUsd": 0.1,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=1+kohm+resistor"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=1+kohm+resistor"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=1+kohm+resistor+1%2F4W+carbon+film"
+      }
+    ],
+    "notes": "Carbon film, axial, ±5 % — sold in packs of 100 in most stores."
+  },
+  "resistor_2200": {
+    "name": "2.2 kΩ resistor (1/4 W, 5 %)",
+    "unitPriceUsd": 0.1,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=2.2+kohm+resistor"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=2.2+kohm+resistor"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=2.2+kohm+resistor+1%2F4W+carbon+film"
+      }
+    ],
+    "notes": "Carbon film, axial, ±5 % — sold in packs of 100 in most stores."
+  },
+  "resistor_4700": {
+    "name": "4.7 kΩ resistor (1/4 W, 5 %)",
+    "unitPriceUsd": 0.1,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=4.7+kohm+resistor"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=4.7+kohm+resistor"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=4.7+kohm+resistor+1%2F4W+carbon+film"
+      }
+    ],
+    "notes": "Carbon film, axial, ±5 % — sold in packs of 100 in most stores."
+  },
+  "resistor_10000": {
+    "name": "10 kΩ resistor (1/4 W, 5 %)",
+    "unitPriceUsd": 0.1,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=10+kohm+resistor"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=10+kohm+resistor"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=10+kohm+resistor+1%2F4W+carbon+film"
+      }
+    ],
+    "notes": "Carbon film, axial, ±5 % — sold in packs of 100 in most stores."
+  },
+  "resistor_22000": {
+    "name": "22 kΩ resistor (1/4 W, 5 %)",
+    "unitPriceUsd": 0.1,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=22+kohm+resistor"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=22+kohm+resistor"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=22+kohm+resistor+1%2F4W+carbon+film"
+      }
+    ],
+    "notes": "Carbon film, axial, ±5 % — sold in packs of 100 in most stores."
+  },
+  "resistor_47000": {
+    "name": "47 kΩ resistor (1/4 W, 5 %)",
+    "unitPriceUsd": 0.1,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=47+kohm+resistor"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=47+kohm+resistor"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=47+kohm+resistor+1%2F4W+carbon+film"
+      }
+    ],
+    "notes": "Carbon film, axial, ±5 % — sold in packs of 100 in most stores."
+  },
+  "resistor_100000": {
+    "name": "100 kΩ resistor (1/4 W, 5 %)",
+    "unitPriceUsd": 0.1,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=100+kohm+resistor"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=100+kohm+resistor"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=100+kohm+resistor+1%2F4W+carbon+film"
+      }
+    ],
+    "notes": "Carbon film, axial, ±5 % — sold in packs of 100 in most stores."
+  },
+  "led_red": {
+    "name": "Red LED (5 mm, diffused)",
+    "unitPriceUsd": 0.25,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=5mm+red+LED"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=5mm+red+LED"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=5mm+red+LED+through+hole"
+      }
+    ],
+    "notes": "Forward voltage ≈ 1.8 V, 20 mA rated — always use a series resistor."
+  },
+  "led_green": {
+    "name": "Green LED (5 mm, diffused)",
+    "unitPriceUsd": 0.25,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=5mm+green+LED"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=5mm+green+LED"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=5mm+green+LED+through+hole"
+      }
+    ],
+    "notes": "Forward voltage ≈ 2.1 V, 20 mA rated — always use a series resistor."
+  },
+  "led_blue": {
+    "name": "Blue LED (5 mm, diffused)",
+    "unitPriceUsd": 0.25,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=5mm+blue+LED"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=5mm+blue+LED"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=5mm+blue+LED+through+hole"
+      }
+    ],
+    "notes": "Forward voltage ≈ 2.7 V, 20 mA rated — always use a series resistor."
+  },
+  "led_yellow": {
+    "name": "Yellow LED (5 mm, diffused)",
+    "unitPriceUsd": 0.25,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=5mm+yellow+LED"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=5mm+yellow+LED"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=5mm+yellow+LED+through+hole"
+      }
+    ],
+    "notes": "Forward voltage ≈ 2.0 V, 20 mA rated — always use a series resistor."
+  },
+  "led_white": {
+    "name": "White LED (5 mm, diffused)",
+    "unitPriceUsd": 0.25,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=5mm+white+LED"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=5mm+white+LED"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=5mm+white+LED+through+hole"
+      }
+    ],
+    "notes": "Forward voltage ≈ 2.8 V, 20 mA rated — always use a series resistor."
+  },
+  "rgb_led": {
+    "name": "RGB LED (5 mm, common cathode)",
+    "unitPriceUsd": 0.65,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=RGB+LED+common+cathode"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=RGB+LED+common+cathode+5mm"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=RGB+LED+common+cathode+5mm"
+      }
+    ],
+    "notes": "Three dies in one package sharing a cathode — one resistor per colour."
+  },
+  "capacitor": {
+    "name": "Electrolytic capacitor 100 µF 16 V",
+    "unitPriceUsd": 0.2,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=100uF+electrolytic+capacitor"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=100uF+capacitor"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=100uF+16V+aluminum+electrolytic+capacitor"
+      }
+    ],
+    "notes": "Polarised: the long lead and the unmarked side are positive."
+  },
+  "diode_1n4007": {
+    "name": "1N4007 rectifier diode (1 A, 1000 V)",
+    "unitPriceUsd": 0.12,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=1N4007+diode"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=1N4007+diode"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=1N4007"
+      }
+    ],
+    "notes": "General-purpose silicon diode, ≈ 0.7 V forward drop. Great as a motor flyback diode."
+  },
+  "transistor_2n2222": {
+    "name": "2N2222 NPN transistor (TO-92)",
+    "unitPriceUsd": 0.3,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=2N2222+transistor"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=2N2222+NPN+transistor"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=2N2222+NPN+TO-92"
+      }
+    ],
+    "notes": "Switches up to 800 mA with a small base current — β ≈ 100."
+  },
+  "pushbutton": {
+    "name": "Tactile pushbutton, 6 mm 4-pin",
+    "unitPriceUsd": 0.2,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=tactile+pushbutton+6mm"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=tactile+switch+6mm"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=tactile+switch+6mm+through+hole"
+      }
+    ],
+    "notes": "The two pins on the same side are permanently joined; the switch bridges the two sides."
+  },
+  "potentiometer_10k": {
+    "name": "10 kΩ linear potentiometer (rotary)",
+    "unitPriceUsd": 1.1,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=10k+potentiometer"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=10k+potentiometer"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=10+kohm+rotary+potentiometer"
+      }
+    ],
+    "notes": "Three pins: two ends across a supply, the wiper gives an adjustable voltage."
+  },
+  "ldr": {
+    "name": "LDR photoresistor (GL5528, 5 mm)",
+    "unitPriceUsd": 0.5,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=photoresistor+LDR"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=photocell"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=GL5528+photoresistor"
+      }
+    ],
+    "notes": "About 1 kΩ in bright light and 200 kΩ in the dark — pair it with a fixed resistor to make a divider."
+  },
+  "buzzer": {
+    "name": "Active/passive piezo buzzer, 12 mm",
+    "unitPriceUsd": 0.9,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=piezo+buzzer"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=piezo+buzzer"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=12mm+piezo+buzzer+through+hole"
+      }
+    ],
+    "notes": "Passive type plays tones from tone(); active type only beeps at one pitch."
+  },
+  "servo_sg90": {
+    "name": "SG90 micro servo (9 g, 180°)",
+    "unitPriceUsd": 3.5,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=SG90+servo"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=micro+servo+9g"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=SG90+micro+servo"
+      }
+    ],
+    "notes": "Draws up to 700 mA when it stalls — give it its own 5 V supply for anything but light loads."
+  },
+  "lcd16x2_i2c": {
+    "name": "16x2 character LCD with I²C backpack",
+    "unitPriceUsd": 6.5,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=16x2+LCD+I2C"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=16x2+LCD+I2C+backpack"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=16x2+character+LCD+module+I2C"
+      }
+    ],
+    "notes": "Default address 0x27 (some modules use 0x3F). Four wires: VCC, GND, SDA, SCL."
+  },
+  "oled_ssd1306": {
+    "name": "0.96\" OLED display 128x64 (SSD1306, I²C)",
+    "unitPriceUsd": 5.5,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=SSD1306+OLED+128x64"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=SSD1306+OLED+128x64"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=SSD1306+OLED+display+module"
+      }
+    ],
+    "notes": "Runs happily at 3.3 V or 5 V. Default I²C address 0x3C."
+  },
+  "seven_segment": {
+    "name": "7-segment display, single digit, common cathode",
+    "unitPriceUsd": 0.75,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=7+segment+display+common+cathode"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=7+segment+display"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=single+digit+7+segment+display+common+cathode"
+      }
+    ],
+    "notes": "Eight LEDs (a–g plus the decimal point) sharing a cathode — one resistor per segment."
+  },
+  "neopixel_ring_12": {
+    "name": "NeoPixel ring, 12 x WS2812B RGB LEDs",
+    "unitPriceUsd": 9.95,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=WS2812B+LED+ring+12"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=NeoPixel+ring+12"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=WS2812B+RGB+LED+ring+12+bit"
+      }
+    ],
+    "notes": "One data wire drives all 12 pixels. At full white it can pull over 700 mA — feed it 5 V."
+  },
+  "hcsr04": {
+    "name": "HC-SR04 ultrasonic distance sensor",
+    "unitPriceUsd": 2.5,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=HC-SR04+ultrasonic"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=ultrasonic+distance+sensor"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=HC-SR04+ultrasonic+ranging+module"
+      }
+    ],
+    "notes": "5 V module: its ECHO pin outputs 5 V, so divide it down before an ESP32 GPIO."
+  },
+  "pir": {
+    "name": "HC-SR501 PIR motion sensor",
+    "unitPriceUsd": 3,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=PIR+motion+sensor"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=PIR+motion+sensor"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=HC-SR501+PIR+motion+sensor"
+      }
+    ],
+    "notes": "Outputs a 3.3 V HIGH while motion is detected; trim pots set sensitivity and hold time."
+  },
+  "dht22": {
+    "name": "DHT22 / AM2302 temperature + humidity sensor",
+    "unitPriceUsd": 5.5,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=DHT22+temperature+humidity+sensor"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=DHT22+AM2302"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=DHT22+AM2302+temperature+humidity+sensor"
+      }
+    ],
+    "notes": "One-wire digital sensor, ±0.5 °C. Needs at least 2 s between readings."
+  },
+  "bme280": {
+    "name": "BME280 temperature / humidity / pressure sensor",
+    "unitPriceUsd": 8.5,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=BME280+sensor+breakout"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=BME280"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=BME280+sensor+module+I2C"
+      }
+    ],
+    "notes": "I²C address 0x76 or 0x77. Works from 3.0 V up."
+  },
+  "touch_pad": {
+    "name": "Capacitive touch pad (copper pad / TTP223 module)",
+    "unitPriceUsd": 1.2,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=capacitive+touch+sensor"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=capacitive+touch+sensor+breakout"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=TTP223+capacitive+touch+module"
+      }
+    ],
+    "notes": "On an ESP32 a bare wire or pad on a touch-capable GPIO is enough — touchRead() does the rest."
+  },
+  "level_shifter": {
+    "name": "4-channel bidirectional logic level converter",
+    "unitPriceUsd": 3,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=logic+level+converter+4+channel"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=4-channel+bi-directional+logic+level+converter"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=bidirectional+logic+level+shifter+4+channel"
+      }
+    ],
+    "notes": "Safely bridges 5 V devices to 3.3 V logic in both directions."
+  },
+  "relay_5v": {
+    "name": "5 V single-channel relay module (opto-isolated)",
+    "unitPriceUsd": 2.5,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=5V+relay+module"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=5V+relay+module"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=5V+single+channel+relay+module"
+      }
+    ],
+    "notes": "Switches mains-level loads from a logic pin. COM/NO/NC contacts on the screw terminals."
+  },
+  "dc_motor": {
+    "name": "Small DC hobby motor (3–6 V, TT/130 size)",
+    "unitPriceUsd": 2,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=DC+hobby+motor+130"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=DC+motor+3V+6V"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=small+DC+brushed+motor+3-6V"
+      }
+    ],
+    "notes": "Never drive it straight from a GPIO — use a transistor and a flyback diode."
+  },
+  "arduino_uno": {
+    "name": "Arduino Uno R3 (or compatible)",
+    "unitPriceUsd": 27.6,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=Arduino+Uno+R3"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=Arduino+Uno+R3"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=Arduino+Uno+R3+development+board"
+      }
+    ],
+    "notes": "5 V logic, 10-bit ADC, 16-bit int. The classic starting board."
+  },
+  "arduino_nano": {
+    "name": "Arduino Nano (ATmega328, or compatible)",
+    "unitPriceUsd": 24.9,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=Arduino+Nano"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=Arduino+Nano"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=Arduino+Nano+ATmega328"
+      }
+    ],
+    "notes": "Same brain as the Uno in a breadboard-friendly DIP footprint."
+  },
+  "esp32_devkit_v1": {
+    "name": "ESP32 DevKit V1 (30-pin, WROOM-32)",
+    "unitPriceUsd": 8.9,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=ESP32+development+board"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=ESP32+devkit"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=ESP32+WROOM-32+development+board+30+pin"
+      }
+    ],
+    "notes": "3.3 V logic — never feed a GPIO 5 V. Wi-Fi, Bluetooth, touch pins, 12-bit ADC."
+  },
+  "esp32_s3": {
+    "name": "ESP32-S3 DevKitC-1 (44-pin)",
+    "unitPriceUsd": 14.5,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=ESP32-S3+development+board"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=ESP32-S3+devkit"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=ESP32-S3-DevKitC-1"
+      }
+    ],
+    "notes": "Faster ESP32 with native USB and 14 touch channels. Still 3.3 V logic."
+  },
+  "breadboard_half": {
+    "name": "Solderless breadboard, half size (400 tie points)",
+    "unitPriceUsd": 4.5,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=half+size+breadboard+400"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=half+size+breadboard"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=solderless+breadboard+400+tie+points"
+      }
+    ],
+    "notes": "30 rows of 5+5 holes plus two power rails per side."
+  },
+  "breadboard_full": {
+    "name": "Solderless breadboard, full size (830 tie points)",
+    "unitPriceUsd": 6.5,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=full+size+breadboard+830"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=full+size+breadboard"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=solderless+breadboard+830+tie+points"
+      }
+    ],
+    "notes": "63 rows — enough for an MCU plus a sensor and a display."
+  },
+  "jumper_wires": {
+    "name": "Jumper wire kit (male-male, assorted lengths)",
+    "unitPriceUsd": 6,
+    "vendors": [
+      {
+        "name": "SparkFun",
+        "url": "https://www.sparkfun.com/search/results?term=jumper+wires+male+to+male"
+      },
+      {
+        "name": "Adafruit",
+        "url": "https://www.adafruit.com/search?q=jumper+wire+bundle"
+      },
+      {
+        "name": "DigiKey",
+        "url": "https://www.digikey.com/en/products/result?keywords=breadboard+jumper+wire+kit"
+      }
+    ],
+    "notes": "Solid-core pre-cut wires keep a breadboard readable; colour-code power red and ground black."
+  }
+}

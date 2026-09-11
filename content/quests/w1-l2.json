@@ -1,0 +1,127 @@
+{
+  "id": "w1-l2",
+  "worldId": "w1",
+  "order": 2,
+  "title": "The Shield",
+  "codeName": "Level 1-2",
+  "board": "uno",
+  "startBoard": "uno",
+  "boardSwitcher": "locked",
+  "boardMode": "half",
+  "xp": 100,
+  "estimatedMinutes": 5,
+  "summary": "Put a 220 Ohm resistor in front of the LED so it glows instead of dying. One part, one calculation, and the LED lives forever.",
+  "concepts": ["Ohm's law", "series resistance", "current limiting", "forward voltage"],
+  "briefing": [
+    { "mood": "happy", "text": "Same circuit as last time, but this run the LED survives. All it needs is one resistor standing between it and the 5 V rail." },
+    { "mood": "thinking", "text": "A resistor in series sets the current for the whole loop. Pick 220 Ohm and you get a bright, safe 14 mA." }
+  ],
+  "learn": {
+    "title": "Sizing the current-limiting resistor",
+    "body": "The LED drops a fixed forward voltage Vf. Everything left over lands on the resistor, and the resistor decides the current:\n\n    I = (Vsrc - Vf) / (R + Rpin + rOn)\n\nRearranged to pick a resistor for a target current:\n\n    R = (Vsrc - Vf) / I\n\nFor a red LED on 5 V at a comfortable 20 mA:\n\n    R = (5 V - 1.8 V) / 0.020 A = 160 Ohm\n\nThere is no 160 Ohm in the drawer, so go up to the next standard value: 220 Ohm. Going up is always safe — a bigger resistor means less current and a slightly dimmer, longer-lived LED. Measured here: about 13.9 mA, roughly 83 % brightness.",
+    "links": []
+  },
+  "starterCircuit": {
+    "version": 1,
+    "boardMode": "half",
+    "breadboards": [{ "id": "bb1", "type": "half", "x": 0, "y": 0 }],
+    "mcu": "uno",
+    "components": [
+      { "id": "c_uno", "type": "uno", "props": {}, "rotation": 0, "position": { "x": 0, "y": -552 } },
+      { "id": "c_led1", "type": "led", "props": { "color": "red" }, "rotation": 0, "anchor": { "board": "bb1", "hole": "e10" } }
+    ],
+    "wires": [
+      { "id": "w_1", "from": "c_uno:5V", "to": "bb1:TP1", "color": "red" },
+      { "id": "w_2", "from": "c_uno:GND", "to": "bb1:TN1", "color": "black" },
+      { "id": "w_3", "from": "bb1:TP5", "to": "bb1:a10", "color": "red" },
+      { "id": "w_4", "from": "bb1:a11", "to": "bb1:TN5", "color": "black" }
+    ],
+    "meta": { "name": "The Shield" }
+  },
+  "starterCode": "// Still no code needed — this one is all about the resistor.\nvoid setup() {\n\n}\n\nvoid loop() {\n\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": ["uno", "led", "resistor"],
+  "objectives": [
+    {
+      "id": "rails_powered",
+      "text": "Keep 5 V on the red rail and GND on the blue rail",
+      "rules": [
+        { "type": "net_has", "net": { "mcuPin": "5V" }, "contains": { "terminal": "bb1:TP1" } },
+        { "type": "net_has", "net": { "mcuPin": "GND" }, "contains": { "terminal": "bb1:TN1" } }
+      ],
+      "hints": {
+        "tier1": "The power jumpers from the last level still do their job — leave them where they are.",
+        "tier2": { "mcuPins": ["5V", "GND"], "terminals": ["bb1:TP1", "bb1:TN1"], "text": "5V to the red rail, GND to the blue rail." },
+        "tier3": true
+      }
+    },
+    {
+      "id": "resistor_in_series",
+      "text": "Put a 220 Ohm resistor between the 5 V rail and the LED anode",
+      "rules": [
+        { "type": "component_present", "componentType": "resistor", "props": { "ohms": 220 } },
+        { "type": "path", "from": { "mcuPin": "5V" }, "to": { "componentType": "led", "pin": "anode" }, "through": [{ "componentType": "resistor", "props": { "ohms": 220 } }] }
+      ],
+      "hints": {
+        "tier1": "In series means the current has no choice but to go through both parts. The resistor must sit in the wire, not beside it.",
+        "tier2": { "componentTypes": ["resistor", "led"], "mcuPins": ["5V"], "text": "One end of the resistor on the rail side, the other end in the same row as the LED anode." },
+        "tier3": true
+      }
+    },
+    {
+      "id": "cathode_to_ground",
+      "text": "Return the LED cathode to ground",
+      "rules": [
+        { "type": "path", "from": { "componentType": "led", "pin": "cathode" }, "to": { "mcuPin": "GND" } }
+      ],
+      "hints": {
+        "tier1": "Current only flows in a complete loop. The short leg of the LED needs a way back to GND.",
+        "tier2": { "componentTypes": ["led"], "mcuPins": ["GND"], "text": "Jumper the cathode's row to the blue rail." },
+        "tier3": true
+      }
+    },
+    {
+      "id": "glows_and_lives",
+      "text": "Run it: the LED glows brightly and nothing is damaged",
+      "rules": [
+        { "type": "led_lit", "minBrightness": 0.5 },
+        { "type": "no_damage" }
+      ],
+      "hints": {
+        "tier1": "If the LED is dark, check its direction — the anode must face the positive side. If it blew, press Reset sim after adding the resistor.",
+        "tier2": { "componentTypes": ["led", "resistor"], "text": "220 Ohm from 5 V gives about 13.9 mA, which is a safe, bright glow." },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [{ "type": "max_components", "max": 2, "excludeTypes": ["uno"] }],
+    "threeText": "Do it with exactly two parts: one resistor and one LED"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "half",
+      "breadboards": [{ "id": "bb1", "type": "half", "x": 0, "y": 0 }],
+      "mcu": "uno",
+      "components": [
+        { "id": "c_uno", "type": "uno", "props": {}, "rotation": 0, "position": { "x": 0, "y": -552 } },
+        { "id": "c_r1", "type": "resistor", "props": { "ohms": 220 }, "rotation": 0, "anchor": { "board": "bb1", "hole": "a6" } },
+        { "id": "c_led1", "type": "led", "props": { "color": "red" }, "rotation": 0, "anchor": { "board": "bb1", "hole": "e10" } }
+      ],
+      "wires": [
+        { "id": "w_1", "from": "c_uno:5V", "to": "bb1:TP1", "color": "red" },
+        { "id": "w_2", "from": "c_uno:GND", "to": "bb1:TN1", "color": "black" },
+        { "id": "w_3", "from": "bb1:TP5", "to": "bb1:b6", "color": "red" },
+        { "id": "w_4", "from": "bb1:a11", "to": "bb1:TN5", "color": "black" }
+      ],
+      "meta": { "name": "The Shield" }
+    },
+    "code": "// The Shield is still a wiring level: a 220 Ohm resistor in series with the LED.\n// R = (5 V - 1.8 V) / 0.020 A = 160 Ohm, rounded up to the nearest standard 220 Ohm.\n\nvoid setup() {\n}\n\nvoid loop() {\n}\n",
+    "blocklyXml": null
+  },
+  "solutionRunMs": 2000,
+  "successText": "Steady, bright, and cool to the touch. About 13.9 mA of the 20 mA the LED can take — that resistor will keep it alive for twenty years.",
+  "chipOnSmoke": "Still smoking? The current is finding a way around the resistor. Make sure the resistor is in the path, not bridging the same row as the LED anode."
+}

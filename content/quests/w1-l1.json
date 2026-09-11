@@ -1,0 +1,237 @@
+{
+  "id": "w1-l1",
+  "worldId": "w1",
+  "order": 1,
+  "title": "First Glow",
+  "codeName": "Level 1-1",
+  "board": "uno",
+  "startBoard": "uno",
+  "boardSwitcher": "locked",
+  "boardMode": "half",
+  "xp": 80,
+  "estimatedMinutes": 4,
+  "summary": "Wire a red LED straight across the Uno's 5 V and GND rails and watch it let out its magic smoke. This is the mistake every engineer makes exactly once.",
+  "concepts": [
+    "power rails",
+    "LED forward voltage",
+    "current",
+    "magic smoke"
+  ],
+  "briefing": [
+    {
+      "mood": "happy",
+      "text": "Welcome to the bench! Your very first job is to light an LED, and I want you to do it the reckless way."
+    },
+    {
+      "mood": "thinking",
+      "text": "Run 5 V straight into the LED with nothing in between. Watch what happens — the smoke is the lesson."
+    },
+    {
+      "mood": "alert",
+      "text": "Nothing here is really broken, so experiment freely. Reset sim puts every part back together."
+    }
+  ],
+  "learn": {
+    "title": "Why an LED dies on bare 5 V",
+    "body": "An LED is not a resistor. Once the voltage across it passes its forward voltage Vf (about 1.8 V for red) it stops resisting and conducts almost everything you give it.\n\nThe current is set by whatever resistance is left in the loop:\n\n    I = (Vsrc - Vf) / (R + Rpin + rOn)\n\nWith no resistor at all, R = 0 and only the LED's own tiny internal resistance (about 10 Ohm) is left:\n\n    I = (5 V - 1.8 V) / 10 Ohm = 320 mA\n\nA 5 mm LED is rated for 20 mA and dies above about 30 mA. 320 mA is sixteen times its rating — hence the smoke. Next level you will fix it with a single resistor.",
+    "links": []
+  },
+  "starterCircuit": null,
+  "starterCode": "// First Glow is pure wiring — no code needed yet.\nvoid setup() {\n\n}\n\nvoid loop() {\n\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": [
+    "uno",
+    "led"
+  ],
+  "objectives": [
+    {
+      "id": "rails_powered",
+      "text": "Feed the breadboard: 5 V to the red rail, GND to the blue rail",
+      "rules": [
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "5V"
+          },
+          "contains": {
+            "terminal": "bb1:TP1"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "GND"
+          },
+          "contains": {
+            "terminal": "bb1:TN1"
+          }
+        }
+      ],
+      "hints": {
+        "tier1": "The breadboard has no power of its own. The two long side strips are rails — run one jumper from the Uno's 5V pin to the red rail and one from GND to the blue rail.",
+        "tier2": {
+          "mcuPins": [
+            "5V",
+            "GND"
+          ],
+          "terminals": [
+            "bb1:TP1",
+            "bb1:TN1"
+          ],
+          "text": "These are the two terminals your jumpers should reach."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "led_across_rails",
+      "text": "Put the LED straight across the rails — anode to 5 V, cathode to GND",
+      "rules": [
+        {
+          "type": "component_present",
+          "componentType": "led"
+        },
+        {
+          "type": "path",
+          "from": {
+            "mcuPin": "5V"
+          },
+          "to": {
+            "componentType": "led",
+            "pin": "anode"
+          }
+        },
+        {
+          "type": "path",
+          "from": {
+            "componentType": "led",
+            "pin": "cathode"
+          },
+          "to": {
+            "mcuPin": "GND"
+          }
+        }
+      ],
+      "hints": {
+        "tier1": "An LED only works one way round. The long leg (anode) faces the positive rail, the short leg (cathode) faces ground.",
+        "tier2": {
+          "componentTypes": [
+            "led"
+          ],
+          "mcuPins": [
+            "5V",
+            "GND"
+          ],
+          "text": "Drop the LED across two different rows, then jumper each row to a rail."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "magic_smoke",
+      "text": "Run it and release the magic smoke",
+      "rules": [
+        {
+          "type": "component_blown",
+          "componentType": "led"
+        }
+      ],
+      "hints": {
+        "tier1": "Nothing is limiting the current, so the LED will destroy itself the moment power reaches it. Press Run.",
+        "tier2": {
+          "componentTypes": [
+            "led"
+          ],
+          "text": "The LED must sit directly across 5 V with no resistor anywhere in the loop."
+        },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": true,
+    "three": [
+      {
+        "type": "max_components",
+        "max": 1,
+        "excludeTypes": [
+          "uno"
+        ]
+      }
+    ],
+    "threeText": "Blow it up with exactly one part on the board — just the LED"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "half",
+      "breadboards": [
+        {
+          "id": "bb1",
+          "type": "half",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "mcu": "uno",
+      "components": [
+        {
+          "id": "c_uno",
+          "type": "uno",
+          "props": {},
+          "rotation": 0,
+          "position": {
+            "x": 0,
+            "y": -552
+          }
+        },
+        {
+          "id": "c_led1",
+          "type": "led",
+          "props": {
+            "color": "red"
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "e10"
+          }
+        }
+      ],
+      "wires": [
+        {
+          "id": "w_1",
+          "from": "c_uno:5V",
+          "to": "bb1:TP1",
+          "color": "red"
+        },
+        {
+          "id": "w_2",
+          "from": "c_uno:GND",
+          "to": "bb1:TN1",
+          "color": "black"
+        },
+        {
+          "id": "w_3",
+          "from": "bb1:TP5",
+          "to": "bb1:a10",
+          "color": "red"
+        },
+        {
+          "id": "w_4",
+          "from": "bb1:a11",
+          "to": "bb1:TN5",
+          "color": "black"
+        }
+      ],
+      "meta": {
+        "name": "First Glow"
+      }
+    },
+    "code": "// First Glow needs no firmware at all: the LED is wired straight across 5 V.\n// Power alone is enough to kill it.\n\nvoid setup() {\n}\n\nvoid loop() {\n}\n",
+    "blocklyXml": null
+  },
+  "solutionRunMs": 2000,
+  "successText": "That is what 320 mA through a 20 mA part looks like. You just learned the single most important rule in electronics: something must limit the current.",
+  "chipOnSmoke": "Ha! Right on schedule. 5 V straight into an LED means about 320 mA through a part rated for 20 mA — sixteen times too much. Next level you get a resistor."
+}

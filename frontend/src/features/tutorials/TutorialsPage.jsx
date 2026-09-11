@@ -1,0 +1,58 @@
+import { useMemo } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
+import { ArrowRight, BookOpen, Clock, Cpu, Search } from 'lucide-react'
+import { TUTORIALS } from '../../content/index.js'
+import { BOARD_IDS, getBoard } from '../../engine/boards/index.js'
+import { AppHeader } from '../workspace/AppHeader.jsx'
+import { Badge, ChipMascot, EmptyState } from '../../ui/index.js'
+
+export default function TutorialsPage() {
+  const [params, setParams] = useSearchParams()
+  const board = params.get('board') ?? ''
+  const query = params.get('q') ?? ''
+  const difficulty = params.get('difficulty') ?? ''
+  const tutorials = useMemo(() => TUTORIALS.filter((tutorial) => (!board || tutorial.boards.includes(board))
+    && (!difficulty || tutorial.difficulty === difficulty)
+    && `${tutorial.title} ${tutorial.summary} ${tutorial.concepts.join(' ')}`.toLowerCase().includes(query.toLowerCase())), [board, query, difficulty])
+  function filter(key, value) {
+    const next = new URLSearchParams(params)
+    if (value) next.set(key, value)
+    else next.delete(key)
+    setParams(next, { replace: true })
+  }
+  return (
+    <div className="min-h-screen bg-surface-page">
+      <AppHeader />
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-8">
+        <div className="mb-8 flex items-start justify-between gap-6">
+          <div className="max-w-2xl">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-brand-700">The VoltQuest learning lab</p>
+            <h1 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">Small circuits. Big discoveries.</h1>
+            <p className="mt-4 text-base leading-relaxed text-ink-secondary">Learn by making something work. Explore {TUTORIALS.length} guided tutorials with ready-wired circuits, editable code, and experiments for Arduino Uno, ESP32, and Raspberry Pi 4 / 5.</p>
+            <div className="mt-5 flex flex-wrap gap-2"><Badge tone="brand"><BookOpen size={12} /> {TUTORIALS.length} tutorials</Badge><Badge tone="info"><Cpu size={12} /> 6 boards</Badge><Badge>Runs in your browser</Badge></div>
+          </div>
+          <div className="hidden sm:block"><ChipMascot size={100} mood="thinking" /></div>
+        </div>
+        <div className="mb-7 grid gap-3 rounded-lg border border-line bg-white p-4 sm:grid-cols-[1fr_240px]">
+          <label className="relative block"><span className="sr-only">Search tutorials</span><Search size={17} className="absolute left-3 top-3 text-slate-500" /><input type="search" value={query} onChange={(event) => filter('q', event.target.value)} placeholder="Search LEDs, Python, WiFi, sensors…" className="h-10 w-full rounded-md border border-line-strong bg-white pl-10 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" /></label>
+          <label><span className="sr-only">Filter by board</span><select value={board} onChange={(event) => filter('board', event.target.value)} className="h-10 w-full rounded-md border border-line-strong bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"><option value="">All boards</option>{BOARD_IDS.map((id) => <option key={id} value={id}>{getBoard(id).name}</option>)}</select></label>
+        </div>
+        <div className="mb-5 flex flex-wrap gap-2" role="group" aria-label="Tutorial difficulty">{['', 'Easy', 'Intermediate', 'Hard'].map((tier, index) => <button key={tier} onClick={() => filter('difficulty', tier)} aria-pressed={difficulty === tier} className={`rounded-md border px-4 py-2 text-sm font-medium ${difficulty === tier ? 'border-brand-600 bg-brand-600 text-white' : 'border-line bg-white text-slate-600'}`}>{tier ? `${index}. ${tier}` : 'Full learning path'}</button>)}</div>
+        <div className="mb-5 flex flex-wrap items-center gap-3 text-sm"><button onClick={() => { const next = new URLSearchParams(params); next.set('q', 'C++'); next.delete('difficulty'); next.delete('board'); setParams(next) }} className="rounded-md border border-brand-600 bg-white px-3 py-2 font-medium text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500">Explore Arduino / ESP32 code lessons</button><span className="text-slate-600">From setup and variables to serial commands and state machines.</span></div>
+        <p className="mb-4 text-sm text-slate-500" role="status">{tutorials.length} tutorials{board ? ` for ${getBoard(board)?.name ?? board}` : ' to explore'} · Easy → Intermediate → Hard</p>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {tutorials.map((tutorial) => (
+            <Link key={tutorial.id} to={`/tutorials/${tutorial.id}${board ? `?board=${board}` : ''}`} className="group flex flex-col rounded-lg border border-line bg-white p-5 transition-colors hover:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500">
+              <div className="mb-4 flex items-center justify-between gap-2"><Badge tone={tutorial.language === 'python' ? 'info' : 'brand'}>{tutorial.language === 'python' ? 'Raspberry Pi · Python' : tutorial.boards.includes('uno') && tutorial.boards.includes('esp32') ? 'Arduino / ESP32 · C++' : tutorial.boards[0] === 'uno' ? 'Arduino · C++' : 'ESP32 · C++'}</Badge><span className="flex items-center gap-1 text-xs text-slate-500"><Clock size={12} />{tutorial.minutes} min</span></div>
+              <h2 className="text-lg font-semibold text-ink group-hover:text-brand-700">{tutorial.title}</h2>
+              <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-secondary">{tutorial.summary}</p>
+              <div className="my-5 flex flex-wrap gap-1.5">{tutorial.concepts.map((concept) => <span key={concept} className="rounded bg-surface-sunken px-2 py-1 text-xs text-slate-600">{concept}</span>)}</div>
+              <div className="flex items-center justify-between border-t border-line pt-3 text-xs"><span className="text-slate-500">{tutorial.difficulty}</span><span className="inline-flex items-center gap-1 font-semibold text-brand-700">Open tutorial <ArrowRight size={14} /></span></div>
+            </Link>
+          ))}
+        </div>
+        {!tutorials.length && <EmptyState icon={<Search />} title="No tutorials match" description="Try another topic or choose a different board." action={<button className="text-brand-700 underline" onClick={() => setParams({})}>Clear filters</button>} />}
+      </main>
+    </div>
+  )
+}

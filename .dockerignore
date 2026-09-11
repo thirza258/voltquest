@@ -1,0 +1,17 @@
+# Build context is the repo root for both images, so the ignore rules live here.
+**/node_modules
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+backend/.venv
+backend/tests
+backend/*.db
+frontend/dist
+frontend/test-results
+frontend/playwright-report
+frontend/.vite
+.git
+docs
+*.md
+!content/**/*.md
+.env

@@ -1,0 +1,44 @@
+{
+  "worlds": [
+    {
+      "id": "w1",
+      "order": 1,
+      "title": "The Spark of Life",
+      "subtitle": "Power, LEDs, resistors, buttons",
+      "theme": "amber",
+      "board": "uno",
+      "intro": "Welcome to the bench! We start with the oldest trick in electronics: pushing current through a piece of glass until it glows. You will blow one LED on purpose, then learn exactly why it happened.",
+      "levelIds": ["w1-l1", "w1-l2", "w1-l3", "w1-l4"]
+    },
+    {
+      "id": "w2",
+      "order": 2,
+      "title": "Signals and Rhythms",
+      "subtitle": "Digital & analog I/O, PWM, transistors",
+      "theme": "teal",
+      "board": "uno",
+      "intro": "Now the Uno starts talking. Blink patterns become messages, sensors become numbers, and a transistor lets a 40 mA pin command a motor that eats hundreds.",
+      "levelIds": ["w2-l1", "w2-l2", "w2-l3", "w2-l4", "w2-l5"]
+    },
+    {
+      "id": "w3",
+      "order": 3,
+      "title": "The Power Swap",
+      "subtitle": "Transition boss: 5 V to 3.3 V",
+      "theme": "rose",
+      "board": "esp32",
+      "intro": "One board, one boss fight. Move a working 5 V project onto a 3.3 V ESP32 without letting a single pin see more than 3.6 V.",
+      "levelIds": ["w3-l1"]
+    },
+    {
+      "id": "w4",
+      "order": 4,
+      "title": "The Connected World",
+      "subtitle": "ESP32 IoT Academy",
+      "theme": "indigo",
+      "board": "esp32",
+      "intro": "Your circuits get a Wi-Fi antenna. Touch pads, addressable pixels, a web server in your pocket, and a weather station that publishes to the world.",
+      "levelIds": ["w4-l1", "w4-l2", "w4-l3", "w4-l4"]
+    }
+  ]
+}

@@ -1,0 +1,1995 @@
+{
+  "tutorials": [
+    {
+      "id": "cpp-start",
+      "title": "C++ basics: setup, loop and your first message",
+      "difficulty": "Easy",
+      "minutes": 8,
+      "preset": "empty",
+      "concepts": [
+        "C++",
+        "setup",
+        "loop",
+        "Serial"
+      ],
+      "summary": "Understand the structure of an Arduino sketch before connecting any components.",
+      "code": "int count = 0;\nvoid setup() {\n  Serial.begin(115200);\n  Serial.println(\"Starting once\");\n}\nvoid loop() {\n  count = count + 1;\n  Serial.print(\"Loop number: \");\n  Serial.println(count);\n  delay(500);\n}",
+      "steps": [
+        {
+          "title": "Start a sketch",
+          "text": "void setup() defines a function that runs once after reset. Braces enclose its statements, and a semicolon ends each call or assignment. Serial.begin configures the output channel."
+        },
+        {
+          "title": "Follow repeated execution",
+          "text": "loop runs again and again after setup returns. The global count variable keeps its value between calls. Expect Starting once, then Loop number: 1, 2, 3 and so on."
+        },
+        {
+          "title": "Edit and reset",
+          "text": "Run the example and change the message or 500 ms delay. Stop and Run again: the simulation resets, so setup prints once more and the counter starts from zero."
+        }
+      ],
+      "challenge": "Print your name in setup and change loop to print every second.",
+      "programConcepts": [
+        {
+          "title": "A function is a named group of instructions",
+          "text": "setup and loop are special entry points called by the Arduino runtime. void means these functions return no value; empty parentheses mean they accept no arguments."
+        },
+        {
+          "title": "Keep state outside loop",
+          "text": "count is declared outside both functions so it survives subsequent loop calls. Moving int count = 0 inside loop would reset it each time, making every line show 1."
+        }
+      ],
+      "boards": [
+        "uno",
+        "nano",
+        "esp32",
+        "esp32s3"
+      ],
+      "language": "cpp",
+      "order": 0,
+      "hardwareConcepts": [
+        {
+          "title": "Learn the program before adding wires",
+          "text": "This lesson uses only the selected board and its simulated USB serial connection. No breadboard parts or jumper cables are needed; the empty placement and cable tables are intentional."
+        },
+        {
+          "title": "The same sketch, different hardware",
+          "text": "Arduino Uno and ESP32 both accept this Arduino-style C++ example. Their logic voltages, pin maps and integer sizes differ, so a later hardware project must choose board-appropriate pins and components rather than copying a wiring diagram blindly."
+        }
+      ]
+    },
+    {
+      "id": "uno-first-light",
+      "title": "Your first LED",
+      "boards": [
+        "uno",
+        "nano"
+      ],
+      "preset": "led",
+      "summary": "Trace current from an output pin, through a resistor and LED, back to ground.",
+      "concepts": [
+        "polarity",
+        "current",
+        "digital output"
+      ],
+      "code": "void setup() {\n  pinMode(9, OUTPUT);\n  digitalWrite(9, HIGH);\n}\nvoid loop() {}",
+      "steps": [
+        {
+          "title": "Follow the circuit",
+          "text": "D9 connects to a 220 Ω resistor, then the LED anode. The cathode returns to GND. The resistor limits the current; the LED must face the correct direction."
+        },
+        {
+          "title": "Switch the pin on",
+          "text": "Run the sketch. pinMode makes D9 an output; digitalWrite raises it to the board supply voltage. Hover over the LED to inspect its current and brightness."
+        },
+        {
+          "title": "Predict a change",
+          "text": "Replace HIGH with LOW and run again. The current should fall to zero because there is no voltage difference across the LED branch."
+        }
+      ],
+      "challenge": "Explain why removing the resistor would damage the LED before trying any wiring changes.",
+      "minutes": 8,
+      "difficulty": "Easy",
+      "language": "cpp",
+      "order": 1,
+      "hardwareConcepts": [
+        {
+          "title": "The current needs a complete loop",
+          "text": "The GPIO output supplies the branch, the resistor limits current, the LED converts some electrical energy into light, and ground completes the return path. A missing ground or reversed LED prevents the intended current flow."
+        },
+        {
+          "title": "Why this resistor is here",
+          "text": "The prepared circuit uses 220 Ω. LED forward voltage and the board's output resistance also affect current. The simulator shows the resulting current when you hover over the LED; never treat a GPIO output as an unlimited power supply."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "setup runs once before loop begins. pinMode changes D9 from a high-impedance input to a driver; digitalWrite chooses its output level."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "An empty loop still leaves the configured output on. Change the sketch and Run again to reset the board and execute setup from the beginning."
+        }
+      ]
+    },
+    {
+      "id": "cpp-variables",
+      "title": "C++ basics: variables and types",
+      "difficulty": "Easy",
+      "minutes": 8,
+      "preset": "empty",
+      "concepts": [
+        "C++",
+        "variables",
+        "types",
+        "Serial"
+      ],
+      "summary": "Learn how int, float and unsigned long represent different kinds of program data.",
+      "code": "void setup() {\n  Serial.begin(9600);\n  int count = 42;\n  float voltage = 3.3;\n  unsigned long elapsed = millis();\n  Serial.print(\"Count: \");\n  Serial.println(count);\n  Serial.print(\"Voltage: \");\n  Serial.println(voltage, 2);\n  Serial.print(\"Elapsed ms: \");\n  Serial.println(elapsed);\n  Serial.print(\"Bytes in int: \");\n  Serial.println(sizeof(int));\n}\nvoid loop() {}",
+      "steps": [
+        {
+          "title": "Create named values",
+          "text": "Each declaration specifies a type, a name and an initial value. count represents a whole number, voltage keeps a fractional measurement, and elapsed stores a non-negative millisecond counter."
+        },
+        {
+          "title": "Observe formatting",
+          "text": "Run and compare the serial output. println(voltage, 2) prints two decimal places, while println(count) prints a whole number."
+        },
+        {
+          "title": "Compare boards",
+          "text": "Select Uno, then ESP32, and run again. sizeof(int) is 2 bytes on the AVR boards and 4 bytes on ESP32. A type name alone does not guarantee the same range on every board."
+        }
+      ],
+      "challenge": "Change count to 40 and print count * 1000 on Uno and ESP32. Explain the different results.",
+      "programConcepts": [
+        {
+          "title": "Storage type and expression type",
+          "text": "int holds whole numbers in a board-dependent range. Intermediate arithmetic follows the operand types, so assigning the result to a long afterward does not undo an overflow that already happened."
+        },
+        {
+          "title": "Choose types by meaning",
+          "text": "Use floating-point values for fractions and unsigned long for millis-based counters. A name such as voltage or elapsed makes the value's role clearer than its type alone."
+        }
+      ],
+      "boards": [
+        "uno",
+        "nano",
+        "esp32",
+        "esp32s3"
+      ],
+      "language": "cpp",
+      "codeOverrides": {},
+      "order": 1,
+      "hardwareConcepts": [
+        {
+          "title": "The board and output monitor are enough",
+          "text": "These values are program examples, not live sensor measurements. No external components or jumper wires are required. The board runs setup and sends text to the serial monitor."
+        },
+        {
+          "title": "Code still runs on a particular board",
+          "text": "Uno/Nano use a 16-bit int model and ESP32/ESP32-S3 use a 32-bit int model. Hardware-related code also needs the right voltage and ADC range; those differences matter even when the syntax looks identical."
+        }
+      ]
+    },
+    {
+      "id": "uno-blink",
+      "title": "Blink and virtual time",
+      "boards": [
+        "uno",
+        "nano"
+      ],
+      "preset": "led",
+      "summary": "Make a repeating signal and connect code timing to the visible circuit.",
+      "concepts": [
+        "loop",
+        "delay",
+        "period"
+      ],
+      "code": "void setup() { pinMode(9, OUTPUT); }\nvoid loop() {\n  digitalWrite(9, HIGH);\n  delay(500);\n  digitalWrite(9, LOW);\n  delay(500);\n}",
+      "steps": [
+        {
+          "title": "Start the pattern",
+          "text": "Run the example and watch the LED alternate between on and off. setup runs once; loop repeats until you stop the simulation."
+        },
+        {
+          "title": "Calculate the period",
+          "text": "The LED is on for 500 ms and off for 500 ms. One complete cycle takes about 1000 ms, giving a frequency of 1 Hz."
+        },
+        {
+          "title": "Change the rhythm",
+          "text": "Change the first delay to 100 and the second to 900. The cycle remains one second long, but the LED is on for only one tenth of it."
+        }
+      ],
+      "challenge": "Create a double flash followed by a one-second pause.",
+      "minutes": 8,
+      "difficulty": "Easy",
+      "language": "cpp",
+      "order": 2,
+      "hardwareConcepts": [
+        {
+          "title": "The current needs a complete loop",
+          "text": "The GPIO output supplies the branch, the resistor limits current, the LED converts some electrical energy into light, and ground completes the return path. A missing ground or reversed LED prevents the intended current flow."
+        },
+        {
+          "title": "Why this resistor is here",
+          "text": "The prepared circuit uses 220 Ω. LED forward voltage and the board's output resistance also affect current. The simulator shows the resulting current when you hover over the LED; never treat a GPIO output as an unlimited power supply."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "Each pass through loop executes the statements in order: HIGH, wait, LOW, wait. delay pauses firmware progress while the virtual electrical state remains visible."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "Adding both delays gives the period. Changing their ratio changes duty cycle; changing their sum changes the blink frequency."
+        }
+      ]
+    },
+    {
+      "id": "cpp-arithmetic",
+      "title": "C++ numbers: arithmetic, division and remainder",
+      "difficulty": "Easy",
+      "minutes": 10,
+      "preset": "empty",
+      "concepts": [
+        "C++",
+        "arithmetic",
+        "types",
+        "modulo"
+      ],
+      "summary": "Predict numeric results and learn why integer division differs from decimal division.",
+      "code": "void setup() {\n  Serial.begin(115200);\n  int total = 17;\n  int groupSize = 5;\n  Serial.println(total / groupSize);\n  Serial.println(total % groupSize);\n  float average = 17.0 / 5.0;\n  Serial.println(average, 2);\n}\nvoid loop() {}",
+      "steps": [
+        {
+          "title": "Divide whole numbers",
+          "text": "Both total and groupSize are integers. 17 / 5 produces 3, not 3.4, because integer division discards the fractional part. Predict this result before pressing Run."
+        },
+        {
+          "title": "Find what remains",
+          "text": "The % operator returns the remainder of integer division. 17 % 5 is 2: three complete groups use 15 items and leave two. It is useful for wrapping counters and repeating patterns."
+        },
+        {
+          "title": "Keep a fraction",
+          "text": "17.0 and 5.0 are floating-point literals. Their division keeps a decimal result. Serial.println(average, 2) displays two decimal places, so the final line is 3.40."
+        }
+      ],
+      "challenge": "Try 23 items in groups of 4. Predict the quotient, remainder and decimal result before running.",
+      "programConcepts": [
+        {
+          "title": "The operands determine division behavior",
+          "text": "Assigning 17 / 5 to a float does not restore the lost fraction: division happens first. At least one operand must be floating-point when the expression is evaluated."
+        },
+        {
+          "title": "Precedence matters",
+          "text": "Multiplication, division and remainder are evaluated before addition and subtraction. Parentheses make the intended order explicit; never divide or take a remainder by zero."
+        }
+      ],
+      "boards": [
+        "uno",
+        "nano",
+        "esp32",
+        "esp32s3"
+      ],
+      "language": "cpp",
+      "order": 2,
+      "hardwareConcepts": [
+        {
+          "title": "Learn the program before adding wires",
+          "text": "This lesson uses only the selected board and its simulated USB serial connection. No breadboard parts or jumper cables are needed; the empty placement and cable tables are intentional."
+        },
+        {
+          "title": "The same sketch, different hardware",
+          "text": "Arduino Uno and ESP32 both accept this Arduino-style C++ example. Their logic voltages, pin maps and integer sizes differ, so a later hardware project must choose board-appropriate pins and components rather than copying a wiring diagram blindly."
+        }
+      ]
+    },
+    {
+      "id": "uno-button",
+      "title": "A button that never floats",
+      "boards": [
+        "uno",
+        "nano"
+      ],
+      "preset": "button",
+      "summary": "Use a pull-up resistor so a button has a reliable released state.",
+      "concepts": [
+        "button",
+        "INPUT_PULLUP",
+        "active low"
+      ],
+      "code": "void setup() {\n  pinMode(2, INPUT_PULLUP);\n  pinMode(9, OUTPUT);\n}\nvoid loop() {\n  digitalWrite(9, digitalRead(2) == LOW ? HIGH : LOW);\n  delay(10);\n}",
+      "steps": [
+        {
+          "title": "Inspect the button wiring",
+          "text": "The pushbutton connects D2 to GND when pressed. INPUT_PULLUP provides the other path to 5 V inside the board, so an open switch reads HIGH."
+        },
+        {
+          "title": "Press and release",
+          "text": "Run the sketch, then press the button on the canvas. The condition reverses the active-low input so the LED turns on while the button is held."
+        },
+        {
+          "title": "Spot a floating input",
+          "text": "Replace INPUT_PULLUP with INPUT and run again. With the button released, no component sets the pin voltage and the simulator can show unstable readings."
+        }
+      ],
+      "challenge": "Make the LED turn off while the button is pressed.",
+      "minutes": 8,
+      "difficulty": "Easy",
+      "language": "cpp",
+      "order": 3,
+      "hardwareConcepts": [
+        {
+          "title": "A button connects two electrical nodes",
+          "text": "The four button legs form two internally joined pairs. Pressing the switch joins those pairs. In this circuit one pair goes to an input and the other to GND; the internal pull-up gives the released input a known HIGH level."
+        },
+        {
+          "title": "The input and output have separate jobs",
+          "text": "The button input senses voltage with very little current. The LED output drives a separate resistor-and-LED branch. Ground is their shared reference, so the button does not need to carry the LED's current."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "digitalRead samples the input at the moment it is called. The comparison to LOW returns a boolean, and the conditional expression selects HIGH or LOW for the LED."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "The button is active-low because pressing it connects to ground. INPUT_PULLUP is a configuration decision, not a value repeatedly written into the input."
+        }
+      ]
+    },
+    {
+      "id": "cpp-conditions",
+      "title": "C++ decisions: if, else and logical operators",
+      "difficulty": "Easy",
+      "minutes": 10,
+      "preset": "empty",
+      "concepts": [
+        "C++",
+        "if",
+        "else",
+        "comparisons",
+        "boolean"
+      ],
+      "summary": "Choose different actions using a simulated sensor value and clear Boolean conditions.",
+      "code": "void setup() {\n  Serial.begin(115200);\n  int temperature = 28;\n  bool enabled = true;\n  if (!enabled) {\n    Serial.println(\"Monitor disabled\");\n  } else if (temperature >= 30) {\n    Serial.println(\"Too warm\");\n  } else if (temperature >= 18 && temperature < 30) {\n    Serial.println(\"Comfortable\");\n  } else {\n    Serial.println(\"Too cold\");\n  }\n}\nvoid loop() {}",
+      "steps": [
+        {
+          "title": "Evaluate comparisons",
+          "text": "temperature >= 30 asks a question with a true or false answer. With the initial value 28 it is false. == compares equality; a single = assigns a value instead."
+        },
+        {
+          "title": "Combine conditions",
+          "text": "&& requires both conditions to be true, || requires at least one, and ! reverses a Boolean. The middle range includes 18 but excludes 30, so the first run prints Comfortable."
+        },
+        {
+          "title": "Test every branch",
+          "text": "Change temperature to 15, 18, 29 and 30 and run each version. Then set enabled to false. In an if/else-if chain only the first matching branch executes."
+        }
+      ],
+      "challenge": "Add a Danger message for values of 40 or more. Put its check before Too warm so the more specific condition can be reached.",
+      "programConcepts": [
+        {
+          "title": "Branch ordering changes the result",
+          "text": "A broad condition placed first can hide a later specific condition. Think through exact boundary values, not just typical inputs, when ordering range checks."
+        },
+        {
+          "title": "Separate data from decisions",
+          "text": "The temperature variable stands in for a future sensor reading. Keeping the decision logic independent lets you test it with known values before connecting hardware."
+        }
+      ],
+      "boards": [
+        "uno",
+        "nano",
+        "esp32",
+        "esp32s3"
+      ],
+      "language": "cpp",
+      "order": 3,
+      "hardwareConcepts": [
+        {
+          "title": "Learn the program before adding wires",
+          "text": "This lesson uses only the selected board and its simulated USB serial connection. No breadboard parts or jumper cables are needed; the empty placement and cable tables are intentional."
+        },
+        {
+          "title": "The same sketch, different hardware",
+          "text": "Arduino Uno and ESP32 both accept this Arduino-style C++ example. Their logic voltages, pin maps and integer sizes differ, so a later hardware project must choose board-appropriate pins and components rather than copying a wiring diagram blindly."
+        }
+      ]
+    },
+    {
+      "id": "uno-serial",
+      "title": "Control an LED from serial",
+      "boards": [
+        "uno",
+        "nano"
+      ],
+      "preset": "led",
+      "summary": "Send characters to your program and observe the response.",
+      "concepts": [
+        "Serial",
+        "input",
+        "conditions"
+      ],
+      "code": "void setup() {\n  pinMode(9, OUTPUT);\n  Serial.begin(9600);\n  Serial.println(\"Send 1 for on, 0 for off\");\n}\nvoid loop() {\n  if (Serial.available()) {\n    char command = Serial.read();\n    if (command == '1') digitalWrite(9, HIGH);\n    if (command == '0') digitalWrite(9, LOW);\n    Serial.println(command);\n  }\n  delay(10);\n}",
+      "steps": [
+        {
+          "title": "Run before sending",
+          "text": "Start the sketch and read the prompt in the serial monitor. available reports how many received characters are waiting."
+        },
+        {
+          "title": "Send a command",
+          "text": "Enter 1 in the serial input and send it. Serial.read removes one character; the corresponding condition switches the LED on. Send 0 to switch it off."
+        },
+        {
+          "title": "Understand buffering",
+          "text": "A string such as 101 queues three commands. Each loop processes one character. Output uses a modeled UART FIFO, so excessive printing takes virtual time."
+        }
+      ],
+      "challenge": "Add a command that reports whether the LED is on.",
+      "minutes": 8,
+      "difficulty": "Easy",
+      "language": "cpp",
+      "order": 8,
+      "hardwareConcepts": [
+        {
+          "title": "The current needs a complete loop",
+          "text": "The GPIO output supplies the branch, the resistor limits current, the LED converts some electrical energy into light, and ground completes the return path. A missing ground or reversed LED prevents the intended current flow."
+        },
+        {
+          "title": "Why this resistor is here",
+          "text": "The prepared circuit uses 220 Ω. LED forward voltage and the board's output resistance also affect current. The simulator shows the resulting current when you hover over the LED; never treat a GPIO output as an unlimited power supply."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "available avoids reading an empty input queue. read consumes one byte, and the char variable preserves it as a character for comparisons and printing."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "A character literal such as '1' is different from the integer 1. The monitor sends text characters, so the sketch compares against character literals."
+        }
+      ]
+    },
+    {
+      "id": "esp32-first-light",
+      "title": "Meet the 3.3 V world",
+      "boards": [
+        "esp32",
+        "esp32s3"
+      ],
+      "preset": "led",
+      "summary": "Run an LED circuit on ESP32 while respecting its lower GPIO voltage.",
+      "concepts": [
+        "3.3 V",
+        "GPIO",
+        "voltage limits"
+      ],
+      "code": "void setup() { pinMode(18, OUTPUT); }\nvoid loop() {\n  digitalWrite(18, HIGH);\n  delay(500);\n  digitalWrite(18, LOW);\n  delay(500);\n}",
+      "steps": [
+        {
+          "title": "Find GPIO18",
+          "text": "ESP32 programs use GPIO numbers. The circuit connects GPIO18 to a resistor and LED, with a return to GND."
+        },
+        {
+          "title": "Compare board voltages",
+          "text": "Run and inspect the LED. The ESP32 drives 3.3 V, so the same LED and resistor carry less current than they do from a 5 V Uno output."
+        },
+        {
+          "title": "Keep 5 V away from GPIO",
+          "text": "The USB supply pin can power suitable 5 V modules, but it must not be connected directly to a GPIO input. Use a divider or level shifter when needed."
+        }
+      ],
+      "challenge": "Predict how a blue LED's higher forward voltage changes current.",
+      "minutes": 8,
+      "difficulty": "Easy",
+      "language": "cpp",
+      "order": 9,
+      "hardwareConcepts": [
+        {
+          "title": "The current needs a complete loop",
+          "text": "The GPIO output supplies the branch, the resistor limits current, the LED converts some electrical energy into light, and ground completes the return path. A missing ground or reversed LED prevents the intended current flow."
+        },
+        {
+          "title": "Why this resistor is here",
+          "text": "The prepared circuit uses 220 Ω. LED forward voltage and the board's output resistance also affect current. The simulator shows the resulting current when you hover over the LED; never treat a GPIO output as an unlimited power supply."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "ESP32 pin arguments are GPIO numbers, so 18 resolves to GPIO18. The runtime posts canonical pin names to the solver after it interprets the sketch."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "setup configures the driver once. loop creates a repeated signal; the output voltage follows the board profile rather than a voltage hard-coded into the sketch."
+        }
+      ],
+      "codeOverrides": {
+        "esp32s3": "void setup() { pinMode(18, OUTPUT); }\nvoid loop() {\n  digitalWrite(18, HIGH);\n  delay(500);\n  digitalWrite(18, LOW);\n  delay(500);\n}"
+      }
+    },
+    {
+      "id": "pi-blink",
+      "title": "Python: your first GPIO output",
+      "boards": [
+        "raspberrypi4",
+        "raspberrypi5"
+      ],
+      "preset": "led",
+      "summary": "Use gpiozero to blink an LED on a Raspberry Pi 4 or 5.",
+      "concepts": [
+        "Python",
+        "gpiozero",
+        "BCM numbering"
+      ],
+      "code": "from gpiozero import LED\nfrom time import sleep\n\nled = LED(17)\nwhile True:\n    led.on()\n    sleep(0.5)\n    led.off()\n    sleep(0.5)",
+      "steps": [
+        {
+          "title": "Find BCM17 on the header",
+          "text": "gpiozero uses BCM numbers. GPIO17 is physical pin 11, and connects through a 220 Ω resistor to the LED anode. The cathode returns to GND."
+        },
+        {
+          "title": "Run Python",
+          "text": "The LED object configures the pin as an output. Unlike Arduino delay, sleep takes seconds, so 0.5 means half a second."
+        },
+        {
+          "title": "Compare the board models",
+          "text": "Select Raspberry Pi 4 or Pi 5 using the board picker. Both use the same numbered 40-pin header in this GPIO simulation."
+        }
+      ],
+      "challenge": "Make the LED flash three times quickly, then pause.",
+      "minutes": 8,
+      "difficulty": "Easy",
+      "language": "python",
+      "order": 17,
+      "hardwareConcepts": [
+        {
+          "title": "The current needs a complete loop",
+          "text": "The GPIO output supplies the branch, the resistor limits current, the LED converts some electrical energy into light, and ground completes the return path. A missing ground or reversed LED prevents the intended current flow."
+        },
+        {
+          "title": "Why this resistor is here",
+          "text": "The prepared circuit uses 220 Ω. LED forward voltage and the board's output resistance also affect current. The simulator shows the resulting current when you hover over the LED; never treat a GPIO output as an unlimited power supply."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "Imports name the devices and timing function used by the script. Constructing LED(17) configures BCM GPIO17; on and off change that object's output."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "Python indentation defines the body of while True. sleep uses seconds and pauses execution without clearing the output, so the LED keeps its current state during the wait."
+        }
+      ]
+    },
+    {
+      "id": "pi-pin-numbering",
+      "title": "BCM numbers versus physical pins",
+      "boards": [
+        "raspberrypi4",
+        "raspberrypi5"
+      ],
+      "preset": "led",
+      "summary": "Use RPi.GPIO-compatible calls to learn the two numbering systems.",
+      "concepts": [
+        "RPi.GPIO",
+        "BOARD",
+        "BCM"
+      ],
+      "code": "import RPi.GPIO as GPIO\nimport time\n\nGPIO.setmode(GPIO.BOARD)\nGPIO.setup(11, GPIO.OUT)\nwhile True:\n    GPIO.output(11, GPIO.HIGH)\n    time.sleep(0.5)\n    GPIO.output(11, GPIO.LOW)\n    time.sleep(0.5)",
+      "steps": [
+        {
+          "title": "Count physical pins",
+          "text": "Physical pin 11 is GPIO17. BOARD mode addresses the physical header position; BCM mode addresses the GPIO signal number."
+        },
+        {
+          "title": "Run the same circuit",
+          "text": "Run the example with BOARD and 11. Then change the mode to BCM and both output pin numbers to 17. The same LED should blink."
+        },
+        {
+          "title": "Do not address power as GPIO",
+          "text": "Physical pins 1 and 17 supply 3.3 V, and pins 2 and 4 supply 5 V. They cannot be configured as programmable outputs. The simulator reports a source-line error if you try."
+        }
+      ],
+      "challenge": "Predict which header pin GPIO27 uses, then check the pin labels.",
+      "minutes": 10,
+      "difficulty": "Easy",
+      "language": "python",
+      "order": 20,
+      "hardwareConcepts": [
+        {
+          "title": "The current needs a complete loop",
+          "text": "The GPIO output supplies the branch, the resistor limits current, the LED converts some electrical energy into light, and ground completes the return path. A missing ground or reversed LED prevents the intended current flow."
+        },
+        {
+          "title": "Why this resistor is here",
+          "text": "The prepared circuit uses 220 Ω. LED forward voltage and the board's output resistance also affect current. The simulator shows the resulting current when you hover over the LED; never treat a GPIO output as an unlimited power supply."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "GPIO.setmode selects how subsequent numeric pin arguments are interpreted. BOARD 11 and BCM 17 refer to the same signal on the 40-pin header."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "GPIO.setup must configure the pin as OUT before GPIO.output drives it. RPi.GPIO-compatible calls here teach numbering; gpiozero is the preferred example API across Pi 4 and Pi 5."
+        }
+      ]
+    },
+    {
+      "id": "uno-potentiometer",
+      "title": "Read a voltage divider",
+      "boards": [
+        "uno",
+        "nano"
+      ],
+      "preset": "pot",
+      "summary": "Turn a knob, measure its voltage and map a 10-bit reading to PWM.",
+      "concepts": [
+        "ADC",
+        "voltage divider",
+        "map"
+      ],
+      "code": "void setup() { Serial.begin(9600); }\nvoid loop() {\n  int reading = analogRead(A0);\n  analogWrite(9, map(reading, 0, 1023, 0, 255));\n  Serial.println(reading);\n  delay(100);\n}",
+      "steps": [
+        {
+          "title": "Identify the three terminals",
+          "text": "The potentiometer ends connect to 5 V and GND. Its middle terminal, the wiper, supplies a variable voltage to A0."
+        },
+        {
+          "title": "Compare the readings",
+          "text": "Run and turn the knob. Near the middle, expect about 512; at the ends, expect values near 0 and 1023. The serial output reports each sample."
+        },
+        {
+          "title": "Convert between ranges",
+          "text": "analogRead uses 10 bits, while analogWrite uses 8 bits by default. map converts the measurement range to 0–255 so the LED follows the knob."
+        }
+      ],
+      "challenge": "Reverse the output range so clockwise rotation dims the LED.",
+      "minutes": 8,
+      "difficulty": "Intermediate",
+      "language": "cpp",
+      "order": 4,
+      "hardwareConcepts": [
+        {
+          "title": "A movable voltage divider",
+          "text": "The potentiometer is two resistances joined at a movable wiper. One end connects to the board's logic supply and the other to ground. Moving the wiper changes the fraction of supply voltage reaching the ADC input."
+        },
+        {
+          "title": "Measure voltage; do not drive into the wiper",
+          "text": "The ADC pin is an input. The example powers the potentiometer from 5 V on Uno/Nano and 3.3 V on ESP32. An ESP32 input must not receive the Uno's 5 V signal directly."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "reading stores the ADC sample for one loop iteration. map uses long-integer arithmetic to convert 0–1023 into an 8-bit output command."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "Serial.println is an observation tool: compare the printed number, the knob position, and the LED current to test the whole measurement-to-output path."
+        }
+      ]
+    },
+    {
+      "id": "cpp-functions",
+      "title": "C++ basics: functions and return values",
+      "difficulty": "Intermediate",
+      "minutes": 10,
+      "preset": "empty",
+      "concepts": [
+        "C++",
+        "functions",
+        "parameters",
+        "return"
+      ],
+      "summary": "Break a task into named functions that accept inputs and return results.",
+      "code": "float toVolts(int reading, int maximum, float supply) {\n  return reading * supply / maximum;\n}\nvoid setup() {\n  Serial.begin(9600);\n  float voltage = toVolts(512, 1023, 5.0);\n  Serial.print(\"Approximate voltage: \");\n  Serial.println(voltage);\n}\nvoid loop() {}",
+      "steps": [
+        {
+          "title": "Read the signature",
+          "text": "float is the return type. toVolts is the function name, and its three parameters are local names for the supplied arguments."
+        },
+        {
+          "title": "Follow one call",
+          "text": "The call passes 512, 1023 and 5.0 into the function. Multiplication by a float keeps fractional precision; return passes the calculated voltage back to setup."
+        },
+        {
+          "title": "Change the data, keep the function",
+          "text": "For a 12-bit 3.3 V measurement, try toVolts(2048, 4095, 3.3). The conversion logic stays the same while the input range changes."
+        }
+      ],
+      "challenge": "Write a second function that converts Celsius to Fahrenheit and print its result.",
+      "programConcepts": [
+        {
+          "title": "Parameters separate logic from data",
+          "text": "The conversion does not need to know which physical ADC produced the reading. Passing maximum and supply allows the same function to describe multiple boards."
+        },
+        {
+          "title": "Return is different from print",
+          "text": "return gives a value to the caller so it can be stored, compared or reused. Serial.println displays a value for the human reading the monitor; it does not substitute for returning that value."
+        }
+      ],
+      "boards": [
+        "uno",
+        "nano",
+        "esp32",
+        "esp32s3"
+      ],
+      "language": "cpp",
+      "codeOverrides": {},
+      "order": 4,
+      "hardwareConcepts": [
+        {
+          "title": "The board and output monitor are enough",
+          "text": "These values are program examples, not live sensor measurements. No external components or jumper wires are required. The board runs setup and sends text to the serial monitor."
+        },
+        {
+          "title": "Code still runs on a particular board",
+          "text": "Uno/Nano use a 16-bit int model and ESP32/ESP32-S3 use a 32-bit int model. Hardware-related code also needs the right voltage and ADC range; those differences matter even when the syntax looks identical."
+        }
+      ]
+    },
+    {
+      "id": "uno-pwm",
+      "title": "Fade with PWM",
+      "boards": [
+        "uno",
+        "nano"
+      ],
+      "preset": "led",
+      "summary": "Control average LED power with duty cycle rather than a variable supply voltage.",
+      "concepts": [
+        "PWM",
+        "duty cycle",
+        "for loop"
+      ],
+      "code": "void setup() {}\nvoid loop() {\n  for (int brightness = 0; brightness <= 255; brightness += 5) {\n    analogWrite(9, brightness);\n    delay(20);\n  }\n  for (int brightness = 255; brightness >= 0; brightness -= 5) {\n    analogWrite(9, brightness);\n    delay(20);\n  }\n}",
+      "steps": [
+        {
+          "title": "Choose a PWM pin",
+          "text": "D9 supports PWM on Uno and Nano. The signal rapidly switches between LOW and HIGH; the duty cycle describes how long it stays HIGH."
+        },
+        {
+          "title": "Watch the average power",
+          "text": "Run the example. The circuit solver combines the on and off states, so the LED brightness changes as the duty cycle changes."
+        },
+        {
+          "title": "Compare step size and delay",
+          "text": "A larger increment produces fewer brightness levels. A longer delay slows the fade without changing the available duty values."
+        }
+      ],
+      "challenge": "Hold the LED at 25%, 50% and 75% duty and compare the displayed current.",
+      "minutes": 8,
+      "difficulty": "Intermediate",
+      "language": "cpp",
+      "order": 5,
+      "hardwareConcepts": [
+        {
+          "title": "The current needs a complete loop",
+          "text": "The GPIO output supplies the branch, the resistor limits current, the LED converts some electrical energy into light, and ground completes the return path. A missing ground or reversed LED prevents the intended current flow."
+        },
+        {
+          "title": "Why this resistor is here",
+          "text": "The prepared circuit uses 220 Ω. LED forward voltage and the board's output resistance also affect current. The simulator shows the resulting current when you hover over the LED; never treat a GPIO output as an unlimited power supply."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "Each for loop has initialization, a condition, and an increment. The first loop increases brightness; the second decreases it. The condition is checked before each body execution."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "analogWrite changes duty, while delay changes how long that duty is held. These two time scales are different: the PWM carrier is fast, and the visible fade is slow."
+        }
+      ]
+    },
+    {
+      "id": "cpp-loops",
+      "title": "C++ repetition: for, while and bounded loops",
+      "difficulty": "Intermediate",
+      "minutes": 12,
+      "preset": "empty",
+      "concepts": [
+        "C++",
+        "for",
+        "while",
+        "loops"
+      ],
+      "summary": "Repeat a task a known number of times and understand how loops terminate.",
+      "code": "void setup() {\n  Serial.begin(115200);\n  for (int count = 1; count <= 4; count++) {\n    Serial.println(count * count);\n  }\n  int remaining = 3;\n  while (remaining > 0) {\n    Serial.println(remaining);\n    remaining--;\n  }\n  Serial.println(\"Finished\");\n}\nvoid loop() {}",
+      "steps": [
+        {
+          "title": "Read a for loop in order",
+          "text": "Initialize count to 1, check count <= 4, run the body, then increment count. The body prints 1, 4, 9 and 16. Count reaches 5 and the next check stops the loop."
+        },
+        {
+          "title": "Track the while condition",
+          "text": "while checks its condition before each iteration. remaining starts at 3 and decreases after each print, producing 3, 2, 1. At zero the condition is false."
+        },
+        {
+          "title": "Identify the progress step",
+          "text": "Removing remaining-- would prevent this while loop from terminating. A loop must update something that eventually changes its condition, unless it deliberately represents an ongoing program."
+        }
+      ],
+      "challenge": "Print the even numbers from 2 through 10 with a for loop, then count backward from 5 with a while loop.",
+      "programConcepts": [
+        {
+          "title": "Arduino loop and C++ loops are different",
+          "text": "loop() is a function repeatedly called by the Arduino framework. for and while repeat statements inside a function. A long inner loop delays the return to the rest of the sketch."
+        },
+        {
+          "title": "Check the boundaries",
+          "text": "Starting at 1 and using <= 4 gives four iterations. Starting at 0 and using < 4 also gives four, but visits different values. Track the first and last iteration to avoid off-by-one errors."
+        }
+      ],
+      "boards": [
+        "uno",
+        "nano",
+        "esp32",
+        "esp32s3"
+      ],
+      "language": "cpp",
+      "order": 5,
+      "hardwareConcepts": [
+        {
+          "title": "Learn the program before adding wires",
+          "text": "This lesson uses only the selected board and its simulated USB serial connection. No breadboard parts or jumper cables are needed; the empty placement and cable tables are intentional."
+        },
+        {
+          "title": "The same sketch, different hardware",
+          "text": "Arduino Uno and ESP32 both accept this Arduino-style C++ example. Their logic voltages, pin maps and integer sizes differ, so a later hardware project must choose board-appropriate pins and components rather than copying a wiring diagram blindly."
+        }
+      ]
+    },
+    {
+      "id": "uno-servo",
+      "title": "Move a servo",
+      "boards": [
+        "uno",
+        "nano"
+      ],
+      "preset": "servo",
+      "summary": "Separate a motor's power supply from its control signal.",
+      "concepts": [
+        "Servo.h",
+        "peripheral binding",
+        "angles"
+      ],
+      "code": "#include <Servo.h>\nServo arm;\nvoid setup() { arm.attach(9); }\nvoid loop() {\n  arm.write(0);\n  delay(1000);\n  arm.write(90);\n  delay(1000);\n  arm.write(180);\n  delay(1000);\n}",
+      "steps": [
+        {
+          "title": "Trace power and signal",
+          "text": "The servo has separate 5 V, GND and signal terminals. D9 carries commands; it is not the motor's power supply."
+        },
+        {
+          "title": "Attach the library",
+          "text": "The include enables the Servo class. arm.attach(9) tells the library which MCU pin to match to the connected servo."
+        },
+        {
+          "title": "Try three positions",
+          "text": "Run and watch the arm step through 0, 90 and 180 degrees. Keep the ground shared so the signal has a common reference."
+        }
+      ],
+      "challenge": "Replace the three fixed positions with a smooth sweep.",
+      "minutes": 10,
+      "difficulty": "Intermediate",
+      "language": "cpp",
+      "order": 6,
+      "hardwareConcepts": [
+        {
+          "title": "Three connections, two different roles",
+          "text": "The servo power and ground wires supply the motor electronics. The signal wire carries an angle command and must share the same ground reference. An MCU GPIO cannot safely power the servo motor itself."
+        },
+        {
+          "title": "Binding follows real wiring",
+          "text": "The simulator locates the servo connected to the pin passed to attach. Changing the code's pin number without moving the signal wire leaves the library without a matching powered device."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "The Servo object keeps its attached pin. write sends an angle to that device; it does not write a digital HIGH or LOW in the same way as digitalWrite."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "The one-second delays make each position easy to inspect. A smooth sweep can be built by calling write with a small angle increment many times."
+        }
+      ]
+    },
+    {
+      "id": "cpp-arrays",
+      "title": "C++ basics: arrays and loops",
+      "difficulty": "Intermediate",
+      "minutes": 12,
+      "preset": "empty",
+      "concepts": [
+        "C++",
+        "arrays",
+        "for loop",
+        "averages"
+      ],
+      "summary": "Store a small series of readings and process every element with a loop.",
+      "code": "void setup() {\n  Serial.begin(9600);\n  int readings[3] = {100, 200, 300};\n  long total = 0;\n  for (int index = 0; index < 3; index++) {\n    total += readings[index];\n    Serial.println(readings[index]);\n  }\n  float average = total / 3.0;\n  Serial.print(\"Average: \");\n  Serial.println(average);\n}\nvoid loop() {}",
+      "steps": [
+        {
+          "title": "Find the three elements",
+          "text": "The array has exactly three entries with indexes 0, 1 and 2. readings[0] is 100. Index 3 is already beyond the declared array."
+        },
+        {
+          "title": "Trace the loop",
+          "text": "index begins at zero, the condition checks index < 3, and index++ advances after each body execution. total accumulates the readings."
+        },
+        {
+          "title": "Preserve the fraction",
+          "text": "Dividing by 3.0 performs floating-point division. Try values whose sum is not a multiple of three to see why dividing by an integer can lose useful information."
+        }
+      ],
+      "challenge": "Add a fourth reading, update the loop bound and divisor, and calculate the new average.",
+      "programConcepts": [
+        {
+          "title": "One name, several ordered values",
+          "text": "An array stores multiple values of the same declared type. An index selects one value, making arrays useful for measurements, lookup tables and repeating output patterns."
+        },
+        {
+          "title": "Loop bounds are part of correctness",
+          "text": "The condition must stop before the element count. Keep the declared length, loop bound and average divisor consistent when changing a small fixed array."
+        }
+      ],
+      "boards": [
+        "uno",
+        "nano",
+        "esp32",
+        "esp32s3"
+      ],
+      "language": "cpp",
+      "codeOverrides": {},
+      "order": 6,
+      "hardwareConcepts": [
+        {
+          "title": "The board and output monitor are enough",
+          "text": "These values are program examples, not live sensor measurements. No external components or jumper wires are required. The board runs setup and sends text to the serial monitor."
+        },
+        {
+          "title": "Code still runs on a particular board",
+          "text": "Uno/Nano use a 16-bit int model and ESP32/ESP32-S3 use a 32-bit int model. Hardware-related code also needs the right voltage and ADC range; those differences matter even when the syntax looks identical."
+        }
+      ]
+    },
+    {
+      "id": "uno-lcd",
+      "title": "Write an I2C display",
+      "boards": [
+        "uno",
+        "nano"
+      ],
+      "preset": "lcd",
+      "summary": "Address a display over a shared two-wire bus.",
+      "concepts": [
+        "I2C",
+        "address",
+        "LCD"
+      ],
+      "code": "#include <LiquidCrystal_I2C.h>\nLiquidCrystal_I2C lcd(0x27, 16, 2);\nvoid setup() {\n  lcd.init();\n  lcd.backlight();\n  lcd.setCursor(0, 0);\n  lcd.print(\"Hello, VoltQuest\");\n}\nvoid loop() {\n  lcd.setCursor(0, 1);\n  lcd.print(millis() / 1000);\n  delay(1000);\n}",
+      "steps": [
+        {
+          "title": "Check four connections",
+          "text": "The LCD uses 5 V and GND for power, A4 for SDA and A5 for SCL on Uno and Nano. The default simulated device address is 0x27."
+        },
+        {
+          "title": "Place the cursor",
+          "text": "Coordinates start at zero. setCursor(0, 1) selects the start of the second row; the display has 16 columns and two rows."
+        },
+        {
+          "title": "Update a live value",
+          "text": "Run the sketch. The first row stays fixed while the second shows elapsed seconds. Writing text changes the character buffer; clear removes earlier text."
+        }
+      ],
+      "challenge": "Show a short message on the first row and a countdown on the second.",
+      "minutes": 12,
+      "difficulty": "Intermediate",
+      "language": "cpp",
+      "order": 7,
+      "hardwareConcepts": [
+        {
+          "title": "One addressed device on a two-wire bus",
+          "text": "SDA carries I2C data and SCL carries its clock. Devices share those lines and have separate addresses. This prepared LCD uses address 0x27 and receives 5 V on its power terminal."
+        },
+        {
+          "title": "Breadboard rows are electrical connections",
+          "text": "The LCD's four legs sit in four different numbered rows. Connecting its SDA and SCL to different holes in the same numbered row would short the bus; the wiring guide keeps each signal on its own row."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "The constructor defines the I2C address and character dimensions. setCursor chooses where the next print starts, and print updates display memory."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "millis returns elapsed milliseconds. Integer division by 1000 converts that count to whole seconds. Printing a shorter value over a longer one can leave old trailing characters unless you clear or pad the row."
+        }
+      ]
+    },
+    {
+      "id": "esp32-pwm",
+      "title": "Configure ESP32 PWM",
+      "boards": [
+        "esp32",
+        "esp32s3"
+      ],
+      "preset": "led",
+      "summary": "Set PWM frequency and resolution explicitly with LEDC.",
+      "concepts": [
+        "LEDC",
+        "resolution",
+        "duty cycle"
+      ],
+      "code": "void setup() {\n  ledcSetup(0, 1000, 10);\n  ledcAttachPin(18, 0);\n}\nvoid loop() {\n  ledcWrite(0, 256);\n  delay(1000);\n  ledcWrite(0, 768);\n  delay(1000);\n}",
+      "steps": [
+        {
+          "title": "Reserve a channel",
+          "text": "ledcSetup configures channel 0 at 1000 Hz with 10-bit duty resolution. ledcAttachPin routes that channel to GPIO18."
+        },
+        {
+          "title": "Calculate the duty range",
+          "text": "Ten bits gives values from 0 to 1023. Values 256 and 768 are about 25% and 75% duty, so the LED alternates between two brightness levels."
+        },
+        {
+          "title": "Know the API version",
+          "text": "This simulator accepts the older channel API and the newer ledcAttach(pin, frequency, bits) API. With the newer form, ledcWrite addresses the pin."
+        }
+      ],
+      "challenge": "Rewrite the sketch using ledcAttach(18, 1000, 10) and ledcWrite(18, value).",
+      "minutes": 10,
+      "difficulty": "Intermediate",
+      "language": "cpp",
+      "order": 10,
+      "hardwareConcepts": [
+        {
+          "title": "The current needs a complete loop",
+          "text": "The GPIO output supplies the branch, the resistor limits current, the LED converts some electrical energy into light, and ground completes the return path. A missing ground or reversed LED prevents the intended current flow."
+        },
+        {
+          "title": "Why this resistor is here",
+          "text": "The prepared circuit uses 220 Ω. LED forward voltage and the board's output resistance also affect current. The simulator shows the resulting current when you hover over the LED; never treat a GPIO output as an unlimited power supply."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "The channel API separates PWM configuration from pin attachment. Frequency controls cycles per second, while resolution controls the largest duty value."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "With 10-bit resolution, full scale is 2^10−1 = 1023. Writing a value calculated for an 8-bit range would make the output dimmer than intended."
+        }
+      ],
+      "codeOverrides": {
+        "esp32s3": "void setup() {\n  ledcSetup(0, 1000, 10);\n  ledcAttachPin(18, 0);\n}\nvoid loop() {\n  ledcWrite(0, 256);\n  delay(1000);\n  ledcWrite(0, 768);\n  delay(1000);\n}"
+      }
+    },
+    {
+      "id": "esp32-adc",
+      "title": "Measure with a 12-bit ADC",
+      "boards": [
+        "esp32",
+        "esp32s3"
+      ],
+      "preset": "pot",
+      "summary": "Scale a 3.3 V analog input correctly and avoid ADC2 conflicts.",
+      "concepts": [
+        "ADC",
+        "12 bit",
+        "ADC1"
+      ],
+      "code": "void setup() { Serial.begin(115200); }\nvoid loop() {\n  int reading = analogRead(34);\n  Serial.println(reading);\n  analogWrite(18, map(reading, 0, 4095, 0, 255));\n  delay(100);\n}",
+      "steps": [
+        {
+          "title": "Use a 3.3 V divider",
+          "text": "The potentiometer is connected between 3V3 and GND. Its wiper feeds an ADC input, keeping the measurement within the GPIO voltage range."
+        },
+        {
+          "title": "Read the larger range",
+          "text": "On ESP32, the default 12-bit reading spans 0–4095. The middle of the knob should read about 2048; mapping from 0–1023 would saturate the LED too early."
+        },
+        {
+          "title": "Choose an ADC1 pin",
+          "text": "GPIO34 is an ADC1 input on the original ESP32 and remains usable while WiFi is active. The ESP32-S3 version of this tutorial uses GPIO4 instead."
+        }
+      ],
+      "challenge": "Print the measured voltage in addition to the raw ADC count.",
+      "minutes": 10,
+      "difficulty": "Intermediate",
+      "language": "cpp",
+      "order": 11,
+      "hardwareConcepts": [
+        {
+          "title": "A movable voltage divider",
+          "text": "The potentiometer is two resistances joined at a movable wiper. One end connects to the board's logic supply and the other to ground. Moving the wiper changes the fraction of supply voltage reaching the ADC input."
+        },
+        {
+          "title": "Measure voltage; do not drive into the wiper",
+          "text": "The ADC pin is an input. The example powers the potentiometer from 5 V on Uno/Nano and 3.3 V on ESP32. An ESP32 input must not receive the Uno's 5 V signal directly."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "analogRead converts voltage into a 12-bit count. The output mapping must use 4095 as full scale, and the selected pin must actually have ADC capability."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "On the original ESP32, WiFi and ADC2 share hardware resources. This example chooses ADC1 so adding WiFi later will not invalidate the measurement."
+        }
+      ],
+      "codeOverrides": {
+        "esp32s3": "void setup() { Serial.begin(115200); }\nvoid loop() {\n  int reading = analogRead(4);\n  Serial.println(reading);\n  analogWrite(18, map(reading, 0, 4095, 0, 255));\n  delay(100);\n}"
+      }
+    },
+    {
+      "id": "esp32-touch",
+      "title": "A capacitive touch switch",
+      "boards": [
+        "esp32",
+        "esp32s3"
+      ],
+      "preset": "touch",
+      "summary": "Turn a touch measurement into an LED switch.",
+      "concepts": [
+        "touchRead",
+        "threshold",
+        "sensors"
+      ],
+      "code": "void setup() {\n  pinMode(18, OUTPUT);\n  Serial.begin(115200);\n}\nvoid loop() {\n  int reading = touchRead(4);\n  digitalWrite(18, reading < 40 ? HIGH : LOW);\n  Serial.println(reading);\n  delay(100);\n}",
+      "steps": [
+        {
+          "title": "Find the touch pad",
+          "text": "The pad connects to GPIO4. In this simulator, an untouched pad reads about 70 and a touched pad about 15."
+        },
+        {
+          "title": "Test a threshold",
+          "text": "Run, then toggle the touch pad on the canvas. A threshold of 40 lies between the two states and drives the LED accordingly."
+        },
+        {
+          "title": "Allow for real hardware",
+          "text": "Touch baselines and measurement behavior vary by chip and environment. The fixed values here are a teaching model; calibrate when moving a project to hardware."
+        }
+      ],
+      "challenge": "Change the threshold until the switch no longer responds, then explain why.",
+      "minutes": 8,
+      "difficulty": "Intermediate",
+      "language": "cpp",
+      "order": 12,
+      "hardwareConcepts": [
+        {
+          "title": "A sensing electrode, not a switch",
+          "text": "The touch pad changes a capacitive measurement at the GPIO. It does not need to connect the GPIO directly to power or ground. The simulated values are representative teaching values, not a calibration for a physical board."
+        },
+        {
+          "title": "Keep output current separate",
+          "text": "The touch sensor chooses the LED state in software. GPIO18 still drives the LED through its own resistor, so the touch pad never carries LED current."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "touchRead provides a measurement. Comparing it to a threshold converts that number into a yes/no decision for the output."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "Printing each sample makes threshold choice observable. A physical implementation needs calibration and may benefit from separate on/off thresholds to avoid flicker near the boundary."
+        }
+      ],
+      "codeOverrides": {
+        "esp32s3": "void setup() {\n  pinMode(18, OUTPUT);\n  Serial.begin(115200);\n}\nvoid loop() {\n  int reading = touchRead(4);\n  digitalWrite(18, reading < 40 ? HIGH : LOW);\n  Serial.println(reading);\n  delay(100);\n}"
+      }
+    },
+    {
+      "id": "esp32-weather",
+      "title": "Read temperature and humidity",
+      "boards": [
+        "esp32",
+        "esp32s3"
+      ],
+      "preset": "dht",
+      "summary": "Sample a digital sensor and format readable measurements.",
+      "concepts": [
+        "DHT22",
+        "sensors",
+        "Serial"
+      ],
+      "code": "#include <DHT.h>\nDHT sensor(23, DHT22);\nvoid setup() {\n  sensor.begin();\n  Serial.begin(115200);\n}\nvoid loop() {\n  Serial.print(\"Temperature: \");\n  Serial.println(sensor.readTemperature());\n  Serial.print(\"Humidity: \");\n  Serial.println(sensor.readHumidity());\n  delay(1000);\n}",
+      "steps": [
+        {
+          "title": "Power the sensor",
+          "text": "The DHT22 receives 3.3 V and GND, and its data line connects to GPIO23. On ESP32-S3, this tutorial uses GPIO16."
+        },
+        {
+          "title": "Read the controls",
+          "text": "Run and adjust the sensor's temperature or humidity control. The library finds the powered device through the circuit binding and reports the current values."
+        },
+        {
+          "title": "Recognize a missing device",
+          "text": "A sensor with missing power or the wrong data pin returns nan. Check power, ground and the pin number before changing the parsing code."
+        }
+      ],
+      "challenge": "Print an alert only when the temperature exceeds 30 °C.",
+      "minutes": 10,
+      "difficulty": "Intermediate",
+      "language": "cpp",
+      "order": 13,
+      "hardwareConcepts": [
+        {
+          "title": "A digital sensor sends measurements",
+          "text": "The DHT22 has supply, data and ground terminals. Its internal electronics measure temperature and humidity, and the library returns numbers over the bound data connection; it is not an analog voltage divider."
+        },
+        {
+          "title": "Power and pin selection must agree",
+          "text": "Use the prepared 3.3 V supply and connect data to the pin selected by the example. The ESP32 and ESP32-S3 examples select different available header pins. Missing power or a mismatched pin produces unavailable readings."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "The DHT constructor stores the data pin and sensor type. readTemperature and readHumidity query the bound device's current controls."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "The returned values are floating-point measurements. Labels and fixed-decimal formatting make the serial output easier to interpret than a stream of unlabeled numbers."
+        }
+      ],
+      "codeOverrides": {
+        "esp32s3": "#include <DHT.h>\nDHT sensor(16, DHT22);\nvoid setup() {\n  sensor.begin();\n  Serial.begin(115200);\n}\nvoid loop() {\n  Serial.print(\"Temperature: \");\n  Serial.println(sensor.readTemperature());\n  Serial.print(\"Humidity: \");\n  Serial.println(sensor.readHumidity());\n  delay(1000);\n}"
+      }
+    },
+    {
+      "id": "esp32-wifi",
+      "title": "Join the virtual WiFi network",
+      "boards": [
+        "esp32",
+        "esp32s3"
+      ],
+      "preset": "empty",
+      "summary": "Connect to VoltNet and inspect the network state.",
+      "concepts": [
+        "WiFi",
+        "connection state",
+        "IP address"
+      ],
+      "code": "#include <WiFi.h>\nvoid setup() {\n  Serial.begin(115200);\n  WiFi.begin(\"VoltNet\", \"anything\");\n  while (WiFi.status() != WL_CONNECTED) delay(100);\n  Serial.println(WiFi.localIP());\n}\nvoid loop() { delay(1000); }",
+      "steps": [
+        {
+          "title": "Use the lab access point",
+          "text": "VoltNet and VoltNet-Guest are the available simulated networks. Any password is accepted in this teaching environment."
+        },
+        {
+          "title": "Wait for connection",
+          "text": "Run the sketch. Association takes 500 ms of virtual time, after which the serial output shows 192.168.4.1."
+        },
+        {
+          "title": "Inspect a failure",
+          "text": "Try a different SSID. After three seconds the network reports failure. The current loop waits forever, which is why production code also needs a timeout."
+        }
+      ],
+      "challenge": "Add a three-second timeout and print a useful failure message.",
+      "minutes": 8,
+      "difficulty": "Intermediate",
+      "language": "cpp",
+      "order": 14,
+      "hardwareConcepts": [
+        {
+          "title": "The board is the whole circuit",
+          "text": "This network lesson needs no external components or jumper wires. The board is powered by the simulator's USB supply. Concentrate on firmware state and the reported virtual network events."
+        },
+        {
+          "title": "A simulated network has clear boundaries",
+          "text": "VoltNet, its IP address and broker are local teaching models. The sketch does not send requests to physical networks or execute a Linux network stack."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "WiFi.begin starts a connection attempt; it does not make the link immediately ready. The while loop polls status and yields with delay between attempts."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "The successful path prints an IP address. A robust connection loop also tracks elapsed time, exits after a timeout, and decides whether to retry."
+        }
+      ],
+      "codeOverrides": {
+        "esp32s3": "#include <WiFi.h>\nvoid setup() {\n  Serial.begin(115200);\n  WiFi.begin(\"VoltNet\", \"anything\");\n  while (WiFi.status() != WL_CONNECTED) delay(100);\n  Serial.println(WiFi.localIP());\n}\nvoid loop() { delay(1000); }"
+      }
+    },
+    {
+      "id": "pi-button",
+      "title": "Python: read a pushbutton",
+      "boards": [
+        "raspberrypi4",
+        "raspberrypi5"
+      ],
+      "preset": "button",
+      "summary": "Read an active-low button with gpiozero and make decisions.",
+      "concepts": [
+        "Button",
+        "pull-up",
+        "if / else"
+      ],
+      "code": "from gpiozero import LED, Button\nfrom time import sleep\n\nled = LED(17)\nbutton = Button(27)\nwhile True:\n    if button.is_pressed:\n        led.on()\n    else:\n        led.off()\n    sleep(0.01)",
+      "steps": [
+        {
+          "title": "Inspect the released state",
+          "text": "Button(27) enables a pull-up by default. The switch connects GPIO27, physical pin 13, to GND while it is pressed."
+        },
+        {
+          "title": "Use a meaningful property",
+          "text": "is_pressed hides the active-low wiring detail. It is true when the physical input is LOW, so the if branch turns on the LED."
+        },
+        {
+          "title": "Poll without busy waiting",
+          "text": "sleep(0.01) leaves a short gap between reads. Press and release the canvas button to see the circuit follow the input."
+        }
+      ],
+      "challenge": "Reverse the behavior so the LED is normally on.",
+      "minutes": 8,
+      "difficulty": "Intermediate",
+      "language": "python",
+      "order": 18,
+      "hardwareConcepts": [
+        {
+          "title": "A button connects two electrical nodes",
+          "text": "The four button legs form two internally joined pairs. Pressing the switch joins those pairs. In this circuit one pair goes to an input and the other to GND; the internal pull-up gives the released input a known HIGH level."
+        },
+        {
+          "title": "The input and output have separate jobs",
+          "text": "The button input senses voltage with very little current. The LED output drives a separate resistor-and-LED branch. Ground is their shared reference, so the button does not need to carry the LED's current."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "Button provides is_pressed so the code can express behavior in terms of the user action rather than electrical polarity."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "The if/else branches are mutually exclusive. Each loop reads the current state, chooses one output action, and then sleeps for 10 ms before reading again."
+        }
+      ]
+    },
+    {
+      "id": "pi-pwm",
+      "title": "Python: brightness and duty cycle",
+      "boards": [
+        "raspberrypi4",
+        "raspberrypi5"
+      ],
+      "preset": "led",
+      "summary": "Use fractional brightness values with PWMLED.",
+      "concepts": [
+        "PWMLED",
+        "fractions",
+        "PWM"
+      ],
+      "code": "from gpiozero import PWMLED\nfrom time import sleep\n\nled = PWMLED(17)\nwhile True:\n    led.value = 0.25\n    sleep(1)\n    led.value = 0.75\n    sleep(1)",
+      "steps": [
+        {
+          "title": "Create a PWM output",
+          "text": "PWMLED configures a software-style PWM output in the simulator. Its value ranges from 0 for off to 1 for fully on."
+        },
+        {
+          "title": "Compare two duty cycles",
+          "text": "Run and inspect the LED. The two values command approximately 25% and 75% duty, which changes average current."
+        },
+        {
+          "title": "Use a different frequency",
+          "text": "PWMLED(17, frequency=200) requests a 200 Hz signal. The lesson's circuit view shows duty-averaged behavior rather than drawing every fast edge."
+        }
+      ],
+      "challenge": "Use a for loop over range to fade from 0 to 1.",
+      "minutes": 8,
+      "difficulty": "Intermediate",
+      "language": "python",
+      "order": 19,
+      "hardwareConcepts": [
+        {
+          "title": "The current needs a complete loop",
+          "text": "The GPIO output supplies the branch, the resistor limits current, the LED converts some electrical energy into light, and ground completes the return path. A missing ground or reversed LED prevents the intended current flow."
+        },
+        {
+          "title": "Why this resistor is here",
+          "text": "The prepared circuit uses 220 Ω. LED forward voltage and the board's output resistance also affect current. The simulator shows the resulting current when you hover over the LED; never treat a GPIO output as an unlimited power supply."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "A property assignment such as led.value = 0.25 updates the PWM duty. Values use a 0–1 fraction instead of Arduino's default 0–255 integer scale."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "The same LED object remembers its pin and PWM configuration between assignments. The one-second waits change the visible brightness pattern, not the carrier frequency."
+        }
+      ]
+    },
+    {
+      "id": "pi-loops",
+      "title": "Python: loops and measurements",
+      "boards": [
+        "raspberrypi4",
+        "raspberrypi5"
+      ],
+      "preset": "led",
+      "summary": "Use range, arithmetic and printed output to inspect a program.",
+      "concepts": [
+        "range",
+        "print",
+        "finite programs"
+      ],
+      "code": "from gpiozero import LED\nfrom time import sleep\n\nled = LED(17)\nfor count in range(1, 6):\n    print(\"Flash\", count)\n    led.on()\n    sleep(0.1)\n    led.off()\n    sleep(0.1)\nprint(\"Finished\")",
+      "steps": [
+        {
+          "title": "Predict the range",
+          "text": "range(1, 6) includes 1 and stops before 6, so the loop repeats five times. The serial output labels each flash."
+        },
+        {
+          "title": "Watch a program finish",
+          "text": "Unlike an Arduino sketch with a repeating loop function, a Python script can reach its end. After the final message the simulator stops executing instructions."
+        },
+        {
+          "title": "Work within the supported subset",
+          "text": "These examples support assignments, conditions, while, range loops, printing and GPIO calls. Linux commands, arbitrary imports, functions and callbacks are not implemented in this Python teaching runtime."
+        }
+      ],
+      "challenge": "Count down from five to one using range(5, 0, -1).",
+      "minutes": 8,
+      "difficulty": "Intermediate",
+      "language": "python",
+      "order": 22,
+      "hardwareConcepts": [
+        {
+          "title": "The current needs a complete loop",
+          "text": "The GPIO output supplies the branch, the resistor limits current, the LED converts some electrical energy into light, and ground completes the return path. A missing ground or reversed LED prevents the intended current flow."
+        },
+        {
+          "title": "Why this resistor is here",
+          "text": "The prepared circuit uses 220 Ω. LED forward voltage and the board's output resistance also affect current. The simulator shows the resulting current when you hover over the LED; never treat a GPIO output as an unlimited power supply."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "range starts at the first value and excludes the stop value. A negative third argument counts downward; a zero step is invalid."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "print adds text to the Python output panel. When a finite script reaches its end, execution halts while the final electrical pin configuration remains visible."
+        }
+      ]
+    },
+    {
+      "id": "cpp-nonblocking",
+      "title": "C++ timing: blink without delay",
+      "difficulty": "Hard",
+      "minutes": 16,
+      "preset": "led",
+      "concepts": [
+        "C++",
+        "millis",
+        "state",
+        "non-blocking"
+      ],
+      "summary": "Schedule LED changes with elapsed time while keeping loop free to do other work.",
+      "code": "const int ledPin = 9;\nconst unsigned long interval = 500;\nunsigned long previous = 0;\nbool ledOn = false;\nvoid setup() { pinMode(ledPin, OUTPUT); }\nvoid loop() {\n  unsigned long current = millis();\n  if (current - previous >= interval) {\n    previous = current;\n    ledOn = !ledOn;\n    digitalWrite(ledPin, ledOn ? HIGH : LOW);\n  }\n}",
+      "steps": [
+        {
+          "title": "Remember the previous event",
+          "text": "previous stores when the last toggle happened. ledOn stores the logical state between loop iterations."
+        },
+        {
+          "title": "Check elapsed time",
+          "text": "current - previous measures the age of the last event. Most loop iterations do nothing to the LED; an iteration that reaches interval toggles it and records a new timestamp."
+        },
+        {
+          "title": "Leave room for other tasks",
+          "text": "No delay pauses the main program. Button checks or sensor reads can run on each iteration while the LED follows its own schedule."
+        }
+      ],
+      "challenge": "Add a second independent timer that prints a message every two seconds.",
+      "programConcepts": [
+        {
+          "title": "State plus time replaces a blocking wait",
+          "text": "The program remembers enough information to decide whether an action is due. It does not need to stay inside a delay call to preserve a schedule."
+        },
+        {
+          "title": "Subtract timestamps rather than comparing deadlines",
+          "text": "Using unsigned elapsed-time subtraction is a standard way to handle a wrapping millis counter. Keep the timestamps and interval unsigned and choose sensible intervals."
+        }
+      ],
+      "boards": [
+        "uno",
+        "nano",
+        "esp32",
+        "esp32s3"
+      ],
+      "language": "cpp",
+      "codeOverrides": {
+        "esp32": "const int ledPin = 18;\nconst unsigned long interval = 500;\nunsigned long previous = 0;\nbool ledOn = false;\nvoid setup() { pinMode(ledPin, OUTPUT); }\nvoid loop() {\n  unsigned long current = millis();\n  if (current - previous >= interval) {\n    previous = current;\n    ledOn = !ledOn;\n    digitalWrite(ledPin, ledOn ? HIGH : LOW);\n  }\n}",
+        "esp32s3": "const int ledPin = 18;\nconst unsigned long interval = 500;\nunsigned long previous = 0;\nbool ledOn = false;\nvoid setup() { pinMode(ledPin, OUTPUT); }\nvoid loop() {\n  unsigned long current = millis();\n  if (current - previous >= interval) {\n    previous = current;\n    ledOn = !ledOn;\n    digitalWrite(ledPin, ledOn ? HIGH : LOW);\n  }\n}"
+      },
+      "order": 7,
+      "hardwareConcepts": [
+        {
+          "title": "The current needs a complete loop",
+          "text": "The GPIO output supplies the branch, the resistor limits current, the LED converts some electrical energy into light, and ground completes the return path. A missing ground or reversed LED prevents the intended current flow."
+        },
+        {
+          "title": "Why this resistor is here",
+          "text": "The prepared circuit uses 220 Ω. LED forward voltage and the board's output resistance also affect current. The simulator shows the resulting current when you hover over the LED; never treat a GPIO output as an unlimited power supply."
+        }
+      ]
+    },
+    {
+      "id": "cpp-commands",
+      "title": "C++ serial commands: switch and input validation",
+      "difficulty": "Hard",
+      "minutes": 17,
+      "preset": "empty",
+      "concepts": [
+        "C++",
+        "switch",
+        "Serial",
+        "input validation"
+      ],
+      "summary": "Build a small command interpreter that accepts input without blocking the main loop.",
+      "code": "void setup() {\n  Serial.begin(115200);\n  Serial.println(\"Send h for help or s for status\");\n}\nvoid loop() {\n  if (Serial.available() > 0) {\n    char command = Serial.read();\n    switch (command) {\n      case 'h':\n        Serial.println(\"Commands: h=help, s=status\");\n        break;\n      case 's':\n        Serial.println(\"Ready\");\n        break;\n      case '\\n':\n      case '\\r':\n        break;\n      default:\n        Serial.println(\"Unknown command\");\n        break;\n    }\n  }\n}",
+      "steps": [
+        {
+          "title": "Check before reading",
+          "text": "Serial.available returns the number of queued input bytes. Only read when a byte is present. Start the program, type h in Serial input, and press Send to see the help response."
+        },
+        {
+          "title": "Dispatch one character",
+          "text": "switch compares command with the character in each case. Single quotes create a character literal. Each break exits the switch so the next command handler does not accidentally run."
+        },
+        {
+          "title": "Handle unexpected input",
+          "text": "Send s and then x. Expect Ready and Unknown command. Newline and carriage return share an empty handler because some serial terminals append those characters automatically."
+        }
+      ],
+      "challenge": "Add a v command that prints your program version, and test that h and s still work.",
+      "programConcepts": [
+        {
+          "title": "Polling keeps the program responsive",
+          "text": "When no character is available, loop returns immediately. Other tasks can be added beside the input check without waiting for someone to type."
+        },
+        {
+          "title": "Validate at the boundary",
+          "text": "Input is not guaranteed to be a recognized command. The default branch gives a useful response instead of silently accepting invalid data. This example handles single characters, not complete lines."
+        }
+      ],
+      "boards": [
+        "uno",
+        "nano",
+        "esp32",
+        "esp32s3"
+      ],
+      "language": "cpp",
+      "order": 8,
+      "hardwareConcepts": [
+        {
+          "title": "Learn the program before adding wires",
+          "text": "This lesson uses only the selected board and its simulated USB serial connection. No breadboard parts or jumper cables are needed; the empty placement and cable tables are intentional."
+        },
+        {
+          "title": "The same sketch, different hardware",
+          "text": "Arduino Uno and ESP32 both accept this Arduino-style C++ example. Their logic voltages, pin maps and integer sizes differ, so a later hardware project must choose board-appropriate pins and components rather than copying a wiring diagram blindly."
+        }
+      ]
+    },
+    {
+      "id": "cpp-state-machine",
+      "title": "C++ state machines: build a two-flash beacon",
+      "difficulty": "Hard",
+      "minutes": 20,
+      "preset": "led",
+      "concepts": [
+        "C++",
+        "state machine",
+        "arrays",
+        "millis"
+      ],
+      "summary": "Combine arrays, state and non-blocking timing into a repeatable two-flash LED pattern.",
+      "code": "const int ledPin = 9;\nconst unsigned long durations[] = {100, 100, 100, 700};\nint phase = 0;\nunsigned long changedAt = 0;\nvoid setup() {\n  pinMode(ledPin, OUTPUT);\n  digitalWrite(ledPin, HIGH);\n}\nvoid loop() {\n  unsigned long current = millis();\n  if (current - changedAt >= durations[phase]) {\n    changedAt = current;\n    phase = (phase + 1) % 4;\n    digitalWrite(ledPin, phase % 2 == 0 ? HIGH : LOW);\n  }\n}",
+      "steps": [
+        {
+          "title": "Describe the four states",
+          "text": "Phase 0 is on for 100 ms, phase 1 off for 100 ms, phase 2 on for 100 ms, and phase 3 off for 700 ms. The durations array holds each state duration in the same order."
+        },
+        {
+          "title": "Advance only when due",
+          "text": "Each loop checks the elapsed time against durations[phase]. When the interval is reached, the code records a timestamp and advances phase. Modulo 4 wraps phase 3 back to 0."
+        },
+        {
+          "title": "Derive the output from state",
+          "text": "Even phases turn the LED on and odd phases turn it off. The conditional operator chooses HIGH or LOW. Run the example and look for two brief flashes followed by the longer gap."
+        }
+      ],
+      "challenge": "Change the pattern to three short flashes and a long pause. Extend the durations array and update the number of states together.",
+      "programConcepts": [
+        {
+          "title": "State makes a sequence explicit",
+          "text": "phase records where the program is in its pattern. Keeping the sequence in data avoids a long chain of blocking delay calls and makes each transition easy to inspect."
+        },
+        {
+          "title": "Keep indices and array size consistent",
+          "text": "Only indices 0 through 3 exist in this array. The modulo expression keeps phase within that range. Extending a pattern requires updating both its data and the wrapping bound."
+        }
+      ],
+      "boards": [
+        "uno",
+        "nano",
+        "esp32",
+        "esp32s3"
+      ],
+      "language": "cpp",
+      "order": 9,
+      "hardwareConcepts": [
+        {
+          "title": "The current needs a complete loop",
+          "text": "The GPIO output supplies the branch, the resistor limits current, the LED converts some electrical energy into light, and ground completes the return path. A missing ground or reversed LED prevents the intended current flow."
+        },
+        {
+          "title": "Why this resistor is here",
+          "text": "The prepared circuit uses 220 Ω. LED forward voltage and the board's output resistance also affect current. The simulator shows the resulting current when you hover over the LED; never treat a GPIO output as an unlimited power supply."
+        }
+      ],
+      "codeOverrides": {
+        "esp32": "const int ledPin = 18;\nconst unsigned long durations[] = {100, 100, 100, 700};\nint phase = 0;\nunsigned long changedAt = 0;\nvoid setup() {\n  pinMode(ledPin, OUTPUT);\n  digitalWrite(ledPin, HIGH);\n}\nvoid loop() {\n  unsigned long current = millis();\n  if (current - changedAt >= durations[phase]) {\n    changedAt = current;\n    phase = (phase + 1) % 4;\n    digitalWrite(ledPin, phase % 2 == 0 ? HIGH : LOW);\n  }\n}",
+        "esp32s3": "const int ledPin = 18;\nconst unsigned long durations[] = {100, 100, 100, 700};\nint phase = 0;\nunsigned long changedAt = 0;\nvoid setup() {\n  pinMode(ledPin, OUTPUT);\n  digitalWrite(ledPin, HIGH);\n}\nvoid loop() {\n  unsigned long current = millis();\n  if (current - changedAt >= durations[phase]) {\n    changedAt = current;\n    phase = (phase + 1) % 4;\n    digitalWrite(ledPin, phase % 2 == 0 ? HIGH : LOW);\n  }\n}"
+      }
+    },
+    {
+      "id": "esp32-web",
+      "title": "Control a circuit over HTTP",
+      "boards": [
+        "esp32",
+        "esp32s3"
+      ],
+      "preset": "led",
+      "summary": "Register request handlers that switch a real simulated output.",
+      "concepts": [
+        "WebServer",
+        "HTTP",
+        "callbacks"
+      ],
+      "code": "#include <WiFi.h>\n#include <WebServer.h>\nWebServer server(80);\nvoid setup() {\n  pinMode(18, OUTPUT);\n  WiFi.softAP(\"VoltQuest-Lab\");\n  server.on(\"/on\", []() {\n    digitalWrite(18, HIGH);\n    server.send(200, \"text/plain\", \"LED on\");\n  });\n  server.on(\"/off\", []() {\n    digitalWrite(18, LOW);\n    server.send(200, \"text/plain\", \"LED off\");\n  });\n  server.begin();\n}\nvoid loop() { server.handleClient(); delay(1); }",
+      "steps": [
+        {
+          "title": "Start a local access point",
+          "text": "softAP makes the simulated ESP32 available immediately. The server registers two paths, /on and /off, before it begins listening."
+        },
+        {
+          "title": "Send a request",
+          "text": "Run the example and use the HTTP request field below the circuit. Request /on, then /off, and compare the response with the LED state."
+        },
+        {
+          "title": "Keep serving clients",
+          "text": "handleClient processes queued requests and invokes the matching callback. A registered handler must send a response; otherwise the simulator returns status 500."
+        }
+      ],
+      "challenge": "Add a /status route that reports the current LED state.",
+      "minutes": 14,
+      "difficulty": "Hard",
+      "language": "cpp",
+      "order": 15,
+      "hardwareConcepts": [
+        {
+          "title": "The current needs a complete loop",
+          "text": "The GPIO output supplies the branch, the resistor limits current, the LED converts some electrical energy into light, and ground completes the return path. A missing ground or reversed LED prevents the intended current flow."
+        },
+        {
+          "title": "Why this resistor is here",
+          "text": "The prepared circuit uses 220 Ω. LED forward voltage and the board's output resistance also affect current. The simulator shows the resulting current when you hover over the LED; never treat a GPIO output as an unlimited power supply."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "Each server.on call pairs a path with a callback. The lambda runs when handleClient processes a matching queued request, rather than when the route is registered."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "Changing GPIO state and sending an HTTP response are separate operations. The response acknowledges the request; the pin write changes the circuit. Both are needed for a useful control endpoint."
+        }
+      ],
+      "codeOverrides": {
+        "esp32s3": "#include <WiFi.h>\n#include <WebServer.h>\nWebServer server(80);\nvoid setup() {\n  pinMode(18, OUTPUT);\n  WiFi.softAP(\"VoltQuest-Lab\");\n  server.on(\"/on\", []() {\n    digitalWrite(18, HIGH);\n    server.send(200, \"text/plain\", \"LED on\");\n  });\n  server.on(\"/off\", []() {\n    digitalWrite(18, LOW);\n    server.send(200, \"text/plain\", \"LED off\");\n  });\n  server.begin();\n}\nvoid loop() { server.handleClient(); delay(1); }"
+      }
+    },
+    {
+      "id": "esp32-mqtt",
+      "title": "Publish readings with MQTT",
+      "boards": [
+        "esp32",
+        "esp32s3"
+      ],
+      "preset": "dht",
+      "summary": "Connect a sensor to a topic-based message flow.",
+      "concepts": [
+        "MQTT",
+        "publish",
+        "topics"
+      ],
+      "code": "#include <WiFi.h>\n#include <PubSubClient.h>\n#include <DHT.h>\nWiFiClient transport;\nPubSubClient client(transport);\nDHT sensor(23, DHT22);\nvoid setup() {\n  sensor.begin();\n  WiFi.begin(\"VoltNet\", \"\");\n  while (WiFi.status() != WL_CONNECTED) delay(100);\n  client.setServer(\"broker.voltquest\", 1883);\n  client.connect(\"weather-station\");\n}\nvoid loop() {\n  client.publish(\"lab/temperature\", String(sensor.readTemperature()));\n  client.loop();\n  delay(1000);\n}",
+      "steps": [
+        {
+          "title": "Connect the layers",
+          "text": "The sketch joins WiFi before connecting its MQTT client. The simulated broker handshake takes another 200 ms."
+        },
+        {
+          "title": "Read the topic stream",
+          "text": "Run and inspect the network output. lab/temperature receives the sensor reading once each second. Change the sensor control to publish a different value."
+        },
+        {
+          "title": "Design useful topics",
+          "text": "Topics name data streams, not devices alone. A second measurement could use lab/humidity while a command channel could use lab/led/set."
+        }
+      ],
+      "challenge": "Publish humidity on its own topic and compare the two streams.",
+      "minutes": 15,
+      "difficulty": "Hard",
+      "language": "cpp",
+      "order": 16,
+      "hardwareConcepts": [
+        {
+          "title": "A digital sensor sends measurements",
+          "text": "The DHT22 has supply, data and ground terminals. Its internal electronics measure temperature and humidity, and the library returns numbers over the bound data connection; it is not an analog voltage divider."
+        },
+        {
+          "title": "Power and pin selection must agree",
+          "text": "Use the prepared 3.3 V supply and connect data to the pin selected by the example. The ESP32 and ESP32-S3 examples select different available header pins. Missing power or a mismatched pin produces unavailable readings."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "The transport, MQTT client and sensor are separate objects. Initialization connects them in order: sensor setup, WiFi association, broker connection."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "publish sends a topic and payload; client.loop services client activity. A timed publish interval avoids flooding the stream and makes changes in the sensor easy to follow."
+        }
+      ],
+      "codeOverrides": {
+        "esp32s3": "#include <WiFi.h>\n#include <PubSubClient.h>\n#include <DHT.h>\nWiFiClient transport;\nPubSubClient client(transport);\nDHT sensor(16, DHT22);\nvoid setup() {\n  sensor.begin();\n  WiFi.begin(\"VoltNet\", \"\");\n  while (WiFi.status() != WL_CONNECTED) delay(100);\n  client.setServer(\"broker.voltquest\", 1883);\n  client.connect(\"weather-station\");\n}\nvoid loop() {\n  client.publish(\"lab/temperature\", String(sensor.readTemperature()));\n  client.loop();\n  delay(1000);\n}"
+      }
+    },
+    {
+      "id": "pi-traffic",
+      "title": "Python: sequence three signals",
+      "boards": [
+        "raspberrypi4",
+        "raspberrypi5"
+      ],
+      "preset": "traffic",
+      "summary": "Coordinate three outputs to build a simple traffic signal.",
+      "concepts": [
+        "sequence",
+        "multiple outputs",
+        "timing"
+      ],
+      "code": "from gpiozero import LED\nfrom time import sleep\n\nred = LED(17)\namber = LED(22)\ngreen = LED(27)\nwhile True:\n    red.on()\n    sleep(2)\n    red.off()\n    green.on()\n    sleep(2)\n    green.off()\n    amber.on()\n    sleep(0.5)\n    amber.off()",
+      "steps": [
+        {
+          "title": "Trace three independent branches",
+          "text": "Each LED has its own resistor and GPIO output: red on GPIO17, amber on GPIO22 and green on GPIO27. All three share GND."
+        },
+        {
+          "title": "Follow the sequence",
+          "text": "Run and watch which output is active at each point. Turning the previous output off before turning the next on keeps the phases distinct."
+        },
+        {
+          "title": "Change the timing",
+          "text": "The red and green phases last two seconds, while amber lasts half a second. The total cycle takes about 4.5 seconds."
+        }
+      ],
+      "challenge": "Add a one-second phase where red and amber are on together.",
+      "minutes": 12,
+      "difficulty": "Hard",
+      "language": "python",
+      "order": 21,
+      "hardwareConcepts": [
+        {
+          "title": "Each LED needs its own resistor",
+          "text": "Three separate GPIO branches drive the red, amber and green LEDs. A shared resistor would make one LED's current depend on which other LEDs were on. Each branch therefore gets its own 220 Ω resistor."
+        },
+        {
+          "title": "Ground joins the branches",
+          "text": "The three cathodes return to the same GND reference. The breadboard's upper and lower strips are separated by the center trench, so crossing between them requires a wire."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "Each variable references a different output object. The sequence changes one or two outputs at each boundary and preserves their state during sleep."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "The program has no built-in traffic-light rules. If you accidentally leave green on when red turns on, both outputs remain active; inspect transitions as well as steady states."
+        }
+      ]
+    },
+    {
+      "id": "uno-debounce",
+      "title": "Build a reliable toggle switch",
+      "boards": [
+        "uno",
+        "nano"
+      ],
+      "preset": "button",
+      "summary": "Combine state, edge detection and elapsed time to debounce a button without blocking.",
+      "concepts": [
+        "debounce",
+        "state",
+        "millis"
+      ],
+      "minutes": 18,
+      "code": "const int buttonPin = 2;\nconst int ledPin = 9;\nint previous = HIGH;\nint stable = HIGH;\nbool ledOn = false;\nunsigned long changedAt = 0;\nvoid setup() {\n  pinMode(buttonPin, INPUT_PULLUP);\n  pinMode(ledPin, OUTPUT);\n}\nvoid loop() {\n  int reading = digitalRead(buttonPin);\n  if (reading != previous) changedAt = millis();\n  if (millis() - changedAt >= 30 && reading != stable) {\n    stable = reading;\n    if (stable == LOW) ledOn = !ledOn;\n  }\n  previous = reading;\n  digitalWrite(ledPin, ledOn ? HIGH : LOW);\n}",
+      "steps": [
+        {
+          "title": "Identify the state",
+          "text": "previous tracks the latest sample, stable tracks the accepted input, and ledOn remembers the output after the button is released."
+        },
+        {
+          "title": "Wait without blocking",
+          "text": "A changed input records changedAt. The sketch accepts it only after it stays unchanged for at least 30 ms. Other work could continue while this time passes."
+        },
+        {
+          "title": "Toggle on one edge",
+          "text": "Only a stable transition to LOW toggles the LED. Hold the button to verify the LED changes once, then release and press again."
+        }
+      ],
+      "challenge": "Print one message per accepted press without flooding the monitor.",
+      "difficulty": "Hard",
+      "language": "cpp",
+      "order": 23,
+      "hardwareConcepts": [
+        {
+          "title": "A button connects two electrical nodes",
+          "text": "The four button legs form two internally joined pairs. Pressing the switch joins those pairs. In this circuit one pair goes to an input and the other to GND; the internal pull-up gives the released input a known HIGH level."
+        },
+        {
+          "title": "The input and output have separate jobs",
+          "text": "The button input senses voltage with very little current. The LED output drives a separate resistor-and-LED branch. Ground is their shared reference, so the button does not need to carry the LED's current."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "The algorithm separates a raw sample, a stable accepted input and remembered output state. This prevents both contact bounce and a held button from triggering repeated toggles."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "Subtracting changedAt from millis measures elapsed time. Unsigned arithmetic allows this pattern to remain useful when the counter wraps, without a blocking delay."
+        }
+      ]
+    },
+    {
+      "id": "uno-morse",
+      "title": "Compose an SOS beacon",
+      "boards": [
+        "uno",
+        "nano"
+      ],
+      "preset": "led",
+      "summary": "Use reusable functions and nested timing patterns to build a recognizable signal.",
+      "concepts": [
+        "functions",
+        "Morse timing",
+        "loops"
+      ],
+      "minutes": 16,
+      "code": "void flash(int duration) {\n  digitalWrite(9, HIGH);\n  delay(duration);\n  digitalWrite(9, LOW);\n  delay(150);\n}\nvoid setup() { pinMode(9, OUTPUT); }\nvoid loop() {\n  for (int count = 0; count < 3; count++) flash(150);\n  delay(300);\n  for (int count = 0; count < 3; count++) flash(450);\n  delay(300);\n  for (int count = 0; count < 3; count++) flash(150);\n  delay(900);\n}",
+      "steps": [
+        {
+          "title": "Choose a unit",
+          "text": "A dot is 150 ms, a dash is three dots, and each flash includes one unit of off time. Three short, three long, then three short flashes represent SOS."
+        },
+        {
+          "title": "Reuse one function",
+          "text": "flash accepts the on duration as a parameter. It controls the same LED for both dots and dashes, keeping the output sequence consistent."
+        },
+        {
+          "title": "Account for every gap",
+          "text": "The extra 300 ms after a group combines with the 150 ms off time already inside flash. Together they produce a three-unit letter gap."
+        }
+      ],
+      "challenge": "Encode your initials by combining short and long flashes.",
+      "difficulty": "Hard",
+      "language": "cpp",
+      "order": 24,
+      "hardwareConcepts": [
+        {
+          "title": "The current needs a complete loop",
+          "text": "The GPIO output supplies the branch, the resistor limits current, the LED converts some electrical energy into light, and ground completes the return path. A missing ground or reversed LED prevents the intended current flow."
+        },
+        {
+          "title": "Why this resistor is here",
+          "text": "The prepared circuit uses 220 Ω. LED forward voltage and the board's output resistance also affect current. The simulator shows the resulting current when you hover over the LED; never treat a GPIO output as an unlimited power supply."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "flash is a reusable function with one parameter. Calling it with different durations expresses dot and dash while keeping the pin-writing sequence in one place."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "The loop count creates repetition, and the extra delays build letter and word gaps. Always include delays inside helper functions when calculating the complete pattern."
+        }
+      ]
+    },
+    {
+      "id": "pi-button-dimmer",
+      "title": "Build a smooth button-controlled dimmer",
+      "boards": [
+        "raspberrypi4",
+        "raspberrypi5"
+      ],
+      "preset": "button",
+      "summary": "Combine a button, remembered state and PWM to move gradually between brightness targets.",
+      "concepts": [
+        "state",
+        "edge detection",
+        "PWM"
+      ],
+      "minutes": 18,
+      "code": "from gpiozero import PWMLED, Button\nfrom time import sleep\n\nled = PWMLED(17)\nbutton = Button(27)\nwas_pressed = False\ntarget = 0\nbrightness = 0.0\nwhile True:\n    pressed = button.is_pressed\n    if pressed and not was_pressed:\n        target = 1 - target\n    was_pressed = pressed\n    if brightness < target:\n        brightness = min(target, brightness + 0.05)\n    elif brightness > target:\n        brightness = max(target, brightness - 0.05)\n    led.value = brightness\n    sleep(0.02)",
+      "steps": [
+        {
+          "title": "Separate target from output",
+          "text": "target is either fully off or fully on. brightness is the current output level, so the LED can move toward the target over several iterations."
+        },
+        {
+          "title": "Detect a new press",
+          "text": "pressed and not was_pressed is true only at the beginning of a press. A held button does not repeatedly reverse the target."
+        },
+        {
+          "title": "Clamp each step",
+          "text": "min and max prevent the 0.05 increments from overshooting. At a 20 ms loop interval, a complete fade takes about 400 ms."
+        }
+      ],
+      "challenge": "Make fade-in slower than fade-out by using different step sizes.",
+      "difficulty": "Hard",
+      "language": "python",
+      "order": 25,
+      "hardwareConcepts": [
+        {
+          "title": "A button connects two electrical nodes",
+          "text": "The four button legs form two internally joined pairs. Pressing the switch joins those pairs. In this circuit one pair goes to an input and the other to GND; the internal pull-up gives the released input a known HIGH level."
+        },
+        {
+          "title": "The input and output have separate jobs",
+          "text": "The button input senses voltage with very little current. The LED output drives a separate resistor-and-LED branch. Ground is their shared reference, so the button does not need to carry the LED's current."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "What the program is doing",
+          "text": "was_pressed stores the previous loop's input. The expression pressed and not was_pressed detects the rising edge of a user action, so a held button toggles only once."
+        },
+        {
+          "title": "Why the logic works",
+          "text": "target is the desired brightness, while brightness approaches it in bounded steps. min and max clamp the last step and prevent overshoot; the sleep interval determines fade speed."
+        }
+      ]
+    }
+  ]
+}
