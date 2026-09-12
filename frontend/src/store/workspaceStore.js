@@ -34,7 +34,7 @@ function loadPersisted() {
   }
 }
 
-const draftKey = (mode, levelId) => `${DRAFT_PREFIX}${mode === 'sandbox' ? 'sandbox' : levelId ?? 'unknown'}`
+const draftKey = (mode, levelId) => `${DRAFT_PREFIX}${mode === 'sandbox' ? `sandbox${levelId && levelId !== 'new' ? `.${levelId}` : ''}` : levelId ?? 'unknown'}`
 
 const persisted = loadPersisted()
 

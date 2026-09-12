@@ -10,7 +10,7 @@ import { create } from 'zustand'
 import { api, ApiError, getToken, onUnauthorized, setToken } from '../api/client.js'
 import { readJson, removeKey, writeJson } from '../lib/storage.js'
 import { levelForXp, newlyUnlocked, xpForCompletion } from '../lib/xp.js'
-import { COSMETICS } from '../content/index.js'
+import { COSMETICS, LEVELS } from '../content/index.js'
 
 const STORAGE_KEY = 'vq.player'
 const HEALTH_POLL_MS = 30_000
@@ -69,7 +69,9 @@ const initial = loadPersisted()
 
 export const usePlayerStore = create((set, get) => {
   let healthTimer = null
-  let flushing = false
+  let flushing = null
+  let guestRequest = null
+  let identityVersion = 0
 
   /** Persist the parts of state that must survive a reload. */
   const persist = () => writeJson(STORAGE_KEY, persistedSlice(get()))
@@ -79,7 +81,8 @@ export const usePlayerStore = create((set, get) => {
     set({ online })
     if (online) {
       stopHealthPolling()
-      void flushPending()
+      if (!get().token && !get().authExpired) void get().ensureGuest()
+      else void flushPending()
     } else {
       startHealthPolling()
     }
@@ -127,30 +130,27 @@ export const usePlayerStore = create((set, get) => {
 
   /** Replay queued operations in order, stopping at the first failure so ordering is preserved. */
   async function flushPending() {
-    if (flushing) return
+    if (flushing) return flushing
     const { pendingOps, token } = get()
     if (!pendingOps.length || !token) return
-    flushing = true
-    try {
-      let remaining = [...pendingOps]
-      while (remaining.length) {
-        const op = remaining[0]
+    flushing = (async () => {
+      while (get().pendingOps.length) {
+        const op = get().pendingOps[0]
         const sent = await sendOp(op)
         if (!sent) break
-        remaining = remaining.slice(1)
-        set({ pendingOps: remaining })
+        set(s => ({ pendingOps: s.pendingOps.filter(item => item !== op) }))
         persist()
       }
-    } finally {
-      flushing = false
-    }
+    })()
+    try { await flushing } finally { flushing = null }
   }
 
   async function sendOp(op) {
+    const version = identityVersion
     if (op.type === 'complete') {
       const { ok, result } = await call(() => api.progress.complete(op.levelId, op.payload))
-      if (ok) applyServerCompletion(op.levelId, result)
-      return ok
+      if (ok && version === identityVersion) applyServerCompletion(op.levelId, result)
+      return ok && version === identityVersion
     }
     if (op.type === 'attempt') {
       const { ok } = await call(() => api.progress.attempt(op.levelId, op.payload))
@@ -167,8 +167,8 @@ export const usePlayerStore = create((set, get) => {
   function applyServerCompletion(levelId, response) {
     if (!response) return
     set((s) => ({
-      player: withDerived(response.player ?? s.player),
-      progress: response.progress ? { ...s.progress, ...response.progress } : s.progress,
+      player: response.player ? withDerived({ ...response.player, xp: Math.max(response.player.xp ?? 0, s.player?.xp ?? 0) }) : s.player,
+      progress: response.progress ? mergeProgress(response.progress.stars != null ? { ...s.progress, [levelId]: response.progress } : { ...s.progress, ...response.progress }, s.progress) : s.progress,
     }))
     persist()
   }
@@ -213,31 +213,43 @@ export const usePlayerStore = create((set, get) => {
      * on it, because play works entirely offline.
      */
     async ensureGuest() {
+      if (get().authExpired) return null
       if (get().token && get().player) {
         set({ ready: true })
         void get().refresh()
         return get().player
       }
-      const { ok, result } = await call(() => api.players.guest())
-      if (!ok) {
-        set({ ready: true })
-        return null
-      }
-      setToken(result.token)
-      set({ token: result.token, player: withDerived(result.player), authExpired: false, ready: true })
-      persist()
-      await flushPending()
-      return get().player
+      if (guestRequest) return guestRequest
+      const version = identityVersion
+      guestRequest = (async () => {
+        const { ok, result } = await call(() => api.players.guest())
+        if (version !== identityVersion) return null
+        if (!ok) { set({ ready: true }); return null }
+        setToken(result.token)
+        set({ token: result.token, player: withDerived({ ...result.player, xp: Math.max(result.player.xp ?? 0, get().player?.xp ?? 0) }), authExpired: false, ready: true })
+        // A new guest id must recover completed lessons as well as operations queued while offline.
+        for (const [levelId, progress] of Object.entries(get().progress)) {
+          const level = LEVELS[levelId]
+          if (!level || !progress.stars || get().pendingOps.some(op => op.type === 'complete' && op.levelId === levelId)) continue
+          queue({ type: 'complete', levelId, payload: { stars: progress.stars, objectives_passed: level.objectives.map(o => o.id), code_lines: progress.best_code_lines ?? 0, component_count: progress.solution?.circuit?.components?.length ?? 0, damage_count: 0, duration_ms: 0, ...(progress.solution ?? {}) } })
+        }
+        persist()
+        await flushPending()
+        return get().player
+      })().finally(() => { guestRequest = null })
+      return guestRequest
     },
 
     /** Pull the server's view of the player and progress, then replay anything queued. */
     async refresh() {
       if (!get().token) return
+      const version = identityVersion
       const [me, progress] = await Promise.all([call(() => api.players.me()), call(() => api.progress.list())])
+      if (version !== identityVersion) return
       if (me.ok) {
         set((s) => ({
-          player: withDerived(me.result),
-          settings: { ...s.settings, ...serverSettings(me.result?.settings) },
+          player: withDerived({ ...me.result, xp: Math.max(me.result.xp ?? 0, s.player?.xp ?? 0) }),
+          settings: s.pendingOps.some(op => op.type === 'settings') ? s.settings : { ...s.settings, ...serverSettings(me.result?.settings) },
         }))
       }
       if (progress.ok) {
@@ -252,8 +264,9 @@ export const usePlayerStore = create((set, get) => {
     async login(username, password) {
       const { ok, result, error } = await call(() => api.auth.login(username, password))
       if (!ok) return { ok: false, error }
+      identityVersion++
       setToken(result.token)
-      set({ token: result.token, player: withDerived(result.player), authExpired: false })
+      set({ token: result.token, player: withDerived(result.player), progress: {}, pendingOps: [], seenLevels: [], seenWorlds: [], settings: { ...DEFAULT_SETTINGS, ...serverSettings(result.player?.settings) }, authExpired: false })
       persist()
       await get().refresh()
       return { ok: true, player: get().player }
@@ -270,6 +283,7 @@ export const usePlayerStore = create((set, get) => {
     },
 
     logout() {
+      identityVersion++
       stopHealthPolling()
       setToken(null)
       removeKey(STORAGE_KEY)
@@ -316,6 +330,7 @@ export const usePlayerStore = create((set, get) => {
                 ? payload.code_lines ?? null
                 : Math.min(previous.best_code_lines, payload.code_lines ?? previous.best_code_lines),
             completed_at: new Date().toISOString(),
+            ...(payload.code != null && payload.circuit ? { solution: { code: payload.code, circuit: payload.circuit } } : {}),
           },
         },
       })
@@ -328,13 +343,12 @@ export const usePlayerStore = create((set, get) => {
         component_count: payload.component_count ?? 0,
         damage_count: payload.damage_count ?? 0,
         duration_ms: payload.duration_ms ?? 0,
-        ...(payload.solution ? { solution: payload.solution } : {}),
+        ...(payload.code != null ? { code: payload.code } : {}),
+        ...(payload.circuit ? { circuit: payload.circuit } : {}),
+        ...(payload.solution ?? {}),
       }
-      // Fire the network call, queueing it for replay if it fails.
-      void call(() => api.progress.complete(levelId, body)).then(({ ok, result }) => {
-        if (ok) applyServerCompletion(levelId, result)
-        else queue({ type: 'complete', levelId, payload: body })
-      })
+      queue({ type: 'complete', levelId, payload: body })
+      void flushPending()
 
       return { xpGained, levelUp: player.level > beforeLevel, unlocked, stars }
     },
@@ -355,9 +369,8 @@ export const usePlayerStore = create((set, get) => {
       })
       persist()
       const body = { hint_tier: hintTier }
-      void call(() => api.progress.attempt(levelId, body)).then(({ ok }) => {
-        if (!ok) queue({ type: 'attempt', levelId, payload: body })
-      })
+      queue({ type: 'attempt', levelId, payload: body })
+      void flushPending()
     },
 
     /** Update local settings and mirror them to the server (queued when offline). */
@@ -373,9 +386,8 @@ export const usePlayerStore = create((set, get) => {
           monitor_baud: settings.monitorBaud,
         },
       }
-      void call(() => api.players.update(body)).then(({ ok }) => {
-        if (!ok) queue({ type: 'settings', payload: body })
-      })
+      queue({ type: 'settings', payload: body })
+      void flushPending()
     },
 
     /** Remember that a level's briefing (or a world's intro) has been shown. */
@@ -398,7 +410,7 @@ export const usePlayerStore = create((set, get) => {
     },
 
     /** Exposed for the UI's "retry now" affordance and for tests. */
-    flushPending,
+    async flushPending() { await flushing; return flushPending() },
   }
 })
 

@@ -1,0 +1,206 @@
+{
+  "id": "w4-l4",
+  "worldId": "w4",
+  "order": 4,
+  "title": "Weather Station",
+  "codeName": "Level 4-4",
+  "board": "esp32",
+  "startBoard": "esp32",
+  "boardSwitcher": "locked",
+  "boardMode": "dual",
+  "xp": 280,
+  "estimatedMinutes": 15,
+  "summary": "Publish DHT22 temperature readings to a virtual MQTT topic.",
+  "concepts": [
+    "DHT22",
+    "MQTT",
+    "topics",
+    "sensor telemetry"
+  ],
+  "briefing": [
+    {
+      "mood": "happy",
+      "text": "Publish DHT22 temperature readings to a virtual MQTT topic."
+    },
+    {
+      "mood": "thinking",
+      "text": "Build the circuit, write the program, then use the live objectives and hints to check each connection."
+    }
+  ],
+  "learn": {
+    "title": "DHT22",
+    "body": "Publish DHT22 temperature readings to a virtual MQTT topic.\n\nUse 3V3 and GND for the sensor, DATA to GPIO23. The simulator library supplies the timing and teaching subset.\n\nConnect to the virtual broker, publish the sensor value to weather/temperature, and inspect the topic count in the IoT tab.",
+    "links": []
+  },
+  "starterCircuit": null,
+  "starterCode": "void setup() {\n  // Configure your pins here.\n}\n\nvoid loop() {\n  // Read inputs and control your outputs here.\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": [
+    "esp32",
+    "dht22"
+  ],
+  "objectives": [
+    {
+      "id": "sensor",
+      "text": "Power the DHT22 at 3.3 V and connect DATA to GPIO23",
+      "rules": [
+        {
+          "type": "pin_connected_to",
+          "pin": "GPIO23",
+          "componentType": "dht22",
+          "componentPin": "data"
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "3V3"
+          },
+          "contains": {
+            "componentType": "dht22",
+            "pin": "vcc"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "GND"
+          },
+          "contains": {
+            "componentType": "dht22",
+            "pin": "gnd"
+          }
+        }
+      ],
+      "hints": {
+        "tier1": "Use 3V3 and GND for the sensor, DATA to GPIO23. The simulator library supplies the timing and teaching subset.",
+        "tier2": {
+          "mcuPins": [
+            "GPIO23",
+            "3V3",
+            "GND"
+          ],
+          "componentTypes": [
+            "dht22"
+          ],
+          "text": "Use 3V3 and GND for the sensor, DATA to GPIO23. The simulator library supplies the timing and teaching subset."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "publish",
+      "text": "Join WiFi and publish at least three temperature readings",
+      "rules": [
+        {
+          "type": "wifi_connected"
+        },
+        {
+          "type": "mqtt_published",
+          "topic": "weather/temperature",
+          "pattern": "[0-9]+",
+          "minCount": 3
+        }
+      ],
+      "hints": {
+        "tier1": "Connect to the virtual broker, publish the sensor value to weather/temperature, and inspect the topic count in the IoT tab.",
+        "tier2": {
+          "componentTypes": [
+            "esp32",
+            "dht22"
+          ],
+          "text": "Connect to the virtual broker, publish the sensor value to weather/temperature, and inspect the topic count in the IoT tab."
+        },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [
+      {
+        "type": "code_max_lines",
+        "max": 40
+      }
+    ],
+    "threeText": "Use 40 non-comment lines or fewer"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "dual",
+      "breadboards": [
+        {
+          "id": "bb1",
+          "type": "half",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "id": "bb2",
+          "type": "half",
+          "x": 0,
+          "y": 504
+        }
+      ],
+      "mcu": "esp32",
+      "components": [
+        {
+          "id": "c_esp32",
+          "type": "esp32",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "j1"
+          }
+        },
+        {
+          "id": "c_dht221",
+          "type": "dht22",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb2",
+            "hole": "f20"
+          }
+        }
+      ],
+      "wires": [
+        {
+          "id": "w_q2",
+          "from": "bb2:g20",
+          "to": "bb1:f1",
+          "color": "red"
+        },
+        {
+          "id": "w_q3",
+          "from": "bb2:g22",
+          "to": "bb1:f2",
+          "color": "black"
+        },
+        {
+          "id": "w_q4",
+          "from": "bb2:g21",
+          "to": "bb1:f15",
+          "color": "green"
+        }
+      ],
+      "meta": {}
+    },
+    "code": "#include <WiFi.h>\n#include <PubSubClient.h>\n#include <DHT.h>\nWiFiClient network;\nPubSubClient mqtt(network);\nDHT sensor(23, DHT22);\nvoid setup() {\n  Serial.begin(115200);\n  sensor.begin();\n  WiFi.begin(\"VoltNet\", \"pass\");\n  while (WiFi.status() != WL_CONNECTED) delay(50);\n  mqtt.setServer(\"broker.voltquest.local\", 1883);\n  mqtt.connect(\"weather-station\");\n}\nvoid loop() {\n  mqtt.loop();\n  float temperature = sensor.readTemperature();\n  String payload = String(temperature);\n  mqtt.publish(\"weather/temperature\", payload.c_str());\n  Serial.println(payload);\n  delay(500);\n}\n",
+    "blocklyXml": null,
+    "actions": [
+      {
+        "atMs": 1500,
+        "select": {
+          "componentType": "dht22"
+        },
+        "patch": {
+          "temperatureC": 31
+        }
+      }
+    ]
+  },
+  "solutionRunMs": 7000,
+  "successText": "You completed Weather Station. Publish DHT22 temperature readings to a virtual MQTT topic."
+}

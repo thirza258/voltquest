@@ -1,0 +1,18 @@
+.vq-workspace .vq-left, .vq-workspace .vq-right { width: 100%; }
+.vq-workspace .vq-left { max-height: 320px; }
+.vq-workspace .vq-bench { height: 560px; min-height: 420px; flex: none; }
+.vq-workspace .vq-right { min-height: 650px; }
+.vq-workspace-header { height: auto; min-height: 48px; flex-wrap: wrap; padding-top: 6px; padding-bottom: 6px; }
+.vq-workspace-header > div:last-child { flex-wrap: wrap; }
+.vq-workspace-header > div:nth-child(2) { min-width: 160px; }
+@media (min-width: 1280px) {
+  .vq-workspace { height: 100dvh; min-height: 650px; }
+  .vq-workspace .vq-left, .vq-workspace .vq-right { width: clamp(220px, var(--panel-width), 40vw); flex-shrink: 0; }
+  .vq-workspace .vq-left { max-height: none; }
+  .vq-workspace .vq-right { min-height: 0; }
+  .vq-workspace .vq-bench { flex: 1; height: auto; min-height: 0; }
+}
+@media (max-width: 639px) {
+  .vq-workspace-header > div:nth-child(2) { order: 3; flex-basis: 100%; justify-content: flex-start; }
+  .vq-workspace-header > div:last-child { flex: 1; justify-content: flex-end; }
+}

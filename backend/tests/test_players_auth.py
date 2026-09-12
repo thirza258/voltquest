@@ -83,7 +83,7 @@ def test_patch_me_rejects_locked_cosmetics(client, guest):
 
 def test_default_cosmetics_stay_selectable_when_content_is_unauthored(client, guest, tmp_path):
     """With an empty cosmetics.json the defaults still apply but unknown ids do not."""
-    from app import content
+    from app.services import content
 
     (tmp_path / "quests").mkdir()
     (tmp_path / "worlds.json").write_text('{"worlds": []}', encoding="utf-8")

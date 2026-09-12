@@ -6,7 +6,7 @@ import pytest
 
 @pytest.fixture
 def tutorial_content(client, monkeypatch):
-    from app import content
+    from app.services import content
 
     source = Path(__file__).resolve().parents[2] / "content" / "tutorials.json"
     tutorials = json.loads(source.read_text())["tutorials"]
@@ -48,7 +48,7 @@ def test_cpp_programming_path_is_available_for_arduino_and_esp32(client, tutoria
 
 
 def test_missing_tutorial_content_returns_an_empty_list(client, monkeypatch):
-    from app import content
+    from app.services import content
 
     monkeypatch.setattr(content, "_tutorials", [])
     assert client.get("/api/tutorials").json() == {"tutorials": [], "total": 0}

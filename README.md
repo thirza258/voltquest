@@ -9,10 +9,12 @@ breadboard/cable instructions where components are needed. Supported boards: Uno
 ESP32-S3, Raspberry Pi 4 and Raspberry Pi 5. Pi support is a restricted GPIO learning model, **not a
 Linux emulator**; see [`docs/RASPBERRY_PI.md`](docs/RASPBERRY_PI.md) and [`docs/TUTORIALS.md`](docs/TUTORIALS.md).
 
-The runtime and backend APIs work, but the full campaign workspace, freeform sandbox, Monaco/Blockly
-editor components, gallery/profile/leaderboard pages and 11 remaining campaign levels are not yet
-built. Those routes clearly identify unfinished features. The product overview below describes the
-target experience; [`AGENTS.md`](AGENTS.md) records the verified implementation and remaining work.
+The **14-quest campaign**, freeform **sandbox**, local **Monaco/Blockly editors**, **virtual phone**,
+**showcase with interactive previews and forking**, and **profile/leaderboard** are implemented.
+Sandbox projects support account saves, independent local drafts, JSON import, JSON/PNG/code/BOM
+exports, and public sharing. Campaign progress and settings recover after connectivity returns.
+See [`docs/IMPLEMENTATION_STATUS.md`](docs/IMPLEMENTATION_STATUS.md) for implementation evidence
+and [`AGENTS.md`](AGENTS.md) for the current verification results and remaining release checks.
 
 ## Product overview
 

@@ -122,6 +122,15 @@ describe('useLevelSession', () => {
     expect(useWorkspaceStore.getState().code).toBe(LEVEL.starterCode)
   })
 
+  it('keeps new edits when the player starts working instead of accepting an older draft', () => {
+    localStorage.setItem(`vq.draft.${LEVEL.id}`, JSON.stringify({ doc: buildStarterDoc(LEVEL), code: '// older work' }))
+    const { result } = renderHook(() => useLevelSession({ levelId: LEVEL.id, level: LEVEL }))
+    expect(result.current.draftOffer).not.toBeNull()
+    act(() => useWorkspaceStore.getState().setCode('// new work'))
+    expect(result.current.draftOffer).toBeNull()
+    expect(useWorkspaceStore.getState().peekDraft('campaign', LEVEL.id).code).toBe('// new work')
+  })
+
   it('reports a missing level', () => {
     const { result } = renderHook(() => useLevelSession({ levelId: 'nope', level: null, mode: 'campaign' }))
     expect(result.current.notFound).toBe(true)

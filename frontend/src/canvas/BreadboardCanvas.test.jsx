@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
-import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
-import { cleanup, createEvent, fireEvent, render } from '@testing-library/react'
+// @vitest-environment-options { "url": "http://localhost:5173" }
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
+import { act, cleanup, createEvent, fireEvent, render } from '@testing-library/react'
 import { BREADBOARD_TYPES, holeWorldPosition } from '../engine/components/breadboard.js'
 import { WIRE_COLORS } from '../engine/components/registry.js'
 import { makeDoc, place, wire } from '../engine/components/seeds.js'
@@ -15,7 +16,13 @@ const VIEW_SIZE = { width: 800, height: 600 }
 
 beforeAll(() => {
   // jsdom has neither layout nor pointer/drag event classes; MouseEvent carries button + clientX/Y.
-  if (!window.PointerEvent) window.PointerEvent = window.MouseEvent
+  if (!window.PointerEvent) window.PointerEvent = class extends window.MouseEvent {
+    constructor(type, init = {}) {
+      super(type, init)
+      this.pointerId = init.pointerId ?? 1
+      this.isPrimary = init.isPrimary ?? true
+    }
+  }
   if (!window.DragEvent) window.DragEvent = window.MouseEvent
   Element.prototype.getBoundingClientRect = function getBoundingClientRect() {
     return { x: 0, y: 0, left: 0, top: 0, right: VIEW_SIZE.width, bottom: VIEW_SIZE.height, ...VIEW_SIZE, toJSON: () => ({}) }
@@ -361,7 +368,164 @@ describe('moving a component', () => {
   })
 })
 
+describe('drag stability across animation frames', () => {
+  let frames
+  let frameId
+
+  beforeEach(() => {
+    frames = new Map()
+    frameId = 0
+    vi.stubGlobal('requestAnimationFrame', (callback) => {
+      frames.set(++frameId, callback)
+      return frameId
+    })
+    vi.stubGlobal('cancelAnimationFrame', (id) => frames.delete(id))
+  })
+
+  afterEach(() => vi.unstubAllGlobals())
+
+  function paint() {
+    act(() => {
+      const pending = [...frames.values()]
+      frames.clear()
+      pending.forEach((callback) => callback())
+    })
+  }
+
+  function setupDrag() {
+    const doc = makeDoc({ boardMode: 'half' })
+    const id = place(doc, 'led', 'bb1', 'e5')
+    const onMoveComponent = vi.fn()
+    const onDropRejected = vi.fn()
+    const canvas = renderCanvas({ doc, onMoveComponent, onDropRejected })
+    const node = canvas.container.querySelector('[data-layer="components"] > [data-component-id]')
+    const point = (hole) => holeClientPoint(doc, 'bb1', hole)
+    const pointer = (kind, at, pointerId = 1, target = canvas.root) => {
+      fireEvent[kind](target, { button: 0, clientX: at.x, clientY: at.y, pointerId })
+    }
+    pointer('pointerDown', point('e5'), 1, node)
+    return { ...canvas, doc, id, node, point, pointer, onMoveComponent, onDropRejected }
+  }
+
+  it('commits the release position when a newer move is waiting for a frame', () => {
+    const { container, point, pointer, id, onMoveComponent } = setupDrag()
+    pointer('pointerMove', point('e10'))
+    paint()
+    expect(container.querySelector('[data-drag-preview]')).toBeTruthy()
+    pointer('pointerMove', point('e15'))
+    pointer('pointerUp', point('e16'))
+    paint()
+    expect(onMoveComponent).toHaveBeenCalledExactlyOnceWith(id, { anchor: { board: 'bb1', hole: 'e16' }, rotation: 0 })
+    expect(container.querySelector('[data-drag-preview]')).toBeNull()
+  })
+
+  it('rejects an off-board release after a valid preview', () => {
+    const { point, pointer, onMoveComponent, onDropRejected } = setupDrag()
+    pointer('pointerMove', point('e10'))
+    paint()
+    pointer('pointerUp', { x: -200, y: -200 })
+    expect(onMoveComponent).not.toHaveBeenCalled()
+    expect(onDropRejected).toHaveBeenCalledWith('off_board')
+  })
+
+  it('updates the snap when crossing a hole midpoint inside the same half-pitch cell', () => {
+    const { container, doc, pointer } = setupDrag()
+    const view = fitView(docBounds(doc), VIEW_SIZE)
+    const a = holeWorldPosition(doc, 'bb1', 'e10')
+    const b = holeWorldPosition(doc, 'bb1', 'e11')
+    pointer('pointerMove', worldToScreen(view, { x: (a.x + b.x) / 2 - 1, y: a.y }))
+    paint()
+    expect(container.querySelector('[data-drag-preview]').getAttribute('transform')).toBe(`translate(${a.x} ${a.y}) rotate(0)`)
+    pointer('pointerMove', worldToScreen(view, { x: (a.x + b.x) / 2 + 1, y: a.y }))
+    paint()
+    expect(container.querySelector('[data-drag-preview]').getAttribute('transform')).toBe(`translate(${b.x} ${b.y}) rotate(0)`)
+  })
+
+  it('ignores another pointer pressing, moving and releasing during a drag', () => {
+    const { point, pointer, id, onMoveComponent } = setupDrag()
+    pointer('pointerMove', point('e10'))
+    paint()
+    pointer('pointerDown', { x: 2, y: 2 }, 2)
+    pointer('pointerMove', point('e20'), 2)
+    pointer('pointerUp', point('e20'), 2)
+    expect(onMoveComponent).not.toHaveBeenCalled()
+    pointer('pointerUp', point('e12'))
+    expect(onMoveComponent).toHaveBeenCalledExactlyOnceWith(id, { anchor: { board: 'bb1', hole: 'e12' }, rotation: 0 })
+  })
+
+  it.each(['escape', 'blur', 'pointerCancel', 'lostPointerCapture'])('clears painted and queued previews on %s', (reason) => {
+    const { container, root, node, point, pointer, onMoveComponent } = setupDrag()
+    pointer('pointerMove', point('e10'))
+    paint()
+    pointer('pointerMove', point('e15'))
+    if (reason === 'escape') fireEvent.keyDown(document, { key: 'Escape' })
+    else if (reason === 'blur') fireEvent.blur(window)
+    else pointer(reason, point('e15'))
+    expect(container.querySelector('[data-drag-preview]')).toBeNull()
+    expect(node.getAttribute('opacity')).toBe('1')
+    paint()
+    pointer('pointerUp', point('e15'))
+    expect(onMoveComponent).not.toHaveBeenCalled()
+    expect(root.style.cursor).not.toBe('grabbing')
+    // A new gesture must never inherit a cancelled gesture's queued frame.
+    pointer('pointerDown', point('e5'), 1, node)
+    pointer('pointerMove', point('e8'))
+    paint()
+    pointer('pointerUp', point('e8'))
+    expect(onMoveComponent).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps the breadboard fixed when a wheel event arrives during a device drag', () => {
+    const { container, root, point, pointer } = setupDrag()
+    pointer('pointerMove', point('e10'))
+    paint()
+    const viewport = container.querySelector('[data-viewport]')
+    const before = viewport.getAttribute('transform')
+    fireEvent.wheel(root, { deltaX: 40, deltaY: 80 })
+    expect(viewport.getAttribute('transform')).toBe(before)
+    pointer('pointerUp', point('e10'))
+    fireEvent.wheel(root, { deltaX: 40, deltaY: 80 })
+    expect(viewport.getAttribute('transform')).not.toBe(before)
+  })
+
+  it('moves a free-mounted device smoothly while preserving the grab offset and snapping on release', () => {
+    const doc = makeDoc({ mcu: 'uno' })
+    const onMoveComponent = vi.fn()
+    const { container, root } = renderCanvas({ doc, onMoveComponent })
+    const node = container.querySelector('[data-layer="components"] > [data-component-id]')
+    const view = fitView(docBounds(doc), VIEW_SIZE)
+    const comp = doc.components[0]
+    const grab = { x: 100, y: 100 }
+    const pointer = (kind, dx, target = root) => {
+      const at = worldToScreen(view, { x: comp.position.x + grab.x + dx, y: comp.position.y + grab.y })
+      fireEvent[kind](target, { button: 0, clientX: at.x, clientY: at.y, pointerId: 1 })
+    }
+    pointer('pointerDown', 0, node)
+    pointer('pointerMove', 25)
+    paint()
+    const preview = container.querySelector('[data-drag-preview]')
+    const first = preview.getAttribute('transform')
+    pointer('pointerMove', 26)
+    paint()
+    expect(preview.getAttribute('transform')).not.toBe(first)
+    pointer('pointerUp', 26)
+    expect(onMoveComponent).toHaveBeenCalledWith(comp.id, { position: { x: 24, y: comp.position.y }, rotation: 0 })
+  })
+})
+
 describe('wire tool', () => {
+  it('keeps the pressed hole as the wire source when a select gesture becomes a drag', () => {
+    const doc = makeDoc({ boardMode: 'half' })
+    const onAddWire = vi.fn()
+    const { root } = renderCanvas({ doc, onAddWire })
+    const from = holeClientPoint(doc, 'bb1', 'e5')
+    const to = holeClientPoint(doc, 'bb1', 'e10')
+    fireEvent.pointerDown(root, { button: 0, clientX: from.x, clientY: from.y })
+    fireEvent.pointerMove(root, { button: 0, clientX: to.x, clientY: to.y })
+    fireEvent.pointerUp(root, { button: 0, clientX: to.x, clientY: to.y })
+    expect(onAddWire).toHaveBeenCalledWith('bb1:e5', 'bb1:e10', 'red')
+  })
+
   it('draws a wire between two holes hit-tested mathematically', () => {
     const doc = makeDoc({ boardMode: 'half' })
     const onAddWire = vi.fn()

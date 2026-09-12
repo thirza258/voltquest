@@ -1,0 +1,462 @@
+{
+  "id": "w2-l5",
+  "worldId": "w2",
+  "order": 5,
+  "title": "Simon Says",
+  "codeName": "Level 2-5",
+  "board": "uno",
+  "startBoard": "uno",
+  "boardSwitcher": "locked",
+  "boardMode": "half",
+  "xp": 210,
+  "estimatedMinutes": 18,
+  "summary": "Watch a three-color sequence and repeat it with three pull-up buttons.",
+  "concepts": [
+    "arrays",
+    "random sequence",
+    "input edges",
+    "state"
+  ],
+  "briefing": [
+    {
+      "mood": "happy",
+      "text": "Watch a three-color sequence and repeat it with three pull-up buttons."
+    },
+    {
+      "mood": "thinking",
+      "text": "Build the circuit, write the program, then use the live objectives and hints to check each connection."
+    }
+  ],
+  "learn": {
+    "title": "arrays",
+    "body": "Watch a three-color sequence and repeat it with three pull-up buttons.\n\nUse LED pins 9, 10 and 11 and button pins 2, 3 and 4. INPUT_PULLUP makes a pressed button read LOW.\n\nStore three random color indexes in an array. Compare one button press at a time and print Sequence complete! after three correct inputs.",
+    "links": []
+  },
+  "starterCircuit": null,
+  "starterCode": "void setup() {\n  // Configure your pins here.\n}\n\nvoid loop() {\n  // Read inputs and control your outputs here.\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": [
+    "uno",
+    "resistor",
+    "led",
+    "pushbutton"
+  ],
+  "objectives": [
+    {
+      "id": "parts",
+      "text": "Connect three protected LEDs and three grounded buttons",
+      "rules": [
+        {
+          "type": "component_present",
+          "componentType": "led",
+          "min": 3
+        },
+        {
+          "type": "component_present",
+          "componentType": "resistor",
+          "props": {
+            "ohms": 220
+          },
+          "min": 3
+        },
+        {
+          "type": "component_present",
+          "componentType": "pushbutton",
+          "min": 3
+        },
+        {
+          "type": "path",
+          "from": {
+            "mcuPin": "D9"
+          },
+          "to": {
+            "componentType": "led",
+            "pin": "anode"
+          },
+          "through": [
+            {
+              "componentType": "resistor",
+              "props": {
+                "ohms": 220
+              }
+            }
+          ]
+        },
+        {
+          "type": "path",
+          "from": {
+            "mcuPin": "D10"
+          },
+          "to": {
+            "componentType": "led",
+            "pin": "anode"
+          },
+          "through": [
+            {
+              "componentType": "resistor",
+              "props": {
+                "ohms": 220
+              }
+            }
+          ]
+        },
+        {
+          "type": "path",
+          "from": {
+            "mcuPin": "D11"
+          },
+          "to": {
+            "componentType": "led",
+            "pin": "anode"
+          },
+          "through": [
+            {
+              "componentType": "resistor",
+              "props": {
+                "ohms": 220
+              }
+            }
+          ]
+        }
+      ],
+      "hints": {
+        "tier1": "Use LED pins 9, 10 and 11 and button pins 2, 3 and 4. INPUT_PULLUP makes a pressed button read LOW.",
+        "tier2": {
+          "mcuPins": [
+            "D2",
+            "D3",
+            "D4",
+            "D9",
+            "D10",
+            "D11"
+          ],
+          "text": "Use LED pins 9, 10 and 11 and button pins 2, 3 and 4. INPUT_PULLUP makes a pressed button read LOW."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "memory",
+      "text": "Generate a sequence and report Sequence complete! after matching it",
+      "rules": [
+        {
+          "type": "code_matches",
+          "pattern": "random\\s*\\("
+        },
+        {
+          "type": "serial_matches",
+          "pattern": "Sequence complete!"
+        }
+      ],
+      "hints": {
+        "tier1": "Store three random color indexes in an array. Compare one button press at a time and print Sequence complete! after three correct inputs.",
+        "tier2": {
+          "componentTypes": [
+            "pushbutton",
+            "led"
+          ],
+          "text": "Store three random color indexes in an array. Compare one button press at a time and print Sequence complete! after three correct inputs."
+        },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [
+      {
+        "type": "code_max_lines",
+        "max": 60
+      }
+    ],
+    "threeText": "Use 60 non-comment lines or fewer"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "half",
+      "breadboards": [
+        {
+          "id": "bb1",
+          "type": "half",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "mcu": "uno",
+      "components": [
+        {
+          "id": "c_uno",
+          "type": "uno",
+          "props": {},
+          "rotation": 0,
+          "position": {
+            "x": 0,
+            "y": -552
+          }
+        },
+        {
+          "id": "c_resistor1",
+          "type": "resistor",
+          "props": {
+            "ohms": 220
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a2"
+          }
+        },
+        {
+          "id": "c_led2",
+          "type": "led",
+          "props": {
+            "color": "red"
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a7"
+          }
+        },
+        {
+          "id": "c_pushbutton6",
+          "type": "pushbutton",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "f2"
+          }
+        },
+        {
+          "id": "c_resistor9",
+          "type": "resistor",
+          "props": {
+            "ohms": 220
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a11"
+          }
+        },
+        {
+          "id": "c_led10",
+          "type": "led",
+          "props": {
+            "color": "green"
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a16"
+          }
+        },
+        {
+          "id": "c_pushbutton14",
+          "type": "pushbutton",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "f11"
+          }
+        },
+        {
+          "id": "c_resistor17",
+          "type": "resistor",
+          "props": {
+            "ohms": 220
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a20"
+          }
+        },
+        {
+          "id": "c_led18",
+          "type": "led",
+          "props": {
+            "color": "blue"
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a25"
+          }
+        },
+        {
+          "id": "c_pushbutton22",
+          "type": "pushbutton",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "f20"
+          }
+        }
+      ],
+      "wires": [
+        {
+          "id": "w_q3",
+          "from": "c_uno:D9",
+          "to": "bb1:b2",
+          "color": "green"
+        },
+        {
+          "id": "w_q4",
+          "from": "bb1:b6",
+          "to": "bb1:b7",
+          "color": "green"
+        },
+        {
+          "id": "w_q5",
+          "from": "bb1:b8",
+          "to": "c_uno:GND",
+          "color": "black"
+        },
+        {
+          "id": "w_q7",
+          "from": "bb1:h2",
+          "to": "c_uno:D2",
+          "color": "green"
+        },
+        {
+          "id": "w_q8",
+          "from": "bb1:h4",
+          "to": "c_uno:GND",
+          "color": "black"
+        },
+        {
+          "id": "w_q11",
+          "from": "c_uno:D10",
+          "to": "bb1:b11",
+          "color": "green"
+        },
+        {
+          "id": "w_q12",
+          "from": "bb1:b15",
+          "to": "bb1:b16",
+          "color": "green"
+        },
+        {
+          "id": "w_q13",
+          "from": "bb1:b17",
+          "to": "c_uno:GND",
+          "color": "black"
+        },
+        {
+          "id": "w_q15",
+          "from": "bb1:h11",
+          "to": "c_uno:D3",
+          "color": "green"
+        },
+        {
+          "id": "w_q16",
+          "from": "bb1:h13",
+          "to": "c_uno:GND",
+          "color": "black"
+        },
+        {
+          "id": "w_q19",
+          "from": "c_uno:D11",
+          "to": "bb1:b20",
+          "color": "green"
+        },
+        {
+          "id": "w_q20",
+          "from": "bb1:b24",
+          "to": "bb1:b25",
+          "color": "green"
+        },
+        {
+          "id": "w_q21",
+          "from": "bb1:b26",
+          "to": "c_uno:GND",
+          "color": "black"
+        },
+        {
+          "id": "w_q23",
+          "from": "bb1:h20",
+          "to": "c_uno:D4",
+          "color": "green"
+        },
+        {
+          "id": "w_q24",
+          "from": "bb1:h22",
+          "to": "c_uno:GND",
+          "color": "black"
+        }
+      ],
+      "meta": {}
+    },
+    "code": "int leds[3] = {9, 10, 11};\nint buttons[3] = {2, 3, 4};\nint sequence[3];\nint step = 0;\nbool held = false;\nvoid setup() {\n  Serial.begin(9600);\n  randomSeed(42);\n  for (int i = 0; i < 3; i++) {\n    pinMode(leds[i], OUTPUT);\n    pinMode(buttons[i], INPUT_PULLUP);\n    sequence[i] = random(3);\n  }\n  Serial.println(\"Watch the three flashes\");\n  for (int i = 0; i < 3; i++) {\n    Serial.println(sequence[i]);\n    digitalWrite(leds[sequence[i]], HIGH); delay(400);\n    digitalWrite(leds[sequence[i]], LOW); delay(200);\n  }\n  Serial.println(\"Repeat the sequence\");\n}\nvoid loop() {\n  int pressed = -1;\n  for (int i = 0; i < 3; i++) {\n    if (digitalRead(buttons[i]) == LOW) pressed = i;\n  }\n  if (pressed < 0) held = false;\n  if (pressed >= 0 && !held && step < 3) {\n    held = true;\n    if (pressed == sequence[step]) {\n      step++;\n      if (step == 3) Serial.println(\"Sequence complete!\");\n    } else {\n      step = 0;\n      Serial.println(\"Try again from the first color\");\n    }\n  }\n  delay(20);\n}\n",
+    "blocklyXml": null,
+    "actions": [
+      {
+        "atMs": 2400,
+        "select": {
+          "componentType": "pushbutton",
+          "index": 1
+        },
+        "patch": {
+          "pressed": true
+        }
+      },
+      {
+        "atMs": 2700,
+        "select": {
+          "componentType": "pushbutton",
+          "index": 1
+        },
+        "patch": {
+          "pressed": false
+        }
+      },
+      {
+        "atMs": 3100,
+        "select": {
+          "componentType": "pushbutton",
+          "index": 1
+        },
+        "patch": {
+          "pressed": true
+        }
+      },
+      {
+        "atMs": 3400,
+        "select": {
+          "componentType": "pushbutton",
+          "index": 1
+        },
+        "patch": {
+          "pressed": false
+        }
+      },
+      {
+        "atMs": 3800,
+        "select": {
+          "componentType": "pushbutton",
+          "index": 2
+        },
+        "patch": {
+          "pressed": true
+        }
+      },
+      {
+        "atMs": 4100,
+        "select": {
+          "componentType": "pushbutton",
+          "index": 2
+        },
+        "patch": {
+          "pressed": false
+        }
+      }
+    ]
+  },
+  "solutionRunMs": 9000,
+  "successText": "You completed Simon Says. Watch a three-color sequence and repeat it with three pull-up buttons."
+}

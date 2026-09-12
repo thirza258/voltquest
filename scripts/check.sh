@@ -37,6 +37,12 @@ step "frontend: initial JS payload budget (${BUDGET_KB} kB gzipped)"
   total=0
   while IFS= read -r asset; do
     [ -n "$asset" ] || continue
+    case "$asset" in
+      assets/monaco-*|assets/blockly-*|assets/VirtualPhone-*)
+        echo "FAIL: $asset must load lazily, but index.html requests it eagerly."
+        exit 1
+        ;;
+    esac
     [ -f "dist/$asset" ] || { echo "referenced but missing: dist/$asset"; exit 1; }
     size=$(gzip -9 -c "dist/$asset" | wc -c | tr -d ' ')
     printf '  %-48s %8.1f kB\n' "$asset" "$(echo "$size" | awk '{print $1/1024}')"

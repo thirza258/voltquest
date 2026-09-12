@@ -68,9 +68,9 @@ center trench, independent rails and the distinction between cable color and ele
 The Raspberry Pi canvas drawing is an explicitly simplified GPIO teaching diagram, with all 40
 physical pin numbers and live damage/power indicators. It is not a mechanically exact board drawing.
 
-Prepared wiring is read-only; editing code and operating buttons/sensors are supported. Freeform
-rewiring, tutorial progress persistence, Monaco/Blockly editor components, the virtual phone, and
-the full campaign/sandbox workspaces remain separate unfinished tasks.
+Prepared tutorial wiring is read-only; editing code and operating buttons/sensors are supported.
+Tutorial rewiring and persistent lesson progress remain optional extensions. The separate campaign
+and sandbox workspaces now provide Monaco/Blockly, freeform wiring, and the virtual ESP32 phone.
 
 ## API
 

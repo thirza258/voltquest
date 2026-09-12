@@ -1,0 +1,287 @@
+{
+  "id": "w2-l3",
+  "worldId": "w2",
+  "order": 3,
+  "title": "The Dimmer",
+  "codeName": "Level 2-3",
+  "board": "uno",
+  "startBoard": "uno",
+  "boardSwitcher": "locked",
+  "boardMode": "half",
+  "xp": 190,
+  "estimatedMinutes": 10,
+  "summary": "Turn a potentiometer to vary the duty cycle and brightness of an LED.",
+  "concepts": [
+    "PWM",
+    "ADC",
+    "map",
+    "potentiometer"
+  ],
+  "briefing": [
+    {
+      "mood": "happy",
+      "text": "Turn a potentiometer to vary the duty cycle and brightness of an LED."
+    },
+    {
+      "mood": "thinking",
+      "text": "Build the circuit, write the program, then use the live objectives and hints to check each connection."
+    }
+  ],
+  "learn": {
+    "title": "PWM",
+    "body": "Turn a potentiometer to vary the duty cycle and brightness of an LED.\n\nThe two outer pot terminals go to power and ground; only the middle wiper goes to A0.\n\nScale 0–1023 ADC readings to 0–255 PWM and turn the knob to at least three positions while running.",
+    "links": []
+  },
+  "starterCircuit": null,
+  "starterCode": "void setup() {\n  // Configure your pins here.\n}\n\nvoid loop() {\n  // Read inputs and control your outputs here.\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": [
+    "uno",
+    "resistor",
+    "led",
+    "potentiometer"
+  ],
+  "objectives": [
+    {
+      "id": "wiring",
+      "text": "Wire the pot across 5 V/GND, its wiper to A0, and a protected LED to D9",
+      "rules": [
+        {
+          "type": "path",
+          "from": {
+            "mcuPin": "D9"
+          },
+          "to": {
+            "componentType": "led",
+            "pin": "anode"
+          },
+          "through": [
+            {
+              "componentType": "resistor",
+              "props": {
+                "ohms": 220
+              }
+            }
+          ]
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "GND"
+          },
+          "contains": {
+            "componentType": "led",
+            "pin": "cathode"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "A0"
+          },
+          "contains": {
+            "componentType": "potentiometer",
+            "pin": "wiper"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "GND"
+          },
+          "contains": {
+            "componentType": "potentiometer",
+            "pin": "end1"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "5V"
+          },
+          "contains": {
+            "componentType": "potentiometer",
+            "pin": "end2"
+          }
+        }
+      ],
+      "hints": {
+        "tier1": "The two outer pot terminals go to power and ground; only the middle wiper goes to A0.",
+        "tier2": {
+          "mcuPins": [
+            "A0",
+            "D9"
+          ],
+          "componentTypes": [
+            "potentiometer",
+            "led"
+          ],
+          "text": "The two outer pot terminals go to power and ground; only the middle wiper goes to A0."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "vary",
+      "text": "Read A0 and produce at least three PWM brightness settings",
+      "rules": [
+        {
+          "type": "analog_read_seen",
+          "pin": "A0",
+          "minSamples": 3
+        },
+        {
+          "type": "pwm_varies",
+          "pin": "D9",
+          "minDistinctDuties": 3
+        }
+      ],
+      "hints": {
+        "tier1": "Scale 0–1023 ADC readings to 0–255 PWM and turn the knob to at least three positions while running.",
+        "tier2": {
+          "componentTypes": [
+            "potentiometer"
+          ],
+          "text": "Scale 0–1023 ADC readings to 0–255 PWM and turn the knob to at least three positions while running."
+        },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [
+      {
+        "type": "code_max_lines",
+        "max": 20
+      }
+    ],
+    "threeText": "Use 20 non-comment lines or fewer"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "half",
+      "breadboards": [
+        {
+          "id": "bb1",
+          "type": "half",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "mcu": "uno",
+      "components": [
+        {
+          "id": "c_uno",
+          "type": "uno",
+          "props": {},
+          "rotation": 0,
+          "position": {
+            "x": 0,
+            "y": -552
+          }
+        },
+        {
+          "id": "c_resistor1",
+          "type": "resistor",
+          "props": {
+            "ohms": 220
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a20"
+          }
+        },
+        {
+          "id": "c_led2",
+          "type": "led",
+          "props": {
+            "color": "red"
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a25"
+          }
+        },
+        {
+          "id": "c_potentiometer6",
+          "type": "potentiometer",
+          "props": {
+            "ohms": 10000
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "f20"
+          }
+        }
+      ],
+      "wires": [
+        {
+          "id": "w_q3",
+          "from": "c_uno:D9",
+          "to": "bb1:b20",
+          "color": "green"
+        },
+        {
+          "id": "w_q4",
+          "from": "bb1:b24",
+          "to": "bb1:b25",
+          "color": "green"
+        },
+        {
+          "id": "w_q5",
+          "from": "bb1:b26",
+          "to": "c_uno:GND",
+          "color": "black"
+        },
+        {
+          "id": "w_q7",
+          "from": "bb1:g20",
+          "to": "c_uno:GND",
+          "color": "black"
+        },
+        {
+          "id": "w_q8",
+          "from": "bb1:g22",
+          "to": "c_uno:5V",
+          "color": "red"
+        },
+        {
+          "id": "w_q9",
+          "from": "bb1:g21",
+          "to": "c_uno:A0",
+          "color": "green"
+        }
+      ],
+      "meta": {}
+    },
+    "code": "void setup() { pinMode(9, OUTPUT); }\nvoid loop() {\n  int reading = analogRead(A0);\n  analogWrite(9, map(reading, 0, 1023, 0, 255));\n  delay(20);\n}\n",
+    "blocklyXml": null,
+    "actions": [
+      {
+        "atMs": 300,
+        "select": {
+          "componentType": "potentiometer"
+        },
+        "patch": {
+          "value": 0.1
+        }
+      },
+      {
+        "atMs": 600,
+        "select": {
+          "componentType": "potentiometer"
+        },
+        "patch": {
+          "value": 0.9
+        }
+      }
+    ]
+  },
+  "solutionRunMs": 7000,
+  "successText": "You completed The Dimmer. Turn a potentiometer to vary the duty cycle and brightness of an LED."
+}

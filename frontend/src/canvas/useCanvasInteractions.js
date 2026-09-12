@@ -139,6 +139,7 @@ function useRafSchedule(fn) {
   const hasRaf = typeof requestAnimationFrame === 'function'
 
   const cancel = useCallback(() => {
+    payload.current = null
     if (!handle.current) return
     if (hasRaf) cancelAnimationFrame(handle.current)
     else clearTimeout(handle.current)
@@ -225,8 +226,6 @@ export function useCanvasInteractions({
 
   const gesture = useRef(null)
   const spaceDown = useRef(false)
-  /** Last hole name used for a move candidate — lets an unchanged pointer skip the anchor search. */
-  const lastAnchorKey = useRef(null)
 
   /** Pointer event → svg-local point. */
   const toScreen = useCallback(
@@ -324,25 +323,20 @@ export function useCanvasInteractions({
 
   // ---------------------------------------------------------------- move drag
 
-  const [scheduleDrag] = useRafSchedule((world) => {
-    if (!world) return
+  const [scheduleDrag, cancelDrag] = useRafSchedule((screen) => {
+    if (!screen) return
     const g = gesture.current
     if (!g || g.type !== 'move') return
     const { doc: d } = ctx.current
+    const world = ctx.current.viewport.toWorld(screen)
     const origin = { x: world.x - g.grab.dx, y: world.y - g.grab.dy }
-    // Skip the anchor search while the pointer stays inside the same half-pitch cell.
-    const anchorKey = `${Math.round(origin.x / (PITCH / 2))}:${Math.round(origin.y / (PITCH / 2))}:${g.comp.rotation ?? 0}`
-    if (anchorKey === lastAnchorKey.current) return
-    lastAnchorKey.current = anchorKey
-    const result = nearestValidOrigin({ ...g.comp }, g.def, origin, d, registry)
-    // The gesture ref carries the result so pointer-up never reads a frame-behind render state.
-    g.result = { ...result, rawOrigin: origin }
-    setDrag({ comp: g.comp, def: g.def, ...g.result })
+    const result = nearestValidOrigin(g.comp, g.def, origin, d, registry)
+    setDrag({ comp: g.comp, def: g.def, ...result, rawOrigin: origin })
   })
 
   // ---------------------------------------------------------------- wire draft
 
-  const [scheduleWire] = useRafSchedule((payload) => {
+  const [scheduleWire, cancelScheduledWire] = useRafSchedule((payload) => {
     if (!payload) return
     const g = gesture.current
     if (!g || g.type !== 'wire') return
@@ -359,11 +353,6 @@ export function useCanvasInteractions({
     })
   })
 
-  const cancelWire = useCallback(() => {
-    if (gesture.current?.type === 'wire') gesture.current = null
-    setWireDraft(null)
-  }, [])
-
   /** Begin a rubber-band wire at `terminal`. */
   const startWire = useCallback((event, terminal, pos, world) => {
     const { wireColor: color } = ctx.current
@@ -375,6 +364,7 @@ export function useCanvasInteractions({
 
   const onPointerDown = useCallback(
     (event) => {
+      if (gesture.current || event.isPrimary === false) return
       if (event.button !== 0 && event.button !== 1) return
       const { doc: d, readOnly: ro, tool: t } = ctx.current
       const screen = toScreen(event)
@@ -447,9 +437,11 @@ export function useCanvasInteractions({
       const screen = toScreen(event)
       const g = gesture.current
       if (!g) {
+        if (event.isPrimary === false) return
         scheduleHover({ event, screen })
         return
       }
+      if (event.pointerId !== g.pointerId) return
       const world = ctx.current.viewport.toWorld(screen)
 
       if (g.type === 'pan') {
@@ -467,14 +459,15 @@ export function useCanvasInteractions({
         g.moved = true
         if (g.promote === 'move' && g.comp) {
           gesture.current = { ...g, type: 'move' }
-          lastAnchorKey.current = null
           const { selectedIds: sel, onSelect: select } = ctx.current
           if (!sel.includes(g.comp.id)) select?.([g.comp.id])
-          scheduleDrag(world)
+          scheduleDrag(screen)
           return
         }
         if (g.promote === 'wire') {
-          const target = terminalAt(event, world)
+          const terminal = `${g.hit.boardId}:${g.hit.hole.name}`
+          const pos = safeTerminalPosition(ctx.current.doc, terminal)
+          const target = pos ? { terminal, pos } : null
           if (target) {
             startWire(event, target.terminal, target.pos, world)
             return
@@ -487,7 +480,7 @@ export function useCanvasInteractions({
       }
 
       if (g.type === 'move') {
-        scheduleDrag(world)
+        scheduleDrag(screen)
         return
       }
 
@@ -495,20 +488,25 @@ export function useCanvasInteractions({
         scheduleWire({ event, world })
       }
     },
-    [scheduleDrag, scheduleHover, scheduleWire, startWire, terminalAt, toScreen],
+    [scheduleDrag, scheduleHover, scheduleWire, startWire, toScreen],
   )
 
   const finishGesture = useCallback(
     (event, cancelled) => {
       const g = gesture.current
+      if (!g || event.pointerId !== g.pointerId) return
       gesture.current = null
+      cancelDrag()
+      cancelScheduledWire()
+      clearHover()
+      setDrag(null)
+      setWireDraft(null)
       setPanning(false)
       try {
         rootRef?.current?.releasePointerCapture?.(event.pointerId)
       } catch {
         // best effort
       }
-      if (!g) return
       const c = ctx.current
 
       if (g.type === 'pan') {
@@ -532,18 +530,12 @@ export function useCanvasInteractions({
       }
 
       if (g.type === 'move') {
-        setDrag(null)
-        lastAnchorKey.current = null
-        if (cancelled) return
-        // A flick that starts and ends inside one frame never reaches the rAF callback — resolve the
-        // candidate here so the drop always answers with a move or an explicit rejection.
-        let result = g.result
-        if (!result) {
-          const world = ctx.current.viewport.toWorld(toScreen(event))
-          const origin = { x: world.x - g.grab.dx, y: world.y - g.grab.dy }
-          result = nearestValidOrigin({ ...g.comp }, g.def, origin, ctx.current.doc, registry)
-        }
-        if (!result) return
+        if (cancelled || c.readOnly || !c.doc.components.includes(g.comp)) return
+        // Resolve the release position even if a preview was painted: the last pointer move may
+        // still be queued for the next frame, or the pointer-up may have newer coordinates.
+        const world = c.viewport.toWorld(toScreen(event))
+        const origin = { x: world.x - g.grab.dx, y: world.y - g.grab.dy }
+        const result = nearestValidOrigin(g.comp, g.def, origin, c.doc, registry)
         if (!result.valid || !result.candidate) {
           c.onDropRejected?.(result.reason ?? 'invalid_placement')
           return
@@ -554,16 +546,20 @@ export function useCanvasInteractions({
       }
 
       if (g.type === 'wire') {
-        setWireDraft(null)
-        if (cancelled) return
+        if (cancelled || c.readOnly) return
         const world = ctx.current.viewport.toWorld(toScreen(event))
         const target = terminalAt(event, world)
         if (!target || target.terminal === g.from) return
         c.onAddWire?.(g.from, target.terminal, g.color)
       }
     },
-    [rootRef, terminalAt, toScreen],
+    [cancelDrag, cancelScheduledWire, clearHover, rootRef, terminalAt, toScreen],
   )
+
+  const cancelGesture = useCallback(() => {
+    const g = gesture.current
+    if (g) finishGesture({ pointerId: g.pointerId }, true)
+  }, [finishGesture])
 
   const onPointerUp = useCallback((event) => finishGesture(event, false), [finishGesture])
   const onPointerCancel = useCallback((event) => finishGesture(event, true), [finishGesture])
@@ -578,6 +574,7 @@ export function useCanvasInteractions({
     if (!el) return undefined
     const onWheel = (event) => {
       event.preventDefault()
+      if (gesture.current) return
       const scale = event.deltaMode === 1 ? LINE_HEIGHT_PX : event.deltaMode === 2 ? PAGE_HEIGHT_PX : 1
       const { viewport: vp } = ctx.current
       if (event.ctrlKey || event.metaKey) {
@@ -687,10 +684,11 @@ export function useCanvasInteractions({
         return
       }
       if (key === 'Escape') {
-        if (gesture.current?.type === 'wire') cancelWire()
+        if (gesture.current) cancelGesture()
         else c.onSelect?.([])
         return
       }
+      if (gesture.current) return
       if (key === 'v' || key === 'V') {
         c.onToolChange?.('select')
         return
@@ -742,6 +740,7 @@ export function useCanvasInteractions({
     }
     const onBlur = () => {
       spaceDown.current = false
+      cancelGesture()
     }
     document.addEventListener('keydown', onKeyDown)
     document.addEventListener('keyup', onKeyUp)
@@ -751,7 +750,7 @@ export function useCanvasInteractions({
       document.removeEventListener('keyup', onKeyUp)
       window.removeEventListener('blur', onBlur)
     }
-  }, [cancelWire, inScope])
+  }, [cancelGesture, inScope])
 
   // ---------------------------------------------------------------- derived
 
@@ -774,6 +773,7 @@ export function useCanvasInteractions({
       onPointerMove,
       onPointerUp,
       onPointerCancel,
+      onLostPointerCapture: onPointerCancel,
       onPointerLeave,
       onDragOver,
       onDragEnter: onDragOver,

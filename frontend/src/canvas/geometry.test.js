@@ -175,6 +175,17 @@ describe('snapping and placement validation', () => {
     expect(moved.candidate.position).toEqual({ x: 0, y: 0 })
   })
 
+  it('ranks fallback anchors by distance after snapping at a rail gap', () => {
+    const origin = { x: 474, y: -16 }
+    const result = nearestValidOrigin({ ...base, rotation: 90 }, resistorDef, origin, doc)
+    expect(result.valid).toBe(true)
+    expect(result.candidate.anchor).toEqual({ board: 'bb1', hole: 'TP16' })
+    expect(registry.resolvePins(result.candidate, doc).valid).toBe(true)
+    const chosen = holeWorldPosition(doc, 'bb1', 'TP16')
+    const farther = holeWorldPosition(doc, 'bb1', 'TP15')
+    expect(Math.hypot(chosen.x - origin.x, chosen.y - origin.y)).toBeLessThan(Math.hypot(farther.x - origin.x, farther.y - origin.y))
+  })
+
   it('describes placements and compares them', () => {
     const ledDoc = makeDoc({ boardMode: 'half' })
     place(ledDoc, 'led', 'bb1', 'e5', {}, 90)

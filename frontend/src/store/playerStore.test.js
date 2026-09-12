@@ -42,6 +42,64 @@ describe('playerStore', () => {
     vi.restoreAllMocks()
   })
 
+  it('deduplicates concurrent guest initialization', async () => {
+    let finish
+    global.fetch = mockFetch({ 'POST /players/guest': () => new Promise(resolve => { finish = resolve }) })
+    const store = await freshStore()
+    const first = store.getState().ensureGuest()
+    const second = store.getState().ensureGuest()
+    expect(global.fetch).toHaveBeenCalledTimes(1)
+    finish({ body: { token: 'one', player: GUEST } })
+    await Promise.all([first, second])
+    expect(store.getState().token).toBe('one')
+  })
+
+  it('merges the real singular completion response without dropping other levels', async () => {
+    global.fetch = mockFetch({
+      'POST /players/guest': () => ({ body: { token: 'one', player: GUEST } }),
+      'POST /progress/w1-l2/complete': () => ({ body: { player: { ...GUEST, xp: 150 }, progress: { level_id: 'w1-l2', stars: 2, xp_earned: 150 } } }),
+    })
+    const store = await freshStore(); await store.getState().ensureGuest()
+    store.setState({ progress: { 'w1-l1': { stars: 3 } } })
+    store.getState().completeLevel('w1-l2', { level: { xp: 120 }, stars: 2 })
+    await store.getState().flushPending()
+    expect(store.getState().progress['w1-l2'].stars).toBe(2)
+    expect(store.getState().progress['w1-l1'].stars).toBe(3)
+    expect(store.getState().progress.stars).toBeUndefined()
+  })
+
+  it('preserves operations appended while a queued request is in flight', async () => {
+    let finish
+    global.fetch = mockFetch({
+      'POST /players/guest': () => ({ body: { token: 'one', player: GUEST } }),
+      'POST /progress/w1-l1/attempt': () => new Promise(resolve => { finish = resolve }),
+      'PATCH /players/me': () => ({ body: GUEST }),
+    })
+    const store = await freshStore(); await store.getState().ensureGuest()
+    store.getState().recordAttempt('w1-l1')
+    store.getState().setSettings({ audio: false })
+    expect(store.getState().pendingOps).toHaveLength(2)
+    finish({ body: { attempts: 1 } })
+    await store.getState().flushPending()
+    expect(store.getState().pendingOps).toHaveLength(0)
+    expect(global.fetch.mock.calls.some(([url]) => String(url).endsWith('/players/me'))).toBe(true)
+  })
+
+  it('does not restore a previous identity from a completion arriving after logout', async () => {
+    let finish
+    global.fetch = mockFetch({
+      'POST /players/guest': () => ({ body: { token: 'one', player: GUEST } }),
+      'POST /progress/w1-l1/complete': () => new Promise(resolve => { finish = resolve }),
+    })
+    const store = await freshStore(); await store.getState().ensureGuest()
+    store.getState().completeLevel('w1-l1', { level: { xp: 100 }, stars: 3 })
+    store.getState().logout()
+    finish({ body: { player: { ...GUEST, xp: 150 }, progress: { stars: 3 } } })
+    await store.getState().flushPending()
+    expect(store.getState().player).toBeNull()
+    expect(store.getState().progress).toEqual({})
+  })
+
   it('creates a guest and persists the token', async () => {
     global.fetch = mockFetch({
       'POST /players/guest': () => ({ status: 201, body: { token: 'tok-1', player: GUEST } }),

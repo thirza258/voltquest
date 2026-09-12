@@ -83,7 +83,7 @@ export async function request(method, path, body, { query, responseType = 'json'
     if (timer) clearTimeout(timer)
   }
 
-  if (res.status === 401) unauthorizedListeners.forEach((fn) => fn())
+  if (res.status === 401 && headers.Authorization && headers.Authorization === `Bearer ${token}` && path !== '/auth/login') unauthorizedListeners.forEach((fn) => fn())
   if (!res.ok) throw await parseError(res)
   if (res.status === 204) return null
   if (responseType === 'blob') return res.blob()

@@ -75,9 +75,20 @@ describe('api client', () => {
 
     const listener = vi.fn()
     const off = onUnauthorized(listener)
+    setToken('expired-token')
     fetchMock.mockResolvedValueOnce(jsonResponse(401, { detail: 'Not authenticated' }))
     await expect(api.players.me()).rejects.toMatchObject({ status: 401 })
     expect(listener).toHaveBeenCalledTimes(1)
+    off()
+  })
+
+  it('does not expire the current session for a rejected login', async () => {
+    setToken('current-session')
+    const listener = vi.fn()
+    const off = onUnauthorized(listener)
+    fetchMock.mockResolvedValueOnce(jsonResponse(401, { detail: 'Invalid credentials' }))
+    await expect(api.auth.login('wrong', 'password')).rejects.toMatchObject({ status: 401 })
+    expect(listener).not.toHaveBeenCalled()
     off()
   })
 

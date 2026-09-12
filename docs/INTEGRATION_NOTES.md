@@ -27,6 +27,26 @@ The canvas also ships `canvas/CanvasStyles.jsx`, which injects the `vq-strip*`, 
 and `vq-ghost` classes as a `<style>` element **inside** the `<svg>` so that PNG export keeps the
 styling. Do not move those rules into `index.css` — the export would lose them.
 
+### Device placement stability (2026-09-12)
+
+Pointer-up must resolve its own coordinates against the current document; a previously painted
+preview can be stale while the last move waits for requestAnimationFrame. Cancel queued drag/wire
+callbacks on every gesture ending so they cannot update a later gesture. Pointer ids must match,
+and Escape, lost capture, pointer cancellation and window blur must all clear the preview/capture.
+Keep wheel/zoom actions from shifting the breadboard during a device drag.
+
+Do not cache board snaps by a rounded half-pitch origin: a hole midpoint can sit inside that cell,
+so crossing it would leave the preview on the wrong hole. Rank distinct candidate anchors by their
+actual distance after snapping, rather than by search-offset order. Free-mounted devices render
+at the raw origin during the drag and snap only when committed. Select-mode wire drags keep the
+original pressed hole as their source, even if the first move has already reached another hole.
+
+Browser verification of editable placement uses a temporary in-browser mount of BreadboardCanvas
+with createDocumentStore. At that stage the workspace was unfinished; editable placement is now
+available in campaign and sandbox. Tutorials intentionally remain read-only.
+Real mouse drags verified LED placement, one undo entry per move, a fixed viewport, Escape cleanup,
+and continuous Uno preview movement before its final grid snap. The harness adds no application route.
+
 ## Circuit engine — verified against the CONTRACTS §5 reference numbers
 
 Measured with the real registry through `compileCircuit` + `evaluateCircuit`:
@@ -72,7 +92,7 @@ silently produces wires to `"[object Object]:5V"` and a `no_ground` issue.
 The old handoff understated the runtime blocker: not only was `runtime/index.js` a stub,
 `runtime/libraries/index.js` imported implementation files that did not exist. The assembled runtime
 and device/network adapters now run sketches through the real worker and deterministic inline path.
-Regression coverage includes all three authored quest solutions, not just the interpreter in isolation.
+Regression coverage now includes all 14 authored quest solutions, not just the interpreter in isolation.
 
 - Start the VM without executing its first slice synchronously. The simulation sends the initial
   environment after start; running setup immediately can bind sensors/displays before their circuit exists.
@@ -108,3 +128,35 @@ Tutorial presets initially connected jumpers directly to component pin terminals
 breadboard instructions this would suggest inserting a jumper into an already occupied hole.
 Presets now allocate separate free holes on the same strip, using the registry's actual connectivity.
 The regression suite checks that no cable hole is occupied by a component or another cable.
+
+## Workspace, projects and account integration (2026-09-12)
+
+- `useLevelSession` uses an optional seed for sandbox/public previews but assigns objectives and XP
+  only in campaign mode. It synchronizes the current store document/code after initialization, offers
+  drafts explicitly, and ignores reports from previous levels. The page owns runtime disposal.
+- `useAsyncResource` hides old data on the render before a route/filter effect starts, and cancels
+  obsolete responses. Otherwise a saved/forked project can initialize from the previous route's data.
+- `/progress/{id}/complete` returns **one progress record**, whereas `/progress` returns a map.
+  The player store merges those shapes separately. Queue entries are recorded before network calls;
+  flushing removes only the sent entry so concurrent additions survive. Account changes invalidate
+  in-flight completion/refresh responses. A rejected login does not expire the current guest token.
+- Local drafts are `vq.draft.<levelId>`, `vq.draft.sandbox` for a new circuit, and
+  `vq.draft.sandbox.<projectId>` for saved projects. Confirmed import/new replaces the unsaved slot;
+  a saved project's own draft remains independent. JSON validation runs before loading either files
+  or server projects. Pi imports require text mode, and the project/circuit/controller must agree.
+- Monaco uses `loader.config({monaco})`, local editor workers and a lazy component. Blockly media is
+  served from `frontend/public/blockly-media`. Vite's preload helper must stay in the shared vendor
+  chunk, or importing that helper would pull Monaco into the initial page despite `React.lazy`.
+- The virtual phone is an opaque `sandbox="allow-scripts"` iframe. Only the injected navigation
+  bridge executes: supplied scripts/active embeds/event handlers are removed, CSP blocks network
+  access, and the parent accepts messages only from that iframe with its current channel. Links
+  and GET/POST forms become simulated HTTP requests. Stop/reset/run changes invalidate old replies.
+- Reference solution actions may include `http`, `serial`, or `mqtt`. HTTP calls must be queued
+  before advancing virtual time; awaiting them first would deadlock the inline server.
+
+- A bounded cache retains the three most recently opened/saved server projects. Network/5xx
+  failures can reopen a cached snapshot only for its owner, then offer the newer local draft.
+  Server 401/403/404 responses never fall back to a private cached project. Offline My projects
+  lists the available cached entries. This does not provide offline installation or a service worker.
+- If a player starts editing while an older draft is offered, those explicit edits become the new
+  local draft immediately. Autosave must not stay disabled while accepting fresh edits.

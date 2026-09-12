@@ -101,14 +101,20 @@ export async function runLevelSolution(level, options = {}) {
       .map((a) => ({ ...a, componentId: resolveActionTarget(doc, a.select) }))
       .sort((a, b) => (a.atMs ?? 0) - (b.atMs ?? 0))
     let nextAction = 0
+    let actionError = null
 
     let elapsedMs = 0
     while (elapsedMs < runMs) {
       while (nextAction < actions.length && (actions[nextAction].atMs ?? 0) <= elapsedMs) {
         const action = actions[nextAction++]
         if (action.componentId && action.patch) sim.setControl(action.componentId, action.patch)
+        if (action.http) void sim.httpRequest(action.http).catch((error) => { actionError = error.error ?? error.message ?? 'HTTP action failed' })
+        if (action.serial != null) sim.serialWrite(action.serial)
+        if (action.mqtt) sim.mqttPublish(action.mqtt.topic, action.mqtt.payload)
       }
       sim.advance(stepMs)
+      // Let request promises settle without introducing host timers into deterministic execution.
+      await Promise.resolve()
       elapsedMs += stepMs
       result = report()
       if (result.allPassed) break
@@ -124,7 +130,7 @@ export async function runLevelSolution(level, options = {}) {
       warnings: state.warnings ?? [],
       events: state.events ?? [],
       serial: state.trace?.serialText ?? '',
-      error: state.runtimeError ? `${state.runtimeError.message} (line ${state.runtimeError.line})` : null,
+      error: state.runtimeError ? `${state.runtimeError.message} (line ${state.runtimeError.line})` : actionError,
     }
   } finally {
     sim.dispose()

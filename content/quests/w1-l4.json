@@ -1,0 +1,209 @@
+{
+  "id": "w1-l4",
+  "worldId": "w1",
+  "order": 4,
+  "title": "Code Awakening",
+  "codeName": "Level 1-4",
+  "board": "uno",
+  "startBoard": "uno",
+  "boardSwitcher": "locked",
+  "boardMode": "half",
+  "xp": 160,
+  "estimatedMinutes": 10,
+  "summary": "Make a protected LED blink under firmware control.",
+  "concepts": [
+    "pinMode",
+    "digitalWrite",
+    "delay",
+    "period"
+  ],
+  "briefing": [
+    {
+      "mood": "happy",
+      "text": "Make a protected LED blink under firmware control."
+    },
+    {
+      "mood": "thinking",
+      "text": "Build the circuit, write the program, then use the live objectives and hints to check each connection."
+    }
+  ],
+  "learn": {
+    "title": "pinMode",
+    "body": "Make a protected LED blink under firmware control.\n\nD13 replaces the constant 5 V supply. Keep the resistor in series and the cathode grounded.\n\nSet D13 to OUTPUT. Hold HIGH for 500 ms and LOW for 500 ms: the full period is 1000 ms.",
+    "links": []
+  },
+  "starterCircuit": null,
+  "starterCode": "void setup() {\n  // Configure your pins here.\n}\n\nvoid loop() {\n  // Read inputs and control your outputs here.\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": [
+    "uno",
+    "resistor",
+    "led"
+  ],
+  "objectives": [
+    {
+      "id": "led_path",
+      "text": "Connect D13 through 220 Ω to the LED",
+      "rules": [
+        {
+          "type": "path",
+          "from": {
+            "mcuPin": "D13"
+          },
+          "to": {
+            "componentType": "led",
+            "pin": "anode"
+          },
+          "through": [
+            {
+              "componentType": "resistor",
+              "props": {
+                "ohms": 220
+              }
+            }
+          ]
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "GND"
+          },
+          "contains": {
+            "componentType": "led",
+            "pin": "cathode"
+          }
+        }
+      ],
+      "hints": {
+        "tier1": "D13 replaces the constant 5 V supply. Keep the resistor in series and the cathode grounded.",
+        "tier2": {
+          "mcuPins": [
+            "D13",
+            "GND"
+          ],
+          "componentTypes": [
+            "resistor",
+            "led"
+          ],
+          "text": "D13 replaces the constant 5 V supply. Keep the resistor in series and the cathode grounded."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "blink",
+      "text": "Blink with a one-second period",
+      "rules": [
+        {
+          "type": "pin_toggles",
+          "pin": "D13",
+          "minEdges": 5
+        },
+        {
+          "type": "pin_period",
+          "pin": "D13",
+          "periodMs": 1000,
+          "toleranceMs": 80,
+          "minCycles": 2
+        }
+      ],
+      "hints": {
+        "tier1": "Set D13 to OUTPUT. Hold HIGH for 500 ms and LOW for 500 ms: the full period is 1000 ms.",
+        "tier2": {
+          "mcuPins": [
+            "D13"
+          ],
+          "text": "Set D13 to OUTPUT. Hold HIGH for 500 ms and LOW for 500 ms: the full period is 1000 ms."
+        },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [
+      {
+        "type": "code_max_lines",
+        "max": 14
+      }
+    ],
+    "threeText": "Use 14 non-comment lines or fewer"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "half",
+      "breadboards": [
+        {
+          "id": "bb1",
+          "type": "half",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "mcu": "uno",
+      "components": [
+        {
+          "id": "c_uno",
+          "type": "uno",
+          "props": {},
+          "rotation": 0,
+          "position": {
+            "x": 0,
+            "y": -552
+          }
+        },
+        {
+          "id": "c_resistor1",
+          "type": "resistor",
+          "props": {
+            "ohms": 220
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a20"
+          }
+        },
+        {
+          "id": "c_led2",
+          "type": "led",
+          "props": {
+            "color": "red"
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a25"
+          }
+        }
+      ],
+      "wires": [
+        {
+          "id": "w_q3",
+          "from": "c_uno:D13",
+          "to": "bb1:b20",
+          "color": "green"
+        },
+        {
+          "id": "w_q4",
+          "from": "bb1:b24",
+          "to": "bb1:b25",
+          "color": "green"
+        },
+        {
+          "id": "w_q5",
+          "from": "bb1:b26",
+          "to": "c_uno:GND",
+          "color": "black"
+        }
+      ],
+      "meta": {}
+    },
+    "code": "void setup() { pinMode(13, OUTPUT); }\nvoid loop() {\n  digitalWrite(13, HIGH);\n  delay(500);\n  digitalWrite(13, LOW);\n  delay(500);\n}\n",
+    "blocklyXml": null,
+    "actions": []
+  },
+  "solutionRunMs": 5000,
+  "successText": "You completed Code Awakening. Make a protected LED blink under firmware control."
+}

@@ -1,0 +1,247 @@
+{
+  "id": "w2-l2",
+  "worldId": "w2",
+  "order": 2,
+  "title": "Night Owl",
+  "codeName": "Level 2-2",
+  "board": "uno",
+  "startBoard": "uno",
+  "boardSwitcher": "locked",
+  "boardMode": "half",
+  "xp": 180,
+  "estimatedMinutes": 10,
+  "summary": "Measure light with a photoresistor voltage divider and print the ADC reading.",
+  "concepts": [
+    "voltage divider",
+    "analogRead",
+    "Serial",
+    "light"
+  ],
+  "briefing": [
+    {
+      "mood": "happy",
+      "text": "Measure light with a photoresistor voltage divider and print the ADC reading."
+    },
+    {
+      "mood": "thinking",
+      "text": "Build the circuit, write the program, then use the live objectives and hints to check each connection."
+    }
+  ],
+  "learn": {
+    "title": "voltage divider",
+    "body": "Measure light with a photoresistor voltage divider and print the ADC reading.\n\nThe LDR goes toward 5 V, the fixed 10 kΩ resistor toward GND, and A0 reads the midpoint.\n\nCall analogRead(A0) inside loop, print the integer, and change the light control to see the divider respond.",
+    "links": []
+  },
+  "starterCircuit": null,
+  "starterCode": "void setup() {\n  // Configure your pins here.\n}\n\nvoid loop() {\n  // Read inputs and control your outputs here.\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": [
+    "uno",
+    "ldr",
+    "resistor"
+  ],
+  "objectives": [
+    {
+      "id": "divider",
+      "text": "Build a 5 V LDR / 10 kΩ divider with its midpoint at A0",
+      "rules": [
+        {
+          "type": "path",
+          "from": {
+            "mcuPin": "5V"
+          },
+          "to": {
+            "componentType": "ldr",
+            "pin": "p1"
+          },
+          "through": []
+        },
+        {
+          "type": "path",
+          "from": {
+            "mcuPin": "GND"
+          },
+          "to": {
+            "componentType": "resistor",
+            "pin": "p2"
+          },
+          "through": []
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "A0"
+          },
+          "contains": {
+            "componentType": "ldr",
+            "pin": "p2"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "A0"
+          },
+          "contains": {
+            "componentType": "resistor",
+            "pin": "p1"
+          }
+        }
+      ],
+      "hints": {
+        "tier1": "The LDR goes toward 5 V, the fixed 10 kΩ resistor toward GND, and A0 reads the midpoint.",
+        "tier2": {
+          "mcuPins": [
+            "A0",
+            "5V",
+            "GND"
+          ],
+          "componentTypes": [
+            "ldr",
+            "resistor"
+          ],
+          "text": "The LDR goes toward 5 V, the fixed 10 kΩ resistor toward GND, and A0 reads the midpoint."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "measure",
+      "text": "Read A0 repeatedly and print Light: followed by a number",
+      "rules": [
+        {
+          "type": "analog_read_seen",
+          "pin": "A0",
+          "minSamples": 3
+        },
+        {
+          "type": "serial_matches",
+          "pattern": "Light: [0-9]+"
+        }
+      ],
+      "hints": {
+        "tier1": "Call analogRead(A0) inside loop, print the integer, and change the light control to see the divider respond.",
+        "tier2": {
+          "componentTypes": [
+            "ldr"
+          ],
+          "mcuPins": [
+            "A0"
+          ],
+          "text": "Call analogRead(A0) inside loop, print the integer, and change the light control to see the divider respond."
+        },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [
+      {
+        "type": "code_max_lines",
+        "max": 20
+      }
+    ],
+    "threeText": "Use 20 non-comment lines or fewer"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "half",
+      "breadboards": [
+        {
+          "id": "bb1",
+          "type": "half",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "mcu": "uno",
+      "components": [
+        {
+          "id": "c_uno",
+          "type": "uno",
+          "props": {},
+          "rotation": 0,
+          "position": {
+            "x": 0,
+            "y": -552
+          }
+        },
+        {
+          "id": "c_ldr1",
+          "type": "ldr",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a6"
+          }
+        },
+        {
+          "id": "c_resistor2",
+          "type": "resistor",
+          "props": {
+            "ohms": 10000
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "f6"
+          }
+        }
+      ],
+      "wires": [
+        {
+          "id": "w_q3",
+          "from": "c_uno:5V",
+          "to": "bb1:b6",
+          "color": "red"
+        },
+        {
+          "id": "w_q4",
+          "from": "bb1:b8",
+          "to": "bb1:g6",
+          "color": "green"
+        },
+        {
+          "id": "w_q5",
+          "from": "bb1:g10",
+          "to": "c_uno:GND",
+          "color": "black"
+        },
+        {
+          "id": "w_q6",
+          "from": "bb1:c8",
+          "to": "c_uno:A0",
+          "color": "green"
+        }
+      ],
+      "meta": {}
+    },
+    "code": "void setup() { Serial.begin(9600); }\nvoid loop() {\n  int light = analogRead(A0);\n  Serial.print(\"Light: \");\n  Serial.println(light);\n  delay(100);\n}\n",
+    "blocklyXml": null,
+    "actions": [
+      {
+        "atMs": 400,
+        "select": {
+          "componentType": "ldr"
+        },
+        "patch": {
+          "lightLevel": 10
+        }
+      },
+      {
+        "atMs": 800,
+        "select": {
+          "componentType": "ldr"
+        },
+        "patch": {
+          "lightLevel": 90
+        }
+      }
+    ]
+  },
+  "solutionRunMs": 7000,
+  "successText": "You completed Night Owl. Measure light with a photoresistor voltage divider and print the ADC reading."
+}

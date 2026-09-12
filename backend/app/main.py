@@ -9,10 +9,12 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from . import content
-from .config import get_settings
-from .db import create_all
-from .routers import auth, boards, exports, health, leaderboard, players, progress, projects, quests, showcase, tutorials
+from app.api.errors import service_error_response
+from app.api.router import api_router
+from app.core.config import get_settings
+from app.db.session import create_all
+from app.domain.errors import ServiceError
+from app.services import content
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 log = logging.getLogger("voltquest")
@@ -44,20 +46,8 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    for router in (
-        health.router,
-        boards.router,
-        tutorials.router,
-        players.router,
-        auth.router,
-        quests.router,
-        progress.router,
-        projects.router,
-        showcase.router,
-        exports.router,
-        leaderboard.router,
-    ):
-        app.include_router(router, prefix="/api")
+    app.add_exception_handler(ServiceError, service_error_response)
+    app.include_router(api_router)
     return app
 
 

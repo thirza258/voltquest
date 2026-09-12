@@ -1,0 +1,17 @@
+# VoltQuest — https://pcb.nevatal.id
+# /sitemap.xml is generated from ../content during `vite build`; see ../vite-sitemap.js.
+
+User-agent: *
+Allow: /
+
+# Per-player and user-generated pages: no stable content to index.
+Disallow: /profile
+Disallow: /sandbox/
+
+# The JSON API serves data, not pages.
+Disallow: /api/
+
+# /assets/ stays crawlable on purpose: this is a client-rendered app, so a crawler that
+# cannot fetch the bundle sees an empty page on every route.
+
+Sitemap: https://pcb.nevatal.id/sitemap.xml

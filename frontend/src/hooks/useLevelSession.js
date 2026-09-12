@@ -99,12 +99,14 @@ export function useLevelSession({ levelId, mode = 'campaign', level: levelOverri
   const firedRunRef = useRef(null)
   const sessionKey = `${mode}:${levelId ?? 'new'}`
   const loadedKeyRef = useRef(null)
+  const openedInputs = useRef(null)
 
   // ---- open the level -----------------------------------------------------------------------
 
   useEffect(() => {
     if (!enabled) return
     if (loadedKeyRef.current === sessionKey) return
+    if (loadedKeyRef.current != null) useWorkspaceStore.getState().saveDraft()
     loadedKeyRef.current = sessionKey
 
     const workspace = useWorkspaceStore.getState()
@@ -116,7 +118,7 @@ export function useLevelSession({ levelId, mode = 'campaign', level: levelOverri
       levelId,
       code: level?.starterCode ?? FALLBACK_CODE,
       blocklyXml: level?.starterBlocklyXml ?? null,
-      editorMode: 'text',
+      editorMode: level?.starterEditorMode ?? 'text',
     })
     workspace.setDocProvider(() => useDocumentStore.getState().doc)
     loadDoc(starterDoc)
@@ -125,6 +127,7 @@ export function useLevelSession({ levelId, mode = 'campaign', level: levelOverri
     sim.reset()
     sim.setDocument(useDocumentStore.getState().doc)
     sim.setCode(useWorkspaceStore.getState().code)
+    openedInputs.current = { doc: useDocumentStore.getState().doc, code: useWorkspaceStore.getState().code }
 
     passedRef.current = false
     firedRunRef.current = null
@@ -132,19 +135,32 @@ export function useLevelSession({ levelId, mode = 'campaign', level: levelOverri
 
     const draft = workspace.peekDraft(mode, levelId)
     setDraftOffer(draftIsUseful(draft) ? draft : null)
+    workspace.setDraftsEnabled(mode !== 'showcase' && !draftIsUseful(draft))
   }, [enabled, sessionKey, level, levelId, mode, loadDoc])
 
   // ---- keep the simulation in step with the editor -------------------------------------------
 
   useEffect(() => {
     if (!enabled || loadedKeyRef.current !== sessionKey) return
-    useSimStore.getState().setDocument(doc)
+    useSimStore.getState().setDocument(useDocumentStore.getState().doc)
   }, [doc, enabled, sessionKey])
 
   useEffect(() => {
     if (!enabled || loadedKeyRef.current !== sessionKey) return
-    useSimStore.getState().setCode(code)
+    useSimStore.getState().setCode(useWorkspaceStore.getState().code)
   }, [code, enabled, sessionKey])
+
+  // Editing the fresh circuit is also a choice to continue with it. Never leave autosave disabled
+  // while accepting new edits merely because the player did not press the draft banner's buttons.
+  useEffect(() => {
+    if (!enabled || !draftOffer || mode === 'showcase' || loadedKeyRef.current !== sessionKey) return
+    const workspace = useWorkspaceStore.getState()
+    if (doc !== useDocumentStore.getState().doc || code !== workspace.code) return
+    if (doc === openedInputs.current?.doc && code === openedInputs.current?.code) return
+    workspace.setDraftsEnabled(true)
+    workspace.saveDraft()
+    setDraftOffer(null)
+  }, [code, doc, draftOffer, enabled, mode, sessionKey])
 
   // Circuit edits are not routed through workspaceStore, so drafts are saved from here.
   useEffect(() => {
@@ -156,7 +172,8 @@ export function useLevelSession({ levelId, mode = 'campaign', level: levelOverri
   // ---- success latch ------------------------------------------------------------------------
 
   useEffect(() => {
-    if (!enabled || mode !== 'campaign' || !level) return
+    if (!enabled || mode !== 'campaign' || !level || useSimStore.getState().level !== level) return
+    if (objectives !== useSimStore.getState().objectives) return
     const allPassed = !!objectives?.allPassed
     const wasPassed = passedRef.current
     passedRef.current = allPassed
@@ -175,6 +192,8 @@ export function useLevelSession({ levelId, mode = 'campaign', level: levelOverri
       component_count: objectives?.efficiency?.componentCount ?? 0,
       damage_count: Object.keys(simState?.damaged ?? {}).length,
       duration_ms: Math.round(simState?.millis ?? 0),
+      code: useWorkspaceStore.getState().code,
+      circuit: useDocumentStore.getState().doc,
     })
     setSuccess({
       stars,
@@ -194,10 +213,10 @@ export function useLevelSession({ levelId, mode = 'campaign', level: levelOverri
       sim.stop()
       return undefined
     }
-    if (level) usePlayerStore.getState().recordAttempt(level.id, useWorkspaceStore.getState().maxHintTier())
+    if (level && mode === 'campaign') usePlayerStore.getState().recordAttempt(level.id, useWorkspaceStore.getState().maxHintTier())
     passedRef.current = false
     return sim.run()
-  }, [level, simState?.status])
+  }, [level, mode, simState?.status])
 
   const stop = useCallback(() => useSimStore.getState().stop(), [])
   const resetSim = useCallback(() => {
@@ -209,9 +228,9 @@ export function useLevelSession({ levelId, mode = 'campaign', level: levelOverri
     const workspace = useWorkspaceStore.getState()
     const merged = objectivesWithHints(useSimStore.getState().objectives, level)
     const result = workspace.requestHint(merged)
-    if (result && level) usePlayerStore.getState().recordAttempt(level.id, workspace.maxHintTier())
+    if (result && level && mode === 'campaign') usePlayerStore.getState().recordAttempt(level.id, workspace.maxHintTier())
     return result
-  }, [level])
+  }, [level, mode])
 
   /** Put the level back to its starter circuit and sketch, dropping the draft. */
   const restartLevel = useCallback(() => {
@@ -222,9 +241,10 @@ export function useLevelSession({ levelId, mode = 'campaign', level: levelOverri
       levelId,
       code: level?.starterCode ?? FALLBACK_CODE,
       blocklyXml: level?.starterBlocklyXml ?? null,
-      editorMode: 'text',
+      editorMode: level?.starterEditorMode ?? 'text',
     })
     workspace.setDocProvider(() => useDocumentStore.getState().doc)
+    workspace.setDraftsEnabled(mode !== 'showcase')
     loadDoc(buildStarterDoc(level))
     const sim = useSimStore.getState()
     sim.reset()
@@ -241,15 +261,17 @@ export function useLevelSession({ levelId, mode = 'campaign', level: levelOverri
     if (!draft) return
     const workspace = useWorkspaceStore.getState()
     workspace.applyDraft(draft)
+    workspace.setDraftsEnabled(mode !== 'showcase')
     if (draft.doc) loadDoc(draft.doc)
     const sim = useSimStore.getState()
     sim.setDocument(useDocumentStore.getState().doc)
     sim.setCode(useWorkspaceStore.getState().code)
     setDraftOffer(null)
-  }, [draftOffer, loadDoc])
+  }, [draftOffer, loadDoc, mode])
 
   const dismissDraft = useCallback(() => {
     useWorkspaceStore.getState().discardDraft(mode, levelId)
+    useWorkspaceStore.getState().setDraftsEnabled(mode !== 'showcase')
     setDraftOffer(null)
   }, [levelId, mode])
 
@@ -263,7 +285,7 @@ export function useLevelSession({ levelId, mode = 'campaign', level: levelOverri
 
   return {
     level,
-    notFound: !!levelId && !level,
+    notFound: mode === 'campaign' && !!levelId && !level,
     boardId,
     doc,
     code,

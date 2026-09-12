@@ -31,7 +31,11 @@ LEVEL_W1_L1 = {
     "summary": "Light an LED.",
     "concepts": ["current"],
     "objectives": [
-        {"id": "led_present", "text": "Place an LED", "rules": [{"type": "component_present", "componentType": "led"}]},
+        {
+            "id": "led_present",
+            "text": "Place an LED",
+            "rules": [{"type": "component_present", "componentType": "led"}],
+        },
         {"id": "led_lit", "text": "Light it", "rules": [{"type": "led_lit"}]},
     ],
     "starCriteria": {"damageExpected": False, "three": []},
@@ -128,28 +132,44 @@ def content_dir(tmp_path_factory) -> Path:
     _write_content(root)
     os.environ["CONTENT_DIR"] = str(root)
 
-    from app.config import get_settings
+    from app.core.config import get_settings
 
     get_settings.cache_clear()
-    from app import content as content_module
+    from app.services import content as content_module
 
     content_module.load_content(root)
     return root
 
 
 @pytest.fixture()
-def client(content_dir):
+def database_schema(content_dir):
+    """A fresh in-memory schema shared by HTTP and service tests."""
+    from app.db.base import Base
+    from app.db.session import create_all, engine
+
+    Base.metadata.drop_all(bind=engine)
+    create_all()
+    yield
+    Base.metadata.drop_all(bind=engine)
+
+
+@pytest.fixture()
+def db_session(database_schema):
+    """An application session with no FastAPI app or HTTP client."""
+    from app.db.session import session_scope
+
+    with session_scope() as db:
+        yield db
+
+
+@pytest.fixture()
+def client(database_schema):
     """A TestClient on a freshly created in-memory schema."""
+    from app.main import create_app
     from fastapi.testclient import TestClient
 
-    from app.db import Base, engine
-    from app.main import create_app
-
-    Base.metadata.drop_all(bind=engine)
-    Base.metadata.create_all(bind=engine)
     with TestClient(create_app()) as test_client:
         yield test_client
-    Base.metadata.drop_all(bind=engine)
 
 
 @pytest.fixture()

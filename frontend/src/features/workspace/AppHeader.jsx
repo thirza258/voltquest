@@ -90,6 +90,7 @@ export function AppHeader({
   hintTier = 0,
   hintMax = 3,
   hintDisabled = false,
+  showHint = true,
   onHint,
   onResetSim,
   onRestartLevel,
@@ -201,7 +202,7 @@ export function AppHeader({
               </button>
             </Tooltip>
 
-            <Button
+            {showHint && <Button
               size="sm"
               variant="secondary"
               icon={<Lightbulb size={14} />}
@@ -212,7 +213,7 @@ export function AppHeader({
                 Hint {hintTier}/{hintMax}
                 <TierDots tier={hintTier} max={hintMax} />
               </span>
-            </Button>
+            </Button>}
 
             <Tooltip content="Clears damage, serial and timers; keeps your circuit">
               <IconButton size="md" icon={<RotateCcw size={15} />} label="Reset sim" onClick={onResetSim} />

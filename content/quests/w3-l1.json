@@ -1,0 +1,332 @@
+{
+  "id": "w3-l1",
+  "worldId": "w3",
+  "order": 1,
+  "title": "The Power Swap",
+  "codeName": "Level 3-1",
+  "board": "esp32",
+  "startBoard": "uno",
+  "boardSwitcher": "enabled",
+  "boardMode": "dual",
+  "xp": 210,
+  "estimatedMinutes": 18,
+  "summary": "Move from Uno to ESP32, protect a 5 V sensor echo, and scale a 12-bit ADC.",
+  "concepts": [
+    "3.3 V GPIO safety",
+    "voltage divider",
+    "12-bit ADC",
+    "ultrasonic"
+  ],
+  "briefing": [
+    {
+      "mood": "happy",
+      "text": "Move from Uno to ESP32, protect a 5 V sensor echo, and scale a 12-bit ADC."
+    },
+    {
+      "mood": "thinking",
+      "text": "Build the circuit, write the program, then use the live objectives and hints to check each connection."
+    }
+  ],
+  "learn": {
+    "title": "3.3 V GPIO safety",
+    "body": "Move from Uno to ESP32, protect a 5 V sensor echo, and scale a 12-bit ADC.\n\nUse the board selector to replace Uno with ESP32. The circuit needs a shared ground and 3.3 V-safe inputs.\n\nEcho goes through 1 kΩ to GPIO19. Add 2.2 kΩ from that junction to GND: a HIGH echo becomes about 3.38 V in this model.\n\nPower the pot from 3V3, not VIN. Map the ESP32 ADC range 0–4095 to 0–100 and print the percentage.",
+    "links": []
+  },
+  "starterCircuit": null,
+  "starterCode": "void setup() {\n  // Configure your pins here.\n}\n\nvoid loop() {\n  // Read inputs and control your outputs here.\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": [
+    "uno",
+    "esp32",
+    "ultrasonic_hcsr04",
+    "potentiometer",
+    "resistor",
+    "level_shifter"
+  ],
+  "objectives": [
+    {
+      "id": "board",
+      "text": "Switch the controller to ESP32",
+      "rules": [
+        {
+          "type": "mcu_is",
+          "board": "esp32"
+        }
+      ],
+      "hints": {
+        "tier1": "Use the board selector to replace Uno with ESP32. The circuit needs a shared ground and 3.3 V-safe inputs.",
+        "tier2": {
+          "componentTypes": [
+            "esp32"
+          ],
+          "text": "Use the board selector to replace Uno with ESP32. The circuit needs a shared ground and 3.3 V-safe inputs."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "divider",
+      "text": "Route the 5 V echo through a 1 kΩ / 2.2 kΩ divider",
+      "rules": [
+        {
+          "type": "path",
+          "from": {
+            "mcuPin": "GPIO19"
+          },
+          "to": {
+            "componentType": "ultrasonic_hcsr04",
+            "pin": "echo"
+          },
+          "through": [
+            {
+              "componentType": "resistor",
+              "props": {
+                "ohms": 1000
+              }
+            }
+          ]
+        },
+        {
+          "type": "path",
+          "from": {
+            "mcuPin": "GPIO19"
+          },
+          "to": {
+            "componentType": "resistor",
+            "pin": "p1"
+          },
+          "through": []
+        },
+        {
+          "type": "path",
+          "from": {
+            "mcuPin": "GPIO19"
+          },
+          "to": {
+            "mcuPin": "GND"
+          },
+          "through": [
+            {
+              "componentType": "resistor",
+              "props": {
+                "ohms": 2200
+              }
+            }
+          ]
+        },
+        {
+          "type": "no_warning",
+          "code": "overvoltage_gpio"
+        }
+      ],
+      "hints": {
+        "tier1": "Echo goes through 1 kΩ to GPIO19. Add 2.2 kΩ from that junction to GND: a HIGH echo becomes about 3.38 V in this model.",
+        "tier2": {
+          "mcuPins": [
+            "GPIO19"
+          ],
+          "componentTypes": [
+            "ultrasonic_hcsr04",
+            "resistor"
+          ],
+          "text": "Echo goes through 1 kΩ to GPIO19. Add 2.2 kΩ from that junction to GND: a HIGH echo becomes about 3.38 V in this model."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "adc",
+      "text": "Read the 3.3 V pot on GPIO34 using the 0–4095 range",
+      "rules": [
+        {
+          "type": "analog_read_seen",
+          "pin": "GPIO34",
+          "minSamples": 2
+        },
+        {
+          "type": "code_matches",
+          "pattern": "4095"
+        },
+        {
+          "type": "serial_matches",
+          "pattern": "Dial %: [0-9]+"
+        },
+        {
+          "type": "serial_matches",
+          "pattern": "Distance cm: [1-9]"
+        }
+      ],
+      "hints": {
+        "tier1": "Power the pot from 3V3, not VIN. Map the ESP32 ADC range 0–4095 to 0–100 and print the percentage.",
+        "tier2": {
+          "mcuPins": [
+            "GPIO34",
+            "3V3"
+          ],
+          "componentTypes": [
+            "potentiometer"
+          ],
+          "text": "Power the pot from 3V3, not VIN. Map the ESP32 ADC range 0–4095 to 0–100 and print the percentage."
+        },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [
+      {
+        "type": "code_max_lines",
+        "max": 35
+      }
+    ],
+    "threeText": "Use 35 non-comment lines or fewer"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "dual",
+      "breadboards": [
+        {
+          "id": "bb1",
+          "type": "half",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "id": "bb2",
+          "type": "half",
+          "x": 0,
+          "y": 504
+        }
+      ],
+      "mcu": "esp32",
+      "components": [
+        {
+          "id": "c_esp32",
+          "type": "esp32",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "j1"
+          }
+        },
+        {
+          "id": "c_ultrasonic_hcsr041",
+          "type": "ultrasonic_hcsr04",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb2",
+            "hole": "f2"
+          }
+        },
+        {
+          "id": "c_resistor2",
+          "type": "resistor",
+          "props": {
+            "ohms": 1000
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb2",
+            "hole": "f10"
+          }
+        },
+        {
+          "id": "c_resistor3",
+          "type": "resistor",
+          "props": {
+            "ohms": 2200
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb2",
+            "hole": "f20"
+          }
+        },
+        {
+          "id": "c_potentiometer4",
+          "type": "potentiometer",
+          "props": {
+            "ohms": 10000
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a20"
+          }
+        }
+      ],
+      "wires": [
+        {
+          "id": "w_q5",
+          "from": "bb2:g2",
+          "to": "bb2:b1",
+          "color": "red"
+        },
+        {
+          "id": "w_q6",
+          "from": "bb2:g5",
+          "to": "bb1:f2",
+          "color": "black"
+        },
+        {
+          "id": "w_q7",
+          "from": "bb2:g3",
+          "to": "bb1:f9",
+          "color": "green"
+        },
+        {
+          "id": "w_q8",
+          "from": "bb2:g4",
+          "to": "bb2:g10",
+          "color": "green"
+        },
+        {
+          "id": "w_q9",
+          "from": "bb2:g14",
+          "to": "bb2:g20",
+          "color": "green"
+        },
+        {
+          "id": "w_q10",
+          "from": "bb2:h14",
+          "to": "bb1:f10",
+          "color": "green"
+        },
+        {
+          "id": "w_q11",
+          "from": "bb2:g24",
+          "to": "bb1:g2",
+          "color": "black"
+        },
+        {
+          "id": "w_q12",
+          "from": "bb1:b20",
+          "to": "bb1:h2",
+          "color": "black"
+        },
+        {
+          "id": "w_q13",
+          "from": "bb1:b22",
+          "to": "bb1:f1",
+          "color": "red"
+        },
+        {
+          "id": "w_q14",
+          "from": "bb1:b21",
+          "to": "bb2:b12",
+          "color": "green"
+        }
+      ],
+      "meta": {}
+    },
+    "code": "void setup() {\n  Serial.begin(115200);\n  pinMode(18, OUTPUT); pinMode(19, INPUT);\n}\nvoid loop() {\n  digitalWrite(18, LOW); delayMicroseconds(2);\n  digitalWrite(18, HIGH); delayMicroseconds(10);\n  digitalWrite(18, LOW);\n  unsigned long echo = pulseIn(19, HIGH, 30000);\n  int percent = map(analogRead(34), 0, 4095, 0, 100);\n  Serial.print(\"Distance cm: \"); Serial.println(echo / 58.3);\n  Serial.print(\"Dial %: \"); Serial.println(percent);\n  delay(100);\n}\n",
+    "blocklyXml": null,
+    "actions": []
+  },
+  "solutionRunMs": 7000,
+  "successText": "You completed The Power Swap. Move from Uno to ESP32, protect a 5 V sensor echo, and scale a 12-bit ADC."
+}

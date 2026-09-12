@@ -1,0 +1,271 @@
+{
+  "id": "w2-l1",
+  "worldId": "w2",
+  "order": 1,
+  "title": "The SOS Beacon",
+  "codeName": "Level 2-1",
+  "board": "uno",
+  "startBoard": "uno",
+  "boardSwitcher": "locked",
+  "boardMode": "half",
+  "xp": 170,
+  "estimatedMinutes": 10,
+  "summary": "Send three short flashes, three long flashes, then three short flashes.",
+  "concepts": [
+    "Morse code",
+    "functions",
+    "loops",
+    "timing"
+  ],
+  "briefing": [
+    {
+      "mood": "happy",
+      "text": "Send three short flashes, three long flashes, then three short flashes."
+    },
+    {
+      "mood": "thinking",
+      "text": "Build the circuit, write the program, then use the live objectives and hints to check each connection."
+    }
+  ],
+  "learn": {
+    "title": "Morse code",
+    "body": "Send three short flashes, three long flashes, then three short flashes.\n\nEach flash still needs a 220 Ω resistor; timing cannot limit instantaneous current.\n\nUse 200 ms dots, 600 ms dashes, and 200 ms LOW gaps. A reusable flash function keeps the pattern readable.",
+    "links": []
+  },
+  "starterCircuit": null,
+  "starterCode": "void setup() {\n  // Configure your pins here.\n}\n\nvoid loop() {\n  // Read inputs and control your outputs here.\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": [
+    "uno",
+    "resistor",
+    "led"
+  ],
+  "objectives": [
+    {
+      "id": "circuit",
+      "text": "Protect and ground the D13 LED",
+      "rules": [
+        {
+          "type": "path",
+          "from": {
+            "mcuPin": "D13"
+          },
+          "to": {
+            "componentType": "led",
+            "pin": "anode"
+          },
+          "through": [
+            {
+              "componentType": "resistor",
+              "props": {
+                "ohms": 220
+              }
+            }
+          ]
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "GND"
+          },
+          "contains": {
+            "componentType": "led",
+            "pin": "cathode"
+          }
+        }
+      ],
+      "hints": {
+        "tier1": "Each flash still needs a 220 Ω resistor; timing cannot limit instantaneous current.",
+        "tier2": {
+          "mcuPins": [
+            "D13"
+          ],
+          "componentTypes": [
+            "resistor",
+            "led"
+          ],
+          "text": "Each flash still needs a 220 Ω resistor; timing cannot limit instantaneous current."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "sos",
+      "text": "Transmit the full short-short-short, long-long-long, short-short-short pattern",
+      "rules": [
+        {
+          "type": "pin_pattern",
+          "pin": "D13",
+          "pattern": [
+            {
+              "level": 1,
+              "ms": 200
+            },
+            {
+              "level": 0,
+              "ms": 200
+            },
+            {
+              "level": 1,
+              "ms": 200
+            },
+            {
+              "level": 0,
+              "ms": 200
+            },
+            {
+              "level": 1,
+              "ms": 200
+            },
+            {
+              "level": 0,
+              "ms": 200
+            },
+            {
+              "level": 1,
+              "ms": 600
+            },
+            {
+              "level": 0,
+              "ms": 200
+            },
+            {
+              "level": 1,
+              "ms": 600
+            },
+            {
+              "level": 0,
+              "ms": 200
+            },
+            {
+              "level": 1,
+              "ms": 600
+            },
+            {
+              "level": 0,
+              "ms": 200
+            },
+            {
+              "level": 1,
+              "ms": 200
+            },
+            {
+              "level": 0,
+              "ms": 200
+            },
+            {
+              "level": 1,
+              "ms": 200
+            },
+            {
+              "level": 0,
+              "ms": 200
+            },
+            {
+              "level": 1,
+              "ms": 200
+            }
+          ],
+          "toleranceRatio": 0.2
+        }
+      ],
+      "hints": {
+        "tier1": "Use 200 ms dots, 600 ms dashes, and 200 ms LOW gaps. A reusable flash function keeps the pattern readable.",
+        "tier2": {
+          "mcuPins": [
+            "D13"
+          ],
+          "text": "Use 200 ms dots, 600 ms dashes, and 200 ms LOW gaps. A reusable flash function keeps the pattern readable."
+        },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [
+      {
+        "type": "code_max_lines",
+        "max": 30
+      }
+    ],
+    "threeText": "Use 30 non-comment lines or fewer"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "half",
+      "breadboards": [
+        {
+          "id": "bb1",
+          "type": "half",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "mcu": "uno",
+      "components": [
+        {
+          "id": "c_uno",
+          "type": "uno",
+          "props": {},
+          "rotation": 0,
+          "position": {
+            "x": 0,
+            "y": -552
+          }
+        },
+        {
+          "id": "c_resistor1",
+          "type": "resistor",
+          "props": {
+            "ohms": 220
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a20"
+          }
+        },
+        {
+          "id": "c_led2",
+          "type": "led",
+          "props": {
+            "color": "red"
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a25"
+          }
+        }
+      ],
+      "wires": [
+        {
+          "id": "w_q3",
+          "from": "c_uno:D13",
+          "to": "bb1:b20",
+          "color": "green"
+        },
+        {
+          "id": "w_q4",
+          "from": "bb1:b24",
+          "to": "bb1:b25",
+          "color": "green"
+        },
+        {
+          "id": "w_q5",
+          "from": "bb1:b26",
+          "to": "c_uno:GND",
+          "color": "black"
+        }
+      ],
+      "meta": {}
+    },
+    "code": "void flash(int duration) {\n  digitalWrite(13, HIGH);\n  delay(duration);\n  digitalWrite(13, LOW);\n  delay(200);\n}\nvoid setup() { pinMode(13, OUTPUT); }\nvoid loop() {\n  for (int i = 0; i < 3; i++) flash(200);\n  for (int i = 0; i < 3; i++) flash(600);\n  for (int i = 0; i < 3; i++) flash(200);\n  delay(1200);\n}\n",
+    "blocklyXml": null,
+    "actions": []
+  },
+  "solutionRunMs": 9000,
+  "successText": "You completed The SOS Beacon. Send three short flashes, three long flashes, then three short flashes."
+}

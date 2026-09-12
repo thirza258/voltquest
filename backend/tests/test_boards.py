@@ -2,7 +2,7 @@ from copy import deepcopy
 
 import pytest
 
-from app.boards import BOARDS
+from app.domain.boards import BOARDS
 from test_projects_showcase import CIRCUIT
 
 

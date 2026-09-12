@@ -1,0 +1,247 @@
+{
+  "id": "w4-l1",
+  "worldId": "w4",
+  "order": 1,
+  "title": "Touch Lamp",
+  "codeName": "Level 4-1",
+  "board": "esp32",
+  "startBoard": "esp32",
+  "boardSwitcher": "locked",
+  "boardMode": "dual",
+  "xp": 250,
+  "estimatedMinutes": 10,
+  "summary": "Use ESP32 capacitive touch to switch a protected LED.",
+  "concepts": [
+    "touchRead",
+    "threshold",
+    "capacitive input"
+  ],
+  "briefing": [
+    {
+      "mood": "happy",
+      "text": "Use ESP32 capacitive touch to switch a protected LED."
+    },
+    {
+      "mood": "thinking",
+      "text": "Build the circuit, write the program, then use the live objectives and hints to check each connection."
+    }
+  ],
+  "learn": {
+    "title": "touchRead",
+    "body": "Use ESP32 capacitive touch to switch a protected LED.\n\nT0 is the touch alias for GPIO4. Wire the LED through 220 Ω from GPIO18 to ground.\n\nUntouched reads about 70; touched reads about 15. Compare against 30 and touch the pad while running.",
+    "links": []
+  },
+  "starterCircuit": null,
+  "starterCode": "void setup() {\n  // Configure your pins here.\n}\n\nvoid loop() {\n  // Read inputs and control your outputs here.\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": [
+    "esp32",
+    "resistor",
+    "led",
+    "touch_pad"
+  ],
+  "objectives": [
+    {
+      "id": "wiring",
+      "text": "Connect a touch pad to GPIO4/T0 and a protected LED to GPIO18",
+      "rules": [
+        {
+          "type": "path",
+          "from": {
+            "mcuPin": "GPIO18"
+          },
+          "to": {
+            "componentType": "led",
+            "pin": "anode"
+          },
+          "through": [
+            {
+              "componentType": "resistor",
+              "props": {
+                "ohms": 220
+              }
+            }
+          ]
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "GND"
+          },
+          "contains": {
+            "componentType": "led",
+            "pin": "cathode"
+          }
+        },
+        {
+          "type": "pin_connected_to",
+          "pin": "GPIO4",
+          "componentType": "touch_pad",
+          "componentPin": "pad"
+        }
+      ],
+      "hints": {
+        "tier1": "T0 is the touch alias for GPIO4. Wire the LED through 220 Ω from GPIO18 to ground.",
+        "tier2": {
+          "mcuPins": [
+            "GPIO4",
+            "GPIO18"
+          ],
+          "componentTypes": [
+            "touch_pad"
+          ],
+          "text": "T0 is the touch alias for GPIO4. Wire the LED through 220 Ω from GPIO18 to ground."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "touch",
+      "text": "Read touch and light the lamp when the pad is touched",
+      "rules": [
+        {
+          "type": "touch_used",
+          "pin": "GPIO4"
+        },
+        {
+          "type": "control_state",
+          "componentType": "touch_pad",
+          "field": "touched",
+          "equals": true
+        },
+        {
+          "type": "led_lit"
+        }
+      ],
+      "hints": {
+        "tier1": "Untouched reads about 70; touched reads about 15. Compare against 30 and touch the pad while running.",
+        "tier2": {
+          "componentTypes": [
+            "touch_pad"
+          ],
+          "text": "Untouched reads about 70; touched reads about 15. Compare against 30 and touch the pad while running."
+        },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [
+      {
+        "type": "code_max_lines",
+        "max": 20
+      }
+    ],
+    "threeText": "Use 20 non-comment lines or fewer"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "dual",
+      "breadboards": [
+        {
+          "id": "bb1",
+          "type": "half",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "id": "bb2",
+          "type": "half",
+          "x": 0,
+          "y": 504
+        }
+      ],
+      "mcu": "esp32",
+      "components": [
+        {
+          "id": "c_esp32",
+          "type": "esp32",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "j1"
+          }
+        },
+        {
+          "id": "c_resistor1",
+          "type": "resistor",
+          "props": {
+            "ohms": 220
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb2",
+            "hole": "f20"
+          }
+        },
+        {
+          "id": "c_led2",
+          "type": "led",
+          "props": {
+            "color": "red"
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb2",
+            "hole": "f25"
+          }
+        },
+        {
+          "id": "c_touch_pad6",
+          "type": "touch_pad",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb2",
+            "hole": "f5"
+          }
+        }
+      ],
+      "wires": [
+        {
+          "id": "w_q3",
+          "from": "bb1:f9",
+          "to": "bb2:g20",
+          "color": "green"
+        },
+        {
+          "id": "w_q4",
+          "from": "bb2:g24",
+          "to": "bb2:g25",
+          "color": "green"
+        },
+        {
+          "id": "w_q5",
+          "from": "bb2:g26",
+          "to": "bb1:f2",
+          "color": "black"
+        },
+        {
+          "id": "w_q7",
+          "from": "bb2:g5",
+          "to": "bb1:f5",
+          "color": "green"
+        }
+      ],
+      "meta": {}
+    },
+    "code": "void setup() { pinMode(18, OUTPUT); }\nvoid loop() {\n  digitalWrite(18, touchRead(T0) < 30 ? HIGH : LOW);\n  delay(20);\n}\n",
+    "blocklyXml": null,
+    "actions": [
+      {
+        "atMs": 500,
+        "select": {
+          "componentType": "touch_pad"
+        },
+        "patch": {
+          "touched": true
+        }
+      }
+    ]
+  },
+  "solutionRunMs": 7000,
+  "successText": "You completed Touch Lamp. Use ESP32 capacitive touch to switch a protected LED."
+}

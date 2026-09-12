@@ -1,5 +1,5 @@
 # VoltQuest
 
-**Read [`AGENTS.md`](AGENTS.md) first — it is the current-state handoff log**: what is actually built,
-the one blocking defect, and the ordered work queue. `README.md` describes the *finished* product and
-overstates what exists today.
+Read [`AGENTS.md`](AGENTS.md) for the current implementation, verification results and ground rules.
+Read [`docs/CONTRACTS.md`](docs/CONTRACTS.md) before changes. The PRD coverage report is
+[`docs/IMPLEMENTATION_STATUS.md`](docs/IMPLEMENTATION_STATUS.md).

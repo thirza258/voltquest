@@ -2,17 +2,22 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { sitemapPlugin } from './vite-sitemap.js'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const contentDir = path.resolve(here, '../content')
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), sitemapPlugin({ contentDir })],
   resolve: {
     alias: {
       '@': path.resolve(here, 'src'),
       '@content': contentDir,
     },
+  },
+  // Discover heavy lazy editor dependencies at startup, avoiding a dev-page reload on first use.
+  optimizeDeps: {
+    include: ['blockly', 'blockly/blocks', '@monaco-editor/react', 'monaco-editor/esm/vs/editor/editor.api', 'monaco-editor/esm/vs/editor/editor.all', 'monaco-editor/esm/vs/basic-languages/python/python.contribution'],
   },
   server: {
     port: 5173,
@@ -29,6 +34,8 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
+          // Keep Vite's shared import helper out of Monaco, or the entry chunk eagerly imports it.
+          if (id.includes('vite/preload-helper') || id.includes('commonjsHelpers')) return 'vendor'
           if (id.includes('node_modules/monaco-editor') || id.includes('node_modules/@monaco-editor')) return 'monaco'
           if (id.includes('node_modules/blockly')) return 'blockly'
           if (id.includes('/src/engine/')) return 'engine'
@@ -42,7 +49,7 @@ export default defineConfig({
     // Engine/store tests run in node; component tests opt into jsdom with a
     // `// @vitest-environment jsdom` docblock on their first line.
     environment: 'node',
-    include: ['src/**/*.test.{js,jsx}'],
+    include: ['src/**/*.test.{js,jsx}', '*.test.js'],
     globals: false,
   },
 })

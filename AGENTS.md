@@ -1,6 +1,6 @@
 # VoltQuest — agent handoff log
 
-**Last verified: 2026-09-11.** This is the state document: what exists, what remains unfinished,
+**Last verified: 2026-09-12.** This is the state document: what exists, what remains unfinished,
 and what to do next. The specifications in `docs/` remain binding.
 
 | Read | When |
@@ -15,7 +15,7 @@ and what to do next. The specifications in `docs/` remain binding.
 
 ## 1. Current build, not the target product
 
-The main entry point for a working interactive experience is **`/tutorials`**.
+The main entry points are **`/`** (14 campaign quests), **`/sandbox`** (freeform projects), and **`/tutorials`** (guided lessons).
 There are **35 tutorials**, ordered Easy → Intermediate → Hard, with editable code,
 real simulation, explanations of program and hardware concepts, exact breadboard placement,
 cable endpoint tables and click-to-highlight wiring. The circuit is prepared/read-only, but
@@ -36,20 +36,21 @@ The user explicitly requested **Raspberry Pi 4 / 5, not Pico**. Pi uses a restri
 learning model with a 40-pin header, not Linux/CPU emulation or arbitrary Python execution.
 The canvas has a simplified Pi teaching diagram with all physical pin numbers.
 
-`/` now renders the real campaign map and links prominently to tutorials.
-**Campaign play, sandbox, showcase, profile and leaderboard pages are still unfinished** and
-render explicit coming-soon pages rather than pretending to work. Only three campaign quests exist.
-The README now has a Current build notice; its product overview still describes the target experience.
+All product routes are implemented: campaign workspace, sandbox, public showcase and interactive
+preview/fork, profile/account/cosmetics, and leaderboard. The workspace has a parts drawer, inspector,
+local Monaco/Blockly editors, serial monitor, virtual ESP32 phone, IoT inspector, hints and success flow.
+Sandbox supports save/load, JSON import, JSON/PNG/code/BOM exports, publish/unpublish and deletion.
+Read `docs/IMPLEMENTATION_STATUS.md` for requirement-to-implementation evidence and verification limits.
 
-There is still **no git repository**. Do not assume a diff/history exists and do not initialize or
-commit without the user's explicit request.
+A git repository now exists (baseline `ff79723`). Preserve existing changes. Do not initialize another
+repository or commit without the user's explicit request.
 
 ## 2. Verification
 
 Latest full `make check`:
-- **630 frontend tests in 38 files pass.**
+- **732 frontend tests in 48 files pass.**
 - **45 backend tests pass.**
-- Production build succeeds; initial JS payload is **221.2 KiB gzipped**, below the 1500 KiB budget.
+- Production build succeeds; initial JS payload is **238.0 KiB gzipped**, below the 1500 KiB budget.
 - ESLint has no errors. Two existing exhaustive-deps warnings remain in
   `features/campaign/CampaignMap.jsx:82`; these are unrelated to the tutorial/runtime work.
 - Node prints the existing jsdom/localStorage warning; persistence tests use the memory-storage helper.
@@ -60,11 +61,78 @@ and mobile width were checked in isolated Chrome. The header now switches to a n
 small screens; tutorial pages fit a 390 px viewport without page-level horizontal overflow.
 Uno Run and the ESP32 virtual HTTP request were also verified; GET /on returns 200 and LED on.
 
+Completion browser checks used an isolated local SQLite database. Verified saved-project opening,
+publish → public preview → editable fork, account claim/logout/login, JSON import confirmation,
+Monaco editing, Blockly delay edits regenerating both code and XML, and a 1416 × 1456 PNG export.
+The virtual phone's link to `/on` returned HTTP 200, raised GPIO18 and lit the LED. Desktop and
+390 px layouts fit without page-level horizontal overflow. A saved project reopened offline via
+My projects, and Resume restored the exact sketch edited before navigation.
+
+Latest placement check: real browser mouse drags in a temporary editable canvas connected to the
+real document store verified LED snapping, one undo entry per move, a stationary viewport, Escape
+cancellation and smooth Uno movement followed by its final grid snap. The temporary harness adds
+no app route; tutorial circuits remain read-only. No browser application errors were reported.
+
 Run the tests, not just a build, after touching source examples: compilation alone does not prove
 their explanation or timing is correct. `features/tutorials/programming.test.js` asserts expected
 numeric output, command dispatch and LED state transitions on all four C++ boards.
 
 ## 3. Completed in this continuation
+
+### Crawler files — sitemap and robots (2026-09-12)
+`frontend/vite-sitemap.js` emits `dist/sitemap.xml` during `vite build` for the deployed origin
+`https://pcb.nevatal.id`; `frontend/public/robots.txt` is static. The URL list is derived from
+`content/` at build time, not committed, so newly authored quests and tutorials appear without a
+second edit: 54 URLs today — `/`, the 14 campaign levels in worlds.json order, `/tutorials` plus its
+35 lessons, `/sandbox`, `/showcase` and `/leaderboard`.
+
+`/profile`, `/sandbox/:projectId` and `/showcase/:slug` are excluded and disallowed in robots.txt —
+per-player or user-generated, with nothing enumerable from content. `/assets/` stays crawlable: this
+is a client-rendered app, so blocking the bundle would render every route empty for a crawler.
+Locked levels are listed on purpose — `campaign/gating.js` drives presentation only, so every
+`/play/` URL is publicly reachable.
+
+Still missing for search: `index.html` carries one hardcoded `<title>` and no description, so all 54
+URLs share identical SERP text. Per-route titles/meta need either a prerender step or an SSR host;
+do not paste a static `<link rel="canonical">` into `index.html`, which would declare every route
+canonical to one URL.
+
+### PRD completion — B / H1 / H2 (2026-09-12)
+Authored the 11 missing quests, including Simon Says, the Uno→ESP32 voltage-divider challenge,
+NeoPixels, HTTP and MQTT. All 14 references earn three stars. Headless actions now support serial,
+HTTP and MQTT inputs alongside sensor controls.
+
+`WorkspacePage` assembles the real canvas, engine, objectives, editors, controls, hints, reset/restart,
+drafts, damage explanations/replacement and success/XP flow. Sidebar widths persist; mobile stacks
+the panels. MCU switching resets Python/C++ editor state when the language changes.
+
+Monaco and Blockly load from local npm assets. Text→blocks requires confirmation before replacing
+manual code. The virtual phone renders sandboxed server HTML and bridges links/forms into virtual
+HTTP requests; server scripts and external network requests are disabled. Reset invalidates responses.
+
+Sandbox files validate all six boards, component geometry, terminal references, editor mode and size
+before loading. Saved projects have independent drafts. The three most recently opened/saved projects have an
+owner-checked offline cache; 401/403/404 never fall back to cached data. Explicit import/new confirmations protect
+unsaved work. The gallery supports filters/pagination and public read-only previews with live controls.
+Account claiming/login, cosmetics and leaderboard are connected to the existing backend.
+
+Guest initialization is deduplicated. Progress handles the API's singular completion record, queues
+mutations before sending, preserves operations added during a flush, and ignores stale identity
+responses. Resource loading never exposes a previous project's data during route transitions.
+
+Vite's shared preload helper must live outside the Monaco chunk. The build gate now rejects eager
+Monaco/Blockly/phone imports in addition to enforcing the total payload budget.
+
+### Device dragging and placement stability — G1 (2026-09-12)
+Moves now resolve the actual release coordinates, including when a newer pointer move is still
+waiting for its animation frame. Board snapping updates at hole boundaries within a half-pitch
+cell and ranks nearby valid anchors by actual distance. Free-mounted device previews preserve
+the grab offset and follow the pointer continuously, then snap to the grid on release.
+
+Gestures belong to one pointer. Escape, window blur, pointer cancellation and lost capture clear
+previews and queued frames without committing a move. Wheel/viewport hotkeys cannot shift the
+breadboard during the drag. Select-mode wire drags retain the hole where the press began.
+Twelve new adjacent regressions cover these cases; the full `make check` passes.
 
 ### Runtime — E2
 The entry-point stub is gone. `engine/runtime/index.js` assembles the interpreter, Arduino API,
@@ -90,8 +158,8 @@ Original Python line numbers survive diagnostics. See `RASPBERRY_PI.md` for exac
 do not imply support for arbitrary imports, Python functions, Linux, networking or camera simulation.
 
 ### Simulation integration — F
-`engine/headless.test.js` now executes all three authored reference solutions through solver,
-runtime and validator; all pass. This is the regression net for future authored quests.
+`engine/headless.test.js` executes all 14 authored reference solutions through solver,
+runtime and validator; every solution earns three stars. This is the regression net for future authored quests.
 
 ### Tutorial UI — H2 / H1
 `features/tutorials/`: hub, detail lab, deterministic circuit presets, code variants and wiring guide.
@@ -109,35 +177,22 @@ Pi text-only editor mode and 200 KiB UTF-8 field limits. Partial updates validat
 before mutation. Save/publish/filter/fork round trips are tested for all six board ids.
 Unknown showcase board filters are rejected. The frontend API client includes the new endpoints.
 
-## 4. Remaining work, ordered by impact
+## 4. Remaining verification and optional work
 
-### 4.1 Campaign workspace — H1
-Build `features/workspace/WorkspacePage.jsx` to assemble the canvas, objectives, sim controls,
-code editor and briefing/success flow. Existing hooks (`useLevelSession`, `useKeyboard`,
-`useToneAudio`), stores, header, objectives and campaign map are available.
-The tutorial lab proves the engine integration but is not a replacement for a quest workspace.
-Wire guest/session initialization, offline progress and account UX as part of that work.
+The in-scope product implementation is complete; the PRD's full nonfunctional browser/device matrix
+has not been certified. Current browser checks use local Chromium. Safari, Firefox, Edge, real touch
+hardware and throttled-network/frame-time measurements remain release verification work.
 
-### 4.2 Editors, sandbox and sharing UI — H2
-Monaco language setup, Blockly definitions and generator exist; editor components do not.
-The full virtual phone, freeform sandbox/component drawer, export UI, gallery/forking,
-profile and leaderboard pages remain unbuilt. Backend endpoints exist.
-Keep Monaco, Blockly and the phone behind lazy boundaries to preserve the payload budget.
+Search-engine metadata is one document deep: per-route `<title>`/description and canonical tags
+remain unbuilt (see the sitemap entry in §3). The sitemap was verified through `vite preview`, not
+against the live pcb.nevatal.id host.
 
-### 4.3 Remaining 11 campaign levels — B
-Authored: `w1-l1` First Glow, `w1-l2` The Shield, `w1-l3` The Gatekeeper.
-Missing: `w1-l4`, `w2-l1`–`w2-l5`, `w3-l1`, `w4-l1`–`w4-l4`.
-Worlds already list all 14 ids. Preserve the intentional filter that omits unauthored levels.
-Follow `QUEST_SCHEMA.md`, include a reference solution and let the headless test discover it.
+Optional tutorial extensions: persistent lesson progress, lesson-to-lesson navigation, replacing the
+lesson textarea with the shared full editor, and user-controlled rewiring. Tutorials still use prepared
+circuits and do not grant campaign XP. Keep Pi's restricted syntax and schematic drawing explicit.
 
-### 4.4 Tutorial follow-ups
-Optional next improvements: persistent lesson progress, lesson-to-lesson navigation, a full code editor,
-and user-controlled rewiring mode. Do not silently expand Pi's advertised language support without
-implementing/testing it and updating its docs. Pi board drawing is intentionally schematic.
-
-### 4.5 Explicitly out of scope
 Educator Portal, Custom Component Creator, virtual oscilloscope, ESP32-S3 camera/AI levels,
-and cloud compilation remain out of scope per CONTRACTS §13.
+and cloud compilation remain explicitly out of scope per CONTRACTS §13.
 
 ## 5. Ground rules
 

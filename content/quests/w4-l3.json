@@ -1,0 +1,252 @@
+{
+  "id": "w4-l3",
+  "worldId": "w4",
+  "order": 3,
+  "title": "Smart Switch",
+  "codeName": "Level 4-3",
+  "board": "esp32",
+  "startBoard": "esp32",
+  "boardSwitcher": "locked",
+  "boardMode": "dual",
+  "xp": 270,
+  "estimatedMinutes": 15,
+  "summary": "Serve a tiny web page and control an LED from the virtual phone.",
+  "concepts": [
+    "WiFi",
+    "WebServer",
+    "HTTP",
+    "callbacks"
+  ],
+  "briefing": [
+    {
+      "mood": "happy",
+      "text": "Serve a tiny web page and control an LED from the virtual phone."
+    },
+    {
+      "mood": "thinking",
+      "text": "Build the circuit, write the program, then use the live objectives and hints to check each connection."
+    }
+  ],
+  "learn": {
+    "title": "WiFi",
+    "body": "Serve a tiny web page and control an LED from the virtual phone.\n\nThe HTTP callback controls GPIO18, so connect its resistor/LED circuit before running.\n\nWait for WiFi connection, register your routes and call server.begin(). Keep server.handleClient() in loop.\n\nOpen the Phone tab, load /, then follow Turn on. The /on callback must set GPIO18 HIGH and send a response containing ON.",
+    "links": []
+  },
+  "starterCircuit": null,
+  "starterCode": "void setup() {\n  // Configure your pins here.\n}\n\nvoid loop() {\n  // Read inputs and control your outputs here.\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": [
+    "esp32",
+    "resistor",
+    "led"
+  ],
+  "objectives": [
+    {
+      "id": "led",
+      "text": "Connect a protected LED to GPIO18",
+      "rules": [
+        {
+          "type": "path",
+          "from": {
+            "mcuPin": "GPIO18"
+          },
+          "to": {
+            "componentType": "led",
+            "pin": "anode"
+          },
+          "through": [
+            {
+              "componentType": "resistor",
+              "props": {
+                "ohms": 220
+              }
+            }
+          ]
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "GND"
+          },
+          "contains": {
+            "componentType": "led",
+            "pin": "cathode"
+          }
+        }
+      ],
+      "hints": {
+        "tier1": "The HTTP callback controls GPIO18, so connect its resistor/LED circuit before running.",
+        "tier2": {
+          "mcuPins": [
+            "GPIO18"
+          ],
+          "componentTypes": [
+            "led",
+            "resistor"
+          ],
+          "text": "The HTTP callback controls GPIO18, so connect its resistor/LED circuit before running."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "server",
+      "text": "Join VoltNet and register /, /on and /off",
+      "rules": [
+        {
+          "type": "wifi_connected"
+        },
+        {
+          "type": "http_route_exists",
+          "path": "/"
+        },
+        {
+          "type": "http_route_exists",
+          "path": "/on"
+        },
+        {
+          "type": "http_route_exists",
+          "path": "/off"
+        }
+      ],
+      "hints": {
+        "tier1": "Wait for WiFi connection, register your routes and call server.begin(). Keep server.handleClient() in loop.",
+        "tier2": {
+          "componentTypes": [
+            "esp32"
+          ],
+          "text": "Wait for WiFi connection, register your routes and call server.begin(). Keep server.handleClient() in loop."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "phone",
+      "text": "Use the virtual phone to request /on and light the LED",
+      "rules": [
+        {
+          "type": "http_response_matches",
+          "path": "/on",
+          "pattern": "ON"
+        },
+        {
+          "type": "led_lit"
+        }
+      ],
+      "hints": {
+        "tier1": "Open the Phone tab, load /, then follow Turn on. The /on callback must set GPIO18 HIGH and send a response containing ON.",
+        "tier2": {
+          "mcuPins": [
+            "GPIO18"
+          ],
+          "componentTypes": [
+            "led"
+          ],
+          "text": "Open the Phone tab, load /, then follow Turn on. The /on callback must set GPIO18 HIGH and send a response containing ON."
+        },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [
+      {
+        "type": "code_max_lines",
+        "max": 45
+      }
+    ],
+    "threeText": "Use 45 non-comment lines or fewer"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "dual",
+      "breadboards": [
+        {
+          "id": "bb1",
+          "type": "half",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "id": "bb2",
+          "type": "half",
+          "x": 0,
+          "y": 504
+        }
+      ],
+      "mcu": "esp32",
+      "components": [
+        {
+          "id": "c_esp32",
+          "type": "esp32",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "j1"
+          }
+        },
+        {
+          "id": "c_resistor1",
+          "type": "resistor",
+          "props": {
+            "ohms": 220
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb2",
+            "hole": "f20"
+          }
+        },
+        {
+          "id": "c_led2",
+          "type": "led",
+          "props": {
+            "color": "red"
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb2",
+            "hole": "f25"
+          }
+        }
+      ],
+      "wires": [
+        {
+          "id": "w_q3",
+          "from": "bb1:f9",
+          "to": "bb2:g20",
+          "color": "green"
+        },
+        {
+          "id": "w_q4",
+          "from": "bb2:g24",
+          "to": "bb2:g25",
+          "color": "green"
+        },
+        {
+          "id": "w_q5",
+          "from": "bb2:g26",
+          "to": "bb1:f2",
+          "color": "black"
+        }
+      ],
+      "meta": {}
+    },
+    "code": "#include <WiFi.h>\n#include <WebServer.h>\nWebServer server(80);\nvoid setup() {\n  pinMode(18, OUTPUT);\n  WiFi.begin(\"VoltNet\", \"pass\");\n  while (WiFi.status() != WL_CONNECTED) delay(50);\n  server.on(\"/\", []() {\n    server.send(200, \"text/html\", \"<h1>Smart Switch</h1><a href='/on'>Turn on</a> <a href='/off'>Turn off</a>\");\n  });\n  server.on(\"/on\", []() {\n    digitalWrite(18, HIGH);\n    server.send(200, \"text/html\", \"<h1>Light ON</h1><a href='/off'>Turn off</a>\");\n  });\n  server.on(\"/off\", []() {\n    digitalWrite(18, LOW);\n    server.send(200, \"text/html\", \"<h1>Light OFF</h1><a href='/on'>Turn on</a>\");\n  });\n  server.begin();\n}\nvoid loop() { server.handleClient(); }\n",
+    "blocklyXml": null,
+    "actions": [
+      {
+        "atMs": 1000,
+        "http": {
+          "method": "GET",
+          "path": "/on"
+        }
+      }
+    ]
+  },
+  "solutionRunMs": 7000,
+  "successText": "You completed Smart Switch. Serve a tiny web page and control an LED from the virtual phone."
+}

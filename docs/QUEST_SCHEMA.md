@@ -49,6 +49,9 @@ w4-l1 Touch Lamp (touchRead on GPIO4/T0), w4-l2 Status Ring (NeoPixel), w4-l3 Sm
 ```
 Tier-2 target: `{ mcuPins?, componentTypes?, terminals?, text? }` → canvas `highlights`. Tier-3 `true` → ghost = `solution.circuit`. Hints are per objective (`hintTier[objectiveId]`) and never affect stars.
 Headless test (F): loads `solution.circuit` + `solution.code`, applies `solution.actions` at their virtual times via `sim.setControl`, and requires `allPassed` within `solutionRunMs`.
+Actions may also contain `http: { method, path, body?, headers? }`, `serial: string`, or
+`mqtt: { topic, payload }`; these use the same virtual network/serial controller methods as the UI.
+HTTP requests are queued without blocking virtual time, so the firmware can handle them on its next slice.
 
 ## Rule JSON
 Selectors: `{ "mcuPin": "D13" }` · `{ "componentType": "led", "pin": "anode", "props": { "color": "red" }, "index": 0 }` · `{ "terminal": "bb1:e12" }`.

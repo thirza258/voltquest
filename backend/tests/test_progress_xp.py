@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from app.xp import level_for_xp, xp_for_completion, xp_for_level
+from app.domain.xp import level_for_xp, xp_for_completion, xp_for_level
 
 ALL_OBJECTIVES = ["led_present", "led_lit"]
 

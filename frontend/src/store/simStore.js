@@ -76,7 +76,7 @@ export function createSimStore({ createWorker = defaultCreateWorker, inline = nu
       /** Create the simulation. Safe to call repeatedly; only the first call builds anything. */
       init() {
         if (sim) return sim
-        sim = createSimulation({ createWorker, inline })
+        sim = createSimulation({ createWorker, inline: inline ?? (createWorker === defaultCreateWorker && typeof Worker === 'undefined') })
         unsubscribe = sim.subscribe(publish)
         set({ sim, state: sim.getState() })
         return sim

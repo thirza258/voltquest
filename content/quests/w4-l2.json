@@ -1,0 +1,200 @@
+{
+  "id": "w4-l2",
+  "worldId": "w4",
+  "order": 2,
+  "title": "Status Ring",
+  "codeName": "Level 4-2",
+  "board": "esp32",
+  "startBoard": "esp32",
+  "boardSwitcher": "locked",
+  "boardMode": "dual",
+  "xp": 260,
+  "estimatedMinutes": 10,
+  "summary": "Display an RGB status pattern on a twelve-pixel addressable ring.",
+  "concepts": [
+    "NeoPixel",
+    "RGB",
+    "arrays",
+    "peripherals"
+  ],
+  "briefing": [
+    {
+      "mood": "happy",
+      "text": "Display an RGB status pattern on a twelve-pixel addressable ring."
+    },
+    {
+      "mood": "thinking",
+      "text": "Build the circuit, write the program, then use the live objectives and hints to check each connection."
+    }
+  ],
+  "learn": {
+    "title": "NeoPixel",
+    "body": "Display an RGB status pattern on a twelve-pixel addressable ring.\n\nThe ring needs 5 V power (VIN) and a common ground. The teaching peripheral accepts GPIO18 data; real 5 V pixels may need a data level shifter.\n\nSet each pixel color, then call show() to transmit the buffer. Setting a color alone does not update the LEDs.",
+    "links": []
+  },
+  "starterCircuit": null,
+  "starterCode": "void setup() {\n  // Configure your pins here.\n}\n\nvoid loop() {\n  // Read inputs and control your outputs here.\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": [
+    "esp32",
+    "neopixel_ring"
+  ],
+  "objectives": [
+    {
+      "id": "power",
+      "text": "Power the ring from VIN/GND and connect DIN to GPIO18",
+      "rules": [
+        {
+          "type": "pin_connected_to",
+          "pin": "GPIO18",
+          "componentType": "neopixel_ring",
+          "componentPin": "din"
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "VIN"
+          },
+          "contains": {
+            "componentType": "neopixel_ring",
+            "pin": "vcc"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "GND"
+          },
+          "contains": {
+            "componentType": "neopixel_ring",
+            "pin": "gnd"
+          }
+        }
+      ],
+      "hints": {
+        "tier1": "The ring needs 5 V power (VIN) and a common ground. The teaching peripheral accepts GPIO18 data; real 5 V pixels may need a data level shifter.",
+        "tier2": {
+          "mcuPins": [
+            "GPIO18",
+            "VIN",
+            "GND"
+          ],
+          "componentTypes": [
+            "neopixel_ring"
+          ],
+          "text": "The ring needs 5 V power (VIN) and a common ground. The teaching peripheral accepts GPIO18 data; real 5 V pixels may need a data level shifter."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "pixels",
+      "text": "Send twelve pixels with a green status color",
+      "rules": [
+        {
+          "type": "peripheral_state",
+          "componentType": "neopixel_ring",
+          "path": "data.pixels.length",
+          "equals": 12
+        },
+        {
+          "type": "peripheral_state",
+          "componentType": "neopixel_ring",
+          "path": "data.pixels.0.1",
+          "min": 1
+        }
+      ],
+      "hints": {
+        "tier1": "Set each pixel color, then call show() to transmit the buffer. Setting a color alone does not update the LEDs.",
+        "tier2": {
+          "componentTypes": [
+            "neopixel_ring"
+          ],
+          "text": "Set each pixel color, then call show() to transmit the buffer. Setting a color alone does not update the LEDs."
+        },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [
+      {
+        "type": "code_max_lines",
+        "max": 25
+      }
+    ],
+    "threeText": "Use 25 non-comment lines or fewer"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "dual",
+      "breadboards": [
+        {
+          "id": "bb1",
+          "type": "half",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "id": "bb2",
+          "type": "half",
+          "x": 0,
+          "y": 504
+        }
+      ],
+      "mcu": "esp32",
+      "components": [
+        {
+          "id": "c_esp32",
+          "type": "esp32",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "j1"
+          }
+        },
+        {
+          "id": "c_neopixel_ring1",
+          "type": "neopixel_ring",
+          "props": {
+            "count": 12
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb2",
+            "hole": "f20"
+          }
+        }
+      ],
+      "wires": [
+        {
+          "id": "w_q2",
+          "from": "bb2:g20",
+          "to": "bb1:f9",
+          "color": "green"
+        },
+        {
+          "id": "w_q3",
+          "from": "bb2:g21",
+          "to": "bb2:b1",
+          "color": "red"
+        },
+        {
+          "id": "w_q4",
+          "from": "bb2:g22",
+          "to": "bb1:f2",
+          "color": "black"
+        }
+      ],
+      "meta": {}
+    },
+    "code": "#include <Adafruit_NeoPixel.h>\nAdafruit_NeoPixel ring(12, 18, NEO_GRB + NEO_KHZ800);\nvoid setup() {\n  ring.begin();\n  ring.setBrightness(80);\n  for (int i = 0; i < 12; i++) {\n    ring.setPixelColor(i, ring.Color(0, 160, 40));\n  }\n  ring.show();\n}\nvoid loop() {}\n",
+    "blocklyXml": null,
+    "actions": []
+  },
+  "solutionRunMs": 7000,
+  "successText": "You completed Status Ring. Display an RGB status pattern on a twelve-pixel addressable ring."
+}

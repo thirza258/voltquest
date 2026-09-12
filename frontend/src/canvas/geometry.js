@@ -1,6 +1,6 @@
 // Pure canvas geometry: viewport math, footprint rotation, snapping and drop payload parsing.
 // No DOM access here so everything is unit-testable in Node.
-import { PITCH, boardSize, holeAtWorld } from '../engine/components/breadboard.js'
+import { PITCH, boardSize, holeAtWorld, holeWorldPosition } from '../engine/components/breadboard.js'
 import * as defaultRegistry from '../engine/components/registry.js'
 
 export const MIN_ZOOM = 0.25
@@ -193,14 +193,23 @@ export function nearestValidOrigin(base, def, origin, doc, registry = defaultReg
     const { valid } = validateCandidate(candidate, doc, registry)
     return { candidate, valid, reason: valid ? null : 'invalid_placement' }
   }
-  let first = null
+  const candidates = new Map()
   for (const off of SEARCH_OFFSETS) {
     const pt = { x: origin.x + off.dx * PITCH, y: origin.y + off.dy * PITCH }
     const { candidate } = candidateAt(base, def, pt, doc)
     if (!candidate) continue
-    first = first ?? candidate
+    const key = `${candidate.anchor.board}:${candidate.anchor.hole}`
+    if (candidates.has(key)) continue
+    const pos = holeWorldPosition(doc, candidate.anchor.board, candidate.anchor.hole)
+    candidates.set(key, { candidate, distance: Math.hypot(pos.x - origin.x, pos.y - origin.y) })
+  }
+  // Offset order is not distance order after snapping, especially near the trench and board edges.
+  // Rank distinct anchors by their actual distance so a farther valid hole never wins first.
+  const ranked = [...candidates.values()].sort((a, b) => a.distance - b.distance)
+  for (const { candidate } of ranked) {
     if (validateCandidate(candidate, doc, registry).valid) return { candidate, valid: true, reason: null }
   }
+  const first = ranked[0]?.candidate ?? null
   return { candidate: first, valid: false, reason: first ? 'invalid_placement' : 'off_board' }
 }
 

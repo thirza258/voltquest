@@ -210,7 +210,8 @@ export const ComponentLayer = React.memo(function ComponentLayer({ doc, simState
 export const DragPreview = React.memo(function DragPreview({ drag, doc, simState }) {
   if (!drag) return null
   const { comp, def, candidate, valid, rawOrigin } = drag
-  const origin = (candidate && componentOrigin(candidate, doc, holeWorldPosition)) ?? rawOrigin
+  // Free-mounted devices follow the grab point continuously; only the committed placement snaps.
+  const origin = def.mount === 'free' ? rawOrigin : (candidate && componentOrigin(candidate, doc, holeWorldPosition)) ?? rawOrigin
   if (!origin) return null
   const Renderer = rendererFor(comp.type)
   const box = localBodyBox(def)
