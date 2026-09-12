@@ -60,3 +60,20 @@ Tooltips with real numbers on everything on the canvas (V, mA, Ω, net name). Wa
 
 ## Chip the mascot
 Friendly retro robot: rounded head, round eyes, antenna with a bolt tip, teal body, amber accents. Moods change eyes/mouth only; gentle 2 s float at most.
+
+## Localization and assistant extension (2026-09-12)
+
+The shared header includes a compact native Language / Bahasa selector, English by default and
+Indonesian optional. Language changes preserve circuit, editor and simulation state. Translate UI
+labels and instructional prose; retain code, program output, pin names and user-entered content.
+
+The circuit sidebar adds an AI tab, with Ask AI above the canvas. Use existing brand/line/surface
+tokens, a visible context and selection summary, suggested questions, labelled textarea, response
+log and retry/clear controls. Provider configuration errors do not hide agent setup. A disclosure
+explains what is shared. Answers render as escaped text with readable fenced code, never executable
+HTML. Under the same section, a details element groups Claude Code/Codex configuration, token
+creation/replacement/revocation and explicit context sharing. Code blocks scroll within the panel.
+
+Tutorials show the guide below their prepared circuit. Selected parts expose the same inspector;
+selection and live controls remain active while circuit editing stays read-only. At mobile widths
+panels stack and long configuration/code lines scroll locally, with no page-level horizontal scroll.

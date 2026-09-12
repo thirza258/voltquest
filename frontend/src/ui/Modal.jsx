@@ -1,3 +1,4 @@
+import { useI18n } from '../i18n/index.jsx'
 import { useCallback, useEffect, useId, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { motion } from 'framer-motion'
@@ -32,6 +33,7 @@ export function Modal({
   className = '',
   ...rest
 }) {
+  const { t } = useI18n()
   const panelRef = useRef(null)
   const openerRef = useRef(null)
   const baseId = useId()
@@ -128,16 +130,16 @@ export function Modal({
             <div className="min-w-0 flex-1">
               {title && (
                 <h2 id={titleId} className="text-sm font-semibold text-ink">
-                  {title}
+                  {t(title)}
                 </h2>
               )}
               {description && (
                 <p id={descId} className="mt-0.5 text-xxs leading-relaxed text-slate-500">
-                  {description}
+                  {t(description)}
                 </p>
               )}
             </div>
-            {onClose && <IconButton icon={<X aria-hidden="true" className="h-4 w-4" />} label="Close" size="sm" onClick={() => onClose()} />}
+            {onClose && <IconButton icon={<X aria-hidden="true" className="h-4 w-4" />} label={t("Close")} size="sm" onClick={() => onClose()} />}
           </div>
         )}
         <div className="min-h-0 flex-1 overflow-auto px-4 py-3">{children}</div>

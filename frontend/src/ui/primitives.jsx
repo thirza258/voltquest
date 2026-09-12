@@ -1,3 +1,4 @@
+import { useI18n } from '../i18n/index.jsx'
 import { forwardRef } from 'react'
 import {
   cx,
@@ -75,12 +76,13 @@ export const IconButton = forwardRef(function IconButton(
   { icon, label, size = 'md', variant = 'ghost', active = false, disabled = false, className = '', ...rest },
   ref,
 ) {
+  const { t } = useI18n()
   return (
     <button
       ref={ref}
       type="button"
-      title={label}
-      aria-label={label}
+      title={t(label)}
+      aria-label={t(label)}
       aria-pressed={active || undefined}
       disabled={disabled}
       className={cx(
@@ -190,9 +192,10 @@ export function Card({ children, className = '', hover = false, onClick, ...rest
 
 /** Labelled readout: big tabular value with an optional unit and hint line. */
 export function Stat({ label, value, unit, hint, tone = 'neutral', className = '', ...rest }) {
+  const { t } = useI18n()
   return (
     <div className={cx('min-w-0', className)} {...rest}>
-      <div className={LABEL_CLASS}>{label}</div>
+      <div className={LABEL_CLASS}>{t(label)}</div>
       <div className={cx('tabular flex items-baseline gap-1 text-base font-semibold', TONE_TEXT[tone] || TONE_TEXT.neutral)}>
         <span className="truncate">{value}</span>
         {unit && <span className="text-xxs font-medium text-slate-500">{unit}</span>}

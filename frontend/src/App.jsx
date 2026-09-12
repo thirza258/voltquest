@@ -1,3 +1,4 @@
+import { useI18n } from './i18n/index.jsx'
 import { Component, lazy, Suspense, useEffect } from 'react'
 import { Routes, Route, Link } from 'react-router-dom'
 import { CampaignPage } from './features/campaign/CampaignPage.jsx'
@@ -24,10 +25,11 @@ class AppErrorBoundary extends Component {
 }
 
 export default function App() {
+  const { t } = useI18n()
   useEffect(() => { void usePlayerStore.getState().ensureGuest() }, [])
   const expired = usePlayerStore(s => s.authExpired)
   return (
-    <AppErrorBoundary>{expired && <div role="alert" className="bg-amber-50 p-2 text-center text-sm">Your session expired. <Link className="underline" to="/profile#account">Log in to sync your progress.</Link></div>}<Suspense fallback={<p role="status" className="p-8 text-slate-600">Loading the lab…</p>}><Routes>
+    <AppErrorBoundary>{expired && <div role="alert" className="bg-amber-50 p-2 text-center text-sm">{t("Your session expired. ")}<Link className="underline" to="/profile#account">{t("Log in to sync your progress.")}</Link></div>}<Suspense fallback={<p role="status" className="p-8 text-slate-600">{t("Loading the lab…")}</p>}><Routes>
       <Route path="/" element={<CampaignPage />} />
       <Route path="/tutorials" element={<TutorialsPage />} />
       <Route path="/tutorials/:tutorialId" element={<TutorialPage />} />
@@ -38,7 +40,7 @@ export default function App() {
       <Route path="/showcase/:slug" element={<ShowcaseProjectPage />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/leaderboard" element={<LeaderboardPage />} />
-      <Route path="*" element={<div><AppHeader /><main className="p-8"><h1 className="text-xl font-semibold">Page not found</h1><Link className="mt-4 inline-block text-brand-700 underline" to="/">Back to the campaign</Link></main></div>} />
+      <Route path="*" element={<div><AppHeader /><main className="p-8"><h1 className="text-xl font-semibold">{t("Page not found")}</h1><Link className="mt-4 inline-block text-brand-700 underline" to="/">{t("Back to the campaign")}</Link></main></div>} />
     </Routes></Suspense><Toaster /></AppErrorBoundary>
   )
 }

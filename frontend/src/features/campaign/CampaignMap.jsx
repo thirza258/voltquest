@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/index.jsx'
 /**
  * The campaign map (`/`): hero, player summary, one section per world, and the always-present
  * sandbox card. Content and progress arrive as props (defaulting to the bundled content and the
@@ -32,25 +33,24 @@ function boardLabel(boardId) {
 }
 
 function PlayerSummary({ player, totals }) {
+  const { t } = useI18n()
   const level = player?.level ?? 1
   const into = player?.xp_into_level ?? 0
   const forNext = player?.xp_for_next ?? 100
   return (
     <div className="flex flex-col gap-2 rounded-lg border border-line bg-surface-panel p-3 sm:min-w-64">
       <div className="flex items-center justify-between gap-3">
-        <span className="text-xxs font-semibold uppercase tracking-wide text-slate-500">Your bench</span>
-        <Badge tone="volt">Level {level}</Badge>
+        <span className="text-xxs font-semibold uppercase tracking-wide text-slate-500">{t("Your bench")}</span>
+        <Badge tone="volt">{t("Level ")}{level}</Badge>
       </div>
-      <ProgressBar value={into} max={forNext} tone="volt" label="XP to next level" showValue size="sm" />
+      <ProgressBar value={into} max={forNext} tone="volt" label={t("XP to next level")} showValue size="sm" />
       <div className="flex items-center gap-4 text-xxs text-slate-500">
         <span className="inline-flex items-center gap-1">
           <Star size={12} className="text-volt-500" aria-hidden="true" />
-          {totals.stars} / {totals.maxStars} stars
-        </span>
+          {totals.stars} / {totals.maxStars}{t(" stars")}</span>
         <span className="inline-flex items-center gap-1">
           <Trophy size={12} className="text-brand-600" aria-hidden="true" />
-          {totals.completed} / {totals.total} levels
-        </span>
+          {totals.completed} / {totals.total}{t(" levels")}</span>
       </div>
     </div>
   )
@@ -73,6 +73,7 @@ export function CampaignMap({
   onOpenSandbox,
   className = '',
 }) {
+  const { t } = useI18n()
   const navigate = useNavigate()
   const storeProgress = usePlayerStore((s) => s.progress)
   const storePlayer = usePlayerStore((s) => s.player)
@@ -101,15 +102,11 @@ export function CampaignMap({
         <div className="flex items-center gap-3">
           <ChipMascot mood={totals.completed > 0 ? 'happy' : 'celebrate'} size={56} />
           <div>
-            <h1 className="text-lg font-semibold text-ink">VoltQuest campaign</h1>
-            <p className="max-w-lg text-xxs text-slate-500">
-              Build real circuits on a real breadboard, write real Arduino code, and find out exactly why things glow —
-              or smoke.
-            </p>
+            <h1 className="text-lg font-semibold text-ink">{t("VoltQuest campaign")}</h1>
+            <p className="max-w-lg text-xxs text-slate-500">{t("Build real circuits on a real breadboard, write real Arduino code, and find out exactly why things glow — or smoke.")}</p>
             {nextLevel && (
               <div className="mt-3">
-                <Button size="md" iconRight={<ArrowRight size={15} />} onClick={() => openLevel(nextLevel.id)}>
-                  Continue → {nextLevel.codeName} {nextLevel.title}
+                <Button size="md" iconRight={<ArrowRight size={15} />} onClick={() => openLevel(nextLevel.id)}>{t("Continue → ")}{nextLevel.codeName} {t(nextLevel.title)}
                 </Button>
               </div>
             )}
@@ -121,9 +118,9 @@ export function CampaignMap({
       {worlds.length === 0 && (
         <EmptyState
           icon={<Boxes size={24} />}
-          title="No quests are bundled yet"
-          description="The campaign content could not be loaded. The sandbox is still open for free building."
-          action={<Button onClick={openSandbox}>Open the sandbox</Button>}
+          title={t("No quests are bundled yet")}
+          description={t("The campaign content could not be loaded. The sandbox is still open for free building.")}
+          action={<Button onClick={openSandbox}>{t("Open the sandbox")}</Button>}
         />
       )}
 
@@ -134,22 +131,21 @@ export function CampaignMap({
           <section key={world.id} className={cx('rounded-lg border p-3 sm:p-4', THEME[world.theme] ?? THEME.teal)}>
             <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
               <div>
-                <h2 className="text-base font-semibold text-ink">{world.title}</h2>
-                <p className="text-xxs text-slate-500">{world.subtitle}</p>
+                <h2 className="text-base font-semibold text-ink">{t(world.title)}</h2>
+                <p className="text-xxs text-slate-500">{t(world.subtitle)}</p>
               </div>
               <div className="flex items-center gap-2">
                 <Badge tone="neutral">{boardLabel(world.board)}</Badge>
                 <Stars value={Math.round(worldStars / Math.max(1, worldLevels.length))} max={3} size="sm" />
                 <span className="text-xxs text-slate-500">
-                  {worldStars} / {worldLevels.length * 3} stars
-                </span>
+                  {worldStars} / {worldLevels.length * 3}{t(" stars")}</span>
               </div>
             </div>
 
             {introsToShow.has(world.id) && world.intro && (
               <div className="mb-3 flex items-start gap-2">
                 <ChipMascot mood="thinking" size={34} className="shrink-0" />
-                <SpeechBubble tone="neutral">{world.intro}</SpeechBubble>
+                <SpeechBubble tone="neutral">{t(world.intro)}</SpeechBubble>
               </div>
             )}
 
@@ -179,15 +175,11 @@ export function CampaignMap({
             <Boxes size={20} />
           </span>
           <div>
-            <h2 className="text-sm font-semibold text-ink">Sandbox</h2>
-            <p className="text-xxs text-slate-500">
-              No objectives, every part unlocked. Build whatever you like and publish it to the showcase.
-            </p>
+            <h2 className="text-sm font-semibold text-ink">{t("Sandbox")}</h2>
+            <p className="text-xxs text-slate-500">{t("No objectives, every part unlocked. Build whatever you like and publish it to the showcase.")}</p>
           </div>
         </div>
-        <Button variant="secondary" onClick={openSandbox} iconRight={<ArrowRight size={15} />}>
-          Open the sandbox
-        </Button>
+        <Button variant="secondary" onClick={openSandbox} iconRight={<ArrowRight size={15} />}>{t("Open the sandbox")}</Button>
       </Card>
     </div>
   )

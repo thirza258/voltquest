@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/index.jsx'
 import { useEffect, useRef, useState } from 'react'
 import Editor, { loader } from '@monaco-editor/react'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
@@ -12,6 +13,7 @@ loader.config({ monaco })
 registerArduinoLanguage(monaco)
 
 export default function MonacoEditor({ value, onChange, readOnly = false, language = 'cpp', diagnostics = [], label = 'Sketch code' }) {
+  const { t } = useI18n()
   const editorRef = useRef(null)
   const [ready, setReady] = useState(false)
   useEffect(() => {
@@ -25,7 +27,7 @@ export default function MonacoEditor({ value, onChange, readOnly = false, langua
     value={value}
     onChange={(next) => onChange?.(next ?? '')}
     onMount={(editor) => { editorRef.current = editor; setReady(true) }}
-    loading={<p role="status" className="p-3 text-sm text-slate-600">Loading code editor…</p>}
+    loading={<p role="status" className="p-3 text-sm text-slate-600">{t("Loading code editor…")}</p>}
     options={{ readOnly, ariaLabel: label, automaticLayout: true, minimap: { enabled: false }, fontSize: 13, tabSize: 2, scrollBeyondLastLine: false, wordWrap: 'off', padding: { top: 12 }, bracketPairColorization: { enabled: true }, formatOnPaste: true }}
   />
 }

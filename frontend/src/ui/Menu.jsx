@@ -1,3 +1,4 @@
+import { useI18n } from '../i18n/index.jsx'
 import { useEffect, useId, useRef, useState } from 'react'
 import { cx, FOCUS_RING, TRANSITION } from './tokens.js'
 
@@ -13,6 +14,7 @@ import { cx, FOCUS_RING, TRANSITION } from './tokens.js'
  *          align?: 'left'|'right', label?: string, className?: string }} props
  */
 export function Menu({ trigger, items = [], align = 'left', label = 'Menu', className = '', ...rest }) {
+  const { t } = useI18n()
   const [open, setOpen] = useState(false)
   const rootRef = useRef(null)
   const menuRef = useRef(null)
@@ -109,7 +111,7 @@ export function Menu({ trigger, items = [], align = 'left', label = 'Menu', clas
           ref={menuRef}
           id={menuId}
           role="menu"
-          aria-label={label}
+          aria-label={t(label)}
           onKeyDown={onMenuKeyDown}
           className={cx(
             'absolute z-40 mt-1 min-w-[11rem] rounded-lg border border-line bg-surface-panel p-1 shadow-sm',
@@ -133,7 +135,7 @@ export function Menu({ trigger, items = [], align = 'left', label = 'Menu', clas
               )}
             >
               {item.icon && <span className="shrink-0 text-slate-500">{item.icon}</span>}
-              <span className="truncate">{item.label}</span>
+              <span className="truncate">{t(item.label)}</span>
             </button>
           ))}
         </div>

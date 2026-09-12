@@ -4,6 +4,10 @@ from fastapi import Request
 from fastapi.responses import JSONResponse
 
 from app.domain.errors import (
+    AssistantUnavailable,
+    AssistantUpstreamError,
+    AssistantTimeout,
+    TooManyRequests,
     AuthenticationFailed,
     Conflict,
     InvalidInput,
@@ -13,6 +17,10 @@ from app.domain.errors import (
 )
 
 STATUS_CODES = {
+    AssistantUnavailable: 503,
+    AssistantUpstreamError: 502,
+    AssistantTimeout: 504,
+    TooManyRequests: 429,
     InvalidOperation: 400,
     AuthenticationFailed: 401,
     NotFound: 404,

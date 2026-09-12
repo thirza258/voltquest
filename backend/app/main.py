@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.errors import service_error_response
 from app.api.router import api_router
+from app.api.mcp import create_mcp
 from app.core.config import get_settings
 from app.db.session import create_all
 from app.domain.errors import ServiceError
@@ -28,7 +29,8 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     create_all()
     content.load_content()
     log.info("VoltQuest %s ready (%d levels)", settings.app_version, len(content.get_levels()))
-    yield
+    async with _app.state.mcp.session_manager.run():
+        yield
 
 
 def create_app() -> FastAPI:
@@ -48,6 +50,9 @@ def create_app() -> FastAPI:
     )
     app.add_exception_handler(ServiceError, service_error_response)
     app.include_router(api_router)
+    mcp, mcp_app = create_mcp()
+    app.state.mcp = mcp
+    app.mount("/api/mcp", mcp_app)
     return app
 
 

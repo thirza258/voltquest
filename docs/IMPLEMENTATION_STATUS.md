@@ -21,11 +21,14 @@ JavaScript, uses an SVG breadboard, and runs its teaching VM on the client.
 | Gallery, publish/unpublish, preview and fork | `/showcase`, `/showcase/:slug`; search/filter/retry tests and backend ownership/round-trip tests; browser publish → preview → editable fork | Implemented |
 | Guest/account UX, profile, cosmetics and leaderboard | `playerStore`, `features/profile`; deduplicated guests, real completion response shape, queue concurrency, identity-response guards, XP/cosmetics/leaderboard tests; browser claim/logout/login | Implemented |
 | Offline drafts/progress/settings, keyboard, audio and runtime lifecycle | Existing helpers integrated into workspace; final-draft save/disposal, optimistic progress/replay and keyboard tests; browser offline reopen/Resume preserved the exact edited sketch | Implemented |
-| Initial payload and lazy editors | `vite.config.js`, `scripts/check.sh`; 238.0 KiB initial gzipped JS; build rejects eager Monaco/Blockly/phone chunks | Verified build budget |
+| English/Indonesian interface and learning guidance | `i18n`, translated UI/tutorial/quest/component cards; coverage and state-preservation tests; browser switch retains edited runnable code | Implemented; English default |
+| Context-aware AI guide | `features/assistant`, backend OpenAI SDK → OpenRouter; latest code/inspector/circuit/runtime/lesson snapshot; request/error/cancellation tests with mocked provider transport | Implemented; live provider key required |
+| Claude Code/Codex MCP project creation | In-panel configuration and scoped credentials; official MCP endpoint, all six boards, ownership/conflict/expiry tests; browser shared context → MCP create/edit → saved sandbox → real Worker LED blink | Implemented; individual CLI setup required |
+| Initial payload and lazy editors | `vite.config.js`, `scripts/check.sh`; 301.1 KiB initial gzipped JS; build rejects eager Monaco/Blockly/phone chunks | Verified build budget |
 | Full browser/device/performance matrix | Chromium desktop and 390 px checks; existing engine statement/notification performance guards | Not yet certified across Safari, Firefox, Edge, real touch devices or throttled connections |
 | Educator Portal, custom components, oscilloscope, camera/AI and cloud compiler | CONTRACTS §13 | Explicitly deferred |
 
-`make check`: 722 frontend tests in 47 files, 45 backend tests, ESLint without errors, successful
+`make check`: 750 frontend tests in 51 files, 82 backend tests, ESLint without errors, successful
 production build, and passing initial-JS budget. Two pre-existing CampaignMap exhaustive-deps
 warnings and the environment's jsdom/localStorage warning remain.
 

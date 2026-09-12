@@ -1,0 +1,7719 @@
+{
+  "boards": {
+    "uno": {
+      "id": "uno",
+      "name": "Arduino Uno R3",
+      "componentType": "uno",
+      "family": "avr",
+      "vcc": 5,
+      "gpioMaxV": 5.5,
+      "adcBits": 10,
+      "intBits": 16,
+      "statementCostUs": 1,
+      "pinOutputResistance": 25,
+      "pinMaxSourceMa": 40,
+      "pullupOhms": 35000,
+      "usbSupplyMaxMa": 500,
+      "ledBuiltin": "D13",
+      "i2c": {
+        "sda": "A4",
+        "scl": "A5"
+      },
+      "pwmDefault": {
+        "freqHz": 490,
+        "bits": 8
+      },
+      "libraries": [
+        "Servo.h",
+        "LiquidCrystal_I2C.h",
+        "Wire.h",
+        "Adafruit_NeoPixel.h",
+        "DHT.h",
+        "Adafruit_SSD1306.h",
+        "Adafruit_GFX.h",
+        "Adafruit_BME280.h",
+        "Adafruit_Sensor.h"
+      ],
+      "pins": [
+        {
+          "name": "SCL",
+          "label": "SCL",
+          "kind": "other",
+          "number": null,
+          "aliases": [],
+          "caps": [
+            "i2c_scl"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": "A5",
+          "side": "top",
+          "index": 0
+        },
+        {
+          "name": "SDA",
+          "label": "SDA",
+          "kind": "other",
+          "number": null,
+          "aliases": [],
+          "caps": [
+            "i2c_sda"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": "A4",
+          "side": "top",
+          "index": 1
+        },
+        {
+          "name": "AREF",
+          "label": "AREF",
+          "kind": "other",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 2
+        },
+        {
+          "name": "GND",
+          "label": "GND",
+          "kind": "ground",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 3
+        },
+        {
+          "name": "D13",
+          "label": "D13",
+          "kind": "digital",
+          "number": 13,
+          "aliases": [
+            "LED_BUILTIN"
+          ],
+          "caps": [
+            "digital"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 4
+        },
+        {
+          "name": "D12",
+          "label": "D12",
+          "kind": "digital",
+          "number": 12,
+          "aliases": [],
+          "caps": [
+            "digital"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 5
+        },
+        {
+          "name": "D11",
+          "label": "D11",
+          "kind": "digital",
+          "number": 11,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 6
+        },
+        {
+          "name": "D10",
+          "label": "D10",
+          "kind": "digital",
+          "number": 10,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 7
+        },
+        {
+          "name": "D9",
+          "label": "D9",
+          "kind": "digital",
+          "number": 9,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 8
+        },
+        {
+          "name": "D8",
+          "label": "D8",
+          "kind": "digital",
+          "number": 8,
+          "aliases": [],
+          "caps": [
+            "digital"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 9
+        },
+        {
+          "name": "D7",
+          "label": "D7",
+          "kind": "digital",
+          "number": 7,
+          "aliases": [],
+          "caps": [
+            "digital"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 10
+        },
+        {
+          "name": "D6",
+          "label": "D6",
+          "kind": "digital",
+          "number": 6,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 11
+        },
+        {
+          "name": "D5",
+          "label": "D5",
+          "kind": "digital",
+          "number": 5,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 12
+        },
+        {
+          "name": "D4",
+          "label": "D4",
+          "kind": "digital",
+          "number": 4,
+          "aliases": [],
+          "caps": [
+            "digital"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 13
+        },
+        {
+          "name": "D3",
+          "label": "D3",
+          "kind": "digital",
+          "number": 3,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 14
+        },
+        {
+          "name": "D2",
+          "label": "D2",
+          "kind": "digital",
+          "number": 2,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 15
+        },
+        {
+          "name": "D1",
+          "label": "D1",
+          "kind": "digital",
+          "number": 1,
+          "aliases": [
+            "TX"
+          ],
+          "caps": [
+            "digital",
+            "serial"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 16
+        },
+        {
+          "name": "D0",
+          "label": "D0",
+          "kind": "digital",
+          "number": 0,
+          "aliases": [
+            "RX"
+          ],
+          "caps": [
+            "digital",
+            "serial"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 17
+        },
+        {
+          "name": "IOREF",
+          "label": "IOREF",
+          "kind": "other",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 0
+        },
+        {
+          "name": "RESET",
+          "label": "RESET",
+          "kind": "other",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 1
+        },
+        {
+          "name": "3V3",
+          "label": "3V3",
+          "kind": "power",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": 3.3,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 2
+        },
+        {
+          "name": "5V",
+          "label": "5V",
+          "kind": "power",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": 5,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 3
+        },
+        {
+          "name": "GND2",
+          "label": "GND",
+          "kind": "ground",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 4
+        },
+        {
+          "name": "GND3",
+          "label": "GND",
+          "kind": "ground",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 5
+        },
+        {
+          "name": "VIN",
+          "label": "VIN",
+          "kind": "power",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": 5,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 6
+        },
+        {
+          "name": "A0",
+          "label": "A0",
+          "kind": "analog",
+          "number": 14,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "adc"
+          ],
+          "adcChannel": 0,
+          "adcUnit": 1,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 7
+        },
+        {
+          "name": "A1",
+          "label": "A1",
+          "kind": "analog",
+          "number": 15,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "adc"
+          ],
+          "adcChannel": 1,
+          "adcUnit": 1,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 8
+        },
+        {
+          "name": "A2",
+          "label": "A2",
+          "kind": "analog",
+          "number": 16,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "adc"
+          ],
+          "adcChannel": 2,
+          "adcUnit": 1,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 9
+        },
+        {
+          "name": "A3",
+          "label": "A3",
+          "kind": "analog",
+          "number": 17,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "adc"
+          ],
+          "adcChannel": 3,
+          "adcUnit": 1,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 10
+        },
+        {
+          "name": "A4",
+          "label": "A4",
+          "kind": "analog",
+          "number": 18,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "adc",
+            "i2c_sda"
+          ],
+          "adcChannel": 4,
+          "adcUnit": 1,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 11
+        },
+        {
+          "name": "A5",
+          "label": "A5",
+          "kind": "analog",
+          "number": 19,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "adc",
+            "i2c_scl"
+          ],
+          "adcChannel": 5,
+          "adcUnit": 1,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 12
+        }
+      ],
+      "notes": [
+        "The Uno runs at 5 V: a HIGH output pin sits near 5 V and its inputs read HIGH above roughly 3 V.",
+        "Each I/O pin can safely source or sink about 40 mA — an LED without a resistor asks for far more and damages the pin.",
+        "analogRead() returns 0–1023 (10 bits) for 0–5 V, so one step is about 4.9 mV.",
+        "Only pins D3, D5, D6, D9, D10 and D11 (marked ~) support analogWrite() PWM at about 490 Hz.",
+        "A0–A5 double as digital pins 14–19; A4/A5 are also the I2C SDA/SCL lines used by LCD and sensor modules.",
+        "int is 16 bits here: values above 32,767 wrap around to negative numbers — use long for big counters.",
+        "The board is powered over USB; the 5V pin can supply about 500 mA in total to your circuit.",
+        "External interrupts are available on D2 and D3 (attachInterrupt)."
+      ],
+      "placements": {
+        "half": {
+          "position": {
+            "x": 0,
+            "y": -552
+          }
+        },
+        "full": {
+          "position": {
+            "x": 0,
+            "y": -552
+          }
+        },
+        "dual": {
+          "position": {
+            "x": 0,
+            "y": -552
+          }
+        }
+      }
+    },
+    "nano": {
+      "id": "nano",
+      "name": "Arduino Nano",
+      "componentType": "nano",
+      "family": "avr",
+      "vcc": 5,
+      "gpioMaxV": 5.5,
+      "adcBits": 10,
+      "intBits": 16,
+      "statementCostUs": 1,
+      "pinOutputResistance": 25,
+      "pinMaxSourceMa": 40,
+      "pullupOhms": 35000,
+      "usbSupplyMaxMa": 500,
+      "ledBuiltin": "D13",
+      "i2c": {
+        "sda": "A4",
+        "scl": "A5"
+      },
+      "pwmDefault": {
+        "freqHz": 490,
+        "bits": 8
+      },
+      "libraries": [
+        "Servo.h",
+        "LiquidCrystal_I2C.h",
+        "Wire.h",
+        "Adafruit_NeoPixel.h",
+        "DHT.h",
+        "Adafruit_SSD1306.h",
+        "Adafruit_GFX.h",
+        "Adafruit_BME280.h",
+        "Adafruit_Sensor.h"
+      ],
+      "pins": [
+        {
+          "name": "D13",
+          "label": "D13",
+          "kind": "digital",
+          "number": 13,
+          "aliases": [
+            "LED_BUILTIN"
+          ],
+          "caps": [
+            "digital"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 0
+        },
+        {
+          "name": "3V3",
+          "label": "3V3",
+          "kind": "power",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": 3.3,
+          "tiedTo": null,
+          "side": "top",
+          "index": 1
+        },
+        {
+          "name": "AREF",
+          "label": "AREF",
+          "kind": "other",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 2
+        },
+        {
+          "name": "A0",
+          "label": "A0",
+          "kind": "analog",
+          "number": 14,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "adc"
+          ],
+          "adcChannel": 0,
+          "adcUnit": 1,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 3
+        },
+        {
+          "name": "A1",
+          "label": "A1",
+          "kind": "analog",
+          "number": 15,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "adc"
+          ],
+          "adcChannel": 1,
+          "adcUnit": 1,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 4
+        },
+        {
+          "name": "A2",
+          "label": "A2",
+          "kind": "analog",
+          "number": 16,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "adc"
+          ],
+          "adcChannel": 2,
+          "adcUnit": 1,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 5
+        },
+        {
+          "name": "A3",
+          "label": "A3",
+          "kind": "analog",
+          "number": 17,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "adc"
+          ],
+          "adcChannel": 3,
+          "adcUnit": 1,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 6
+        },
+        {
+          "name": "A4",
+          "label": "A4",
+          "kind": "analog",
+          "number": 18,
+          "aliases": [
+            "SDA"
+          ],
+          "caps": [
+            "digital",
+            "adc",
+            "i2c_sda"
+          ],
+          "adcChannel": 4,
+          "adcUnit": 1,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 7
+        },
+        {
+          "name": "A5",
+          "label": "A5",
+          "kind": "analog",
+          "number": 19,
+          "aliases": [
+            "SCL"
+          ],
+          "caps": [
+            "digital",
+            "adc",
+            "i2c_scl"
+          ],
+          "adcChannel": 5,
+          "adcUnit": 1,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 8
+        },
+        {
+          "name": "A6",
+          "label": "A6",
+          "kind": "analog",
+          "number": 20,
+          "aliases": [],
+          "caps": [
+            "adc"
+          ],
+          "adcChannel": 6,
+          "adcUnit": 1,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 9
+        },
+        {
+          "name": "A7",
+          "label": "A7",
+          "kind": "analog",
+          "number": 21,
+          "aliases": [],
+          "caps": [
+            "adc"
+          ],
+          "adcChannel": 7,
+          "adcUnit": 1,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 10
+        },
+        {
+          "name": "5V",
+          "label": "5V",
+          "kind": "power",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": 5,
+          "tiedTo": null,
+          "side": "top",
+          "index": 11
+        },
+        {
+          "name": "RESET",
+          "label": "RST",
+          "kind": "other",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 12
+        },
+        {
+          "name": "GND",
+          "label": "GND",
+          "kind": "ground",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 13
+        },
+        {
+          "name": "VIN",
+          "label": "VIN",
+          "kind": "power",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": 5,
+          "tiedTo": null,
+          "side": "top",
+          "index": 14
+        },
+        {
+          "name": "D12",
+          "label": "D12",
+          "kind": "digital",
+          "number": 12,
+          "aliases": [],
+          "caps": [
+            "digital"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 0
+        },
+        {
+          "name": "D11",
+          "label": "D11",
+          "kind": "digital",
+          "number": 11,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 1
+        },
+        {
+          "name": "D10",
+          "label": "D10",
+          "kind": "digital",
+          "number": 10,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 2
+        },
+        {
+          "name": "D9",
+          "label": "D9",
+          "kind": "digital",
+          "number": 9,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 3
+        },
+        {
+          "name": "D8",
+          "label": "D8",
+          "kind": "digital",
+          "number": 8,
+          "aliases": [],
+          "caps": [
+            "digital"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 4
+        },
+        {
+          "name": "D7",
+          "label": "D7",
+          "kind": "digital",
+          "number": 7,
+          "aliases": [],
+          "caps": [
+            "digital"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 5
+        },
+        {
+          "name": "D6",
+          "label": "D6",
+          "kind": "digital",
+          "number": 6,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 6
+        },
+        {
+          "name": "D5",
+          "label": "D5",
+          "kind": "digital",
+          "number": 5,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 7
+        },
+        {
+          "name": "D4",
+          "label": "D4",
+          "kind": "digital",
+          "number": 4,
+          "aliases": [],
+          "caps": [
+            "digital"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 8
+        },
+        {
+          "name": "D3",
+          "label": "D3",
+          "kind": "digital",
+          "number": 3,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 9
+        },
+        {
+          "name": "D2",
+          "label": "D2",
+          "kind": "digital",
+          "number": 2,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 10
+        },
+        {
+          "name": "GND2",
+          "label": "GND",
+          "kind": "ground",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 11
+        },
+        {
+          "name": "RESET2",
+          "label": "RST",
+          "kind": "other",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 12
+        },
+        {
+          "name": "D0",
+          "label": "D0",
+          "kind": "digital",
+          "number": 0,
+          "aliases": [
+            "RX"
+          ],
+          "caps": [
+            "digital",
+            "serial"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 13
+        },
+        {
+          "name": "D1",
+          "label": "D1",
+          "kind": "digital",
+          "number": 1,
+          "aliases": [
+            "TX"
+          ],
+          "caps": [
+            "digital",
+            "serial"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 14
+        }
+      ],
+      "notes": [
+        "The Nano is an Uno shrunk onto a breadboard-friendly stick: same 5 V logic, same 16 MHz chip, same pin numbers.",
+        "It straddles the breadboard gap — the two pin rows are 6 pitches apart, so the top row lands in column b and the bottom row in column f.",
+        "Pins A6 and A7 are analog-input only: analogRead works, digitalWrite does not.",
+        "Like the Uno, only D3, D5, D6, D9, D10 and D11 offer PWM with analogWrite().",
+        "analogRead() returns 0–1023 (10 bits) for 0–5 V.",
+        "Each pin is limited to about 40 mA; always put a resistor in series with an LED.",
+        "A4 is SDA and A5 is SCL for I2C modules such as the 16x2 LCD backpack."
+      ],
+      "placements": {
+        "half": {
+          "anchor": {
+            "board": "bb1",
+            "hole": "b1"
+          }
+        },
+        "full": {
+          "anchor": {
+            "board": "bb1",
+            "hole": "b1"
+          }
+        },
+        "dual": {
+          "anchor": {
+            "board": "bb1",
+            "hole": "b1"
+          }
+        }
+      }
+    },
+    "esp32": {
+      "id": "esp32",
+      "name": "ESP32 DevKit V1",
+      "componentType": "esp32",
+      "family": "esp32",
+      "vcc": 3.3,
+      "gpioMaxV": 3.6,
+      "adcBits": 12,
+      "intBits": 32,
+      "statementCostUs": 0.25,
+      "pinOutputResistance": 40,
+      "pinMaxSourceMa": 40,
+      "pullupOhms": 45000,
+      "usbSupplyMaxMa": 500,
+      "pwmDefault": {
+        "freqHz": 1000,
+        "bits": 8
+      },
+      "libraries": [
+        "Servo.h",
+        "LiquidCrystal_I2C.h",
+        "Wire.h",
+        "Adafruit_NeoPixel.h",
+        "DHT.h",
+        "Adafruit_SSD1306.h",
+        "Adafruit_GFX.h",
+        "Adafruit_BME280.h",
+        "Adafruit_Sensor.h",
+        "WiFi.h",
+        "WebServer.h",
+        "PubSubClient.h",
+        "ESP32Servo.h"
+      ],
+      "ledBuiltin": "GPIO2",
+      "i2c": {
+        "sda": "GPIO21",
+        "scl": "GPIO22"
+      },
+      "pins": [
+        {
+          "name": "3V3",
+          "label": "3V3",
+          "kind": "power",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": 3.3,
+          "tiedTo": null,
+          "side": "top",
+          "index": 0
+        },
+        {
+          "name": "GND",
+          "label": "GND",
+          "kind": "ground",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 1
+        },
+        {
+          "name": "GPIO15",
+          "label": "D15",
+          "kind": "analog",
+          "number": 15,
+          "aliases": [
+            "D15",
+            "T3",
+            "A13"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "touch"
+          ],
+          "adcChannel": 3,
+          "adcUnit": 2,
+          "touchChannel": 3,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 2
+        },
+        {
+          "name": "GPIO2",
+          "label": "D2",
+          "kind": "analog",
+          "number": 2,
+          "aliases": [
+            "D2",
+            "T2",
+            "LED_BUILTIN",
+            "A12"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "touch"
+          ],
+          "adcChannel": 2,
+          "adcUnit": 2,
+          "touchChannel": 2,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 3
+        },
+        {
+          "name": "GPIO4",
+          "label": "D4",
+          "kind": "analog",
+          "number": 4,
+          "aliases": [
+            "D4",
+            "T0",
+            "A10"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "touch"
+          ],
+          "adcChannel": 0,
+          "adcUnit": 2,
+          "touchChannel": 0,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 4
+        },
+        {
+          "name": "GPIO16",
+          "label": "RX2",
+          "kind": "digital",
+          "number": 16,
+          "aliases": [
+            "RX2"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 5
+        },
+        {
+          "name": "GPIO17",
+          "label": "TX2",
+          "kind": "digital",
+          "number": 17,
+          "aliases": [
+            "TX2"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 6
+        },
+        {
+          "name": "GPIO5",
+          "label": "D5",
+          "kind": "digital",
+          "number": 5,
+          "aliases": [
+            "D5"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 7
+        },
+        {
+          "name": "GPIO18",
+          "label": "D18",
+          "kind": "digital",
+          "number": 18,
+          "aliases": [
+            "D18"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 8
+        },
+        {
+          "name": "GPIO19",
+          "label": "D19",
+          "kind": "digital",
+          "number": 19,
+          "aliases": [
+            "D19"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 9
+        },
+        {
+          "name": "GPIO21",
+          "label": "D21",
+          "kind": "digital",
+          "number": 21,
+          "aliases": [
+            "D21",
+            "SDA"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "i2c_sda"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 10
+        },
+        {
+          "name": "GPIO3",
+          "label": "RX0",
+          "kind": "digital",
+          "number": 3,
+          "aliases": [
+            "RX0",
+            "RX"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "serial"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 11
+        },
+        {
+          "name": "GPIO1",
+          "label": "TX0",
+          "kind": "digital",
+          "number": 1,
+          "aliases": [
+            "TX0",
+            "TX"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "serial"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 12
+        },
+        {
+          "name": "GPIO22",
+          "label": "D22",
+          "kind": "digital",
+          "number": 22,
+          "aliases": [
+            "D22",
+            "SCL"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "i2c_scl"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 13
+        },
+        {
+          "name": "GPIO23",
+          "label": "D23",
+          "kind": "digital",
+          "number": 23,
+          "aliases": [
+            "D23"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 14
+        },
+        {
+          "name": "VIN",
+          "label": "VIN",
+          "kind": "power",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": 5,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 0
+        },
+        {
+          "name": "GND2",
+          "label": "GND",
+          "kind": "ground",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 1
+        },
+        {
+          "name": "GPIO13",
+          "label": "D13",
+          "kind": "analog",
+          "number": 13,
+          "aliases": [
+            "D13",
+            "T4",
+            "A14"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "touch"
+          ],
+          "adcChannel": 4,
+          "adcUnit": 2,
+          "touchChannel": 4,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 2
+        },
+        {
+          "name": "GPIO12",
+          "label": "D12",
+          "kind": "analog",
+          "number": 12,
+          "aliases": [
+            "D12",
+            "T5",
+            "A15"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "touch"
+          ],
+          "adcChannel": 5,
+          "adcUnit": 2,
+          "touchChannel": 5,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 3
+        },
+        {
+          "name": "GPIO14",
+          "label": "D14",
+          "kind": "analog",
+          "number": 14,
+          "aliases": [
+            "D14",
+            "T6",
+            "A16"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "touch"
+          ],
+          "adcChannel": 6,
+          "adcUnit": 2,
+          "touchChannel": 6,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 4
+        },
+        {
+          "name": "GPIO27",
+          "label": "D27",
+          "kind": "analog",
+          "number": 27,
+          "aliases": [
+            "D27",
+            "T7",
+            "A17"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "touch"
+          ],
+          "adcChannel": 7,
+          "adcUnit": 2,
+          "touchChannel": 7,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 5
+        },
+        {
+          "name": "GPIO26",
+          "label": "D26",
+          "kind": "analog",
+          "number": 26,
+          "aliases": [
+            "D26",
+            "DAC2",
+            "A19"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "dac"
+          ],
+          "adcChannel": 9,
+          "adcUnit": 2,
+          "touchChannel": null,
+          "dacChannel": 2,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 6
+        },
+        {
+          "name": "GPIO25",
+          "label": "D25",
+          "kind": "analog",
+          "number": 25,
+          "aliases": [
+            "D25",
+            "DAC1",
+            "A18"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "dac"
+          ],
+          "adcChannel": 8,
+          "adcUnit": 2,
+          "touchChannel": null,
+          "dacChannel": 1,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 7
+        },
+        {
+          "name": "GPIO33",
+          "label": "D33",
+          "kind": "analog",
+          "number": 33,
+          "aliases": [
+            "D33",
+            "T8",
+            "A5"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "touch"
+          ],
+          "adcChannel": 5,
+          "adcUnit": 1,
+          "touchChannel": 8,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 8
+        },
+        {
+          "name": "GPIO32",
+          "label": "D32",
+          "kind": "analog",
+          "number": 32,
+          "aliases": [
+            "D32",
+            "T9",
+            "A4"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "touch"
+          ],
+          "adcChannel": 4,
+          "adcUnit": 1,
+          "touchChannel": 9,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 9
+        },
+        {
+          "name": "GPIO35",
+          "label": "D35",
+          "kind": "analog",
+          "number": 35,
+          "aliases": [
+            "D35",
+            "A7"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "input_only",
+            "adc"
+          ],
+          "adcChannel": 7,
+          "adcUnit": 1,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 10
+        },
+        {
+          "name": "GPIO34",
+          "label": "D34",
+          "kind": "analog",
+          "number": 34,
+          "aliases": [
+            "D34",
+            "A6"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "input_only",
+            "adc"
+          ],
+          "adcChannel": 6,
+          "adcUnit": 1,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 11
+        },
+        {
+          "name": "GPIO39",
+          "label": "VN",
+          "kind": "analog",
+          "number": 39,
+          "aliases": [
+            "VN",
+            "A3"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "input_only",
+            "adc"
+          ],
+          "adcChannel": 3,
+          "adcUnit": 1,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 12
+        },
+        {
+          "name": "GPIO36",
+          "label": "VP",
+          "kind": "analog",
+          "number": 36,
+          "aliases": [
+            "VP",
+            "A0"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "input_only",
+            "adc"
+          ],
+          "adcChannel": 0,
+          "adcUnit": 1,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 13
+        },
+        {
+          "name": "EN",
+          "label": "EN",
+          "kind": "other",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 14
+        }
+      ],
+      "notes": [
+        "The ESP32 is a 3.3 V board. Its GPIO pins tolerate at most about 3.6 V — 5 V on a pin burns it. Use a voltage divider or a level shifter for 5 V sensors.",
+        "VIN carries the 5 V from USB and can power 5 V modules; 3V3 is the regulated 3.3 V that the chip itself runs on.",
+        "analogRead() returns 0–4095 (12 bits) for 0–3.3 V — remember to change 1023 to 4095 when porting Uno code.",
+        "ADC2 pins (GPIO 2, 4, 12–15, 25–27) stop working while WiFi is connected; use ADC1 pins (GPIO 32–39) for sensors in IoT projects.",
+        "GPIO 34, 35, 36 and 39 are input-only: they can read but never drive an LED.",
+        "Nine header pins are capacitive touch inputs (T0 = GPIO4 … T9 = GPIO32): touchRead() drops from about 70 to about 15 when a finger touches the pad.",
+        "Any output pin can do PWM through the LEDC peripheral (analogWrite or ledcWrite); GPIO25/26 are true 8-bit DACs.",
+        "int is 32 bits and the chip runs at 240 MHz — millions of statements per second, so short delays matter more than loop overhead."
+      ],
+      "placements": {
+        "half": {
+          "anchor": {
+            "board": "bb1",
+            "hole": "a1"
+          }
+        },
+        "full": {
+          "anchor": {
+            "board": "bb1",
+            "hole": "a1"
+          }
+        },
+        "dual": {
+          "anchor": {
+            "board": "bb1",
+            "hole": "j1"
+          }
+        }
+      }
+    },
+    "esp32s3": {
+      "id": "esp32s3",
+      "name": "ESP32-S3 DevKitC-1",
+      "componentType": "esp32s3",
+      "family": "esp32",
+      "vcc": 3.3,
+      "gpioMaxV": 3.6,
+      "adcBits": 12,
+      "intBits": 32,
+      "statementCostUs": 0.25,
+      "pinOutputResistance": 40,
+      "pinMaxSourceMa": 40,
+      "pullupOhms": 45000,
+      "usbSupplyMaxMa": 500,
+      "pwmDefault": {
+        "freqHz": 1000,
+        "bits": 8
+      },
+      "libraries": [
+        "Servo.h",
+        "LiquidCrystal_I2C.h",
+        "Wire.h",
+        "Adafruit_NeoPixel.h",
+        "DHT.h",
+        "Adafruit_SSD1306.h",
+        "Adafruit_GFX.h",
+        "Adafruit_BME280.h",
+        "Adafruit_Sensor.h",
+        "WiFi.h",
+        "WebServer.h",
+        "PubSubClient.h",
+        "ESP32Servo.h"
+      ],
+      "ledBuiltin": "GPIO48",
+      "i2c": {
+        "sda": "GPIO8",
+        "scl": "GPIO9"
+      },
+      "pins": [
+        {
+          "name": "3V3",
+          "label": "3V3",
+          "kind": "power",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": 3.3,
+          "tiedTo": null,
+          "side": "top",
+          "index": 0
+        },
+        {
+          "name": "3V3_2",
+          "label": "3V3",
+          "kind": "power",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": 3.3,
+          "tiedTo": null,
+          "side": "top",
+          "index": 1
+        },
+        {
+          "name": "RST",
+          "label": "RST",
+          "kind": "other",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 2
+        },
+        {
+          "name": "GPIO4",
+          "label": "4",
+          "kind": "analog",
+          "number": 4,
+          "aliases": [
+            "A3",
+            "T4"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "touch"
+          ],
+          "adcChannel": 3,
+          "adcUnit": 1,
+          "touchChannel": 4,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 3
+        },
+        {
+          "name": "GPIO5",
+          "label": "5",
+          "kind": "analog",
+          "number": 5,
+          "aliases": [
+            "A4",
+            "T5"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "touch"
+          ],
+          "adcChannel": 4,
+          "adcUnit": 1,
+          "touchChannel": 5,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 4
+        },
+        {
+          "name": "GPIO6",
+          "label": "6",
+          "kind": "analog",
+          "number": 6,
+          "aliases": [
+            "A5",
+            "T6"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "touch"
+          ],
+          "adcChannel": 5,
+          "adcUnit": 1,
+          "touchChannel": 6,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 5
+        },
+        {
+          "name": "GPIO7",
+          "label": "7",
+          "kind": "analog",
+          "number": 7,
+          "aliases": [
+            "A6",
+            "T7"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "touch"
+          ],
+          "adcChannel": 6,
+          "adcUnit": 1,
+          "touchChannel": 7,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 6
+        },
+        {
+          "name": "GPIO15",
+          "label": "15",
+          "kind": "analog",
+          "number": 15,
+          "aliases": [
+            "A14"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc"
+          ],
+          "adcChannel": 4,
+          "adcUnit": 2,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 7
+        },
+        {
+          "name": "GPIO16",
+          "label": "16",
+          "kind": "analog",
+          "number": 16,
+          "aliases": [
+            "A15"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc"
+          ],
+          "adcChannel": 5,
+          "adcUnit": 2,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 8
+        },
+        {
+          "name": "GPIO17",
+          "label": "17",
+          "kind": "analog",
+          "number": 17,
+          "aliases": [
+            "A16"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc"
+          ],
+          "adcChannel": 6,
+          "adcUnit": 2,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 9
+        },
+        {
+          "name": "GPIO18",
+          "label": "18",
+          "kind": "analog",
+          "number": 18,
+          "aliases": [
+            "A17"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc"
+          ],
+          "adcChannel": 7,
+          "adcUnit": 2,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 10
+        },
+        {
+          "name": "GPIO8",
+          "label": "8",
+          "kind": "analog",
+          "number": 8,
+          "aliases": [
+            "A7",
+            "T8",
+            "SDA"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "touch",
+            "i2c_sda"
+          ],
+          "adcChannel": 7,
+          "adcUnit": 1,
+          "touchChannel": 8,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 11
+        },
+        {
+          "name": "GPIO3",
+          "label": "3",
+          "kind": "analog",
+          "number": 3,
+          "aliases": [
+            "A2",
+            "T3"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "touch"
+          ],
+          "adcChannel": 2,
+          "adcUnit": 1,
+          "touchChannel": 3,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 12
+        },
+        {
+          "name": "GPIO46",
+          "label": "46",
+          "kind": "digital",
+          "number": 46,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "interrupt",
+            "input_only"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 13
+        },
+        {
+          "name": "GPIO9",
+          "label": "9",
+          "kind": "analog",
+          "number": 9,
+          "aliases": [
+            "A8",
+            "T9",
+            "SCL"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "touch",
+            "i2c_scl"
+          ],
+          "adcChannel": 8,
+          "adcUnit": 1,
+          "touchChannel": 9,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 14
+        },
+        {
+          "name": "GPIO10",
+          "label": "10",
+          "kind": "analog",
+          "number": 10,
+          "aliases": [
+            "A9",
+            "T10"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "touch"
+          ],
+          "adcChannel": 9,
+          "adcUnit": 1,
+          "touchChannel": 10,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 15
+        },
+        {
+          "name": "GPIO11",
+          "label": "11",
+          "kind": "analog",
+          "number": 11,
+          "aliases": [
+            "A10",
+            "T11"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "touch"
+          ],
+          "adcChannel": 0,
+          "adcUnit": 2,
+          "touchChannel": 11,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 16
+        },
+        {
+          "name": "GPIO12",
+          "label": "12",
+          "kind": "analog",
+          "number": 12,
+          "aliases": [
+            "A11",
+            "T12"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "touch"
+          ],
+          "adcChannel": 1,
+          "adcUnit": 2,
+          "touchChannel": 12,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 17
+        },
+        {
+          "name": "GPIO13",
+          "label": "13",
+          "kind": "analog",
+          "number": 13,
+          "aliases": [
+            "A12",
+            "T13"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "touch"
+          ],
+          "adcChannel": 2,
+          "adcUnit": 2,
+          "touchChannel": 13,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 18
+        },
+        {
+          "name": "GPIO14",
+          "label": "14",
+          "kind": "analog",
+          "number": 14,
+          "aliases": [
+            "A13",
+            "T14"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "touch"
+          ],
+          "adcChannel": 3,
+          "adcUnit": 2,
+          "touchChannel": 14,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 19
+        },
+        {
+          "name": "5V",
+          "label": "5V",
+          "kind": "power",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": 5,
+          "tiedTo": null,
+          "side": "top",
+          "index": 20
+        },
+        {
+          "name": "GND",
+          "label": "GND",
+          "kind": "ground",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 21
+        },
+        {
+          "name": "GND2",
+          "label": "GND",
+          "kind": "ground",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 0
+        },
+        {
+          "name": "GPIO43",
+          "label": "TX",
+          "kind": "digital",
+          "number": 43,
+          "aliases": [
+            "TX"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "serial"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 1
+        },
+        {
+          "name": "GPIO44",
+          "label": "RX",
+          "kind": "digital",
+          "number": 44,
+          "aliases": [
+            "RX"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "serial"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 2
+        },
+        {
+          "name": "GPIO1",
+          "label": "1",
+          "kind": "analog",
+          "number": 1,
+          "aliases": [
+            "A0",
+            "T1"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "touch"
+          ],
+          "adcChannel": 0,
+          "adcUnit": 1,
+          "touchChannel": 1,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 3
+        },
+        {
+          "name": "GPIO2",
+          "label": "2",
+          "kind": "analog",
+          "number": 2,
+          "aliases": [
+            "A1",
+            "T2"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc",
+            "touch"
+          ],
+          "adcChannel": 1,
+          "adcUnit": 1,
+          "touchChannel": 2,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 4
+        },
+        {
+          "name": "GPIO42",
+          "label": "42",
+          "kind": "digital",
+          "number": 42,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 5
+        },
+        {
+          "name": "GPIO41",
+          "label": "41",
+          "kind": "digital",
+          "number": 41,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 6
+        },
+        {
+          "name": "GPIO40",
+          "label": "40",
+          "kind": "digital",
+          "number": 40,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 7
+        },
+        {
+          "name": "GPIO39",
+          "label": "39",
+          "kind": "digital",
+          "number": 39,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 8
+        },
+        {
+          "name": "GPIO38",
+          "label": "38",
+          "kind": "digital",
+          "number": 38,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 9
+        },
+        {
+          "name": "GPIO37",
+          "label": "37",
+          "kind": "digital",
+          "number": 37,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 10
+        },
+        {
+          "name": "GPIO36",
+          "label": "36",
+          "kind": "digital",
+          "number": 36,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 11
+        },
+        {
+          "name": "GPIO35",
+          "label": "35",
+          "kind": "digital",
+          "number": 35,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 12
+        },
+        {
+          "name": "GPIO0",
+          "label": "0",
+          "kind": "digital",
+          "number": 0,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 13
+        },
+        {
+          "name": "GPIO45",
+          "label": "45",
+          "kind": "digital",
+          "number": 45,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 14
+        },
+        {
+          "name": "GPIO48",
+          "label": "48",
+          "kind": "digital",
+          "number": 48,
+          "aliases": [
+            "LED_BUILTIN"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 15
+        },
+        {
+          "name": "GPIO47",
+          "label": "47",
+          "kind": "digital",
+          "number": 47,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 16
+        },
+        {
+          "name": "GPIO21",
+          "label": "21",
+          "kind": "digital",
+          "number": 21,
+          "aliases": [],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 17
+        },
+        {
+          "name": "GPIO20",
+          "label": "20",
+          "kind": "analog",
+          "number": 20,
+          "aliases": [
+            "A19"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc"
+          ],
+          "adcChannel": 9,
+          "adcUnit": 2,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 18
+        },
+        {
+          "name": "GPIO19",
+          "label": "19",
+          "kind": "analog",
+          "number": 19,
+          "aliases": [
+            "A18"
+          ],
+          "caps": [
+            "digital",
+            "interrupt",
+            "pwm",
+            "adc"
+          ],
+          "adcChannel": 8,
+          "adcUnit": 2,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 19
+        },
+        {
+          "name": "GND3",
+          "label": "GND",
+          "kind": "ground",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 20
+        },
+        {
+          "name": "GND4",
+          "label": "GND",
+          "kind": "ground",
+          "number": null,
+          "aliases": [],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 21
+        }
+      ],
+      "notes": [
+        "The ESP32-S3 is a 3.3 V board like the classic ESP32: never feed a GPIO more than 3.6 V.",
+        "The 5V pin passes the USB supply through for 5 V modules; the chip itself and its 3V3 pins run at 3.3 V.",
+        "GPIO1–GPIO20 are 12-bit ADC inputs (0–4095). GPIO1–10 are ADC1 (WiFi-safe); GPIO11–20 are ADC2 and pause while WiFi is up.",
+        "GPIO1–GPIO14 are touch pads T1–T14 — the S3 has more touch channels than any other board here.",
+        "There is no DAC on the S3: use PWM (ledcWrite) and an RC filter when you need an analog-like output.",
+        "The built-in RGB LED lives on GPIO48; the default I2C bus is SDA = GPIO8, SCL = GPIO9.",
+        "GPIO43/44 are the UART0 TX/RX lines used by the serial monitor; GPIO19/20 are the native USB data pins.",
+        "GPIO0, GPIO45 and GPIO46 are strapping pins read at boot — they still work as I/O but avoid pulling them the wrong way at power-up."
+      ],
+      "placements": {
+        "half": {
+          "anchor": {
+            "board": "bb1",
+            "hole": "a1"
+          }
+        },
+        "full": {
+          "anchor": {
+            "board": "bb1",
+            "hole": "a1"
+          }
+        },
+        "dual": {
+          "anchor": {
+            "board": "bb1",
+            "hole": "j1"
+          }
+        }
+      }
+    },
+    "raspberrypi4": {
+      "id": "raspberrypi4",
+      "name": "Raspberry Pi 4 Model B",
+      "componentType": "raspberrypi4",
+      "family": "raspberrypi",
+      "language": "python",
+      "vcc": 3.3,
+      "gpioMaxV": 3.6,
+      "adcBits": 0,
+      "intBits": 32,
+      "statementCostUs": 1,
+      "pinOutputResistance": 50,
+      "pinMaxSourceMa": 16,
+      "pullupOhms": 50000,
+      "usbSupplyMaxMa": 500,
+      "pwmDefault": {
+        "freqHz": 100,
+        "bits": 8
+      },
+      "ledBuiltin": null,
+      "i2c": {
+        "sda": "GPIO2",
+        "scl": "GPIO3"
+      },
+      "libraries": [],
+      "pins": [
+        {
+          "name": "3V3",
+          "label": "1 3V3",
+          "kind": "power",
+          "number": null,
+          "aliases": [
+            "PIN1"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": 3.3,
+          "tiedTo": null,
+          "side": "top",
+          "index": 0
+        },
+        {
+          "name": "5V",
+          "label": "2 5V",
+          "kind": "power",
+          "number": null,
+          "aliases": [
+            "PIN2"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": 5,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 0
+        },
+        {
+          "name": "GPIO2",
+          "label": "3 GPIO2",
+          "kind": "digital",
+          "number": 2,
+          "aliases": [
+            "PIN3",
+            "SDA"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt",
+            "i2c_sda"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 1
+        },
+        {
+          "name": "5V_2",
+          "label": "4 5V",
+          "kind": "power",
+          "number": null,
+          "aliases": [
+            "PIN4"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": 5,
+          "tiedTo": "5V",
+          "side": "bottom",
+          "index": 1
+        },
+        {
+          "name": "GPIO3",
+          "label": "5 GPIO3",
+          "kind": "digital",
+          "number": 3,
+          "aliases": [
+            "PIN5",
+            "SCL"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt",
+            "i2c_scl"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 2
+        },
+        {
+          "name": "GND",
+          "label": "6 GND",
+          "kind": "ground",
+          "number": null,
+          "aliases": [
+            "PIN6"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 2
+        },
+        {
+          "name": "GPIO4",
+          "label": "7 GPIO4",
+          "kind": "digital",
+          "number": 4,
+          "aliases": [
+            "PIN7"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 3
+        },
+        {
+          "name": "GPIO14",
+          "label": "8 GPIO14",
+          "kind": "digital",
+          "number": 14,
+          "aliases": [
+            "PIN8"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt",
+            "serial"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 3
+        },
+        {
+          "name": "GND2",
+          "label": "9 GND2",
+          "kind": "ground",
+          "number": null,
+          "aliases": [
+            "PIN9"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 4
+        },
+        {
+          "name": "GPIO15",
+          "label": "10 GPIO15",
+          "kind": "digital",
+          "number": 15,
+          "aliases": [
+            "PIN10"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt",
+            "serial"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 4
+        },
+        {
+          "name": "GPIO17",
+          "label": "11 GPIO17",
+          "kind": "digital",
+          "number": 17,
+          "aliases": [
+            "PIN11"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 5
+        },
+        {
+          "name": "GPIO18",
+          "label": "12 GPIO18",
+          "kind": "digital",
+          "number": 18,
+          "aliases": [
+            "PIN12"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 5
+        },
+        {
+          "name": "GPIO27",
+          "label": "13 GPIO27",
+          "kind": "digital",
+          "number": 27,
+          "aliases": [
+            "PIN13"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 6
+        },
+        {
+          "name": "GND3",
+          "label": "14 GND3",
+          "kind": "ground",
+          "number": null,
+          "aliases": [
+            "PIN14"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 6
+        },
+        {
+          "name": "GPIO22",
+          "label": "15 GPIO22",
+          "kind": "digital",
+          "number": 22,
+          "aliases": [
+            "PIN15"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 7
+        },
+        {
+          "name": "GPIO23",
+          "label": "16 GPIO23",
+          "kind": "digital",
+          "number": 23,
+          "aliases": [
+            "PIN16"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 7
+        },
+        {
+          "name": "3V3_2",
+          "label": "17 3V3",
+          "kind": "power",
+          "number": null,
+          "aliases": [
+            "PIN17"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": 3.3,
+          "tiedTo": "3V3",
+          "side": "top",
+          "index": 8
+        },
+        {
+          "name": "GPIO24",
+          "label": "18 GPIO24",
+          "kind": "digital",
+          "number": 24,
+          "aliases": [
+            "PIN18"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 8
+        },
+        {
+          "name": "GPIO10",
+          "label": "19 GPIO10",
+          "kind": "digital",
+          "number": 10,
+          "aliases": [
+            "PIN19"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 9
+        },
+        {
+          "name": "GND4",
+          "label": "20 GND4",
+          "kind": "ground",
+          "number": null,
+          "aliases": [
+            "PIN20"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 9
+        },
+        {
+          "name": "GPIO9",
+          "label": "21 GPIO9",
+          "kind": "digital",
+          "number": 9,
+          "aliases": [
+            "PIN21"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 10
+        },
+        {
+          "name": "GPIO25",
+          "label": "22 GPIO25",
+          "kind": "digital",
+          "number": 25,
+          "aliases": [
+            "PIN22"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 10
+        },
+        {
+          "name": "GPIO11",
+          "label": "23 GPIO11",
+          "kind": "digital",
+          "number": 11,
+          "aliases": [
+            "PIN23"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 11
+        },
+        {
+          "name": "GPIO8",
+          "label": "24 GPIO8",
+          "kind": "digital",
+          "number": 8,
+          "aliases": [
+            "PIN24"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 11
+        },
+        {
+          "name": "GND5",
+          "label": "25 GND5",
+          "kind": "ground",
+          "number": null,
+          "aliases": [
+            "PIN25"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 12
+        },
+        {
+          "name": "GPIO7",
+          "label": "26 GPIO7",
+          "kind": "digital",
+          "number": 7,
+          "aliases": [
+            "PIN26"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 12
+        },
+        {
+          "name": "GPIO0",
+          "label": "27 GPIO0",
+          "kind": "digital",
+          "number": 0,
+          "aliases": [
+            "PIN27"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 13
+        },
+        {
+          "name": "GPIO1",
+          "label": "28 GPIO1",
+          "kind": "digital",
+          "number": 1,
+          "aliases": [
+            "PIN28"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 13
+        },
+        {
+          "name": "GPIO5",
+          "label": "29 GPIO5",
+          "kind": "digital",
+          "number": 5,
+          "aliases": [
+            "PIN29"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 14
+        },
+        {
+          "name": "GND6",
+          "label": "30 GND6",
+          "kind": "ground",
+          "number": null,
+          "aliases": [
+            "PIN30"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 14
+        },
+        {
+          "name": "GPIO6",
+          "label": "31 GPIO6",
+          "kind": "digital",
+          "number": 6,
+          "aliases": [
+            "PIN31"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 15
+        },
+        {
+          "name": "GPIO12",
+          "label": "32 GPIO12",
+          "kind": "digital",
+          "number": 12,
+          "aliases": [
+            "PIN32"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 15
+        },
+        {
+          "name": "GPIO13",
+          "label": "33 GPIO13",
+          "kind": "digital",
+          "number": 13,
+          "aliases": [
+            "PIN33"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 16
+        },
+        {
+          "name": "GND7",
+          "label": "34 GND7",
+          "kind": "ground",
+          "number": null,
+          "aliases": [
+            "PIN34"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 16
+        },
+        {
+          "name": "GPIO19",
+          "label": "35 GPIO19",
+          "kind": "digital",
+          "number": 19,
+          "aliases": [
+            "PIN35"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 17
+        },
+        {
+          "name": "GPIO16",
+          "label": "36 GPIO16",
+          "kind": "digital",
+          "number": 16,
+          "aliases": [
+            "PIN36"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 17
+        },
+        {
+          "name": "GPIO26",
+          "label": "37 GPIO26",
+          "kind": "digital",
+          "number": 26,
+          "aliases": [
+            "PIN37"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 18
+        },
+        {
+          "name": "GPIO20",
+          "label": "38 GPIO20",
+          "kind": "digital",
+          "number": 20,
+          "aliases": [
+            "PIN38"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 18
+        },
+        {
+          "name": "GND8",
+          "label": "39 GND8",
+          "kind": "ground",
+          "number": null,
+          "aliases": [
+            "PIN39"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 19
+        },
+        {
+          "name": "GPIO21",
+          "label": "40 GPIO21",
+          "kind": "digital",
+          "number": 21,
+          "aliases": [
+            "PIN40"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 19
+        }
+      ],
+      "notes": [
+        "The 40-pin header uses 3.3 V GPIO. Physical header numbers and BCM GPIO numbers differ.",
+        "The simulator accepts a documented Python subset with gpiozero and RPi.GPIO-compatible calls.",
+        "There is no built-in analog input. ADCs, Linux, networking, cameras and external Python packages are not simulated.",
+        "GPIO resistance, current limits and virtual instruction timing are teaching-model approximations."
+      ],
+      "placements": {
+        "half": {
+          "position": {
+            "x": 0,
+            "y": -600
+          }
+        },
+        "full": {
+          "position": {
+            "x": 0,
+            "y": -600
+          }
+        },
+        "dual": {
+          "position": {
+            "x": 0,
+            "y": -600
+          }
+        }
+      }
+    },
+    "raspberrypi5": {
+      "id": "raspberrypi5",
+      "name": "Raspberry Pi 5",
+      "componentType": "raspberrypi5",
+      "family": "raspberrypi",
+      "language": "python",
+      "vcc": 3.3,
+      "gpioMaxV": 3.6,
+      "adcBits": 0,
+      "intBits": 32,
+      "statementCostUs": 1,
+      "pinOutputResistance": 50,
+      "pinMaxSourceMa": 16,
+      "pullupOhms": 50000,
+      "usbSupplyMaxMa": 500,
+      "pwmDefault": {
+        "freqHz": 100,
+        "bits": 8
+      },
+      "ledBuiltin": null,
+      "i2c": {
+        "sda": "GPIO2",
+        "scl": "GPIO3"
+      },
+      "libraries": [],
+      "pins": [
+        {
+          "name": "3V3",
+          "label": "1 3V3",
+          "kind": "power",
+          "number": null,
+          "aliases": [
+            "PIN1"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": 3.3,
+          "tiedTo": null,
+          "side": "top",
+          "index": 0
+        },
+        {
+          "name": "5V",
+          "label": "2 5V",
+          "kind": "power",
+          "number": null,
+          "aliases": [
+            "PIN2"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": 5,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 0
+        },
+        {
+          "name": "GPIO2",
+          "label": "3 GPIO2",
+          "kind": "digital",
+          "number": 2,
+          "aliases": [
+            "PIN3",
+            "SDA"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt",
+            "i2c_sda"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 1
+        },
+        {
+          "name": "5V_2",
+          "label": "4 5V",
+          "kind": "power",
+          "number": null,
+          "aliases": [
+            "PIN4"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": 5,
+          "tiedTo": "5V",
+          "side": "bottom",
+          "index": 1
+        },
+        {
+          "name": "GPIO3",
+          "label": "5 GPIO3",
+          "kind": "digital",
+          "number": 3,
+          "aliases": [
+            "PIN5",
+            "SCL"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt",
+            "i2c_scl"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 2
+        },
+        {
+          "name": "GND",
+          "label": "6 GND",
+          "kind": "ground",
+          "number": null,
+          "aliases": [
+            "PIN6"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 2
+        },
+        {
+          "name": "GPIO4",
+          "label": "7 GPIO4",
+          "kind": "digital",
+          "number": 4,
+          "aliases": [
+            "PIN7"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 3
+        },
+        {
+          "name": "GPIO14",
+          "label": "8 GPIO14",
+          "kind": "digital",
+          "number": 14,
+          "aliases": [
+            "PIN8"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt",
+            "serial"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 3
+        },
+        {
+          "name": "GND2",
+          "label": "9 GND2",
+          "kind": "ground",
+          "number": null,
+          "aliases": [
+            "PIN9"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 4
+        },
+        {
+          "name": "GPIO15",
+          "label": "10 GPIO15",
+          "kind": "digital",
+          "number": 15,
+          "aliases": [
+            "PIN10"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt",
+            "serial"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 4
+        },
+        {
+          "name": "GPIO17",
+          "label": "11 GPIO17",
+          "kind": "digital",
+          "number": 17,
+          "aliases": [
+            "PIN11"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 5
+        },
+        {
+          "name": "GPIO18",
+          "label": "12 GPIO18",
+          "kind": "digital",
+          "number": 18,
+          "aliases": [
+            "PIN12"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 5
+        },
+        {
+          "name": "GPIO27",
+          "label": "13 GPIO27",
+          "kind": "digital",
+          "number": 27,
+          "aliases": [
+            "PIN13"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 6
+        },
+        {
+          "name": "GND3",
+          "label": "14 GND3",
+          "kind": "ground",
+          "number": null,
+          "aliases": [
+            "PIN14"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 6
+        },
+        {
+          "name": "GPIO22",
+          "label": "15 GPIO22",
+          "kind": "digital",
+          "number": 22,
+          "aliases": [
+            "PIN15"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 7
+        },
+        {
+          "name": "GPIO23",
+          "label": "16 GPIO23",
+          "kind": "digital",
+          "number": 23,
+          "aliases": [
+            "PIN16"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 7
+        },
+        {
+          "name": "3V3_2",
+          "label": "17 3V3",
+          "kind": "power",
+          "number": null,
+          "aliases": [
+            "PIN17"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": 3.3,
+          "tiedTo": "3V3",
+          "side": "top",
+          "index": 8
+        },
+        {
+          "name": "GPIO24",
+          "label": "18 GPIO24",
+          "kind": "digital",
+          "number": 24,
+          "aliases": [
+            "PIN18"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 8
+        },
+        {
+          "name": "GPIO10",
+          "label": "19 GPIO10",
+          "kind": "digital",
+          "number": 10,
+          "aliases": [
+            "PIN19"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 9
+        },
+        {
+          "name": "GND4",
+          "label": "20 GND4",
+          "kind": "ground",
+          "number": null,
+          "aliases": [
+            "PIN20"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 9
+        },
+        {
+          "name": "GPIO9",
+          "label": "21 GPIO9",
+          "kind": "digital",
+          "number": 9,
+          "aliases": [
+            "PIN21"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 10
+        },
+        {
+          "name": "GPIO25",
+          "label": "22 GPIO25",
+          "kind": "digital",
+          "number": 25,
+          "aliases": [
+            "PIN22"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 10
+        },
+        {
+          "name": "GPIO11",
+          "label": "23 GPIO11",
+          "kind": "digital",
+          "number": 11,
+          "aliases": [
+            "PIN23"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 11
+        },
+        {
+          "name": "GPIO8",
+          "label": "24 GPIO8",
+          "kind": "digital",
+          "number": 8,
+          "aliases": [
+            "PIN24"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 11
+        },
+        {
+          "name": "GND5",
+          "label": "25 GND5",
+          "kind": "ground",
+          "number": null,
+          "aliases": [
+            "PIN25"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 12
+        },
+        {
+          "name": "GPIO7",
+          "label": "26 GPIO7",
+          "kind": "digital",
+          "number": 7,
+          "aliases": [
+            "PIN26"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 12
+        },
+        {
+          "name": "GPIO0",
+          "label": "27 GPIO0",
+          "kind": "digital",
+          "number": 0,
+          "aliases": [
+            "PIN27"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 13
+        },
+        {
+          "name": "GPIO1",
+          "label": "28 GPIO1",
+          "kind": "digital",
+          "number": 1,
+          "aliases": [
+            "PIN28"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 13
+        },
+        {
+          "name": "GPIO5",
+          "label": "29 GPIO5",
+          "kind": "digital",
+          "number": 5,
+          "aliases": [
+            "PIN29"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 14
+        },
+        {
+          "name": "GND6",
+          "label": "30 GND6",
+          "kind": "ground",
+          "number": null,
+          "aliases": [
+            "PIN30"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 14
+        },
+        {
+          "name": "GPIO6",
+          "label": "31 GPIO6",
+          "kind": "digital",
+          "number": 6,
+          "aliases": [
+            "PIN31"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 15
+        },
+        {
+          "name": "GPIO12",
+          "label": "32 GPIO12",
+          "kind": "digital",
+          "number": 12,
+          "aliases": [
+            "PIN32"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 15
+        },
+        {
+          "name": "GPIO13",
+          "label": "33 GPIO13",
+          "kind": "digital",
+          "number": 13,
+          "aliases": [
+            "PIN33"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 16
+        },
+        {
+          "name": "GND7",
+          "label": "34 GND7",
+          "kind": "ground",
+          "number": null,
+          "aliases": [
+            "PIN34"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 16
+        },
+        {
+          "name": "GPIO19",
+          "label": "35 GPIO19",
+          "kind": "digital",
+          "number": 19,
+          "aliases": [
+            "PIN35"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 17
+        },
+        {
+          "name": "GPIO16",
+          "label": "36 GPIO16",
+          "kind": "digital",
+          "number": 16,
+          "aliases": [
+            "PIN36"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 17
+        },
+        {
+          "name": "GPIO26",
+          "label": "37 GPIO26",
+          "kind": "digital",
+          "number": 26,
+          "aliases": [
+            "PIN37"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 18
+        },
+        {
+          "name": "GPIO20",
+          "label": "38 GPIO20",
+          "kind": "digital",
+          "number": 20,
+          "aliases": [
+            "PIN38"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 18
+        },
+        {
+          "name": "GND8",
+          "label": "39 GND8",
+          "kind": "ground",
+          "number": null,
+          "aliases": [
+            "PIN39"
+          ],
+          "caps": [],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "top",
+          "index": 19
+        },
+        {
+          "name": "GPIO21",
+          "label": "40 GPIO21",
+          "kind": "digital",
+          "number": 21,
+          "aliases": [
+            "PIN40"
+          ],
+          "caps": [
+            "digital",
+            "pwm",
+            "interrupt"
+          ],
+          "adcChannel": null,
+          "adcUnit": null,
+          "touchChannel": null,
+          "dacChannel": null,
+          "volts": null,
+          "tiedTo": null,
+          "side": "bottom",
+          "index": 19
+        }
+      ],
+      "notes": [
+        "The 40-pin header uses 3.3 V GPIO. Physical header numbers and BCM GPIO numbers differ.",
+        "The simulator accepts a documented Python subset with gpiozero and RPi.GPIO-compatible calls.",
+        "There is no built-in analog input. ADCs, Linux, networking, cameras and external Python packages are not simulated.",
+        "GPIO resistance, current limits and virtual instruction timing are teaching-model approximations."
+      ],
+      "placements": {
+        "half": {
+          "position": {
+            "x": 0,
+            "y": -600
+          }
+        },
+        "full": {
+          "position": {
+            "x": 0,
+            "y": -600
+          }
+        },
+        "dual": {
+          "position": {
+            "x": 0,
+            "y": -600
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "uno": {
+      "name": "Arduino Uno R3",
+      "type": "uno",
+      "mount": "free",
+      "category": "mcu",
+      "footprint": {
+        "pins": [
+          {
+            "id": "SCL",
+            "label": "SCL",
+            "dx": 2.5,
+            "dy": 0.5
+          },
+          {
+            "id": "SDA",
+            "label": "SDA",
+            "dx": 3.5,
+            "dy": 0.5
+          },
+          {
+            "id": "AREF",
+            "label": "AREF",
+            "dx": 4.5,
+            "dy": 0.5
+          },
+          {
+            "id": "GND",
+            "label": "GND",
+            "dx": 5.5,
+            "dy": 0.5
+          },
+          {
+            "id": "D13",
+            "label": "D13",
+            "dx": 6.5,
+            "dy": 0.5
+          },
+          {
+            "id": "D12",
+            "label": "D12",
+            "dx": 7.5,
+            "dy": 0.5
+          },
+          {
+            "id": "D11",
+            "label": "D11",
+            "dx": 8.5,
+            "dy": 0.5
+          },
+          {
+            "id": "D10",
+            "label": "D10",
+            "dx": 9.5,
+            "dy": 0.5
+          },
+          {
+            "id": "D9",
+            "label": "D9",
+            "dx": 10.5,
+            "dy": 0.5
+          },
+          {
+            "id": "D8",
+            "label": "D8",
+            "dx": 11.5,
+            "dy": 0.5
+          },
+          {
+            "id": "D7",
+            "label": "D7",
+            "dx": 12.5,
+            "dy": 0.5
+          },
+          {
+            "id": "D6",
+            "label": "D6",
+            "dx": 13.5,
+            "dy": 0.5
+          },
+          {
+            "id": "D5",
+            "label": "D5",
+            "dx": 14.5,
+            "dy": 0.5
+          },
+          {
+            "id": "D4",
+            "label": "D4",
+            "dx": 15.5,
+            "dy": 0.5
+          },
+          {
+            "id": "D3",
+            "label": "D3",
+            "dx": 16.5,
+            "dy": 0.5
+          },
+          {
+            "id": "D2",
+            "label": "D2",
+            "dx": 17.5,
+            "dy": 0.5
+          },
+          {
+            "id": "D1",
+            "label": "D1",
+            "dx": 18.5,
+            "dy": 0.5
+          },
+          {
+            "id": "D0",
+            "label": "D0",
+            "dx": 19.5,
+            "dy": 0.5
+          },
+          {
+            "id": "IOREF",
+            "label": "IOREF",
+            "dx": 8.5,
+            "dy": 20.5
+          },
+          {
+            "id": "RESET",
+            "label": "RESET",
+            "dx": 9.5,
+            "dy": 20.5
+          },
+          {
+            "id": "3V3",
+            "label": "3V3",
+            "dx": 10.5,
+            "dy": 20.5
+          },
+          {
+            "id": "5V",
+            "label": "5V",
+            "dx": 11.5,
+            "dy": 20.5
+          },
+          {
+            "id": "GND2",
+            "label": "GND",
+            "dx": 12.5,
+            "dy": 20.5
+          },
+          {
+            "id": "GND3",
+            "label": "GND",
+            "dx": 13.5,
+            "dy": 20.5
+          },
+          {
+            "id": "VIN",
+            "label": "VIN",
+            "dx": 14.5,
+            "dy": 20.5
+          },
+          {
+            "id": "A0",
+            "label": "A0",
+            "dx": 15.5,
+            "dy": 20.5
+          },
+          {
+            "id": "A1",
+            "label": "A1",
+            "dx": 16.5,
+            "dy": 20.5
+          },
+          {
+            "id": "A2",
+            "label": "A2",
+            "dx": 17.5,
+            "dy": 20.5
+          },
+          {
+            "id": "A3",
+            "label": "A3",
+            "dx": 18.5,
+            "dy": 20.5
+          },
+          {
+            "id": "A4",
+            "label": "A4",
+            "dx": 19.5,
+            "dy": 20.5
+          },
+          {
+            "id": "A5",
+            "label": "A5",
+            "dx": 20.5,
+            "dy": 20.5
+          }
+        ],
+        "width": 27,
+        "height": 21
+      },
+      "props": {},
+      "learn": {
+        "summary": "The Arduino Uno is the classic 5 V microcontroller board. Your sketch runs setup() once, then loop() forever, and each pin becomes an output (drives 0 V or 5 V) or an input (reads a voltage) depending on pinMode().",
+        "pinout": [
+          "D0–D13: digital I/O. D13 also drives the built-in LED (LED_BUILTIN).",
+          "~D3, ~D5, ~D6, ~D9, ~D10, ~D11: PWM-capable — analogWrite(pin, 0..255).",
+          "A0–A5: analog inputs (0–5 V → 0–1023); usable as digital pins 14–19. A4 = SDA, A5 = SCL.",
+          "5V / 3V3 / VIN: supply pins. GND ×3: all the same ground.",
+          "D0 (RX) / D1 (TX): the USB serial link — avoid them for your circuits."
+        ],
+        "tips": [
+          "Always connect a GND pin to the breadboard's − rail first; every circuit needs a return path.",
+          "Power the + rail from 5V for LEDs and modules; use 3V3 only for parts that say so.",
+          "A pin can only supply about 40 mA. Put a 220 Ω resistor in series with every LED.",
+          "Set pinMode(pin, INPUT_PULLUP) for buttons and wire the button to GND — no extra resistor needed."
+        ],
+        "formulas": [
+          "analogRead value = Vin / 5 V × 1023",
+          "LED current I = (5 V − Vf) / (R + 25 Ω)   (25 Ω is the pin's own output resistance)"
+        ],
+        "pitfalls": [
+          "int is 16-bit: 40 × 1000 overflows to −25536. Use long or unsigned long for millis() math.",
+          "Shorting 5V to GND trips the USB supply — nothing lights up and everything gets warm."
+        ]
+      }
+    },
+    "nano": {
+      "name": "Arduino Nano",
+      "type": "nano",
+      "mount": "board",
+      "category": "mcu",
+      "footprint": {
+        "pins": [
+          {
+            "id": "D13",
+            "label": "D13",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "3V3",
+            "label": "3V3",
+            "dx": 1,
+            "dy": 0
+          },
+          {
+            "id": "AREF",
+            "label": "AREF",
+            "dx": 2,
+            "dy": 0
+          },
+          {
+            "id": "A0",
+            "label": "A0",
+            "dx": 3,
+            "dy": 0
+          },
+          {
+            "id": "A1",
+            "label": "A1",
+            "dx": 4,
+            "dy": 0
+          },
+          {
+            "id": "A2",
+            "label": "A2",
+            "dx": 5,
+            "dy": 0
+          },
+          {
+            "id": "A3",
+            "label": "A3",
+            "dx": 6,
+            "dy": 0
+          },
+          {
+            "id": "A4",
+            "label": "A4",
+            "dx": 7,
+            "dy": 0
+          },
+          {
+            "id": "A5",
+            "label": "A5",
+            "dx": 8,
+            "dy": 0
+          },
+          {
+            "id": "A6",
+            "label": "A6",
+            "dx": 9,
+            "dy": 0
+          },
+          {
+            "id": "A7",
+            "label": "A7",
+            "dx": 10,
+            "dy": 0
+          },
+          {
+            "id": "5V",
+            "label": "5V",
+            "dx": 11,
+            "dy": 0
+          },
+          {
+            "id": "RESET",
+            "label": "RST",
+            "dx": 12,
+            "dy": 0
+          },
+          {
+            "id": "GND",
+            "label": "GND",
+            "dx": 13,
+            "dy": 0
+          },
+          {
+            "id": "VIN",
+            "label": "VIN",
+            "dx": 14,
+            "dy": 0
+          },
+          {
+            "id": "D12",
+            "label": "D12",
+            "dx": 0,
+            "dy": 6
+          },
+          {
+            "id": "D11",
+            "label": "D11",
+            "dx": 1,
+            "dy": 6
+          },
+          {
+            "id": "D10",
+            "label": "D10",
+            "dx": 2,
+            "dy": 6
+          },
+          {
+            "id": "D9",
+            "label": "D9",
+            "dx": 3,
+            "dy": 6
+          },
+          {
+            "id": "D8",
+            "label": "D8",
+            "dx": 4,
+            "dy": 6
+          },
+          {
+            "id": "D7",
+            "label": "D7",
+            "dx": 5,
+            "dy": 6
+          },
+          {
+            "id": "D6",
+            "label": "D6",
+            "dx": 6,
+            "dy": 6
+          },
+          {
+            "id": "D5",
+            "label": "D5",
+            "dx": 7,
+            "dy": 6
+          },
+          {
+            "id": "D4",
+            "label": "D4",
+            "dx": 8,
+            "dy": 6
+          },
+          {
+            "id": "D3",
+            "label": "D3",
+            "dx": 9,
+            "dy": 6
+          },
+          {
+            "id": "D2",
+            "label": "D2",
+            "dx": 10,
+            "dy": 6
+          },
+          {
+            "id": "GND2",
+            "label": "GND",
+            "dx": 11,
+            "dy": 6
+          },
+          {
+            "id": "RESET2",
+            "label": "RST",
+            "dx": 12,
+            "dy": 6
+          },
+          {
+            "id": "D0",
+            "label": "D0",
+            "dx": 13,
+            "dy": 6
+          },
+          {
+            "id": "D1",
+            "label": "D1",
+            "dx": 14,
+            "dy": 6
+          }
+        ],
+        "width": 15,
+        "height": 7
+      },
+      "props": {},
+      "learn": {
+        "summary": "The Arduino Nano is the Uno's little sibling: the same chip, the same 5 V pins and sketches, on a board that plugs straight into the breadboard.",
+        "pinout": [
+          "Top row (D13, 3V3, AREF, A0–A7, 5V, RST, GND, VIN) and bottom row (D12–D2, GND, RST, RX0, TX1) straddle the breadboard gap.",
+          "D13 drives the built-in LED; ~D3, ~D5, ~D6, ~D9, ~D10, ~D11 are PWM pins.",
+          "A0–A5 are analog + digital; A6 and A7 are analog-input only.",
+          "A4 = SDA and A5 = SCL for I2C displays and sensors."
+        ],
+        "tips": [
+          "Place the Nano with its top row in column b — the bottom row then lands in column f, leaving a–a and g–j free for wires.",
+          "Each Nano pin gets its own 5-hole row strip, so wire parts to the strip rather than trying to reach the pin itself.",
+          "Use the two GND pins to feed both − rails so wiring stays short."
+        ],
+        "formulas": [
+          "analogRead value = Vin / 5 V × 1023",
+          "LED current I = (5 V − Vf) / (R + 25 Ω)"
+        ],
+        "pitfalls": [
+          "Rotating the Nano 90° never fits: the 15-pin rows are longer than the breadboard is tall."
+        ]
+      }
+    },
+    "esp32": {
+      "name": "ESP32 DevKit V1",
+      "type": "esp32",
+      "mount": "board",
+      "category": "mcu",
+      "footprint": {
+        "pins": [
+          {
+            "id": "3V3",
+            "label": "3V3",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "GND",
+            "label": "GND",
+            "dx": 1,
+            "dy": 0
+          },
+          {
+            "id": "GPIO15",
+            "label": "D15",
+            "dx": 2,
+            "dy": 0
+          },
+          {
+            "id": "GPIO2",
+            "label": "D2",
+            "dx": 3,
+            "dy": 0
+          },
+          {
+            "id": "GPIO4",
+            "label": "D4",
+            "dx": 4,
+            "dy": 0
+          },
+          {
+            "id": "GPIO16",
+            "label": "RX2",
+            "dx": 5,
+            "dy": 0
+          },
+          {
+            "id": "GPIO17",
+            "label": "TX2",
+            "dx": 6,
+            "dy": 0
+          },
+          {
+            "id": "GPIO5",
+            "label": "D5",
+            "dx": 7,
+            "dy": 0
+          },
+          {
+            "id": "GPIO18",
+            "label": "D18",
+            "dx": 8,
+            "dy": 0
+          },
+          {
+            "id": "GPIO19",
+            "label": "D19",
+            "dx": 9,
+            "dy": 0
+          },
+          {
+            "id": "GPIO21",
+            "label": "D21",
+            "dx": 10,
+            "dy": 0
+          },
+          {
+            "id": "GPIO3",
+            "label": "RX0",
+            "dx": 11,
+            "dy": 0
+          },
+          {
+            "id": "GPIO1",
+            "label": "TX0",
+            "dx": 12,
+            "dy": 0
+          },
+          {
+            "id": "GPIO22",
+            "label": "D22",
+            "dx": 13,
+            "dy": 0
+          },
+          {
+            "id": "GPIO23",
+            "label": "D23",
+            "dx": 14,
+            "dy": 0
+          },
+          {
+            "id": "VIN",
+            "label": "VIN",
+            "dx": 0,
+            "dy": 10
+          },
+          {
+            "id": "GND2",
+            "label": "GND",
+            "dx": 1,
+            "dy": 10
+          },
+          {
+            "id": "GPIO13",
+            "label": "D13",
+            "dx": 2,
+            "dy": 10
+          },
+          {
+            "id": "GPIO12",
+            "label": "D12",
+            "dx": 3,
+            "dy": 10
+          },
+          {
+            "id": "GPIO14",
+            "label": "D14",
+            "dx": 4,
+            "dy": 10
+          },
+          {
+            "id": "GPIO27",
+            "label": "D27",
+            "dx": 5,
+            "dy": 10
+          },
+          {
+            "id": "GPIO26",
+            "label": "D26",
+            "dx": 6,
+            "dy": 10
+          },
+          {
+            "id": "GPIO25",
+            "label": "D25",
+            "dx": 7,
+            "dy": 10
+          },
+          {
+            "id": "GPIO33",
+            "label": "D33",
+            "dx": 8,
+            "dy": 10
+          },
+          {
+            "id": "GPIO32",
+            "label": "D32",
+            "dx": 9,
+            "dy": 10
+          },
+          {
+            "id": "GPIO35",
+            "label": "D35",
+            "dx": 10,
+            "dy": 10
+          },
+          {
+            "id": "GPIO34",
+            "label": "D34",
+            "dx": 11,
+            "dy": 10
+          },
+          {
+            "id": "GPIO39",
+            "label": "VN",
+            "dx": 12,
+            "dy": 10
+          },
+          {
+            "id": "GPIO36",
+            "label": "VP",
+            "dx": 13,
+            "dy": 10
+          },
+          {
+            "id": "EN",
+            "label": "EN",
+            "dx": 14,
+            "dy": 10
+          }
+        ],
+        "width": 15,
+        "height": 11
+      },
+      "props": {},
+      "learn": {
+        "summary": "The ESP32 DevKit V1 is a 3.3 V, 32-bit microcontroller with built-in WiFi. It is far faster than an Uno and adds touch sensing, a 12-bit ADC and two DACs — but its pins are NOT 5 V tolerant.",
+        "pinout": [
+          "GPIOn pins: any of them can be a digital input/output and PWM output (ledcWrite / analogWrite).",
+          "GPIO34, 35, 36 (VP) and 39 (VN): input-only, ADC1 — the best pins for analog sensors when WiFi is on.",
+          "T0 = GPIO4, T2 = GPIO2, T3 = GPIO15, T4 = GPIO13, T5 = GPIO12, T6 = GPIO14, T7 = GPIO27, T8 = GPIO33, T9 = GPIO32: touch pads.",
+          "GPIO25 / GPIO26: 8-bit DAC outputs. GPIO21 = SDA, GPIO22 = SCL. GPIO2 = built-in LED.",
+          "VIN: 5 V from USB for 5 V modules. 3V3: the 3.3 V logic supply. GND ×2."
+        ],
+        "tips": [
+          "Anchor the board at column a (row 1): the pins land in a and i, leaving row j free below. Dual-board mode exposes rows on both sides.",
+          "LEDs still need a resistor, but current is lower at 3.3 V: 220 Ω with a red LED gives about 6 mA.",
+          "For a 5 V sensor output (HC-SR04 echo), use a 1 kΩ / 2.2 kΩ divider or a level shifter before the GPIO.",
+          "Read pots and LDRs on ADC1 pins (GPIO32–39); ADC2 pins return 0 while WiFi is connected."
+        ],
+        "formulas": [
+          "analogRead value = Vin / 3.3 V × 4095",
+          "Divider output Vout = Vin × R2 / (R1 + R2)   →   5 V × 2.2 k / 3.2 k = 3.44 V"
+        ],
+        "pitfalls": [
+          "Feeding more than 3.6 V into a GPIO burns it — VIN, 5 V modules and Uno outputs are all dangerous.",
+          "Porting Uno code: 1023 becomes 4095, and delay() is the same but the loop runs about 15× faster."
+        ]
+      }
+    },
+    "esp32s3": {
+      "name": "ESP32-S3 DevKitC-1",
+      "type": "esp32s3",
+      "mount": "board",
+      "category": "mcu",
+      "footprint": {
+        "pins": [
+          {
+            "id": "3V3",
+            "label": "3V3",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "3V3_2",
+            "label": "3V3",
+            "dx": 1,
+            "dy": 0
+          },
+          {
+            "id": "RST",
+            "label": "RST",
+            "dx": 2,
+            "dy": 0
+          },
+          {
+            "id": "GPIO4",
+            "label": "4",
+            "dx": 3,
+            "dy": 0
+          },
+          {
+            "id": "GPIO5",
+            "label": "5",
+            "dx": 4,
+            "dy": 0
+          },
+          {
+            "id": "GPIO6",
+            "label": "6",
+            "dx": 5,
+            "dy": 0
+          },
+          {
+            "id": "GPIO7",
+            "label": "7",
+            "dx": 6,
+            "dy": 0
+          },
+          {
+            "id": "GPIO15",
+            "label": "15",
+            "dx": 7,
+            "dy": 0
+          },
+          {
+            "id": "GPIO16",
+            "label": "16",
+            "dx": 8,
+            "dy": 0
+          },
+          {
+            "id": "GPIO17",
+            "label": "17",
+            "dx": 9,
+            "dy": 0
+          },
+          {
+            "id": "GPIO18",
+            "label": "18",
+            "dx": 10,
+            "dy": 0
+          },
+          {
+            "id": "GPIO8",
+            "label": "8",
+            "dx": 11,
+            "dy": 0
+          },
+          {
+            "id": "GPIO3",
+            "label": "3",
+            "dx": 12,
+            "dy": 0
+          },
+          {
+            "id": "GPIO46",
+            "label": "46",
+            "dx": 13,
+            "dy": 0
+          },
+          {
+            "id": "GPIO9",
+            "label": "9",
+            "dx": 14,
+            "dy": 0
+          },
+          {
+            "id": "GPIO10",
+            "label": "10",
+            "dx": 15,
+            "dy": 0
+          },
+          {
+            "id": "GPIO11",
+            "label": "11",
+            "dx": 16,
+            "dy": 0
+          },
+          {
+            "id": "GPIO12",
+            "label": "12",
+            "dx": 17,
+            "dy": 0
+          },
+          {
+            "id": "GPIO13",
+            "label": "13",
+            "dx": 18,
+            "dy": 0
+          },
+          {
+            "id": "GPIO14",
+            "label": "14",
+            "dx": 19,
+            "dy": 0
+          },
+          {
+            "id": "5V",
+            "label": "5V",
+            "dx": 20,
+            "dy": 0
+          },
+          {
+            "id": "GND",
+            "label": "GND",
+            "dx": 21,
+            "dy": 0
+          },
+          {
+            "id": "GND2",
+            "label": "GND",
+            "dx": 0,
+            "dy": 10
+          },
+          {
+            "id": "GPIO43",
+            "label": "TX",
+            "dx": 1,
+            "dy": 10
+          },
+          {
+            "id": "GPIO44",
+            "label": "RX",
+            "dx": 2,
+            "dy": 10
+          },
+          {
+            "id": "GPIO1",
+            "label": "1",
+            "dx": 3,
+            "dy": 10
+          },
+          {
+            "id": "GPIO2",
+            "label": "2",
+            "dx": 4,
+            "dy": 10
+          },
+          {
+            "id": "GPIO42",
+            "label": "42",
+            "dx": 5,
+            "dy": 10
+          },
+          {
+            "id": "GPIO41",
+            "label": "41",
+            "dx": 6,
+            "dy": 10
+          },
+          {
+            "id": "GPIO40",
+            "label": "40",
+            "dx": 7,
+            "dy": 10
+          },
+          {
+            "id": "GPIO39",
+            "label": "39",
+            "dx": 8,
+            "dy": 10
+          },
+          {
+            "id": "GPIO38",
+            "label": "38",
+            "dx": 9,
+            "dy": 10
+          },
+          {
+            "id": "GPIO37",
+            "label": "37",
+            "dx": 10,
+            "dy": 10
+          },
+          {
+            "id": "GPIO36",
+            "label": "36",
+            "dx": 11,
+            "dy": 10
+          },
+          {
+            "id": "GPIO35",
+            "label": "35",
+            "dx": 12,
+            "dy": 10
+          },
+          {
+            "id": "GPIO0",
+            "label": "0",
+            "dx": 13,
+            "dy": 10
+          },
+          {
+            "id": "GPIO45",
+            "label": "45",
+            "dx": 14,
+            "dy": 10
+          },
+          {
+            "id": "GPIO48",
+            "label": "48",
+            "dx": 15,
+            "dy": 10
+          },
+          {
+            "id": "GPIO47",
+            "label": "47",
+            "dx": 16,
+            "dy": 10
+          },
+          {
+            "id": "GPIO21",
+            "label": "21",
+            "dx": 17,
+            "dy": 10
+          },
+          {
+            "id": "GPIO20",
+            "label": "20",
+            "dx": 18,
+            "dy": 10
+          },
+          {
+            "id": "GPIO19",
+            "label": "19",
+            "dx": 19,
+            "dy": 10
+          },
+          {
+            "id": "GND3",
+            "label": "GND",
+            "dx": 20,
+            "dy": 10
+          },
+          {
+            "id": "GND4",
+            "label": "GND",
+            "dx": 21,
+            "dy": 10
+          }
+        ],
+        "width": 22,
+        "height": 11
+      },
+      "props": {},
+      "learn": {
+        "summary": "The ESP32-S3 DevKitC-1 is the newer, wider ESP32: still 3.3 V and WiFi-capable, with 14 touch pads, 20 ADC pins, native USB and an on-board RGB LED. It bridges a dual breadboard with 22 pins per side.",
+        "pinout": [
+          "GPIO1–GPIO20: 12-bit ADC inputs (ADC1 = GPIO1–10, ADC2 = GPIO11–20) and T1–T14 touch pads on GPIO1–14.",
+          "GPIO8 = SDA, GPIO9 = SCL (default Wire bus). GPIO48 = on-board RGB LED (LED_BUILTIN).",
+          "GPIO43 (TX) / GPIO44 (RX): UART0 — the serial monitor. GPIO19 / GPIO20: native USB D− / D+.",
+          "5V passes the USB supply through; both 3V3 pins are the 3.3 V logic supply. GND ×4."
+        ],
+        "tips": [
+          "The S3 spans 22 rows — anchor it at row 1 and use dual-board mode so both pin rows are reachable.",
+          "Use ADC1 (GPIO1–10) for analog sensors in WiFi projects.",
+          "There is no DAC: create analog-ish output with PWM and an RC filter."
+        ],
+        "formulas": [
+          "analogRead value = Vin / 3.3 V × 4095",
+          "PWM average voltage = duty / 255 × 3.3 V"
+        ],
+        "pitfalls": [
+          "Never connect 5 V to a GPIO — same 3.6 V limit as every ESP32.",
+          "GPIO0, GPIO45 and GPIO46 decide the boot mode; a pull-down on GPIO0 at power-up keeps the board in the bootloader."
+        ]
+      }
+    },
+    "raspberrypi4": {
+      "name": "Raspberry Pi 4 Model B",
+      "type": "raspberrypi4",
+      "mount": "free",
+      "category": "mcu",
+      "footprint": {
+        "pins": [
+          {
+            "id": "3V3",
+            "label": "1 3V3",
+            "dx": 2,
+            "dy": 1
+          },
+          {
+            "id": "5V",
+            "label": "2 5V",
+            "dx": 2,
+            "dy": 2
+          },
+          {
+            "id": "GPIO2",
+            "label": "3 GPIO2",
+            "dx": 3,
+            "dy": 1
+          },
+          {
+            "id": "5V_2",
+            "label": "4 5V",
+            "dx": 3,
+            "dy": 2
+          },
+          {
+            "id": "GPIO3",
+            "label": "5 GPIO3",
+            "dx": 4,
+            "dy": 1
+          },
+          {
+            "id": "GND",
+            "label": "6 GND",
+            "dx": 4,
+            "dy": 2
+          },
+          {
+            "id": "GPIO4",
+            "label": "7 GPIO4",
+            "dx": 5,
+            "dy": 1
+          },
+          {
+            "id": "GPIO14",
+            "label": "8 GPIO14",
+            "dx": 5,
+            "dy": 2
+          },
+          {
+            "id": "GND2",
+            "label": "9 GND2",
+            "dx": 6,
+            "dy": 1
+          },
+          {
+            "id": "GPIO15",
+            "label": "10 GPIO15",
+            "dx": 6,
+            "dy": 2
+          },
+          {
+            "id": "GPIO17",
+            "label": "11 GPIO17",
+            "dx": 7,
+            "dy": 1
+          },
+          {
+            "id": "GPIO18",
+            "label": "12 GPIO18",
+            "dx": 7,
+            "dy": 2
+          },
+          {
+            "id": "GPIO27",
+            "label": "13 GPIO27",
+            "dx": 8,
+            "dy": 1
+          },
+          {
+            "id": "GND3",
+            "label": "14 GND3",
+            "dx": 8,
+            "dy": 2
+          },
+          {
+            "id": "GPIO22",
+            "label": "15 GPIO22",
+            "dx": 9,
+            "dy": 1
+          },
+          {
+            "id": "GPIO23",
+            "label": "16 GPIO23",
+            "dx": 9,
+            "dy": 2
+          },
+          {
+            "id": "3V3_2",
+            "label": "17 3V3",
+            "dx": 10,
+            "dy": 1
+          },
+          {
+            "id": "GPIO24",
+            "label": "18 GPIO24",
+            "dx": 10,
+            "dy": 2
+          },
+          {
+            "id": "GPIO10",
+            "label": "19 GPIO10",
+            "dx": 11,
+            "dy": 1
+          },
+          {
+            "id": "GND4",
+            "label": "20 GND4",
+            "dx": 11,
+            "dy": 2
+          },
+          {
+            "id": "GPIO9",
+            "label": "21 GPIO9",
+            "dx": 12,
+            "dy": 1
+          },
+          {
+            "id": "GPIO25",
+            "label": "22 GPIO25",
+            "dx": 12,
+            "dy": 2
+          },
+          {
+            "id": "GPIO11",
+            "label": "23 GPIO11",
+            "dx": 13,
+            "dy": 1
+          },
+          {
+            "id": "GPIO8",
+            "label": "24 GPIO8",
+            "dx": 13,
+            "dy": 2
+          },
+          {
+            "id": "GND5",
+            "label": "25 GND5",
+            "dx": 14,
+            "dy": 1
+          },
+          {
+            "id": "GPIO7",
+            "label": "26 GPIO7",
+            "dx": 14,
+            "dy": 2
+          },
+          {
+            "id": "GPIO0",
+            "label": "27 GPIO0",
+            "dx": 15,
+            "dy": 1
+          },
+          {
+            "id": "GPIO1",
+            "label": "28 GPIO1",
+            "dx": 15,
+            "dy": 2
+          },
+          {
+            "id": "GPIO5",
+            "label": "29 GPIO5",
+            "dx": 16,
+            "dy": 1
+          },
+          {
+            "id": "GND6",
+            "label": "30 GND6",
+            "dx": 16,
+            "dy": 2
+          },
+          {
+            "id": "GPIO6",
+            "label": "31 GPIO6",
+            "dx": 17,
+            "dy": 1
+          },
+          {
+            "id": "GPIO12",
+            "label": "32 GPIO12",
+            "dx": 17,
+            "dy": 2
+          },
+          {
+            "id": "GPIO13",
+            "label": "33 GPIO13",
+            "dx": 18,
+            "dy": 1
+          },
+          {
+            "id": "GND7",
+            "label": "34 GND7",
+            "dx": 18,
+            "dy": 2
+          },
+          {
+            "id": "GPIO19",
+            "label": "35 GPIO19",
+            "dx": 19,
+            "dy": 1
+          },
+          {
+            "id": "GPIO16",
+            "label": "36 GPIO16",
+            "dx": 19,
+            "dy": 2
+          },
+          {
+            "id": "GPIO26",
+            "label": "37 GPIO26",
+            "dx": 20,
+            "dy": 1
+          },
+          {
+            "id": "GPIO20",
+            "label": "38 GPIO20",
+            "dx": 20,
+            "dy": 2
+          },
+          {
+            "id": "GND8",
+            "label": "39 GND8",
+            "dx": 21,
+            "dy": 1
+          },
+          {
+            "id": "GPIO21",
+            "label": "40 GPIO21",
+            "dx": 21,
+            "dy": 2
+          }
+        ],
+        "width": 34,
+        "height": 23
+      },
+      "props": {},
+      "learn": {
+        "summary": "A Raspberry Pi single-board computer with a 40-pin GPIO header for Python electronics projects.",
+        "pinout": [
+          "BCM17 is physical pin 11; BCM27 is physical pin 13.",
+          "3V3: physical pins 1 and 17. 5V: physical pins 2 and 4.",
+          "GND: physical pins 6, 9, 14, 20, 25, 30, 34 and 39."
+        ],
+        "tips": [
+          "Use BCM pin numbers with gpiozero.",
+          "Use a series resistor for LEDs and a transistor driver for motors."
+        ],
+        "pitfalls": [
+          "GPIO is not 5 V tolerant.",
+          "Analog sensors need an external ADC; it is not simulated yet."
+        ]
+      }
+    },
+    "raspberrypi5": {
+      "name": "Raspberry Pi 5",
+      "type": "raspberrypi5",
+      "mount": "free",
+      "category": "mcu",
+      "footprint": {
+        "pins": [
+          {
+            "id": "3V3",
+            "label": "1 3V3",
+            "dx": 2,
+            "dy": 1
+          },
+          {
+            "id": "5V",
+            "label": "2 5V",
+            "dx": 2,
+            "dy": 2
+          },
+          {
+            "id": "GPIO2",
+            "label": "3 GPIO2",
+            "dx": 3,
+            "dy": 1
+          },
+          {
+            "id": "5V_2",
+            "label": "4 5V",
+            "dx": 3,
+            "dy": 2
+          },
+          {
+            "id": "GPIO3",
+            "label": "5 GPIO3",
+            "dx": 4,
+            "dy": 1
+          },
+          {
+            "id": "GND",
+            "label": "6 GND",
+            "dx": 4,
+            "dy": 2
+          },
+          {
+            "id": "GPIO4",
+            "label": "7 GPIO4",
+            "dx": 5,
+            "dy": 1
+          },
+          {
+            "id": "GPIO14",
+            "label": "8 GPIO14",
+            "dx": 5,
+            "dy": 2
+          },
+          {
+            "id": "GND2",
+            "label": "9 GND2",
+            "dx": 6,
+            "dy": 1
+          },
+          {
+            "id": "GPIO15",
+            "label": "10 GPIO15",
+            "dx": 6,
+            "dy": 2
+          },
+          {
+            "id": "GPIO17",
+            "label": "11 GPIO17",
+            "dx": 7,
+            "dy": 1
+          },
+          {
+            "id": "GPIO18",
+            "label": "12 GPIO18",
+            "dx": 7,
+            "dy": 2
+          },
+          {
+            "id": "GPIO27",
+            "label": "13 GPIO27",
+            "dx": 8,
+            "dy": 1
+          },
+          {
+            "id": "GND3",
+            "label": "14 GND3",
+            "dx": 8,
+            "dy": 2
+          },
+          {
+            "id": "GPIO22",
+            "label": "15 GPIO22",
+            "dx": 9,
+            "dy": 1
+          },
+          {
+            "id": "GPIO23",
+            "label": "16 GPIO23",
+            "dx": 9,
+            "dy": 2
+          },
+          {
+            "id": "3V3_2",
+            "label": "17 3V3",
+            "dx": 10,
+            "dy": 1
+          },
+          {
+            "id": "GPIO24",
+            "label": "18 GPIO24",
+            "dx": 10,
+            "dy": 2
+          },
+          {
+            "id": "GPIO10",
+            "label": "19 GPIO10",
+            "dx": 11,
+            "dy": 1
+          },
+          {
+            "id": "GND4",
+            "label": "20 GND4",
+            "dx": 11,
+            "dy": 2
+          },
+          {
+            "id": "GPIO9",
+            "label": "21 GPIO9",
+            "dx": 12,
+            "dy": 1
+          },
+          {
+            "id": "GPIO25",
+            "label": "22 GPIO25",
+            "dx": 12,
+            "dy": 2
+          },
+          {
+            "id": "GPIO11",
+            "label": "23 GPIO11",
+            "dx": 13,
+            "dy": 1
+          },
+          {
+            "id": "GPIO8",
+            "label": "24 GPIO8",
+            "dx": 13,
+            "dy": 2
+          },
+          {
+            "id": "GND5",
+            "label": "25 GND5",
+            "dx": 14,
+            "dy": 1
+          },
+          {
+            "id": "GPIO7",
+            "label": "26 GPIO7",
+            "dx": 14,
+            "dy": 2
+          },
+          {
+            "id": "GPIO0",
+            "label": "27 GPIO0",
+            "dx": 15,
+            "dy": 1
+          },
+          {
+            "id": "GPIO1",
+            "label": "28 GPIO1",
+            "dx": 15,
+            "dy": 2
+          },
+          {
+            "id": "GPIO5",
+            "label": "29 GPIO5",
+            "dx": 16,
+            "dy": 1
+          },
+          {
+            "id": "GND6",
+            "label": "30 GND6",
+            "dx": 16,
+            "dy": 2
+          },
+          {
+            "id": "GPIO6",
+            "label": "31 GPIO6",
+            "dx": 17,
+            "dy": 1
+          },
+          {
+            "id": "GPIO12",
+            "label": "32 GPIO12",
+            "dx": 17,
+            "dy": 2
+          },
+          {
+            "id": "GPIO13",
+            "label": "33 GPIO13",
+            "dx": 18,
+            "dy": 1
+          },
+          {
+            "id": "GND7",
+            "label": "34 GND7",
+            "dx": 18,
+            "dy": 2
+          },
+          {
+            "id": "GPIO19",
+            "label": "35 GPIO19",
+            "dx": 19,
+            "dy": 1
+          },
+          {
+            "id": "GPIO16",
+            "label": "36 GPIO16",
+            "dx": 19,
+            "dy": 2
+          },
+          {
+            "id": "GPIO26",
+            "label": "37 GPIO26",
+            "dx": 20,
+            "dy": 1
+          },
+          {
+            "id": "GPIO20",
+            "label": "38 GPIO20",
+            "dx": 20,
+            "dy": 2
+          },
+          {
+            "id": "GND8",
+            "label": "39 GND8",
+            "dx": 21,
+            "dy": 1
+          },
+          {
+            "id": "GPIO21",
+            "label": "40 GPIO21",
+            "dx": 21,
+            "dy": 2
+          }
+        ],
+        "width": 34,
+        "height": 23
+      },
+      "props": {},
+      "learn": {
+        "summary": "A Raspberry Pi single-board computer with a 40-pin GPIO header for Python electronics projects.",
+        "pinout": [
+          "BCM17 is physical pin 11; BCM27 is physical pin 13.",
+          "3V3: physical pins 1 and 17. 5V: physical pins 2 and 4.",
+          "GND: physical pins 6, 9, 14, 20, 25, 30, 34 and 39."
+        ],
+        "tips": [
+          "Use BCM pin numbers with gpiozero.",
+          "Use a series resistor for LEDs and a transistor driver for motors."
+        ],
+        "pitfalls": [
+          "GPIO is not 5 V tolerant.",
+          "Analog sensors need an external ADC; it is not simulated yet."
+        ]
+      }
+    },
+    "resistor": {
+      "name": "Resistor",
+      "type": "resistor",
+      "mount": "board",
+      "category": "passive",
+      "footprint": {
+        "pins": [
+          {
+            "id": "p1",
+            "label": "p1",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "p2",
+            "label": "p2",
+            "dx": 4,
+            "dy": 0
+          }
+        ],
+        "width": 5,
+        "height": 1
+      },
+      "props": {
+        "ohms": {
+          "type": "enum",
+          "label": "Resistance",
+          "options": [
+            100,
+            220,
+            330,
+            470,
+            1000,
+            2200,
+            4700,
+            10000,
+            22000,
+            47000,
+            100000
+          ],
+          "default": 220,
+          "unit": "Ω",
+          "format": "ohms"
+        }
+      },
+      "learn": {
+        "summary": "A resistor limits current. Push a voltage across it and a predictable current flows: the bigger the resistance, the smaller the current. Its value is printed as colour bands.",
+        "pinout": [
+          "p1 / p2: no polarity — either way round works.",
+          "Spans 5 holes: bridge two different row strips (or the gap between the a–e and f–j blocks)."
+        ],
+        "tips": [
+          "220 Ω is the go-to value for an LED on a 5 V pin (about 13 mA); 1 kΩ gives a dimmer, safer 3 mA.",
+          "10 kΩ is the standard pull-up / pull-down and the standard partner for an LDR or thermistor divider.",
+          "Read the bands from the side where they are closer together; the gold band is the tolerance (±5 %)."
+        ],
+        "formulas": [
+          "Ohm's law: V = I × R   →   I = V / R",
+          "LED current: I = (Vsrc − Vf) / (R + Rpin + rOn)",
+          "Power dissipated: P = V × I = I² × R  (a 1/4 W resistor is fine below 0.25 W)",
+          "Divider: Vout = Vin × R2 / (R1 + R2)"
+        ],
+        "pitfalls": [
+          "Both legs in the same 5-hole strip short the resistor out — the current simply bypasses it.",
+          "Too small a value (or none at all) lets an LED draw far more than its 30 mA limit: smoke."
+        ]
+      }
+    },
+    "capacitor": {
+      "name": "Capacitor",
+      "type": "capacitor",
+      "mount": "board",
+      "category": "passive",
+      "footprint": {
+        "pins": [
+          {
+            "id": "pos",
+            "label": "+",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "neg",
+            "label": "−",
+            "dx": 1,
+            "dy": 0
+          }
+        ],
+        "width": 2,
+        "height": 1
+      },
+      "props": {
+        "uF": {
+          "type": "number",
+          "label": "Capacitance",
+          "default": 100,
+          "min": 1,
+          "max": 4700,
+          "step": 1,
+          "unit": "µF"
+        }
+      },
+      "learn": {
+        "summary": "A capacitor stores charge. It smooths sudden voltage dips and filters noise. In this DC simulation it behaves like an open circuit once charged — no steady current flows through it.",
+        "pinout": [
+          "pos (+): the longer leg / unmarked side of an electrolytic can.",
+          "neg (−): the shorter leg, marked with a stripe."
+        ],
+        "tips": [
+          "Place 100 µF across a module's VCC and GND to keep servos and NeoPixels from resetting your board.",
+          "Values are in microfarads (µF); bigger stores more energy but charges slower."
+        ],
+        "formulas": [
+          "Charge: Q = C × V",
+          "RC time constant: τ = R × C  (63 % charged after one τ)",
+          "Energy: E = ½ × C × V²"
+        ],
+        "pitfalls": [
+          "Electrolytic capacitors are polarised — connect + to the higher voltage or they vent in real life.",
+          "Because DC is simulated, you will not see blink timing change with the capacitor here."
+        ]
+      }
+    },
+    "diode": {
+      "name": "Diode (1N4007)",
+      "type": "diode",
+      "mount": "board",
+      "category": "passive",
+      "footprint": {
+        "pins": [
+          {
+            "id": "anode",
+            "label": "A",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "cathode",
+            "label": "K",
+            "dx": 4,
+            "dy": 0
+          }
+        ],
+        "width": 5,
+        "height": 1
+      },
+      "props": {},
+      "learn": {
+        "summary": "A rectifier diode is a one-way valve for current: it conducts from anode to cathode once about 0.7 V is across it and blocks the other way. Use it to protect against reversed polarity or motor kick-back.",
+        "pinout": [
+          "anode (+): current enters here.",
+          "cathode (−): the end with the silver stripe; current leaves here."
+        ],
+        "tips": [
+          "Place it \"backwards\" across a motor or relay coil (cathode to +) as a flyback diode.",
+          "It drops about 0.7 V, so a 5 V supply through a diode gives roughly 4.3 V."
+        ],
+        "formulas": [
+          "Conducting: V ≈ 0.7 V + I × 1 Ω",
+          "Reverse: I ≈ 0 (open)"
+        ],
+        "pitfalls": [
+          "Reversed, it blocks completely — a \"dead\" circuit is often a backwards diode.",
+          "Rated for 1 A here; a direct short across a supply still exceeds that."
+        ]
+      }
+    },
+    "transistor_npn": {
+      "name": "NPN transistor (2N2222)",
+      "type": "transistor_npn",
+      "mount": "board",
+      "category": "passive",
+      "footprint": {
+        "pins": [
+          {
+            "id": "e",
+            "label": "E",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "b",
+            "label": "B",
+            "dx": 1,
+            "dy": 0
+          },
+          {
+            "id": "c",
+            "label": "C",
+            "dx": 2,
+            "dy": 0
+          }
+        ],
+        "width": 3,
+        "height": 1
+      },
+      "props": {},
+      "learn": {
+        "summary": "An NPN transistor is an electronic switch and amplifier. A small current into the base lets a current up to about 100 times larger flow from collector to emitter — so a 40 mA pin can control a 300 mA motor.",
+        "pinout": [
+          "e (emitter): connect to GND.",
+          "b (base): drive from a pin through a 1–10 kΩ resistor.",
+          "c (collector): the load (motor, relay, LED strip) sits between + and here."
+        ],
+        "tips": [
+          "Always add a base resistor: 1 kΩ from a 5 V pin gives about 4 mA of base current, enough for ~400 mA of load.",
+          "When fully on (saturated) the collector sits at about 0.2 V — nearly a closed switch.",
+          "Combine with a flyback diode across motors and relay coils."
+        ],
+        "formulas": [
+          "Base current: Ib = (Vpin − 0.7 V) / Rb",
+          "Collector current (active): Ic = β × Ib, β ≈ 100",
+          "Saturated: Vce ≈ 0.2 V"
+        ],
+        "pitfalls": [
+          "Base straight to a pin without a resistor pulls far more than 40 mA — the pin overheats.",
+          "Flat-face pinout of a 2N2222 is E-B-C left to right; swapping E and C makes it barely conduct."
+        ]
+      }
+    },
+    "led": {
+      "name": "LED",
+      "type": "led",
+      "mount": "board",
+      "category": "output",
+      "footprint": {
+        "pins": [
+          {
+            "id": "anode",
+            "label": "+",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "cathode",
+            "label": "−",
+            "dx": 1,
+            "dy": 0
+          }
+        ],
+        "width": 2,
+        "height": 1
+      },
+      "props": {
+        "color": {
+          "type": "enum",
+          "label": "Color",
+          "options": [
+            "red",
+            "green",
+            "blue",
+            "yellow",
+            "white"
+          ],
+          "default": "red"
+        }
+      },
+      "learn": {
+        "summary": "An LED lights when current flows from anode to cathode, but only after its forward voltage (about 1.8 V red … 2.8 V white) is reached. It has almost no resistance of its own, so a series resistor sets the current.",
+        "pinout": [
+          "anode (+): the longer leg — connect toward the positive side / MCU pin.",
+          "cathode (−): the shorter leg on the flat side of the lens — connect toward GND."
+        ],
+        "tips": [
+          "Brightness follows current: ~13 mA (220 Ω on 5 V) is bright, ~3 mA (1 kΩ) is a soft glow.",
+          "On a 3.3 V board the same 220 Ω gives about 6 mA for red and just 2 mA for blue — still visible.",
+          "Reversed LEDs simply stay dark; they are not damaged at these voltages."
+        ],
+        "formulas": [
+          "I = (Vsrc − Vf) / (R + Rpin + rOn)",
+          "Example: (5 V − 1.8 V) / (220 Ω + 25 Ω + 10 Ω) ≈ 12.5 mA",
+          "brightness = √(I / 20 mA), capped at 1"
+        ],
+        "pitfalls": [
+          "No resistor: (5 V − 1.8 V) / 10 Ω ≈ 320 mA — the LED pops and the pin is overloaded (40 mA max).",
+          "Both legs in the same breadboard strip short the LED — it never lights."
+        ]
+      }
+    },
+    "rgb_led": {
+      "name": "RGB LED",
+      "type": "rgb_led",
+      "mount": "board",
+      "category": "output",
+      "footprint": {
+        "pins": [
+          {
+            "id": "r",
+            "label": "R",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "cathode",
+            "label": "−",
+            "dx": 1,
+            "dy": 0
+          },
+          {
+            "id": "g",
+            "label": "G",
+            "dx": 2,
+            "dy": 0
+          },
+          {
+            "id": "b",
+            "label": "B",
+            "dx": 3,
+            "dy": 0
+          }
+        ],
+        "width": 4,
+        "height": 1
+      },
+      "props": {},
+      "learn": {
+        "summary": "An RGB LED is three LEDs (red, green, blue) in one lens sharing a common cathode. Mix colours by driving the three anodes with PWM.",
+        "pinout": [
+          "r: red anode (Vf ≈ 1.8 V).",
+          "cathode: the longest leg — to GND.",
+          "g: green anode (≈ 2.1 V).",
+          "b: blue anode (≈ 2.7 V)."
+        ],
+        "tips": [
+          "Each colour needs its own series resistor (220 Ω); one shared resistor makes the colours fight each other.",
+          "Use three PWM pins and analogWrite(r, 255) analogWrite(g, 128) analogWrite(b, 0) for orange."
+        ],
+        "formulas": [
+          "Per channel: I = (Vsrc − Vf_channel) / (R + Rpin + rOn)",
+          "Colour mix ≈ (duty_r, duty_g, duty_b) / 255"
+        ],
+        "pitfalls": [
+          "Blue needs the highest Vf, so it is dimmest at 3.3 V — increase its duty or lower its resistor."
+        ]
+      }
+    },
+    "buzzer": {
+      "name": "Piezo buzzer",
+      "type": "buzzer",
+      "mount": "board",
+      "category": "output",
+      "footprint": {
+        "pins": [
+          {
+            "id": "pos",
+            "label": "+",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "neg",
+            "label": "−",
+            "dx": 2,
+            "dy": 0
+          }
+        ],
+        "width": 3,
+        "height": 1
+      },
+      "props": {},
+      "learn": {
+        "summary": "A piezo buzzer clicks every time the voltage across it changes; drive it with tone(pin, frequency) and the clicks become a note. Electrically it looks like about 1 kΩ, so a pin drives it directly.",
+        "pinout": [
+          "pos (+): to the tone pin.",
+          "neg (−): to GND."
+        ],
+        "tips": [
+          "tone(8, 440) plays A4; noTone(8) stops it. Only one tone at a time per board.",
+          "Typical audible range: 200 Hz to 5 kHz; piezos are loudest around 2–4 kHz."
+        ],
+        "formulas": [
+          "Current ≈ 5 V / 1 kΩ = 5 mA",
+          "Period T = 1 / f  (440 Hz → 2.27 ms)"
+        ],
+        "pitfalls": [
+          "Using delay() inside a melody blocks everything else — use millis() for lights that keep blinking."
+        ]
+      }
+    },
+    "servo": {
+      "name": "Micro servo (SG90)",
+      "type": "servo",
+      "mount": "board",
+      "category": "output",
+      "footprint": {
+        "pins": [
+          {
+            "id": "signal",
+            "label": "SIG",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "vcc",
+            "label": "VCC",
+            "dx": 1,
+            "dy": 0
+          },
+          {
+            "id": "gnd",
+            "label": "GND",
+            "dx": 2,
+            "dy": 0
+          }
+        ],
+        "width": 3,
+        "height": 1
+      },
+      "props": {},
+      "learn": {
+        "summary": "A hobby servo turns to an angle you command with a pulse train: a 1–2 ms pulse every 20 ms maps to 0–180°. The Servo library generates the pulses; the servo needs 5 V power and a shared ground.",
+        "pinout": [
+          "signal (orange/yellow): to a digital pin, e.g. D9.",
+          "vcc (red): 5V / VIN — at least 4.5 V.",
+          "gnd (brown/black): GND."
+        ],
+        "tips": [
+          "servo.attach(9); servo.write(90); — 90° is the middle position.",
+          "Power the servo from 5V/VIN, never from a GPIO pin: it can draw hundreds of mA while moving.",
+          "On the ESP32 the 3.3 V signal is fine; use ESP32Servo.h and power from VIN."
+        ],
+        "formulas": [
+          "Pulse width ≈ 1000 µs + angle / 180° × 1000 µs",
+          "Frame period = 20 ms (50 Hz)"
+        ],
+        "pitfalls": [
+          "A servo powered from 3V3 stutters or does nothing — it is unpowered below 4.5 V here.",
+          "Forgetting the shared GND leaves the signal without a reference."
+        ]
+      }
+    },
+    "lcd16x2_i2c": {
+      "name": "LCD 16x2 (I2C)",
+      "type": "lcd16x2_i2c",
+      "mount": "board",
+      "category": "output",
+      "footprint": {
+        "pins": [
+          {
+            "id": "gnd",
+            "label": "GND",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "vcc",
+            "label": "VCC",
+            "dx": 1,
+            "dy": 0
+          },
+          {
+            "id": "sda",
+            "label": "SDA",
+            "dx": 2,
+            "dy": 0
+          },
+          {
+            "id": "scl",
+            "label": "SCL",
+            "dx": 3,
+            "dy": 0
+          }
+        ],
+        "width": 4,
+        "height": 1
+      },
+      "props": {
+        "addr": {
+          "type": "enum",
+          "label": "I2C address",
+          "options": [
+            39,
+            63
+          ],
+          "default": 39,
+          "format": "hex"
+        }
+      },
+      "learn": {
+        "summary": "A 16x2 character LCD with an I2C backpack shows two lines of 16 characters using just two data wires (SDA, SCL) plus power. The LiquidCrystal_I2C library talks to it at address 0x27.",
+        "pinout": [
+          "gnd: GND.",
+          "vcc: 5V (the backlight and logic want 5 V).",
+          "sda: A4 (Uno/Nano) or GPIO21 (ESP32).",
+          "scl: A5 (Uno/Nano) or GPIO22 (ESP32)."
+        ],
+        "tips": [
+          "LiquidCrystal_I2C lcd(0x27, 16, 2); lcd.init(); lcd.backlight(); lcd.print(\"Hello\");",
+          "lcd.setCursor(column, row) before printing the second line: lcd.setCursor(0, 1).",
+          "Some backpacks use address 0x3F — change the addr prop and the constructor to match."
+        ],
+        "formulas": [
+          "Address on the bus: 0x27 (0x3F alternative)",
+          "Two wires, up to 127 devices — each needs a different address"
+        ],
+        "pitfalls": [
+          "Wrong address or swapped SDA/SCL: the screen lights but shows nothing.",
+          "Powered from 3V3 the backlight is dim and text may vanish (needs ≥ 4.5 V)."
+        ]
+      }
+    },
+    "oled_ssd1306": {
+      "name": "OLED 128x64 (SSD1306)",
+      "type": "oled_ssd1306",
+      "mount": "board",
+      "category": "output",
+      "footprint": {
+        "pins": [
+          {
+            "id": "vcc",
+            "label": "VCC",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "gnd",
+            "label": "GND",
+            "dx": 1,
+            "dy": 0
+          },
+          {
+            "id": "scl",
+            "label": "SCL",
+            "dx": 2,
+            "dy": 0
+          },
+          {
+            "id": "sda",
+            "label": "SDA",
+            "dx": 3,
+            "dy": 0
+          }
+        ],
+        "width": 4,
+        "height": 1
+      },
+      "props": {
+        "addr": {
+          "type": "enum",
+          "label": "I2C address",
+          "options": [
+            60,
+            61
+          ],
+          "default": 60,
+          "format": "hex"
+        }
+      },
+      "learn": {
+        "summary": "A 0.96\" SSD1306 OLED is a 128×64 pixel monochrome display driven over I2C. Draw text and shapes with Adafruit_GFX, then call display() to push the frame.",
+        "pinout": [
+          "vcc: 3V3 or 5V (the module regulates; needs ≥ 3 V).",
+          "gnd: GND.",
+          "scl: I2C clock (A5 / GPIO22).",
+          "sda: I2C data (A4 / GPIO21)."
+        ],
+        "tips": [
+          "Adafruit_SSD1306 display(128, 64, &Wire); display.begin(SSD1306_SWITCHCAPVCC, 0x3C);",
+          "Nothing appears until display.display() — and clearDisplay() first when redrawing.",
+          "Pixels are OLEDs: white pixels use power, black ones are off."
+        ],
+        "formulas": [
+          "Frame buffer = 128 × 64 / 8 = 1024 bytes",
+          "Address 0x3C (0x3D alternative)"
+        ],
+        "pitfalls": [
+          "begin() returns false when the address does not match or SDA/SCL are swapped.",
+          "Mind the pin order: many modules are VCC-GND-SCL-SDA, others GND-VCC."
+        ]
+      }
+    },
+    "seven_segment": {
+      "name": "Seven-segment display",
+      "type": "seven_segment",
+      "mount": "board",
+      "category": "output",
+      "footprint": {
+        "pins": [
+          {
+            "id": "seg_g",
+            "label": "g",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "seg_f",
+            "label": "f",
+            "dx": 1,
+            "dy": 0
+          },
+          {
+            "id": "com",
+            "label": "COM",
+            "dx": 2,
+            "dy": 0
+          },
+          {
+            "id": "seg_a",
+            "label": "a",
+            "dx": 3,
+            "dy": 0
+          },
+          {
+            "id": "seg_b",
+            "label": "b",
+            "dx": 4,
+            "dy": 0
+          },
+          {
+            "id": "seg_e",
+            "label": "e",
+            "dx": 0,
+            "dy": 3
+          },
+          {
+            "id": "seg_d",
+            "label": "d",
+            "dx": 1,
+            "dy": 3
+          },
+          {
+            "id": "com2",
+            "label": "COM",
+            "dx": 2,
+            "dy": 3
+          },
+          {
+            "id": "seg_c",
+            "label": "c",
+            "dx": 3,
+            "dy": 3
+          },
+          {
+            "id": "seg_dp",
+            "label": "dp",
+            "dx": 4,
+            "dy": 3
+          }
+        ],
+        "width": 5,
+        "height": 4
+      },
+      "props": {},
+      "learn": {
+        "summary": "A seven-segment display is eight LEDs (segments a–g plus the decimal point) sharing a common cathode. Light the right combination to show a digit: 0 = a b c d e f, 1 = b c, and so on.",
+        "pinout": [
+          "Top row: g, f, com, a, b.  Bottom row: e, d, com, c, dp.",
+          "Both com pins are the same common cathode — connect either one to GND.",
+          "Segments are laid out a (top), b (top right), c (bottom right), d (bottom), e (bottom left), f (top left), g (middle)."
+        ],
+        "tips": [
+          "Give every segment its own 220 Ω resistor; a single resistor on com makes digits dimmer the more segments are lit.",
+          "Store the digit patterns in a byte array and loop over the 7 segment pins."
+        ],
+        "formulas": [
+          "Per segment: I = (Vsrc − 1.8 V) / (R + Rpin + 10 Ω)",
+          "Eight segments × 12 mA ≈ 100 mA total from the supply"
+        ],
+        "pitfalls": [
+          "Eight pins at once can exceed the total current an Uno should source at the same time — use higher resistors or fewer segments."
+        ]
+      }
+    },
+    "neopixel_ring": {
+      "name": "NeoPixel ring",
+      "type": "neopixel_ring",
+      "mount": "board",
+      "category": "output",
+      "footprint": {
+        "pins": [
+          {
+            "id": "din",
+            "label": "DIN",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "vcc",
+            "label": "VCC",
+            "dx": 1,
+            "dy": 0
+          },
+          {
+            "id": "gnd",
+            "label": "GND",
+            "dx": 2,
+            "dy": 0
+          }
+        ],
+        "width": 3,
+        "height": 1
+      },
+      "props": {
+        "count": {
+          "type": "number",
+          "label": "Pixels",
+          "default": 12,
+          "min": 1,
+          "max": 60,
+          "step": 1
+        }
+      },
+      "learn": {
+        "summary": "A NeoPixel (WS2812B) ring is a chain of addressable RGB LEDs. One data wire carries colours for every pixel; the library handles the timing. Each pixel can draw up to 60 mA at full white.",
+        "pinout": [
+          "din: data in — to a digital pin (through a 330–470 Ω resistor in real builds).",
+          "vcc: 5V / VIN (≥ 4.5 V).",
+          "gnd: GND."
+        ],
+        "tips": [
+          "Adafruit_NeoPixel ring(12, PIN, NEO_GRB + NEO_KHZ800); ring.begin(); ring.setPixelColor(0, ring.Color(255, 0, 0)); ring.show();",
+          "Set ring.setBrightness(40) — full brightness on 12 pixels is blinding and hungry.",
+          "A 3.3 V ESP32 data signal works in the simulator and usually in real life; a level shifter makes it reliable."
+        ],
+        "formulas": [
+          "Max current ≈ pixels × 60 mA  (12 pixels → 720 mA at full white)",
+          "Colour = (r, g, b) each 0–255"
+        ],
+        "pitfalls": [
+          "Powering 12 pixels from the 500 mA USB budget at full white overloads it — dim them.",
+          "Data goes into DIN, not DOUT; the arrow on the ring shows the direction."
+        ]
+      }
+    },
+    "dc_motor": {
+      "name": "DC motor",
+      "type": "dc_motor",
+      "mount": "board",
+      "category": "output",
+      "footprint": {
+        "pins": [
+          {
+            "id": "p1",
+            "label": "M1",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "p2",
+            "label": "M2",
+            "dx": 2,
+            "dy": 0
+          }
+        ],
+        "width": 3,
+        "height": 1
+      },
+      "props": {},
+      "learn": {
+        "summary": "A small DC motor spins when current flows through it; reverse the current and it spins the other way. It draws far more than a pin can supply, so drive it through a transistor.",
+        "pinout": [
+          "p1 / p2: the two motor leads — no polarity, just direction."
+        ],
+        "tips": [
+          "Wire: 5V → motor → collector of an NPN, emitter → GND, base ← pin through 1 kΩ.",
+          "Add a flyback diode across the motor (cathode to +) to absorb the voltage spike when it stops.",
+          "Speed follows current — PWM on the transistor base gives smooth speed control."
+        ],
+        "formulas": [
+          "Stall current ≈ 5 V / 20 Ω = 250 mA (way over the 40 mA pin limit)",
+          "Speed ∝ current in this model"
+        ],
+        "pitfalls": [
+          "Connecting the motor straight to a pin overloads the pin and stalls the sketch's LEDs too."
+        ]
+      }
+    },
+    "pushbutton": {
+      "name": "Pushbutton",
+      "type": "pushbutton",
+      "mount": "board",
+      "category": "input",
+      "footprint": {
+        "pins": [
+          {
+            "id": "a1",
+            "label": "A",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "a2",
+            "label": "A",
+            "dx": 0,
+            "dy": 1
+          },
+          {
+            "id": "b1",
+            "label": "B",
+            "dx": 2,
+            "dy": 0
+          },
+          {
+            "id": "b2",
+            "label": "B",
+            "dx": 2,
+            "dy": 1
+          }
+        ],
+        "width": 3,
+        "height": 2
+      },
+      "props": {},
+      "learn": {
+        "summary": "A tactile pushbutton connects its two sides only while pressed. The legs come in two pairs that are always joined internally, so straddle the breadboard so that each pair sits in a different row.",
+        "pinout": [
+          "a1 / a2: one side (always connected to each other).",
+          "b1 / b2: the other side, two rows over.",
+          "Pressed: a ↔ b closes with about 0.1 Ω."
+        ],
+        "tips": [
+          "Wire one side to GND and the other to a pin set to INPUT_PULLUP: reads HIGH released, LOW pressed.",
+          "Without a pull-up or pull-down the released pin floats and flickers randomly.",
+          "For a pull-down version: 10 kΩ from pin to GND, other side of the button to 5V — reads HIGH when pressed."
+        ],
+        "formulas": [
+          "Pull-up: released V = Vcc (through ~35 kΩ), pressed V ≈ 0 V",
+          "Debounce: ignore changes within 20–50 ms"
+        ],
+        "pitfalls": [
+          "Rotated so both pairs sit in the same strip, the button is permanently \"pressed\".",
+          "digitalRead on a floating pin gives random values — always add a pull."
+        ]
+      }
+    },
+    "potentiometer": {
+      "name": "Potentiometer",
+      "type": "potentiometer",
+      "mount": "board",
+      "category": "input",
+      "footprint": {
+        "pins": [
+          {
+            "id": "end1",
+            "label": "1",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "wiper",
+            "label": "W",
+            "dx": 1,
+            "dy": 0
+          },
+          {
+            "id": "end2",
+            "label": "2",
+            "dx": 2,
+            "dy": 0
+          }
+        ],
+        "width": 3,
+        "height": 1
+      },
+      "props": {
+        "ohms": {
+          "type": "enum",
+          "label": "Resistance",
+          "options": [
+            1000,
+            5000,
+            10000,
+            50000,
+            100000
+          ],
+          "default": 10000,
+          "unit": "Ω",
+          "format": "ohms"
+        }
+      },
+      "learn": {
+        "summary": "A potentiometer is a resistor with a sliding contact (wiper). Between the ends it is always 10 kΩ; between an end and the wiper the resistance follows the knob. Wired end-to-end across the supply it becomes an adjustable voltage divider.",
+        "pinout": [
+          "end1: to 5V (or 3V3 on the ESP32).",
+          "wiper: the middle pin — to an analog input.",
+          "end2: to GND."
+        ],
+        "tips": [
+          "analogRead(A0) then gives 0 at one end and 1023 (4095 on ESP32) at the other.",
+          "map(value, 0, 1023, 0, 255) turns a knob position into a PWM level.",
+          "Swap end1 and end2 to reverse the direction of the knob."
+        ],
+        "formulas": [
+          "Vwiper = Vcc × position  (position 0..1)",
+          "Rend1–wiper = R × (1 − position), Rwiper–end2 = R × position"
+        ],
+        "pitfalls": [
+          "On the ESP32 feed end1 from 3V3, not VIN — 5 V on the wiper burns the GPIO.",
+          "Wiring the wiper to a supply forces current through a tiny resistance at the knob's end."
+        ]
+      }
+    },
+    "ldr": {
+      "name": "Photoresistor (LDR)",
+      "type": "ldr",
+      "mount": "board",
+      "category": "input",
+      "footprint": {
+        "pins": [
+          {
+            "id": "p1",
+            "label": "p1",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "p2",
+            "label": "p2",
+            "dx": 2,
+            "dy": 0
+          }
+        ],
+        "width": 3,
+        "height": 1
+      },
+      "props": {},
+      "learn": {
+        "summary": "A light-dependent resistor (photoresistor) has high resistance in the dark (~200 kΩ) and low in bright light (~1 kΩ). Pair it with a fixed 10 kΩ resistor to turn light into a voltage an analog pin can read.",
+        "pinout": [
+          "p1 / p2: no polarity.",
+          "Spans 3 holes."
+        ],
+        "tips": [
+          "Divider: 5V → LDR → A0 → 10 kΩ → GND. Brighter light → lower LDR resistance → higher voltage at A0.",
+          "Pick the fixed resistor near the LDR's mid-range (10 kΩ) for the most sensitive readings.",
+          "Use the light slider on the part to test day/night thresholds without waiting for sunset."
+        ],
+        "formulas": [
+          "R_ldr ≈ 200 kΩ × (1 kΩ / 200 kΩ)^(light / 100 %)   (logarithmic)",
+          "V_A0 = Vcc × R_fixed / (R_ldr + R_fixed)"
+        ],
+        "pitfalls": [
+          "LDR straight into an input with no fixed resistor: the pin floats at Vcc regardless of light."
+        ]
+      }
+    },
+    "touch_pad": {
+      "name": "Touch pad",
+      "type": "touch_pad",
+      "mount": "board",
+      "category": "input",
+      "footprint": {
+        "pins": [
+          {
+            "id": "pad",
+            "label": "T",
+            "dx": 0,
+            "dy": 0
+          }
+        ],
+        "width": 1,
+        "height": 2
+      },
+      "props": {},
+      "learn": {
+        "summary": "A touch pad is just a piece of metal or copper tape wired to an ESP32 touch pin. touchRead() measures the pad's capacitance: it drops from about 70 to around 15 when a finger is on it.",
+        "pinout": [
+          "pad: wire to a touch-capable GPIO (T0 = GPIO4, T2 = GPIO2 …)."
+        ],
+        "tips": [
+          "if (touchRead(T0) < 40) — a threshold halfway between idle (~70) and touched (~15).",
+          "Only ESP32 boards have touch hardware; on an Uno the pad does nothing."
+        ],
+        "formulas": [
+          "idle ≈ 70, touched ≈ 15 (lower = more capacitance)"
+        ],
+        "pitfalls": [
+          "Long wires and nearby metal raise the idle reading — calibrate at startup instead of hard-coding."
+        ]
+      }
+    },
+    "pir": {
+      "name": "PIR motion sensor",
+      "type": "pir",
+      "mount": "board",
+      "category": "input",
+      "footprint": {
+        "pins": [
+          {
+            "id": "vcc",
+            "label": "VCC",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "out",
+            "label": "OUT",
+            "dx": 1,
+            "dy": 0
+          },
+          {
+            "id": "gnd",
+            "label": "GND",
+            "dx": 2,
+            "dy": 0
+          }
+        ],
+        "width": 3,
+        "height": 1
+      },
+      "props": {},
+      "learn": {
+        "summary": "A PIR motion sensor watches for moving body heat and raises its OUT pin to 3.3 V while motion is detected. It has its own regulator, so it wants 5 V power but is safe for 3.3 V inputs.",
+        "pinout": [
+          "vcc: 5V / VIN (≥ 4.5 V).",
+          "out: 3.3 V HIGH on motion — to any digital input.",
+          "gnd: GND."
+        ],
+        "tips": [
+          "pinMode(pin, INPUT); if (digitalRead(pin) == HIGH) — no pull-up needed.",
+          "Real sensors hold OUT high for a few seconds after motion; toggle the \"motion\" switch here to test."
+        ],
+        "formulas": [
+          "OUT = 3.3 V when motion, 0 V otherwise (through ~50 Ω)"
+        ],
+        "pitfalls": [
+          "Powered from 3V3 the module is unpowered and OUT stays low forever."
+        ]
+      }
+    },
+    "dht22": {
+      "name": "DHT22 temperature & humidity",
+      "type": "dht22",
+      "mount": "board",
+      "category": "input",
+      "footprint": {
+        "pins": [
+          {
+            "id": "vcc",
+            "label": "VCC",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "data",
+            "label": "DATA",
+            "dx": 1,
+            "dy": 0
+          },
+          {
+            "id": "gnd",
+            "label": "GND",
+            "dx": 2,
+            "dy": 0
+          }
+        ],
+        "width": 3,
+        "height": 1
+      },
+      "props": {},
+      "learn": {
+        "summary": "The DHT22 measures temperature (−40…80 °C) and humidity (0…100 %) and reports them over a single data wire using its own timing protocol. The DHT library does the decoding.",
+        "pinout": [
+          "vcc: 3V3 or 5V (≥ 3 V).",
+          "data: to any digital pin (a 10 kΩ pull-up to VCC is built into most modules).",
+          "gnd: GND."
+        ],
+        "tips": [
+          "DHT dht(PIN, DHT22); dht.begin(); float t = dht.readTemperature(); float h = dht.readHumidity();",
+          "Readings take up to 2 s each — do not poll faster than every 2000 ms.",
+          "Drag the temperature/humidity sliders to simulate a warm, humid afternoon."
+        ],
+        "formulas": [
+          "Heat index and dew point are computed by the library from t and h",
+          "Data line idles HIGH at VCC; unpowered → readings are NaN"
+        ],
+        "pitfalls": [
+          "isnan(t) is how you detect a missing sensor — check it before printing."
+        ]
+      }
+    },
+    "bme280": {
+      "name": "BME280 environment sensor",
+      "type": "bme280",
+      "mount": "board",
+      "category": "input",
+      "footprint": {
+        "pins": [
+          {
+            "id": "vin",
+            "label": "VIN",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "gnd",
+            "label": "GND",
+            "dx": 1,
+            "dy": 0
+          },
+          {
+            "id": "scl",
+            "label": "SCL",
+            "dx": 2,
+            "dy": 0
+          },
+          {
+            "id": "sda",
+            "label": "SDA",
+            "dx": 3,
+            "dy": 0
+          }
+        ],
+        "width": 4,
+        "height": 1
+      },
+      "props": {
+        "addr": {
+          "type": "enum",
+          "label": "I2C address",
+          "options": [
+            118,
+            119
+          ],
+          "default": 118,
+          "format": "hex"
+        }
+      },
+      "learn": {
+        "summary": "The BME280 is a precise environmental sensor: temperature, barometric pressure and humidity over I2C. Pressure lets you estimate altitude and spot weather changes.",
+        "pinout": [
+          "vin: 3V3 or 5V (≥ 3 V; the module regulates).",
+          "gnd: GND.",
+          "scl: I2C clock (A5 / GPIO22).",
+          "sda: I2C data (A4 / GPIO21)."
+        ],
+        "tips": [
+          "Adafruit_BME280 bme; if (!bme.begin(0x76)) Serial.println(\"no sensor\");",
+          "bme.readTemperature(), bme.readPressure() / 100.0F (hPa), bme.readHumidity().",
+          "Publish readings over MQTT every few seconds for a weather station."
+        ],
+        "formulas": [
+          "Altitude ≈ 44330 × (1 − (P / 1013.25 hPa)^0.1903) metres",
+          "I2C address 0x76 (0x77 alternative)"
+        ],
+        "pitfalls": [
+          "begin() returns false with the wrong address or swapped SDA/SCL."
+        ]
+      }
+    },
+    "ultrasonic_hcsr04": {
+      "name": "Ultrasonic sensor (HC-SR04)",
+      "type": "ultrasonic_hcsr04",
+      "mount": "board",
+      "category": "input",
+      "footprint": {
+        "pins": [
+          {
+            "id": "vcc",
+            "label": "VCC",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "trig",
+            "label": "TRIG",
+            "dx": 1,
+            "dy": 0
+          },
+          {
+            "id": "echo",
+            "label": "ECHO",
+            "dx": 2,
+            "dy": 0
+          },
+          {
+            "id": "gnd",
+            "label": "GND",
+            "dx": 3,
+            "dy": 0
+          }
+        ],
+        "width": 4,
+        "height": 1
+      },
+      "props": {},
+      "learn": {
+        "summary": "The HC-SR04 measures distance with sound: pulse TRIG for 10 µs, and ECHO goes HIGH for as long as the ping takes to bounce back. It runs on 5 V, so its 5 V ECHO must be divided down for an ESP32.",
+        "pinout": [
+          "vcc: 5V / VIN (≥ 4.5 V).",
+          "trig: any digital output.",
+          "echo: 5 V pulse output — safe for an Uno, needs a divider or level shifter for an ESP32.",
+          "gnd: GND."
+        ],
+        "tips": [
+          "digitalWrite(TRIG, HIGH); delayMicroseconds(10); digitalWrite(TRIG, LOW); long us = pulseIn(ECHO, HIGH);",
+          "Distance in cm = us / 58.3 (sound travels there and back at 343 m/s).",
+          "ESP32: ECHO → 1 kΩ → GPIO, GPIO → 2.2 kΩ → GND gives 5 V × 2.2 / 3.2 = 3.44 V."
+        ],
+        "formulas": [
+          "distance_cm = echo_µs / 58.3",
+          "echo_µs = distance_cm × 58.3   (50 cm → 2915 µs)",
+          "Divider: Vout = 5 V × R2 / (R1 + R2)"
+        ],
+        "pitfalls": [
+          "ECHO straight into an ESP32 GPIO burns the pin (5 V > 3.6 V).",
+          "A 10 kΩ / 1 kΩ divider is the wrong way round: 0.45 V never reads HIGH."
+        ]
+      }
+    },
+    "relay_5v": {
+      "name": "Relay module 5 V",
+      "type": "relay_5v",
+      "mount": "board",
+      "category": "module",
+      "footprint": {
+        "pins": [
+          {
+            "id": "vcc",
+            "label": "VCC",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "gnd",
+            "label": "GND",
+            "dx": 1,
+            "dy": 0
+          },
+          {
+            "id": "in",
+            "label": "IN",
+            "dx": 2,
+            "dy": 0
+          },
+          {
+            "id": "com",
+            "label": "COM",
+            "dx": 3,
+            "dy": 0
+          },
+          {
+            "id": "no",
+            "label": "NO",
+            "dx": 4,
+            "dy": 0
+          },
+          {
+            "id": "nc",
+            "label": "NC",
+            "dx": 5,
+            "dy": 0
+          }
+        ],
+        "width": 6,
+        "height": 1
+      },
+      "props": {},
+      "learn": {
+        "summary": "A 5 V relay module is an electrically controlled switch: a small signal on IN energises a coil that flips a mechanical contact between COM–NC (normally closed) and COM–NO (normally open).",
+        "pinout": [
+          "vcc: 5V / VIN.",
+          "gnd: GND.",
+          "in: control signal from a pin (HIGH = on).",
+          "com: common contact.",
+          "no: normally open — connected to com only when on.",
+          "nc: normally closed — connected to com only when off."
+        ],
+        "tips": [
+          "Use it to switch a lamp or motor circuit that is separate from the microcontroller.",
+          "The module turns on when IN rises above about 60 % of its supply."
+        ],
+        "formulas": [
+          "relayOn = powered AND V(in) − V(gnd) > 0.6 × Vmodule"
+        ],
+        "pitfalls": [
+          "Powered from 3V3 the coil never pulls in (needs ≥ 4.5 V).",
+          "A 3.3 V ESP32 signal only just reaches the 0.6 × 5 V = 3 V threshold — power the module from 3V3-compatible relays or use a transistor in real builds."
+        ]
+      }
+    },
+    "level_shifter": {
+      "name": "Logic level shifter",
+      "type": "level_shifter",
+      "mount": "board",
+      "category": "module",
+      "footprint": {
+        "pins": [
+          {
+            "id": "hv",
+            "label": "HV",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "hv1",
+            "label": "HV1",
+            "dx": 1,
+            "dy": 0
+          },
+          {
+            "id": "hv2",
+            "label": "HV2",
+            "dx": 2,
+            "dy": 0
+          },
+          {
+            "id": "hv3",
+            "label": "HV3",
+            "dx": 3,
+            "dy": 0
+          },
+          {
+            "id": "hv4",
+            "label": "HV4",
+            "dx": 4,
+            "dy": 0
+          },
+          {
+            "id": "gnd_h",
+            "label": "GND",
+            "dx": 5,
+            "dy": 0
+          },
+          {
+            "id": "lv",
+            "label": "LV",
+            "dx": 0,
+            "dy": 3
+          },
+          {
+            "id": "lv1",
+            "label": "LV1",
+            "dx": 1,
+            "dy": 3
+          },
+          {
+            "id": "lv2",
+            "label": "LV2",
+            "dx": 2,
+            "dy": 3
+          },
+          {
+            "id": "lv3",
+            "label": "LV3",
+            "dx": 3,
+            "dy": 3
+          },
+          {
+            "id": "lv4",
+            "label": "LV4",
+            "dx": 4,
+            "dy": 3
+          },
+          {
+            "id": "gnd_l",
+            "label": "GND",
+            "dx": 5,
+            "dy": 3
+          }
+        ],
+        "width": 6,
+        "height": 4
+      },
+      "props": {},
+      "learn": {
+        "summary": "A bidirectional logic level shifter translates signals between a 5 V side (HV) and a 3.3 V side (LV). Each channel has a pull-up to its own supply; pulling one side LOW pulls the other side LOW too, so a 5 V HIGH becomes a clean 3.3 V HIGH.",
+        "pinout": [
+          "hv: 5 V reference (5V / VIN).  lv: 3.3 V reference (3V3).  gnd_h / gnd_l: GND (both).",
+          "hv1–hv4: 5 V side of channels 1–4.  lv1–lv4: 3.3 V side of the same channels."
+        ],
+        "tips": [
+          "Feed HV from VIN and LV from 3V3 on the ESP32 — both references are required for it to work.",
+          "Sensor outputs (HC-SR04 echo) go into HVn; read LVn on the GPIO. MCU outputs go into LVn to drive 5 V inputs on HVn.",
+          "Idle channels sit HIGH on both sides thanks to the 10 kΩ pull-ups."
+        ],
+        "formulas": [
+          "V(LVn) = V(lv) when idle or HIGH; ≈ 0 V when either side is pulled LOW",
+          "Pull-ups: 10 kΩ per side"
+        ],
+        "pitfalls": [
+          "Unpowered (hv or lv below 1 V): channels are open and nothing passes.",
+          "It shifts logic, not power — do not draw motor current through it."
+        ]
+      }
+    }
+  },
+  "layouts": {
+    "half": [
+      {
+        "id": "bb1",
+        "type": "half",
+        "x": 0,
+        "y": 0
+      }
+    ],
+    "full": [
+      {
+        "id": "bb1",
+        "type": "full",
+        "x": 0,
+        "y": 0
+      }
+    ],
+    "dual": [
+      {
+        "id": "bb1",
+        "type": "half",
+        "x": 0,
+        "y": 0
+      },
+      {
+        "id": "bb2",
+        "type": "half",
+        "x": 0,
+        "y": 504
+      }
+    ]
+  }
+}

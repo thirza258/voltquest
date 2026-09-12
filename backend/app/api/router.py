@@ -3,6 +3,7 @@
 from fastapi import APIRouter
 
 from app.api.routes import (
+    assistant,
     auth,
     boards,
     exports,
@@ -18,6 +19,7 @@ from app.api.routes import (
 
 api_router = APIRouter(prefix="/api")
 for router in (
+    assistant.router,
     health.router,
     boards.router,
     tutorials.router,

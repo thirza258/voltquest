@@ -1,3 +1,4 @@
+import { useI18n } from '../i18n/index.jsx'
 import { useId, useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { cx, FOCUS_RING, LABEL_CLASS, TRANSITION } from './tokens.js'
@@ -20,6 +21,7 @@ export function Panel({
   footer,
   ...rest
 }) {
+  const { t } = useI18n()
   const [open, setOpen] = useState(defaultOpen)
   const bodyId = useId()
   const shown = collapsible ? open : true
@@ -27,8 +29,8 @@ export function Panel({
 
   const heading = (
     <>
-      <span className={LABEL_CLASS}>{title}</span>
-      {subtitle && <span className="mt-0.5 block text-xxs normal-case tracking-normal text-slate-500">{subtitle}</span>}
+      <span className={LABEL_CLASS}>{t(title)}</span>
+      {subtitle && <span className="mt-0.5 block text-xxs normal-case tracking-normal text-slate-500">{t(subtitle)}</span>}
     </>
   )
 

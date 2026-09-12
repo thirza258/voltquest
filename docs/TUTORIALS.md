@@ -78,3 +78,16 @@ and sandbox workspaces now provide Monaco/Blockly, freeform wiring, and the virt
 then authored order. Filters are optional; board and difficulty values are validated.
 `GET /api/tutorials/{id}` returns the full tutorial or 404. Both endpoints are public and tolerate
 missing tutorial content by returning an empty list / 404.
+
+## Localization and AI guidance (2026-09-12 extension)
+
+The header switches between English (default) and Indonesian without remounting the tutorial lab.
+All 35 lessons have translated titles, summaries, steps, challenges, and hardware/program concepts;
+their source code and output remain unchanged. Search matches both original and translated text.
+
+The circuit section includes the shared AI guide and Claude Code/Codex MCP setup. Selecting a part
+opens its read-only inspector; selecting a wiring-guide row focuses that cable in assistant context.
+Every question snapshots the current edited code, board, prepared circuit, live simulation and checked
+steps. Explicit Share current context makes the same snapshot available to a connected coding agent,
+which can create a separate saved sandbox project. Tutorial circuits remain read-only and no XP or
+persistent tutorial completion is introduced. See `ASSISTANT.md` for configuration and boundaries.

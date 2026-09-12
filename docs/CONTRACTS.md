@@ -400,3 +400,29 @@ Informational text uses `#64748B` (slate-500) minimum; `#94A3B8` only decorative
 ---------------------------------------------------------------------------------------------------------------
 ## 13. Deferred (explicitly out of scope for this build)
 Educator Portal (classes/assignments), Custom Component Creator, virtual oscilloscope, ESP32-S3 camera/AI levels, cloud compilation. README lists them.
+
+## 14. Localization and circuit assistant extension (2026-09-12)
+
+`i18n/index.jsx` exports `LocaleProvider`, `useI18n() → { locale, setLocale, t }`, `LanguageSelect`,
+`translate(locale, message, values?)`, and `LOCALES`. Default is `en`; supported alternative is `id`.
+The provider persists the choice in `vq.locale`, updates HTML `lang`, and never remounts a workspace
+on a language change. Source content and engine data stay locale-neutral. UI labels, including
+accessible canvas names, are translated at rendering; identifiers/code/output are preserved.
+
+`features/assistant/context.js` exports `buildAssistantContext({ mode, title, doc, code, selectedIds,
+state, lesson, objectives, completedSteps })`. It returns `{ mode, title, board, code, circuit,
+selection, simulation, lesson, truncated }` from the current implementation, with resolved pins,
+live values and visible learning goals. Hidden solutions/hints and credentials must not be included.
+The frontend targets an 80,000-byte UTF-8 snapshot; the API rejects contexts over 96 KiB.
+
+`AssistantPanel` accepts these same props; it builds context when sending or explicitly sharing.
+`useWorkspaceStore.leftTab` additionally accepts `assistant`. Campaign/sandbox/showcase mount the
+panel inside the circuit sidebar, retaining chat while switching to Inspect. Tutorials render it
+below the canvas; read-only selection and live controls remain available. `WorkspacePage.projectName`
+supplies the unsaved sandbox or public project's name independently of its rendered header title.
+
+`api.assistant` exports `status`, `chat(body, {signal})`, `mcpAccess`, `mcpToken`, `revokeMcp`,
+`shareContext(context)`; `mcpUrl()` resolves the API's `/mcp/` endpoint. Request cancellation/deadlines
+remain active through response-body consumption. Chat does not edit code or circuits. MCP exposes
+only catalog/context and owned project creation/update tools; it never executes firmware or publishes.
+Wire protocol, credentials and limits are binding in `API.md`; usage is described in `ASSISTANT.md`.

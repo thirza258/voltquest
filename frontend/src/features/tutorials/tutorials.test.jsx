@@ -7,6 +7,7 @@ import { installMemoryStorage } from '../../test-utils/localStorage.js'
 import { TUTORIALS } from '../../content/index.js'
 import TutorialsPage from './TutorialsPage.jsx'
 import TutorialPage from './TutorialPage.jsx'
+import { LocaleProvider, translate } from '../../i18n/index.jsx'
 
 vi.mock('../../canvas/BreadboardCanvas.jsx', () => ({ BreadboardCanvas: ({ highlights }) => <div data-testid="circuit" data-highlight={highlights?.terminals?.join(',') ?? ''}>Interactive circuit</div> }))
 
@@ -14,10 +15,20 @@ beforeEach(() => { installMemoryStorage(); vi.useFakeTimers() })
 afterEach(() => { cleanup(); vi.useRealTimers() })
 
 function page(path) {
-  return render(<MemoryRouter initialEntries={[path]}><Routes><Route path="/tutorials" element={<TutorialsPage />} /><Route path="/tutorials/:tutorialId" element={<TutorialPage />} /></Routes></MemoryRouter>)
+  return render(<LocaleProvider><MemoryRouter initialEntries={[path]}><Routes><Route path="/tutorials" element={<TutorialsPage />} /><Route path="/tutorials/:tutorialId" element={<TutorialPage />} /></Routes></MemoryRouter></LocaleProvider>)
 }
 
 describe('tutorial pages', () => {
+  it('translates lesson challenges and preserves unsaved code and step checks while switching languages', () => {
+    page('/tutorials/uno-blink')
+    fireEvent.change(screen.getByLabelText('Example code'), { target: { value: '// my unsaved experiment' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Mark step 1 complete' }))
+    fireEvent.change(screen.getByLabelText('Language / Bahasa'), { target: { value: 'id' } })
+    const lesson = TUTORIALS.find(t => t.id === 'uno-blink')
+    expect(screen.getByText(translate('id', lesson.challenge))).toBeTruthy()
+    expect(screen.getByLabelText('Kode contoh').value).toBe('// my unsaved experiment')
+    expect(screen.getByRole('button', { name: 'Tandai langkah 1 selesai' }).getAttribute('aria-pressed')).toBe('true')
+  })
   it('filters by board, difficulty and topic in learning-path order', () => {
     page('/tutorials')
     expect(screen.getByRole('status').textContent).toContain(`${TUTORIALS.length} tutorials`)

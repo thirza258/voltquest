@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/index.jsx'
 /**
  * The 48 px shell header shared by every page (DESIGN.md "Header shell", CONTRACTS §11.1).
  *
@@ -26,6 +27,7 @@ import {
 } from 'lucide-react'
 import { Badge, Button, IconButton, Menu, SegmentedControl, Select, Tooltip, cx } from '../../ui/index.js'
 import { usePlayerStore } from '../../store/playerStore.js'
+import { LanguageSelect } from '../../i18n/index.jsx'
 
 const NAV_OPTIONS = [
   { value: 'campaign', label: 'Campaign' },
@@ -101,6 +103,7 @@ export function AppHeader({
   runDisabled = false,
   className = '',
 }) {
+  const { t } = useI18n()
   const navigate = useNavigate()
   const location = useLocation()
   const player = usePlayerStore((s) => s.player)
@@ -146,11 +149,11 @@ export function AppHeader({
       <div className="flex shrink-0 items-center gap-3">
         <Link
           to="/"
-          aria-label="VoltQuest"
+          aria-label={t("VoltQuest")}
           className="flex items-center gap-2 rounded-md px-1 py-0.5 font-semibold text-ink ring-brand-500 ring-offset-1 focus:outline-none focus-visible:ring-2"
         >
           <LogoMark />
-          <span className="hidden sm:inline">VoltQuest</span>
+          <span className="hidden sm:inline">{t("VoltQuest")}</span>
         </Link>
         <div className="hidden sm:block">
           <SegmentedControl
@@ -158,16 +161,16 @@ export function AppHeader({
             options={NAV_OPTIONS}
             value={section}
             onChange={(value) => navigate(NAV_PATH[value] ?? '/')}
-            aria-label="Section"
+            aria-label={t("Section")}
           />
         </div>
         <select
-          aria-label="Section navigation"
+          aria-label={t("Section navigation")}
           value={section}
           onChange={(event) => navigate(NAV_PATH[event.target.value] ?? '/')}
           className="h-8 rounded-md border border-line-strong bg-white px-2 text-xs text-ink focus:outline-none focus:ring-2 focus:ring-brand-500 sm:hidden"
         >
-          {NAV_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+          {NAV_OPTIONS.map((option) => <option key={option.value} value={option.value}>{t(option.label)}</option>)}
         </select>
       </div>
 
@@ -175,6 +178,7 @@ export function AppHeader({
 
       <div className="flex shrink-0 items-center gap-1.5">
         {actions}
+        <LanguageSelect />
 
         {workspaceControls && (
           <>
@@ -186,11 +190,11 @@ export function AppHeader({
                 onChange={onBoardChange}
                 options={boardOptions}
                 disabled={!boardSwitcherEnabled}
-                aria-label="Board"
+                aria-label={t("Board")}
               />
             )}
 
-            <Tooltip content={powered ? 'USB power is on' : 'The board has no power'}>
+            <Tooltip content={powered ? t("USB power is on") : t("The board has no power")}>
               <button
                 type="button"
                 onClick={() => onPoweredChange?.(!powered)}
@@ -198,7 +202,7 @@ export function AppHeader({
                 className="inline-flex h-8 items-center gap-1 rounded-md border border-line-strong bg-surface-panel px-2 text-xxs font-medium text-ink ring-brand-500 ring-offset-1 transition-colors duration-150 hover:bg-surface-sunken focus:outline-none focus-visible:ring-2"
               >
                 <Power size={13} className={powered ? 'text-emerald-600' : 'text-slate-500'} />
-                {powered ? 'USB 5 V' : 'Power off'}
+                {powered ? t("USB 5 V") : t("Power off")}
               </button>
             </Tooltip>
 
@@ -209,20 +213,19 @@ export function AppHeader({
               onClick={onHint}
               disabled={hintDisabled || hintTier >= hintMax}
             >
-              <span className="inline-flex items-center">
-                Hint {hintTier}/{hintMax}
+              <span className="inline-flex items-center">{t("Hint ")}{hintTier}/{hintMax}
                 <TierDots tier={hintTier} max={hintMax} />
               </span>
             </Button>}
 
-            <Tooltip content="Clears damage, serial and timers; keeps your circuit">
-              <IconButton size="md" icon={<RotateCcw size={15} />} label="Reset sim" onClick={onResetSim} />
+            <Tooltip content={t("Clears damage, serial and timers; keeps your circuit")}>
+              <IconButton size="md" icon={<RotateCcw size={15} />} label={t("Reset sim")} onClick={onResetSim} />
             </Tooltip>
           </>
         )}
 
         {overflowItems.length > 0 && (
-          <Menu align="right" label="More actions" trigger={<MoreVertical size={15} />} items={overflowItems} />
+          <Menu align="right" label={t("More actions")} trigger={<MoreVertical size={15} />} items={overflowItems} />
         )}
 
         {workspaceControls && (
@@ -233,13 +236,13 @@ export function AppHeader({
             onClick={onRunStop}
             disabled={runDisabled}
           >
-            {running ? 'Stop' : 'Run'}
+            {running ? t("Stop") : t("Run")}
           </Button>
         )}
 
         <Menu
           align="right"
-          label="Account"
+          label={t("Account")}
           trigger={
             <span className="flex items-center gap-1.5">
               <span
@@ -249,9 +252,9 @@ export function AppHeader({
                 {(player?.display_name ?? 'Cadet').slice(0, 1).toUpperCase()}
               </span>
               <span className="hidden max-w-28 truncate text-xxs font-medium text-ink md:inline">
-                {player?.display_name ?? 'Cadet'}
+                {player?.display_name ?? t("Cadet")}
               </span>
-              <Badge tone="volt">Lv {player?.level ?? 1}</Badge>
+              <Badge tone="volt">{t("Lv ")}{player?.level ?? 1}</Badge>
             </span>
           }
           items={avatarItems}
@@ -265,6 +268,7 @@ export function AppHeader({
  * Campaign centre block: `codeName · title`, the board voltage badge and the briefing re-opener.
  */
 export function LevelHeaderCenter({ level, boardVcc, onBriefing }) {
+  const { t } = useI18n()
   if (!level) return null
   return (
     <div className="flex min-w-0 items-center gap-2">
@@ -272,10 +276,10 @@ export function LevelHeaderCenter({ level, boardVcc, onBriefing }) {
       <span className="text-line-strong" aria-hidden="true">
         ·
       </span>
-      <span className="truncate text-sm font-semibold text-ink">{level.title}</span>
-      {boardVcc != null && <Badge tone={boardVcc >= 5 ? 'volt' : 'info'}>{boardVcc} V board</Badge>}
+      <span className="truncate text-sm font-semibold text-ink">{t(level.title)}</span>
+      {boardVcc != null && <Badge tone={boardVcc >= 5 ? 'volt' : 'info'}>{boardVcc}{t(" V board")}</Badge>}
       {onBriefing && (
-        <IconButton size="sm" icon={<Info size={14} />} label="Re-open the briefing" onClick={onBriefing} />
+        <IconButton size="sm" icon={<Info size={14} />} label={t("Re-open the briefing")} onClick={onBriefing} />
       )}
     </div>
   )

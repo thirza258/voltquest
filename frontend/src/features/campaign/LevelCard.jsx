@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/index.jsx'
 /**
  * One level tile on the campaign map. Three states — locked, available, completed — each stated in
  * words as well as colour (DESIGN.md "Campaign map").
@@ -14,6 +15,7 @@ import { Badge, Stars, cx } from '../../ui/index.js'
  * @param {(levelId: string) => void} props.onOpen
  */
 export function LevelCard({ level, stars = 0, locked = false, blocker = null, onOpen }) {
+  const { t } = useI18n()
   const completed = stars > 0
   const state = locked ? 'Locked' : completed ? 'Completed' : 'Available'
 
@@ -28,39 +30,36 @@ export function LevelCard({ level, stars = 0, locked = false, blocker = null, on
         <div className="min-w-0">
           <p className="text-xxs font-semibold uppercase tracking-wide text-slate-500">{level.codeName}</p>
           <h3 className={cx('truncate text-sm font-semibold', locked ? 'text-ink-secondary' : 'text-ink')}>
-            {level.title}
+            {t(level.title)}
           </h3>
         </div>
         {locked ? (
           <Badge tone="neutral">
             <Lock size={11} className="mr-1 inline align-[-1px]" aria-hidden="true" />
-            {state}
+            {t(state)}
           </Badge>
         ) : (
-          <Badge tone={completed ? 'success' : 'brand'}>{state}</Badge>
+          <Badge tone={completed ? 'success' : 'brand'}>{t(state)}</Badge>
         )}
       </div>
 
-      <p className="line-clamp-3 text-xxs leading-relaxed text-slate-500">{level.summary}</p>
+      <p className="line-clamp-3 text-xxs leading-relaxed text-slate-500">{t(level.summary)}</p>
 
       <div className="flex items-center justify-between gap-2">
         <Stars value={stars} max={3} size="sm" />
         <span className="inline-flex items-center gap-1 text-xxs text-slate-500">
           <Clock size={11} aria-hidden="true" />
-          {level.estimatedMinutes ?? 5} min
-        </span>
+          {level.estimatedMinutes ?? 5}{t(" min")}</span>
       </div>
 
       {locked ? (
         <div className="flex items-center justify-between gap-2 border-t border-line pt-2">
-          <span className="text-xxs text-slate-500">Finish {blocker?.codeName ?? 'the previous level'} first</span>
+          <span className="text-xxs text-slate-500">{t("Finish ")}{blocker?.codeName ?? t("the previous level")}{t(" first")}</span>
           <button
             type="button"
             onClick={() => onOpen?.(level.id)}
             className="rounded-md px-1.5 py-1 text-xxs font-medium text-brand-700 ring-brand-500 ring-offset-1 hover:bg-brand-50 focus:outline-none focus-visible:ring-2"
-          >
-            Skip ahead
-          </button>
+          >{t("Skip ahead")}</button>
         </div>
       ) : (
         <button

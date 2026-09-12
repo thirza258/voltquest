@@ -1,4 +1,5 @@
 import React from 'react'
+import { useI18n } from '../i18n/index.jsx'
 import { Grid3x3, Maximize2, ZoomIn, ZoomOut } from 'lucide-react'
 import { IconButton } from '../ui/index.js'
 import { MAX_ZOOM, MIN_ZOOM } from './geometry.js'
@@ -19,6 +20,7 @@ export const CanvasToolbar = React.memo(function CanvasToolbar({
   onToggleGrid,
   extra,
 }) {
+  const { t } = useI18n()
   const percent = Math.round((zoom ?? 1) * 100)
   return (
     <div
@@ -43,8 +45,8 @@ export const CanvasToolbar = React.memo(function CanvasToolbar({
       <IconButton icon={<Maximize2 size={16} />} label="Fit to circuit (F)" size="sm" onClick={() => onFit?.()} />
       <button
         type="button"
-        title="Zoom to 100%"
-        aria-label="Zoom to 100 percent"
+        title={t('Zoom to 100%')}
+        aria-label={t('Zoom to 100 percent')}
         onClick={() => onActualSize?.()}
         className="tabular rounded-md px-2 py-1 text-xxs font-medium text-ink-secondary hover:bg-surface-sunken"
       >

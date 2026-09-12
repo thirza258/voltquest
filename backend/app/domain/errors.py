@@ -23,3 +23,19 @@ class NotFound(ServiceError):
 
 class Conflict(ServiceError):
     """An operation conflicts with an existing resource."""
+
+
+class AssistantUnavailable(ServiceError):
+    """The tutor has not been configured."""
+
+
+class AssistantUpstreamError(ServiceError):
+    """The AI provider could not produce a usable response."""
+
+
+class AssistantTimeout(ServiceError):
+    """The provider exceeded the request deadline."""
+
+
+class TooManyRequests(ServiceError):
+    """The transient request budget is exhausted."""

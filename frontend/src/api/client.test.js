@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { api, ApiError, setToken, getToken, onUnauthorized } from './client.js'
+import { api, ApiError, setToken, getToken, onUnauthorized, request } from './client.js'
 
 function jsonResponse(status, body, headers = {}) {
   return new Response(body === undefined ? null : JSON.stringify(body), {
@@ -66,6 +66,23 @@ describe('api client', () => {
     expect(err).toBeInstanceOf(ApiError)
     expect(err.status).toBe(0)
     expect(err.isNetwork).toBe(true)
+  })
+
+  it.each(['cancel', 'timeout'])('keeps %s active while the response body is arriving', async (kind) => {
+    const controller = new AbortController()
+    let reading
+    const started = new Promise(resolve => { reading = resolve })
+    fetchMock.mockImplementation(async (_url, { signal }) => ({
+      ok: true, status: 200,
+      text: () => new Promise((_resolve, reject) => {
+        signal.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')), { once: true })
+        reading()
+      }),
+    }))
+    const result = request('GET', '/slow', undefined, { signal: controller.signal, timeoutMs: kind === 'timeout' ? 20 : 1000 }).catch(error => error)
+    await started
+    if (kind === 'cancel') controller.abort()
+    expect(await result).toMatchObject({ status: 0, detail: kind === 'cancel' ? 'Request cancelled' : 'Request timed out' })
   })
 
   it('returns null for 204 and notifies unauthorized listeners on 401', async () => {

@@ -160,3 +160,27 @@ The regression suite checks that no cable hole is occupied by a component or ano
   lists the available cached entries. This does not provide offline installation or a service worker.
 - If a player starts editing while an older draft is offered, those explicit edits become the new
   local draft immediately. Autosave must not stay disabled while accepting fresh edits.
+
+## Localization, AI guide and MCP (2026-09-12)
+
+- Locale lives above the routes without a keyed remount; translating a cloned lesson/seed object
+  would recreate its simulation. Translate only at rendering, retaining canonical source content.
+  `t` supports interpolation and English fallback; use distinct hook aliases where callback variables
+  already use `t`. Dictionary membership uses own properties, so identifiers such as `constructor`
+  remain ordinary text. Learn cards and all tutorial narratives have catalog-coverage tests.
+- Assistant requests capture current props at send time, including unsaved code/name, inspector
+  selection, actual `resolvePins` results and live measurements. They exclude reference solutions.
+  Clearing/leaving/changing player cancels responses; API abort signals stay attached until the body
+  is consumed. The guide uses OpenRouter through the official OpenAI Python SDK, never a browser key.
+- MCP 1.x FastMCP needs `session_manager.run()` in the FastAPI lifespan even in stateless mode.
+  Each app factory owns its own instance. Mount `/api/mcp` with internal `/` and configure clients
+  with `/api/mcp/`. Nginx can forward a bare `localhost` Host, so allow both bare and port forms.
+- SDK transport security checks Origin independently of FastAPI CORS. Loopback browser verification
+  needs `http://127.0.0.1:5173`; arbitrary deployment origins/hosts require configuration.
+- MCP credentials are separate opaque, hashed, expiring tokens. Context is shared explicitly and
+  expires for reading after 24 hours. Agents save owned private projects, then return a sandbox link;
+  no live document mutation or simulation execution is claimed. Timestamp comparisons normalize
+  SQLite's naive UTC values before conflict checking. Public edits are rejected by MCP.
+- Footprints spanning two breadboards (ESP32/S3) must be validated in world coordinates, not solely
+  against the anchor board's holes. `scripts/export-mcp-catalog.mjs` exports the actual registry,
+  layouts and profiles; frontend equality tests reject drift. No deterministic engine imports React.

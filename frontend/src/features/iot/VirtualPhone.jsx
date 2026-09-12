@@ -1,8 +1,10 @@
+import { useI18n } from '../../i18n/index.jsx'
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { Button } from '../../ui/index.js'
 import { phoneDocument, virtualRequest } from './phoneDocument.js'
 
 export default function VirtualPhone({ state, onRequest }) {
+  const { t } = useI18n()
   const [path, setPath] = useState('/')
   const [loadedPath, setLoadedPath] = useState('/')
   const [response, setResponse] = useState(null)
@@ -41,13 +43,13 @@ export default function VirtualPhone({ state, onRequest }) {
     return () => window.removeEventListener('message', listener)
   }, [channel, navigate])
   const html = useMemo(() => response ? phoneDocument(response.body, response.contentType, channel) : '', [response, channel])
-  return <section className="flex h-full flex-col gap-3 overflow-auto p-3" aria-label="Virtual phone">
-    <p className="text-xs text-slate-600">{state?.wifi?.status ?? 'idle'} · {state?.wifi?.ip || '192.168.4.1'}</p>
-    <form className="flex gap-2" onSubmit={event => { event.preventDefault(); void navigate({ method: 'GET', path }) }}><input aria-label="Virtual address" value={path} onChange={event => setPath(event.target.value)} className="min-w-0 flex-1 rounded border border-line-strong px-2 text-sm" /><Button size="sm" type="submit" disabled={!available || busy}>Go</Button></form>
-    {!available && <p className="text-sm text-slate-600">Run a sketch that starts a WebServer to load its page here.</p>}
-    {busy && <p role="status" className="text-xs text-slate-600">Waiting for the virtual server…</p>}
+  return <section className="flex h-full flex-col gap-3 overflow-auto p-3" aria-label={t("Virtual phone")}>
+    <p className="text-xs text-slate-600">{state?.wifi?.status ?? t("idle")} · {state?.wifi?.ip || '192.168.4.1'}</p>
+    <form className="flex gap-2" onSubmit={event => { event.preventDefault(); void navigate({ method: 'GET', path }) }}><input aria-label={t("Virtual address")} value={path} onChange={event => setPath(event.target.value)} className="min-w-0 flex-1 rounded border border-line-strong px-2 text-sm" /><Button size="sm" type="submit" disabled={!available || busy}>{t("Go")}</Button></form>
+    {!available && <p className="text-sm text-slate-600">{t("Run a sketch that starts a WebServer to load its page here.")}</p>}
+    {busy && <p role="status" className="text-xs text-slate-600">{t("Waiting for the virtual server…")}</p>}
     {error && <p role="alert" className="text-xs text-rose-700">{error}</p>}
-    {response && <><p role="status" className="text-xs text-slate-600">HTTP {response.status} · {response.contentType}</p><iframe ref={frame} title="Virtual server page" sandbox="allow-scripts" srcDoc={html} className="min-h-[350px] w-full flex-1 rounded-xl border-4 border-slate-300 bg-white" /></>}
-    <p className="text-xs text-slate-600">Links and forms reach the simulated ESP32. Server HTML is displayed with scripts disabled.</p>
+    {response && <><p role="status" className="text-xs text-slate-600">{t("HTTP ")}{response.status} · {response.contentType}</p><iframe ref={frame} title={t("Virtual server page")} sandbox="allow-scripts" srcDoc={html} className="min-h-[350px] w-full flex-1 rounded-xl border-4 border-slate-300 bg-white" /></>}
+    <p className="text-xs text-slate-600">{t("Links and forms reach the simulated ESP32. Server HTML is displayed with scripts disabled.")}</p>
   </section>
 }

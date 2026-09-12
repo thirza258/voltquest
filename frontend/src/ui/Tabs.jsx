@@ -1,3 +1,4 @@
+import { useI18n } from '../i18n/index.jsx'
 import { useRef } from 'react'
 import { Badge } from './primitives.jsx'
 import { cx, FOCUS_RING, TRANSITION } from './tokens.js'
@@ -15,6 +16,7 @@ const TAB_SIZE = { sm: 'h-7 px-2 text-xxs', md: 'h-8 px-3 text-sm', lg: 'h-10 px
  *          value: string, onChange?: (id:string)=>void, size?: 'sm'|'md'|'lg', className?: string }} props
  */
 export function Tabs({ tabs = [], value, onChange, size = 'md', className = '', ...rest }) {
+  const { t } = useI18n()
   const listRef = useRef(null)
   const enabled = tabs.filter((t) => !t.disabled)
   const activeIndex = Math.max(0, enabled.findIndex((t) => t.id === value))
@@ -88,7 +90,7 @@ export function Tabs({ tabs = [], value, onChange, size = 'md', className = '', 
             )}
           >
             {tab.icon}
-            <span className="truncate">{tab.label}</span>
+            <span className="truncate">{t(tab.label)}</span>
             {tab.badge != null && tab.badge !== false && (
               <Badge tone={active ? 'brand' : 'neutral'}>{tab.badge}</Badge>
             )}

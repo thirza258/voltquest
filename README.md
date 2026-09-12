@@ -13,6 +13,10 @@ The **14-quest campaign**, freeform **sandbox**, local **Monaco/Blockly editors*
 **showcase with interactive previews and forking**, and **profile/leaderboard** are implemented.
 Sandbox projects support account saves, independent local drafts, JSON import, JSON/PNG/code/BOM
 exports, and public sharing. Campaign progress and settings recover after connectivity returns.
+English is the default, with a persistent Indonesian switch. The circuit's **AI** section offers
+OpenRouter guidance from the current code, wiring and inspector, plus **Claude Code / Codex MCP**
+setup for creating and editing saved projects. See [assistant setup](docs/ASSISTANT.md) for the
+server key, agent configuration and context-sharing workflow.
 See [`docs/IMPLEMENTATION_STATUS.md`](docs/IMPLEMENTATION_STATUS.md) for implementation evidence
 and [`AGENTS.md`](AGENTS.md) for the current verification results and remaining release checks.
 
@@ -151,7 +155,8 @@ Browser (SPA)                                     Server
 ```
 
 The simulation is entirely client-side: no compile server, no round trip to run your code. The API
-only stores who you are and what you have done.
+stores player/project data and optionally forwards circuit-assistant questions to OpenRouter.
+MCP agents can save projects; firmware still executes only in the browser.
 
 Detailed specs live in `docs/`:
 

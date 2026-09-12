@@ -1,3 +1,4 @@
+import { useI18n } from '../i18n/index.jsx'
 import { forwardRef, useId } from 'react'
 import { clamp, CONTROL_SIZE, cx, FOCUS_RING, LABEL_CLASS, TRANSITION } from './tokens.js'
 
@@ -16,6 +17,7 @@ const INPUT_BASE =
  * would produce two labels for one control.
  */
 export function Field({ label, hint, error, children, className = '', ...rest }) {
+  const { t: tr } = useI18n()
   const id = useId()
   const controlId = `${id}-control`
   const describedBy = error ? `${id}-error` : hint ? `${id}-hint` : undefined
@@ -25,10 +27,10 @@ export function Field({ label, hint, error, children, className = '', ...rest })
       {label &&
         (isRenderProp ? (
           <label htmlFor={controlId} className={LABEL_CLASS}>
-            {label}
+            {tr(label)}
           </label>
         ) : (
-          <span className={LABEL_CLASS}>{label}</span>
+          <span className={LABEL_CLASS}>{tr(label)}</span>
         ))}
       {isRenderProp ? children({ id: controlId, describedBy }) : children}
       {error ? (
@@ -51,13 +53,14 @@ export const TextInput = forwardRef(function TextInput(
   { size = 'md', label, className = '', id, ...rest },
   ref,
 ) {
+  const { t: tr } = useI18n()
   const autoId = useId()
   const inputId = id || autoId
   return (
     <div className={cx('flex flex-col gap-1', className)}>
       {label && (
         <label htmlFor={inputId} className={LABEL_CLASS}>
-          {label}
+          {tr(label)}
         </label>
       )}
       <input
@@ -79,13 +82,14 @@ export const Select = forwardRef(function Select(
   { value, onChange, options = [], label, size = 'md', disabled = false, className = '', id, ...rest },
   ref,
 ) {
+  const { t: tr } = useI18n()
   const autoId = useId()
   const selectId = id || autoId
   return (
     <div className={cx('flex flex-col gap-1', className)}>
       {label && (
         <label htmlFor={selectId} className={LABEL_CLASS}>
-          {label}
+          {tr(label)}
         </label>
       )}
       <select
@@ -99,7 +103,7 @@ export const Select = forwardRef(function Select(
       >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value} disabled={opt.disabled}>
-            {opt.label}
+            {tr(opt.label)}
           </option>
         ))}
       </select>
@@ -128,6 +132,7 @@ export const NumberField = forwardRef(function NumberField(
   },
   ref,
 ) {
+  const { t: tr } = useI18n()
   const autoId = useId()
   const inputId = id || autoId
   const lo = Number.isFinite(min) ? min : -Infinity
@@ -145,7 +150,7 @@ export const NumberField = forwardRef(function NumberField(
     <div className={cx('flex flex-col gap-1', className)}>
       {label && (
         <label htmlFor={inputId} className={LABEL_CLASS}>
-          {label}
+          {tr(label)}
         </label>
       )}
       <div className="relative">
@@ -182,6 +187,7 @@ export const NumberField = forwardRef(function NumberField(
 
 /** Accessible on/off switch backed by a real checkbox with `role="switch"`. */
 export function Switch({ checked = false, onChange, label, disabled = false, className = '', id, ...rest }) {
+  const { t: tr } = useI18n()
   const autoId = useId()
   const inputId = id || autoId
   return (
@@ -218,7 +224,7 @@ export function Switch({ checked = false, onChange, label, disabled = false, cla
           )}
         />
       </span>
-      {label && <span className="text-sm text-ink-secondary">{label}</span>}
+      {label && <span className="text-sm text-ink-secondary">{tr(label)}</span>}
     </label>
   )
 }
@@ -241,6 +247,7 @@ export function Slider({
   id,
   ...rest
 }) {
+  const { t: tr } = useI18n()
   const autoId = useId()
   const inputId = id || autoId
   const current = clamp(value, min, max)
@@ -252,7 +259,7 @@ export function Slider({
         <div className="flex items-baseline justify-between gap-2">
           {label && (
             <label htmlFor={inputId} className={LABEL_CLASS}>
-              {label}
+              {tr(label)}
             </label>
           )}
           <span className="tabular text-xxs text-slate-500">
@@ -280,7 +287,7 @@ export function Slider({
         <div className="flex justify-between text-xxs text-slate-500">
           {ticks.map((t) => (
             <span key={t.value} className="tabular">
-              {t.label}
+              {tr(t.label)}
             </span>
           ))}
         </div>
@@ -296,6 +303,7 @@ const SEGMENT_SIZE = { sm: 'h-7 text-xxs px-2', md: 'h-8 text-sm px-3', lg: 'h-1
  * `onChange` receives the selected option value.
  */
 export function SegmentedControl({ options = [], value, onChange, size = 'md', className = '', ...rest }) {
+  const { t: tr } = useI18n()
   return (
     <div
       role="group"
@@ -321,7 +329,7 @@ export function SegmentedControl({ options = [], value, onChange, size = 'md', c
             )}
           >
             {opt.icon}
-            {opt.label}
+            {tr(opt.label)}
           </button>
         )
       })}

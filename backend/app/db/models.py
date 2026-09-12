@@ -102,3 +102,14 @@ class Project(Base):
     )
 
     owner: Mapped[Player] = relationship(back_populates="projects")
+
+
+class AgentAccess(Base):
+    """One revocable MCP credential and explicitly shared snapshot per player."""
+
+    __tablename__ = "agent_access"
+    player_id: Mapped[str] = mapped_column(String(36), ForeignKey("players.id", ondelete="CASCADE"), primary_key=True)
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    context: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    context_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

@@ -12,6 +12,7 @@ and what to do next. The specifications in `docs/` remain binding.
 | `docs/API.md` | Before touching the backend. |
 | `docs/DESIGN.md` | Before visual/UI changes. |
 | `docs/TUTORIALS.md`, `docs/RASPBERRY_PI.md` | Before editing tutorials or Pi support. |
+| `docs/ASSISTANT.md` | Before editing localization, the circuit AI guide or Claude Code/Codex MCP. |
 
 ## 1. Current build, not the target product
 
@@ -48,11 +49,11 @@ repository or commit without the user's explicit request.
 ## 2. Verification
 
 Latest full `make check`:
-- **732 frontend tests in 48 files pass.**
-- **45 backend tests pass.**
-- Production build succeeds; initial JS payload is **238.0 KiB gzipped**, below the 1500 KiB budget.
+- **750 frontend tests in 51 files pass.**
+- **82 backend tests pass.**
+- Production build succeeds; initial JS payload is **301.1 KiB gzipped**, below the 1500 KiB budget.
 - ESLint has no errors. Two existing exhaustive-deps warnings remain in
-  `features/campaign/CampaignMap.jsx:82`; these are unrelated to the tutorial/runtime work.
+  `features/campaign/CampaignMap.jsx:83`; these are unrelated to the assistant/localization work.
 - Node prints the existing jsdom/localStorage warning; persistence tests use the memory-storage helper.
 
 Browser verification uses the actual Web Worker path, separate from the inline/jsdom tests.
@@ -78,6 +79,48 @@ their explanation or timing is correct. `features/tutorials/programming.test.js`
 numeric output, command dispatch and LED state transitions on all four C++ boards.
 
 ## 3. Completed in this continuation
+
+### Indonesian localization, circuit AI guide and coding-agent MCP (2026-09-12)
+
+English remains the default. The header language selector persists Indonesian in `vq.locale`,
+updates HTML `lang`, and preserves the current code, circuit, simulation and tutorial step checks.
+`frontend/src/i18n/id.json` contains 1,366 display messages, including all 35 tutorial narratives,
+campaign guidance and 29 component learning cards. User content, pin identifiers, source code,
+program output and raw runtime/API diagnostics retain their original text. Missing keys fall back
+to English. Language changes must not clone/re-key a lesson or seed and reset its simulation.
+
+The circuit sidebar has an AI tab and Ask AI button; tutorials show the same guide below their
+prepared circuit with a selectable read-only inspector. Requests capture the latest unsaved project
+name/code, actual parts and resolved pins/wiring, inspected selection, live measurements, recent
+serial output, diagnostics, and tutorial steps/campaign goals. Hidden hints/reference solutions and
+credentials are excluded. Chat clears/cancels on identity changes and page disposal. Snapshots are
+bounded and mark truncation. Model text/code is escaped and never executed or automatically applied.
+
+`backend/app/services/assistant.py` uses the official OpenAI Python SDK 2.x against OpenRouter:
+`OPENROUTER_API_KEY`, `AI_BASE_URL=https://openrouter.ai/api/v1`, `AI_MODEL=openai/gpt-4.1-mini`.
+The key is server-only (local `backend/.env`, root `.env` for Compose), with a 45-second deadline,
+sanitized errors, no automatic paid retries and per-process rate/concurrency limits. No key leaves
+the guide disabled with an explanation; the simulator and MCP remain available.
+
+The same panel includes Claude Code `.mcp.json` and Codex `~/.codex/config.toml` configuration,
+MCP token creation/replacement/revocation, and Share current context. `/api/mcp/` uses official
+MCP SDK 1.x Streamable HTTP, separate hashed 30-day project credentials and explicit 24-hour context
+snapshots. Tools read board/component metadata, shared context and owned saved projects, create
+projects for all six boards, and update owned private projects with timestamp conflict detection.
+There are no publish/delete/account/shell/firmware tools. Agent output is saved; open its sandbox
+link or My projects to run it. Unsaved work in an existing browser tab is not overwritten.
+
+Regenerate `content/mcp-catalog.json` with `node scripts/export-mcp-catalog.mjs` after board,
+layout, footprint or default-property changes. A registry equality test catches drift. ESP32/S3
+footprints span both breadboards and need validation in world coordinates. MCP Host/Origin checks
+are separate from CORS; custom deployment domains need `MCP_ALLOWED_HOSTS`/`CORS_ORIGINS` entries.
+
+Verified in isolated Chromium/SQLite: English default, Indonesian switching with edited code retained
+and executed, tutorial LED selection, shared selected cable context, MCP create → edit → saved
+sandbox opening, real Worker LED brightness cycling 0 ↔ 0.792, and desktop/390 px layouts without
+page-level horizontal overflow or browser application errors. SDK/provider transport is mocked in
+tests; a live paid OpenRouter response and actual Claude Code/Codex CLI sessions still require the
+operator's credentials/configuration. See `docs/ASSISTANT.md` for the complete setup.
 
 ### Crawler files — sitemap and robots (2026-09-12)
 `frontend/vite-sitemap.js` emits `dist/sitemap.xml` during `vite build` for the deployed origin

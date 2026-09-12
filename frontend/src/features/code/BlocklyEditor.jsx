@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/index.jsx'
 import { useEffect, useRef, useState } from 'react'
 import * as Blockly from 'blockly'
 import 'blockly/blocks'
@@ -15,6 +16,7 @@ export function codeFromXml(xml) {
 }
 
 export default function BlocklyEditor({ xml, onChange, esp32 = false, readOnly = false }) {
+  const { t } = useI18n()
   const host = useRef(null)
   const callback = useRef(onChange)
   callback.current = onChange
@@ -40,6 +42,6 @@ export default function BlocklyEditor({ xml, onChange, esp32 = false, readOnly =
   }, [esp32, readOnly])
   return <div className="relative h-full min-h-[280px]" data-keyboard-passthrough>
     {error && <p role="alert" className="absolute left-2 top-2 z-10 bg-rose-50 p-2 text-xs text-rose-700">{error}</p>}
-    <div ref={host} className="h-full w-full" aria-label="Visual code workspace" />
+    <div ref={host} className="h-full w-full" aria-label={t("Visual code workspace")} />
   </div>
 }

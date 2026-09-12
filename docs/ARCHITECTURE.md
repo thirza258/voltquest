@@ -16,6 +16,8 @@ FastAPI backend; `docs/DESIGN.md` defines the visual language.
 | Firmware engine | **Custom Arduino-C++ subset interpreter** (`frontend/src/engine/interpreter`) running in a Web Worker with a virtual clock. Same engine emulates AVR (Uno/Nano: 5 V, 10-bit ADC, 16-bit int) and ESP32 (3.3 V, 12-bit ADC, 32-bit int, WiFi/WebServer/MQTT/touch/ledc libraries). No avr8js, no cloud compiler. |
 | Circuit engine | Custom DC Modified Nodal Analysis solver with piecewise-linear diode/transistor iteration (`frontend/src/engine/circuit`) |
 | Backend | FastAPI (Python 3.12 in Docker), SQLAlchemy 2, Pydantic 2, PyJWT, bcrypt. SQLite by default, PostgreSQL via `DATABASE_URL`. |
+| Circuit assistant | Official OpenAI Python SDK 2.x with configurable OpenRouter base URL/model and backend-only key; transient context snapshots, no firmware execution |
+| Coding agents | Official MCP Python SDK 1.x, Streamable HTTP at `/api/mcp/`; separate scoped credentials, explicit context sharing and owned project creation/update |
 | Deploy | Docker Compose: `frontend` (nginx serving the Vite build + `/api` reverse proxy), `backend` (uvicorn), `db` (postgres:16) |
 | Tests | vitest (frontend engine + validator + headless quest solutions + a perf guard: 50 components, 1 kHz toggling sketch → ≤ 60 notifications per virtual second), pytest (backend), Playwright smoke (optional) |
 | Load budget | PRD NFR < 3 s on 15 Mbps: Monaco, Blockly and the Virtual Phone are lazy chunks; `build.rollupOptions.output.manualChunks` splits `monaco`, `blockly`, `engine`; nginx gzips; initial non-lazy JS ≤ 1.5 MB gzipped (checked by `scripts/check.sh`) |
@@ -129,6 +131,7 @@ voltquest/
 | G1 canvas core | `frontend/src/canvas/**` except `renderers/` | CONTRACTS §10 |
 | G2 component renderers + effects | `frontend/src/canvas/renderers/**`, `frontend/src/canvas/effects/**` | CONTRACTS §10 |
 | H1 app shell | `frontend/src/features/{workspace,campaign,profile}/**`, `frontend/src/store/**`, `frontend/src/api/**`, `frontend/src/lib/**`, `App.jsx` | CONTRACTS §9, §11, API.md |
+| H1 localization and assistant | `frontend/src/i18n/**`, `frontend/src/features/assistant/**` | CONTRACTS §14, API.md, DESIGN.md, ASSISTANT.md |
 | H2 code/iot/sandbox/showcase | `frontend/src/features/{code,iot,sandbox,showcase}/**` | CONTRACTS §7, §9, §11 |
 | H2 tutorials | `frontend/src/features/tutorials/**` | TUTORIALS.md, RASPBERRY_PI.md |
 | I devops | `docker-compose.yml`, `*/Dockerfile`, `frontend/nginx.conf`, `.env.example`, `scripts/**`, `README.md` | ARCHITECTURE |

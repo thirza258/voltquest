@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/index.jsx'
 /**
  * The live objective checklist (DESIGN.md "Workspace body → Objectives").
  *
@@ -16,6 +17,7 @@ export function progressSentence(objectives = []) {
 }
 
 function ObjectiveRow({ objective, hint, tier }) {
+  const { t } = useI18n()
   const passed = !!objective.passed
   return (
     <li className="rounded-lg border border-line bg-surface-panel p-2.5">
@@ -30,15 +32,15 @@ function ObjectiveRow({ objective, hint, tier }) {
           {passed ? <Check size={11} strokeWidth={3} /> : <Circle size={7} />}
         </span>
         <span className={cx('flex-1 text-sm leading-snug', passed ? 'text-ink-secondary' : 'text-ink')}>
-          {objective.text}
+          {t(objective.text)}
         </span>
-        <Badge tone={passed ? 'success' : 'neutral'}>{passed ? 'Done' : 'To do'}</Badge>
+        <Badge tone={passed ? 'success' : 'neutral'}>{passed ? t("Done") : t("To do")}</Badge>
       </div>
 
       {tier >= 1 && hint && (
         <div className="mt-2 flex items-start gap-2">
           <ChipMascot mood="thinking" size={28} className="shrink-0" />
-          <SpeechBubble tone="info">{hint}</SpeechBubble>
+          <SpeechBubble tone="info">{t(hint)}</SpeechBubble>
         </div>
       )}
     </li>
@@ -47,6 +49,7 @@ function ObjectiveRow({ objective, hint, tier }) {
 
 /** One star criterion with its live tick. */
 function StarRow({ symbol, text, met }) {
+  const { t } = useI18n()
   return (
     <li className="flex items-start gap-1.5">
       <span
@@ -59,8 +62,8 @@ function StarRow({ symbol, text, met }) {
         {symbol}
       </span>
       <span className={cx('flex-1 text-xxs', met ? 'text-ink-secondary' : 'text-slate-500')}>
-        {text}
-        <span className="sr-only">{met ? ' — earned' : ' — not yet'}</span>
+        {t(text)}
+        <span className="sr-only">{met ? t(" — earned") : t(" — not yet")}</span>
       </span>
     </li>
   )
@@ -84,6 +87,7 @@ export function ObjectivesPanel({
   className = '',
   ...rest
 }) {
+  const { t } = useI18n()
   const levelObjectives = level?.objectives ?? []
   const reported = report?.objectives ?? []
   // Show the level's own list even before the validator has produced a report.
@@ -103,13 +107,13 @@ export function ObjectivesPanel({
     <div className={cx('flex h-full flex-col gap-3 overflow-y-auto p-3', className)} {...rest}>
       {/* Mounted unconditionally so the announcement is not missed when the node appears. */}
       <p className="sr-only" aria-live="polite" role="status">
-        {progressSentence(objectives)}
+        {objectives.length ? t('Step {done} of {total} complete', { done: objectives.filter(o => o.passed).length, total: objectives.length }) : t('No steps yet')}
       </p>
 
       {smoke && (
         <Callout
           tone="danger"
-          title="Magic smoke!"
+          title={t("Magic smoke!")}
           icon={<Flame size={15} />}
           action={
             <div className="flex flex-wrap gap-1.5">
@@ -118,40 +122,34 @@ export function ObjectivesPanel({
                   type="button"
                   onClick={onShowWhy}
                   className="rounded-md border border-rose-200 bg-white px-2 py-1 text-xxs font-medium text-rose-700 ring-brand-500 ring-offset-1 hover:bg-rose-50 focus:outline-none focus-visible:ring-2"
-                >
-                  Show me why
-                </button>
+                >{t("Show me why")}</button>
               )}
               {onReplacePart && (
                 <button
                   type="button"
                   onClick={onReplacePart}
                   className="rounded-md border border-rose-200 bg-white px-2 py-1 text-xxs font-medium text-rose-700 ring-brand-500 ring-offset-1 hover:bg-rose-50 focus:outline-none focus-visible:ring-2"
-                >
-                  Replace part
-                </button>
+                >{t("Replace part")}</button>
               )}
               {onDismissSmoke && (
                 <button
                   type="button"
                   onClick={onDismissSmoke}
                   className="rounded-md px-2 py-1 text-xxs font-medium text-slate-500 ring-brand-500 ring-offset-1 hover:text-ink focus:outline-none focus-visible:ring-2"
-                >
-                  Dismiss
-                </button>
+                >{t("Dismiss")}</button>
               )}
             </div>
           }
         >
           <span className="flex items-start gap-2">
             <ChipMascot mood="alert" size={28} className="shrink-0" />
-            <span>{level?.chipOnSmoke ?? smoke.hint ?? smoke.message ?? 'Something let its smoke out.'}</span>
+            <span>{t(level?.chipOnSmoke ?? smoke.hint ?? smoke.message ?? "Something let its smoke out.")}</span>
           </span>
         </Callout>
       )}
 
       {objectives.length === 0 ? (
-        <p className="text-sm text-slate-500">This level has no checklist — build freely.</p>
+        <p className="text-sm text-slate-500">{t("This level has no checklist — build freely.")}</p>
       ) : (
         <ol className="flex flex-col gap-2">
           {objectives.map((objective) => (
@@ -167,7 +165,7 @@ export function ObjectivesPanel({
 
       <div className="mt-auto rounded-lg border border-line bg-surface-sunken p-2.5">
         <div className="mb-1.5 flex items-center justify-between">
-          <span className="text-xxs font-semibold uppercase tracking-wide text-slate-500">Stars</span>
+          <span className="text-xxs font-semibold uppercase tracking-wide text-slate-500">{t("Stars")}</span>
           <Stars value={stars} max={3} size="sm" />
         </div>
         <ul className="flex flex-col gap-1">

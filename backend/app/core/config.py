@@ -7,6 +7,7 @@ from functools import lru_cache
 from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import AliasChoices, Field, SecretStr
 
 log = logging.getLogger("voltquest.config")
 
@@ -34,6 +35,10 @@ class Settings(BaseSettings):
     app_version: str = "1.0.0"
     jwt_algorithm: str = "HS256"
     jwt_expiry_days: int = 30
+    ai_api_key: SecretStr = Field(default="", validation_alias=AliasChoices("OPENROUTER_API_KEY", "AI_API_KEY"))
+    ai_base_url: str = "https://openrouter.ai/api/v1"
+    ai_model: str = "openai/gpt-4.1-mini"
+    mcp_allowed_hosts: str = "pcb.nevatal.id,localhost,localhost:*,127.0.0.1,127.0.0.1:*,backend:8000,testserver"
 
     @property
     def cors_origin_list(self) -> list[str]:

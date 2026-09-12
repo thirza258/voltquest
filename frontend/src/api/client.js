@@ -62,39 +62,40 @@ async function parseError(res) {
  * Perform a request. `responseType` 'json' (default) | 'text' | 'blob'.
  * Throws ApiError for HTTP errors (status ≥ 400) and for network failures/timeouts (status 0).
  */
-export async function request(method, path, body, { query, responseType = 'json', timeoutMs = DEFAULT_TIMEOUT_MS, headers: extraHeaders } = {}) {
+export async function request(method, path, body, { query, responseType = 'json', timeoutMs = DEFAULT_TIMEOUT_MS, headers: extraHeaders, signal } = {}) {
   const headers = { Accept: 'application/json, text/plain, */*', ...extraHeaders }
   if (body !== undefined) headers['Content-Type'] = 'application/json'
   if (token) headers.Authorization = `Bearer ${token}`
 
   const controller = typeof AbortController !== 'undefined' ? new AbortController() : null
+  const abort = () => controller?.abort()
+  if (signal?.aborted) abort()
+  signal?.addEventListener('abort', abort, { once: true })
   const timer = controller && timeoutMs > 0 ? setTimeout(() => controller.abort(), timeoutMs) : null
-  let res
   try {
-    res = await fetch(`${BASE}${path}${buildQuery(query)}`, {
+    const res = await fetch(`${BASE}${path}${buildQuery(query)}`, {
       method,
       headers,
       body: body === undefined ? undefined : JSON.stringify(body),
       signal: controller?.signal,
     })
+
+    if (res.status === 401 && headers.Authorization && headers.Authorization === `Bearer ${token}` && path !== '/auth/login') unauthorizedListeners.forEach((fn) => fn())
+    if (!res.ok) throw await parseError(res)
+    if (res.status === 204) return null
+    if (responseType === 'blob') return await res.blob()
+    if (responseType === 'text') return await res.text()
+    const text = await res.text()
+    if (!text) return null
+    try { return JSON.parse(text) } catch { return text }
   } catch (err) {
-    throw new ApiError(0, err?.name === 'AbortError' ? 'Request timed out' : 'Network error', null)
+    if (err instanceof ApiError) throw err
+    throw new ApiError(0, err?.name === 'AbortError' ? (signal?.aborted ? 'Request cancelled' : 'Request timed out') : 'Network error', null)
   } finally {
     if (timer) clearTimeout(timer)
+    signal?.removeEventListener('abort', abort)
   }
 
-  if (res.status === 401 && headers.Authorization && headers.Authorization === `Bearer ${token}` && path !== '/auth/login') unauthorizedListeners.forEach((fn) => fn())
-  if (!res.ok) throw await parseError(res)
-  if (res.status === 204) return null
-  if (responseType === 'blob') return res.blob()
-  if (responseType === 'text') return res.text()
-  const text = await res.text()
-  if (!text) return null
-  try {
-    return JSON.parse(text)
-  } catch {
-    return text
-  }
 }
 
 const get = (path, opts) => request('GET', path, undefined, opts)
@@ -112,6 +113,14 @@ export const api = {
   /** GET /api/health */
   health: () => get('/health', { timeoutMs: 4000 }),
   boards: () => get('/boards'),
+  assistant: {
+    status: () => get('/assistant/status'),
+    chat: (body, options = {}) => post('/assistant/chat', body, { ...options, timeoutMs: 55000 }),
+    mcpAccess: () => get('/assistant/mcp/access'),
+    mcpToken: () => post('/assistant/mcp/token'),
+    revokeMcp: () => del('/assistant/mcp/access'),
+    shareContext: (context) => put('/assistant/mcp/context', { question: 'Share context with my coding agent', context }),
+  },
   tutorials: {
     list: (params = {}) => get('/tutorials', { query: params }),
     get: (id) => get(`/tutorials/${encodeURIComponent(id)}`),
@@ -162,3 +171,7 @@ export const api = {
 }
 
 export default api
+
+export function mcpUrl(origin = window.location.origin) {
+  return new URL(`${BASE}/mcp/`, origin).href
+}

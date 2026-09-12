@@ -25,6 +25,10 @@ services:
       JWT_SECRET: ${JWT_SECRET:-dev-secret-change-me}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8080,http://localhost:5173}
       CONTENT_DIR: /content
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      AI_BASE_URL: ${AI_BASE_URL:-https://openrouter.ai/api/v1}
+      AI_MODEL: ${AI_MODEL:-openai/gpt-4.1-mini}
+      MCP_ALLOWED_HOSTS: ${MCP_ALLOWED_HOSTS:-pcb.nevatal.id,localhost,localhost:*,127.0.0.1,127.0.0.1:*,backend:8000,testserver}
     depends_on:
       db:
         condition: service_healthy

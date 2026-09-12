@@ -1,3 +1,4 @@
+import { useI18n } from '../i18n/index.jsx'
 import { X } from 'lucide-react'
 import { IconButton } from './primitives.jsx'
 import { cx, TONE_FILL } from './tokens.js'
@@ -8,6 +9,7 @@ import { dismiss, useToastStore } from './toast.js'
  * always present (even when empty) so screen readers announce later insertions.
  */
 export function Toaster({ className = '' }) {
+  const { t: tr } = useI18n()
   const toasts = useToastStore((s) => s.toasts)
   return (
     <div
@@ -26,8 +28,8 @@ export function Toaster({ className = '' }) {
             className={cx('mt-1 h-2 w-2 shrink-0 rounded-full', TONE_FILL[t.tone] || TONE_FILL.neutral)}
           />
           <div className="min-w-0 flex-1">
-            {t.title && <div className="text-sm font-semibold text-ink">{t.title}</div>}
-            {t.message && <div className="mt-0.5 text-xxs leading-relaxed text-slate-500">{t.message}</div>}
+            {t.title && <div className="text-sm font-semibold text-ink">{tr(t.title)}</div>}
+            {t.message && <div className="mt-0.5 text-xxs leading-relaxed text-slate-500">{tr(t.message)}</div>}
             {t.action && (
               <button
                 type="button"
@@ -37,13 +39,13 @@ export function Toaster({ className = '' }) {
                 }}
                 className="mt-1.5 rounded-md text-xxs font-semibold text-brand-700 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-1"
               >
-                {t.action.label}
+                {tr(t.action.label)}
               </button>
             )}
           </div>
           <IconButton
             icon={<X aria-hidden="true" className="h-3.5 w-3.5" />}
-            label="Dismiss notification"
+            label={tr("Dismiss notification")}
             size="sm"
             onClick={() => dismiss(t.id)}
           />

@@ -73,3 +73,60 @@ players(id, display_name, username unique null, password_hash null, xp int, sett
 projects(id, owner_id fk, name, description, board, board_mode, circuit json, code text, blockly_xml text null, editor_mode, thumbnail text, is_public bool, share_slug unique null, forked_from null, views, forks, created_at, updated_at).
 JSON columns: use `sqlalchemy.JSON` (works on SQLite and Postgres).
 Env: `DATABASE_URL` (default `sqlite:///./voltquest.db`), `JWT_SECRET` (default dev secret + startup warning), `CONTENT_DIR` (default `../content`), `CORS_ORIGINS`.
+
+## AI assistant (2026-09-12 extension)
+
+- `GET /api/assistant/status` (public) → `{ enabled: boolean }`; exposes no provider credentials.
+- `POST /api/assistant/chat` (player auth, guests allowed) → `{ answer: string }`.
+  Request: `{ question: string(1..2000), locale?: 'en'|'id', history?: [{role:'user'|'assistant',
+  content:string(1..12000)}] (max 8), context: AssistantContext }`. Default locale is English.
+  Context: `{ mode:'campaign'|'tutorial'|'sandbox'|'showcase', title:string(≤200), board:object,
+  code:string(≤24000), circuit:object, selection?:object[](≤20), simulation?:object,
+  lesson?:object|null, truncated?:string[](≤30) }`; serialized UTF-8 context ≤96 KiB.
+  Extra top-level fields and system-role history are rejected (422).
+
+The adapter in `api/routes/assistant.py` calls `services/assistant.py`, which uses `AsyncOpenAI`
+with `AI_BASE_URL` (default `https://openrouter.ai/api/v1`), `AI_MODEL` (default
+`openai/gpt-4.1-mini`) and server-only `OPENROUTER_API_KEY` (`AI_API_KEY` alias). Model output
+is capped at 1,600 completion tokens, the SDK has no automatic retries, and the service deadline
+is 45 seconds. No chat/snapshot database storage or code execution occurs on this path.
+Per-process limits are 10/player/minute, 60/minute globally, one active/player and four active total.
+Errors: 503 `assistant_not_configured`, 429 `assistant_rate_limited`, 504 `assistant_timeout`,
+502 `assistant_provider_error` / `assistant_invalid_response`. Provider errors never expose keys.
+
+## MCP credentials and context (player auth)
+
+- `GET /api/assistant/mcp/access` → `{ enabled, expires_at: string|null }`.
+- `POST /api/assistant/mcp/token` → `{ token, expires_at }` with `Cache-Control: no-store`.
+  Issues an opaque `vq_mcp_` bearer token valid for 30 days, replacing the player's previous token.
+- `DELETE /api/assistant/mcp/access` → 204; removes token hash and shared snapshot.
+- `PUT /api/assistant/mcp/context` accepts the same validated body as chat (only `context` is
+  stored) → `{ shared_at }`; requires active MCP access. Shared snapshots are readable for 24 hours.
+
+Additive table: `agent_access(player_id PK/FK, token_hash unique, expires_at, context JSON nullable,
+context_updated_at nullable)`. Only a SHA-256 hash of the token is persisted. Token lifetime and
+context lifetime are independently checked; creating a new token does not extend snapshot freshness.
+
+## MCP Streamable HTTP (separate MCP bearer auth)
+
+`/api/mcp/` is mounted through `api/mcp.py` using official MCP Python SDK 1.x, stateless HTTP sessions
+and JSON responses. The trailing slash is part of the client configuration. Invalid, expired or
+revoked tokens return 401; player JWTs are not MCP credentials. Every tool rechecks ownership.
+The MCP bearer cannot call ordinary account/project/paid-chat REST endpoints.
+
+Tools: `get_project_guide()`, `get_board(board)`, `get_component(component_type)`,
+`get_current_context()`, `list_projects()`, `get_project(project_id)`,
+`create_project(name, board='uno', circuit?, code='', description='')`,
+`update_project(project_id, expected_updated_at, changes)`.
+Creation returns `{project, open_path}`; an omitted circuit produces a valid starter for any of
+the six boards. Updates require the exact timestamp returned by `get_project`; stale writes return
+a tool error and must re-read. Public projects cannot be changed through MCP. Normal project field
+limits apply, plus complete version/layout, exactly one matching MCU, known properties/terminals,
+valid footprint placement, at most 200 components and 400 wires. Invalid documents never mutate data.
+MCP bodies are limited to 1 MiB. Expected domain failures are MCP tool errors, not HTTP 500 responses.
+
+Tools are backed by `services/agent_access.py` and `services/agent_projects.py`; geometry/catalog
+metadata is generated as `content/mcp-catalog.json` (see `ASSISTANT.md`). The endpoint checks Host
+against `MCP_ALLOWED_HOSTS` and browser Origin against configured CORS origins, the deployed origin,
+and standard loopback dev origins. Add deployment domains explicitly. No tool runs firmware,
+executes shell commands, publishes, deletes projects, or changes the browser's unsaved document.
