@@ -1,0 +1,1158 @@
+{
+  "id": "w5-l4",
+  "worldId": "w5",
+  "order": 4,
+  "title": "Level Head",
+  "codeName": "Level 5-4",
+  "board": "esp32",
+  "boardSwitcher": "locked",
+  "boardMode": "half",
+  "xp": 250,
+  "estimatedMinutes": 7,
+  "summary": "I²C IMU readings and body-frame attitude",
+  "concepts": [
+    "I²C IMU readings and body-frame attitude"
+  ],
+  "briefing": [
+    {
+      "mood": "thinking",
+      "text": "I²C IMU readings and body-frame attitude. Your sketch controls the physical model; use Run, inspect the telemetry, and change one thing at a time."
+    },
+    {
+      "mood": "alert",
+      "text": "Remove props for bench tests. Never reverse a real LiPo to experiment. This simulator models mistakes so you can learn before working with hardware."
+    }
+  ],
+  "learn": {
+    "title": "I²C IMU readings and body-frame attitude",
+    "body": "Gravity projects onto the accelerometer axes when the frame tilts. Use MPU6050.getRoll() and getPitch(). On the stand, set roll to +15° and pitch to −10°. Print both at 115200 baud.\n\nLiPo care: never over-discharge, never charge unattended, do not use a puffed pack, and store at the manufacturer-recommended storage voltage.",
+    "links": []
+  },
+  "starterCircuit": {
+    "version": 1,
+    "kind": "drone",
+    "mcu": "esp32",
+    "boardMode": "half",
+    "breadboards": [],
+    "components": [
+      {
+        "id": "c_frame",
+        "type": "drone_frame",
+        "props": {},
+        "rotation": 0
+      },
+      {
+        "id": "c_fc",
+        "type": "esp32",
+        "props": {},
+        "rotation": 0
+      },
+      {
+        "id": "c_pack",
+        "type": "lipo",
+        "props": {},
+        "rotation": 0
+      },
+      {
+        "id": "c_motor1",
+        "type": "brushless_motor",
+        "props": {
+          "direction": "ccw"
+        },
+        "rotation": 0
+      },
+      {
+        "id": "c_prop1",
+        "type": "drone_prop",
+        "props": {
+          "direction": "ccw",
+          "fitted": false
+        },
+        "rotation": 0
+      },
+      {
+        "id": "c_esc1",
+        "type": "esc",
+        "props": {},
+        "rotation": 0
+      },
+      {
+        "id": "c_motor2",
+        "type": "brushless_motor",
+        "props": {
+          "direction": "cw"
+        },
+        "rotation": 0
+      },
+      {
+        "id": "c_prop2",
+        "type": "drone_prop",
+        "props": {
+          "direction": "cw",
+          "fitted": false
+        },
+        "rotation": 0
+      },
+      {
+        "id": "c_esc2",
+        "type": "esc",
+        "props": {},
+        "rotation": 0
+      },
+      {
+        "id": "c_motor3",
+        "type": "brushless_motor",
+        "props": {
+          "direction": "ccw"
+        },
+        "rotation": 0
+      },
+      {
+        "id": "c_prop3",
+        "type": "drone_prop",
+        "props": {
+          "direction": "ccw",
+          "fitted": false
+        },
+        "rotation": 0
+      },
+      {
+        "id": "c_esc3",
+        "type": "esc",
+        "props": {},
+        "rotation": 0
+      },
+      {
+        "id": "c_motor4",
+        "type": "brushless_motor",
+        "props": {
+          "direction": "cw"
+        },
+        "rotation": 0
+      },
+      {
+        "id": "c_prop4",
+        "type": "drone_prop",
+        "props": {
+          "direction": "cw",
+          "fitted": false
+        },
+        "rotation": 0
+      },
+      {
+        "id": "c_esc4",
+        "type": "esc",
+        "props": {},
+        "rotation": 0
+      },
+      {
+        "id": "c_imu",
+        "type": "imu_mpu6050",
+        "props": {},
+        "rotation": 0
+      },
+      {
+        "id": "c_baro",
+        "type": "baro_bmp280",
+        "props": {},
+        "rotation": 0
+      },
+      {
+        "id": "c_rx",
+        "type": "rx_elrs",
+        "props": {},
+        "rotation": 0
+      }
+    ],
+    "wires": [],
+    "mounts": [
+      {
+        "componentId": "c_frame",
+        "mount": "frame"
+      },
+      {
+        "componentId": "c_fc",
+        "mount": "stack"
+      },
+      {
+        "componentId": "c_pack",
+        "mount": "strap"
+      },
+      {
+        "componentId": "c_motor1",
+        "mount": "arm1"
+      },
+      {
+        "componentId": "c_prop1",
+        "mount": "prop1"
+      },
+      {
+        "componentId": "c_esc1",
+        "mount": "esc1"
+      },
+      {
+        "componentId": "c_motor2",
+        "mount": "arm2"
+      },
+      {
+        "componentId": "c_prop2",
+        "mount": "prop2"
+      },
+      {
+        "componentId": "c_esc2",
+        "mount": "esc2"
+      },
+      {
+        "componentId": "c_motor3",
+        "mount": "arm3"
+      },
+      {
+        "componentId": "c_prop3",
+        "mount": "prop3"
+      },
+      {
+        "componentId": "c_esc3",
+        "mount": "esc3"
+      },
+      {
+        "componentId": "c_motor4",
+        "mount": "arm4"
+      },
+      {
+        "componentId": "c_prop4",
+        "mount": "prop4"
+      },
+      {
+        "componentId": "c_esc4",
+        "mount": "esc4"
+      },
+      {
+        "componentId": "c_imu",
+        "mount": "imu"
+      },
+      {
+        "componentId": "c_baro",
+        "mount": "baro"
+      },
+      {
+        "componentId": "c_rx",
+        "mount": "rx"
+      }
+    ],
+    "links": [
+      {
+        "id": "w_link0",
+        "from": "c_pack:pos",
+        "to": "c_esc1:vbat",
+        "kind": "power",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link1",
+        "from": "c_pack:neg",
+        "to": "c_esc1:gnd",
+        "kind": "power",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link2",
+        "from": "c_esc1:phase",
+        "to": "c_motor1:phase",
+        "kind": "phase",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link3",
+        "from": "c_fc:GPIO18",
+        "to": "c_esc1:signal",
+        "kind": "signal",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link4",
+        "from": "c_pack:pos",
+        "to": "c_esc2:vbat",
+        "kind": "power",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link5",
+        "from": "c_pack:neg",
+        "to": "c_esc2:gnd",
+        "kind": "power",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link6",
+        "from": "c_esc2:phase",
+        "to": "c_motor2:phase",
+        "kind": "phase",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link7",
+        "from": "c_fc:GPIO19",
+        "to": "c_esc2:signal",
+        "kind": "signal",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link8",
+        "from": "c_pack:pos",
+        "to": "c_esc3:vbat",
+        "kind": "power",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link9",
+        "from": "c_pack:neg",
+        "to": "c_esc3:gnd",
+        "kind": "power",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link10",
+        "from": "c_esc3:phase",
+        "to": "c_motor3:phase",
+        "kind": "phase",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link11",
+        "from": "c_fc:GPIO23",
+        "to": "c_esc3:signal",
+        "kind": "signal",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link12",
+        "from": "c_pack:pos",
+        "to": "c_esc4:vbat",
+        "kind": "power",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link13",
+        "from": "c_pack:neg",
+        "to": "c_esc4:gnd",
+        "kind": "power",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link14",
+        "from": "c_esc4:phase",
+        "to": "c_motor4:phase",
+        "kind": "phase",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link15",
+        "from": "c_fc:GPIO25",
+        "to": "c_esc4:signal",
+        "kind": "signal",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link16",
+        "from": "c_esc1:bec",
+        "to": "c_fc:VIN",
+        "kind": "power",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link17",
+        "from": "c_pack:neg",
+        "to": "c_fc:GND",
+        "kind": "power",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link18",
+        "from": "c_fc:GPIO21",
+        "to": "c_imu:sda",
+        "kind": "i2c",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link19",
+        "from": "c_fc:GPIO22",
+        "to": "c_imu:scl",
+        "kind": "i2c",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link20",
+        "from": "c_fc:3V3",
+        "to": "c_imu:vcc",
+        "kind": "power",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link21",
+        "from": "c_fc:GND",
+        "to": "c_imu:gnd",
+        "kind": "power",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link22",
+        "from": "c_fc:GPIO21",
+        "to": "c_baro:sda",
+        "kind": "i2c",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link23",
+        "from": "c_fc:GPIO22",
+        "to": "c_baro:scl",
+        "kind": "i2c",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link24",
+        "from": "c_fc:3V3",
+        "to": "c_baro:vcc",
+        "kind": "power",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link25",
+        "from": "c_fc:GND",
+        "to": "c_baro:gnd",
+        "kind": "power",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link26",
+        "from": "c_rx:tx",
+        "to": "c_fc:GPIO16",
+        "kind": "uart",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link27",
+        "from": "c_rx:rx",
+        "to": "c_fc:GPIO17",
+        "kind": "uart",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link28",
+        "from": "c_fc:3V3",
+        "to": "c_rx:vcc",
+        "kind": "power",
+        "awg": 16,
+        "lengthM": 0.15
+      },
+      {
+        "id": "w_link29",
+        "from": "c_fc:GND",
+        "to": "c_rx:gnd",
+        "kind": "power",
+        "awg": 16,
+        "lengthM": 0.15
+      }
+    ],
+    "droneConfig": {
+      "schemaVersion": 1,
+      "name": "My 5-inch freestyle",
+      "airframe": {
+        "class": "quad_x",
+        "wheelbaseMm": 220,
+        "frameMassG": 110,
+        "maxPropIn": 5.1
+      },
+      "motors": {
+        "count": 4,
+        "kv": 1750,
+        "stator": "2207",
+        "massG": 32,
+        "maxCurrentA": 35,
+        "phaseResistanceMohm": 65,
+        "noLoadCurrentA": 1.1
+      },
+      "props": {
+        "diameterIn": 5.1,
+        "pitchIn": 4.6,
+        "blades": 3,
+        "massG": 4.5
+      },
+      "esc": {
+        "kind": "4in1",
+        "continuousA": 45,
+        "burstA": 55,
+        "protocol": "pwm",
+        "becVolts": 5,
+        "becAmps": 2
+      },
+      "battery": {
+        "cells": 4,
+        "chemistry": "lipo",
+        "capacityMah": 1500,
+        "cRating": 95,
+        "massG": 178,
+        "internalResistanceMohm": 12
+      },
+      "fc": {
+        "board": "esp32",
+        "carrier": "fc_carrier_esp32",
+        "imu": "imu_mpu6050",
+        "baro": "baro_bmp280"
+      },
+      "extras": [
+        {
+          "id": "rx_elrs_2400",
+          "massG": 3
+        }
+      ],
+      "payloadG": 0
+    },
+    "course": [
+      {
+        "x": 2,
+        "y": 0,
+        "z": 1.5,
+        "radius": 0.9
+      },
+      {
+        "x": 4,
+        "y": 0,
+        "z": 1.5,
+        "radius": 0.9
+      }
+    ],
+    "flight": {
+      "seed": 42,
+      "bench": true,
+      "wind": [
+        0,
+        0,
+        0
+      ]
+    },
+    "meta": {
+      "name": "My 5-inch freestyle"
+    }
+  },
+  "starterCode": "#include <MPU6050.h>\nMPU6050 imu;\nvoid setup() {\n  Serial.begin(115200);\n  imu.begin();\n}\nvoid loop() {\n  Serial.print(\"Roll: \"); Serial.print(imu.getRoll(), 1);\n  Serial.print(\" Pitch: \"); Serial.println(imu.getPitch(), 1);\n  delay(100);\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": null,
+  "objectives": [
+    {
+      "id": "read",
+      "text": "Read the connected IMU and print roll / pitch",
+      "rules": [
+        {
+          "type": "imu_read_seen",
+          "minSamples": 20
+        },
+        {
+          "type": "serial_matches",
+          "pattern": "Roll: 1[45]\\.[0-9] Pitch: -(9\\.[0-9]|10\\.[0-9])"
+        }
+      ],
+      "hints": {
+        "tier1": "Gravity projects onto the accelerometer axes when the frame tilts.",
+        "tier2": {
+          "text": "Use MPU6050.getRoll() and getPitch(). On the stand, set roll to +15° and pitch to −10°. Print both at 115200 baud.",
+          "componentTypes": [
+            "esc",
+            "brushless_motor",
+            "imu_mpu6050"
+          ]
+        },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [
+      {
+        "type": "no_damage"
+      },
+      {
+        "type": "no_warning",
+        "code": "prop_direction_mismatch"
+      }
+    ],
+    "threeText": "Finish with no smoke, broken parts or reversed props."
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "kind": "drone",
+      "mcu": "esp32",
+      "boardMode": "half",
+      "breadboards": [],
+      "components": [
+        {
+          "id": "c_frame",
+          "type": "drone_frame",
+          "props": {},
+          "rotation": 0
+        },
+        {
+          "id": "c_fc",
+          "type": "esp32",
+          "props": {},
+          "rotation": 0
+        },
+        {
+          "id": "c_pack",
+          "type": "lipo",
+          "props": {},
+          "rotation": 0
+        },
+        {
+          "id": "c_motor1",
+          "type": "brushless_motor",
+          "props": {
+            "direction": "ccw"
+          },
+          "rotation": 0
+        },
+        {
+          "id": "c_prop1",
+          "type": "drone_prop",
+          "props": {
+            "direction": "ccw",
+            "fitted": false
+          },
+          "rotation": 0
+        },
+        {
+          "id": "c_esc1",
+          "type": "esc",
+          "props": {},
+          "rotation": 0
+        },
+        {
+          "id": "c_motor2",
+          "type": "brushless_motor",
+          "props": {
+            "direction": "cw"
+          },
+          "rotation": 0
+        },
+        {
+          "id": "c_prop2",
+          "type": "drone_prop",
+          "props": {
+            "direction": "cw",
+            "fitted": false
+          },
+          "rotation": 0
+        },
+        {
+          "id": "c_esc2",
+          "type": "esc",
+          "props": {},
+          "rotation": 0
+        },
+        {
+          "id": "c_motor3",
+          "type": "brushless_motor",
+          "props": {
+            "direction": "ccw"
+          },
+          "rotation": 0
+        },
+        {
+          "id": "c_prop3",
+          "type": "drone_prop",
+          "props": {
+            "direction": "ccw",
+            "fitted": false
+          },
+          "rotation": 0
+        },
+        {
+          "id": "c_esc3",
+          "type": "esc",
+          "props": {},
+          "rotation": 0
+        },
+        {
+          "id": "c_motor4",
+          "type": "brushless_motor",
+          "props": {
+            "direction": "cw"
+          },
+          "rotation": 0
+        },
+        {
+          "id": "c_prop4",
+          "type": "drone_prop",
+          "props": {
+            "direction": "cw",
+            "fitted": false
+          },
+          "rotation": 0
+        },
+        {
+          "id": "c_esc4",
+          "type": "esc",
+          "props": {},
+          "rotation": 0
+        },
+        {
+          "id": "c_imu",
+          "type": "imu_mpu6050",
+          "props": {},
+          "rotation": 0
+        },
+        {
+          "id": "c_baro",
+          "type": "baro_bmp280",
+          "props": {},
+          "rotation": 0
+        },
+        {
+          "id": "c_rx",
+          "type": "rx_elrs",
+          "props": {},
+          "rotation": 0
+        }
+      ],
+      "wires": [],
+      "mounts": [
+        {
+          "componentId": "c_frame",
+          "mount": "frame"
+        },
+        {
+          "componentId": "c_fc",
+          "mount": "stack"
+        },
+        {
+          "componentId": "c_pack",
+          "mount": "strap"
+        },
+        {
+          "componentId": "c_motor1",
+          "mount": "arm1"
+        },
+        {
+          "componentId": "c_prop1",
+          "mount": "prop1"
+        },
+        {
+          "componentId": "c_esc1",
+          "mount": "esc1"
+        },
+        {
+          "componentId": "c_motor2",
+          "mount": "arm2"
+        },
+        {
+          "componentId": "c_prop2",
+          "mount": "prop2"
+        },
+        {
+          "componentId": "c_esc2",
+          "mount": "esc2"
+        },
+        {
+          "componentId": "c_motor3",
+          "mount": "arm3"
+        },
+        {
+          "componentId": "c_prop3",
+          "mount": "prop3"
+        },
+        {
+          "componentId": "c_esc3",
+          "mount": "esc3"
+        },
+        {
+          "componentId": "c_motor4",
+          "mount": "arm4"
+        },
+        {
+          "componentId": "c_prop4",
+          "mount": "prop4"
+        },
+        {
+          "componentId": "c_esc4",
+          "mount": "esc4"
+        },
+        {
+          "componentId": "c_imu",
+          "mount": "imu"
+        },
+        {
+          "componentId": "c_baro",
+          "mount": "baro"
+        },
+        {
+          "componentId": "c_rx",
+          "mount": "rx"
+        }
+      ],
+      "links": [
+        {
+          "id": "w_link0",
+          "from": "c_pack:pos",
+          "to": "c_esc1:vbat",
+          "kind": "power",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link1",
+          "from": "c_pack:neg",
+          "to": "c_esc1:gnd",
+          "kind": "power",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link2",
+          "from": "c_esc1:phase",
+          "to": "c_motor1:phase",
+          "kind": "phase",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link3",
+          "from": "c_fc:GPIO18",
+          "to": "c_esc1:signal",
+          "kind": "signal",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link4",
+          "from": "c_pack:pos",
+          "to": "c_esc2:vbat",
+          "kind": "power",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link5",
+          "from": "c_pack:neg",
+          "to": "c_esc2:gnd",
+          "kind": "power",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link6",
+          "from": "c_esc2:phase",
+          "to": "c_motor2:phase",
+          "kind": "phase",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link7",
+          "from": "c_fc:GPIO19",
+          "to": "c_esc2:signal",
+          "kind": "signal",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link8",
+          "from": "c_pack:pos",
+          "to": "c_esc3:vbat",
+          "kind": "power",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link9",
+          "from": "c_pack:neg",
+          "to": "c_esc3:gnd",
+          "kind": "power",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link10",
+          "from": "c_esc3:phase",
+          "to": "c_motor3:phase",
+          "kind": "phase",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link11",
+          "from": "c_fc:GPIO23",
+          "to": "c_esc3:signal",
+          "kind": "signal",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link12",
+          "from": "c_pack:pos",
+          "to": "c_esc4:vbat",
+          "kind": "power",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link13",
+          "from": "c_pack:neg",
+          "to": "c_esc4:gnd",
+          "kind": "power",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link14",
+          "from": "c_esc4:phase",
+          "to": "c_motor4:phase",
+          "kind": "phase",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link15",
+          "from": "c_fc:GPIO25",
+          "to": "c_esc4:signal",
+          "kind": "signal",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link16",
+          "from": "c_esc1:bec",
+          "to": "c_fc:VIN",
+          "kind": "power",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link17",
+          "from": "c_pack:neg",
+          "to": "c_fc:GND",
+          "kind": "power",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link18",
+          "from": "c_fc:GPIO21",
+          "to": "c_imu:sda",
+          "kind": "i2c",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link19",
+          "from": "c_fc:GPIO22",
+          "to": "c_imu:scl",
+          "kind": "i2c",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link20",
+          "from": "c_fc:3V3",
+          "to": "c_imu:vcc",
+          "kind": "power",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link21",
+          "from": "c_fc:GND",
+          "to": "c_imu:gnd",
+          "kind": "power",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link22",
+          "from": "c_fc:GPIO21",
+          "to": "c_baro:sda",
+          "kind": "i2c",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link23",
+          "from": "c_fc:GPIO22",
+          "to": "c_baro:scl",
+          "kind": "i2c",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link24",
+          "from": "c_fc:3V3",
+          "to": "c_baro:vcc",
+          "kind": "power",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link25",
+          "from": "c_fc:GND",
+          "to": "c_baro:gnd",
+          "kind": "power",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link26",
+          "from": "c_rx:tx",
+          "to": "c_fc:GPIO16",
+          "kind": "uart",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link27",
+          "from": "c_rx:rx",
+          "to": "c_fc:GPIO17",
+          "kind": "uart",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link28",
+          "from": "c_fc:3V3",
+          "to": "c_rx:vcc",
+          "kind": "power",
+          "awg": 16,
+          "lengthM": 0.15
+        },
+        {
+          "id": "w_link29",
+          "from": "c_fc:GND",
+          "to": "c_rx:gnd",
+          "kind": "power",
+          "awg": 16,
+          "lengthM": 0.15
+        }
+      ],
+      "droneConfig": {
+        "schemaVersion": 1,
+        "name": "My 5-inch freestyle",
+        "airframe": {
+          "class": "quad_x",
+          "wheelbaseMm": 220,
+          "frameMassG": 110,
+          "maxPropIn": 5.1
+        },
+        "motors": {
+          "count": 4,
+          "kv": 1750,
+          "stator": "2207",
+          "massG": 32,
+          "maxCurrentA": 35,
+          "phaseResistanceMohm": 65,
+          "noLoadCurrentA": 1.1
+        },
+        "props": {
+          "diameterIn": 5.1,
+          "pitchIn": 4.6,
+          "blades": 3,
+          "massG": 4.5
+        },
+        "esc": {
+          "kind": "4in1",
+          "continuousA": 45,
+          "burstA": 55,
+          "protocol": "pwm",
+          "becVolts": 5,
+          "becAmps": 2
+        },
+        "battery": {
+          "cells": 4,
+          "chemistry": "lipo",
+          "capacityMah": 1500,
+          "cRating": 95,
+          "massG": 178,
+          "internalResistanceMohm": 12
+        },
+        "fc": {
+          "board": "esp32",
+          "carrier": "fc_carrier_esp32",
+          "imu": "imu_mpu6050",
+          "baro": "baro_bmp280"
+        },
+        "extras": [
+          {
+            "id": "rx_elrs_2400",
+            "massG": 3
+          }
+        ],
+        "payloadG": 0
+      },
+      "course": [
+        {
+          "x": 2,
+          "y": 0,
+          "z": 1.5,
+          "radius": 0.9
+        },
+        {
+          "x": 4,
+          "y": 0,
+          "z": 1.5,
+          "radius": 0.9
+        }
+      ],
+      "flight": {
+        "seed": 42,
+        "bench": true,
+        "wind": [
+          0,
+          0,
+          0
+        ]
+      },
+      "meta": {
+        "name": "My 5-inch freestyle"
+      }
+    },
+    "code": "#include <MPU6050.h>\nMPU6050 imu;\nvoid setup() {\n  Serial.begin(115200);\n  imu.begin();\n}\nvoid loop() {\n  Serial.print(\"Roll: \"); Serial.print(imu.getRoll(), 1);\n  Serial.print(\" Pitch: \"); Serial.println(imu.getPitch(), 1);\n  delay(100);\n}\n",
+    "blocklyXml": null,
+    "actions": [
+      {
+        "atMs": 200,
+        "tilt": {
+          "roll": 15,
+          "pitch": -10
+        }
+      }
+    ]
+  },
+  "solutionRunMs": 2500,
+  "successText": "Bench check complete. Inspect what changed before moving on."
+}

@@ -1,7 +1,7 @@
 /**
  * Plays `SimState.tones` through WebAudio — one square-wave oscillator per sounding pin.
  *
- * A buzzer driven by `tone()` is the only sound VoltQuest makes, so this stays deliberately tiny: no
+ * Buzzer tones and drone rotor pitch use the same small oscillator player: no
  * sample loading, no mixer. The AudioContext is created lazily on the first tone (browsers refuse to
  * start one before a user gesture, and jsdom has none at all), and everything is torn down when the
  * hook unmounts or audio is switched off.

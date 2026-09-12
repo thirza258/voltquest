@@ -16,7 +16,7 @@ self.onmessage = (event) => {
       post({ type: 'compiled', t: 0, ok: false, errors: [{ line: 0, col: 0, severity: 'error', message: `Unknown board '${msg.board}'` }], warnings: [] })
       return
     }
-    runtime = createRuntime({ board, post })
+    runtime = createRuntime({ board, post, droneDoc: msg.droneDoc ?? null })
     runtime.load(msg.source)
     return
   }

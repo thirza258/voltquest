@@ -51,6 +51,24 @@ export function buildAssistantContext({ mode, title, doc, code = '', selectedIds
     } : null,
     truncated,
   }
+  if (doc?.kind === 'drone') {
+    context.circuit.kind = 'drone'
+    const config = doc.droneConfig
+    context.circuit.droneConfig = { ...pick(config, ['schemaVersion', 'name', 'payloadG', 'mixer']),
+      airframe: pick(config.airframe, ['class', 'wheelbaseMm', 'frameMassG', 'maxPropIn']),
+      motors: pick(config.motors, ['count', 'kv', 'stator', 'massG', 'maxCurrentA', 'phaseResistanceMohm', 'noLoadCurrentA']),
+      props: pick(config.props, ['diameterIn', 'pitchIn', 'blades', 'massG']),
+      esc: pick(config.esc, ['kind', 'continuousA', 'burstA', 'protocol', 'becVolts', 'becAmps']),
+      battery: pick(config.battery, ['cells', 'chemistry', 'capacityMah', 'cRating', 'massG', 'internalResistanceMohm']),
+      fc: pick(config.fc, ['board', 'carrier', 'imu', 'baro']), extras: config.extras.map(e => pick(e, ['id', 'massG'])),
+    }
+    context.circuit.flight = pick(doc.flight, ['seed', 'bench', 'wind'])
+    context.circuit.mounts = take('mounts', doc.mounts, 32).map(m => pick(m, ['componentId', 'mount']))
+    context.circuit.links = take('links', doc.links, 100).map(l => pick(l, ['id', 'from', 'to', 'kind', 'awg', 'lengthM']))
+    context.circuit.course = take('course', doc.course, 24).map(g => pick(g, ['x', 'y', 'z', 'radius']))
+    context.simulation.flight = pick(state?.flight, ['position', 'velocity', 'attitude', 'rates', 'armed', 'mode', 'rpm', 'pulses', 'electrical', 'gatesPassed', 'crashed', 'saturated'])
+    context.selection = take('selection', [...components, ...context.circuit.links].filter(item => selected.has(item.id)), 20)
+  }
   // Leave room under the API's 96 KiB limit, including UTF-8 expansion and JSON whitespace.
   const bytes = () => new TextEncoder().encode(JSON.stringify(context)).length
   for (const [owner, key] of [[context.simulation, 'nets'], [context.simulation, 'components'], [context, 'lesson'], [context.circuit, 'wires'], [context.circuit, 'components']]) {

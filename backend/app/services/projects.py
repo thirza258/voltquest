@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.core.security import new_share_slug
 from app.db.models import Player, Project
-from app.domain.errors import NotFound, ServiceError
+from app.domain.errors import NotFound, ServiceError, InvalidInput
 from app.domain.projects import validate_board
 from app.schemas.projects import (
     ProjectIn,
@@ -52,6 +52,8 @@ def list_projects(player: Player, db: Session) -> ProjectListOut:
 def create_project(body: ProjectIn, player: Player, db: Session) -> ProjectOut:
     """Save a new sandbox project."""
     validate_board(body.board, body.circuit, body.editor_mode)
+    if body.circuit.get('kind') == 'drone' and body.board_mode != 'half':
+        raise InvalidInput('Drone projects use half board_mode with named mounts')
     project = Project(owner_id=player.id, **body.model_dump())
     db.add(project)
     db.commit()
@@ -68,6 +70,9 @@ def get_project(project_id: str, player: Player, db: Session) -> ProjectOut:
 def update_project(project_id: str, body: ProjectPatch, player: Player, db: Session) -> ProjectOut:
     """Partially update one of the caller's projects."""
     project = owned_project(project_id, player, db)
+    merged_circuit = body.circuit if body.circuit is not None else project.circuit
+    if merged_circuit.get('kind') == 'drone' and (body.board_mode or project.board_mode) != 'half':
+        raise InvalidInput('Drone projects use half board_mode with named mounts')
     validate_board(
         body.board or project.board,
         body.circuit if body.circuit is not None else project.circuit,

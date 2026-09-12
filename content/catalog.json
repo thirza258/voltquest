@@ -834,5 +834,280 @@
       }
     ],
     "notes": "Solid-core pre-cut wires keep a breadboard readable; colour-code power red and ground black."
+  },
+  "frame_3in": {
+    "name": "3-inch quad-X frame",
+    "unitPriceUsd": 22,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "frame_5in": {
+    "name": "5-inch quad-X frame",
+    "unitPriceUsd": 35,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "frame_7in": {
+    "name": "7-inch quad-X frame",
+    "unitPriceUsd": 55,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "motor_1404_4600kv": {
+    "name": "1404 brushless motor",
+    "unitPriceUsd": 13,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "motor_2207_1750kv": {
+    "name": "2207 brushless motor",
+    "unitPriceUsd": 19,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "motor_2806_1300kv": {
+    "name": "2806 brushless motor",
+    "unitPriceUsd": 26,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "prop_3in_3b": {
+    "name": "3-inch propeller",
+    "unitPriceUsd": 1,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "prop_5in_3b": {
+    "name": "5-inch propeller",
+    "unitPriceUsd": 1.2,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "prop_7in_2b": {
+    "name": "7-inch propeller",
+    "unitPriceUsd": 2.5,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "esc_4in1_45a": {
+    "name": "4-in-1 ESC, 45 A per channel",
+    "unitPriceUsd": 45,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "esc_single_30a": {
+    "name": "Single ESC, 30 A",
+    "unitPriceUsd": 12,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "fc_carrier_esp32": {
+    "name": "ESP32 flight-controller carrier",
+    "unitPriceUsd": 18,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "imu_mpu6050": {
+    "name": "MPU6050 IMU",
+    "unitPriceUsd": 5,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "baro_bmp280": {
+    "name": "BMP280 barometer",
+    "unitPriceUsd": 4,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "lipo_4s_1500mah": {
+    "name": "4S 1500 mAh LiPo",
+    "unitPriceUsd": 26,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "lipo_3s_2200mah": {
+    "name": "3S 2200 mAh LiPo",
+    "unitPriceUsd": 22,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "lipo_6s_1300mah": {
+    "name": "6S 1300 mAh LiPo",
+    "unitPriceUsd": 35,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "rx_elrs_2400": {
+    "name": "ELRS receiver",
+    "unitPriceUsd": 15,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "xt60_pair": {
+    "name": "XT60 connector pair",
+    "unitPriceUsd": 2,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "silicone_wire_16awg": {
+    "name": "Silicone power wire",
+    "unitPriceUsd": 3,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "jst_sh_cable": {
+    "name": "JST-SH signal cable",
+    "unitPriceUsd": 2,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "thrust_stand": {
+    "name": "Motor bench clamp",
+    "unitPriceUsd": 12,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "prop_guards": {
+    "name": "Propeller guards",
+    "unitPriceUsd": 8,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "smoke_stopper": {
+    "name": "Smoke stopper",
+    "unitPriceUsd": 10,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "gps": {
+    "name": "GPS module",
+    "unitPriceUsd": 18,
+    "vendors": [
+      {
+        "name": "Adafruit components",
+        "url": "https://www.adafruit.com/category/35"
+      }
+    ],
+    "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
   }
 }

@@ -19,6 +19,7 @@ import { createWebServerLibrary } from './webserver.js'
 import { createMqttLibrary } from './mqtt.js'
 import { createEsp32Extras } from './esp32.js'
 import { createRaspberryPiLibrary } from './raspberrypi.js'
+import { createFlightLibrary } from './flight.js'
 
 /**
  * @param {object} core runtime core (see `../index.js`)
@@ -51,6 +52,7 @@ export function registerLibraries(core, { adc, network } = {}) {
 
   // ESP32 family only — `load()` rejects sketches that reach for these on an AVR board.
   if (core.board.family === 'esp32') {
+    add(createFlightLibrary(core))
     add(createWifiLibrary(core, network))
     add(createWebServerLibrary(core, network))
     add(createMqttLibrary(core, network))

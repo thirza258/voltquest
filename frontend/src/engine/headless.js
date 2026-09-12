@@ -111,11 +111,15 @@ export async function runLevelSolution(level, options = {}) {
         if (action.http) void sim.httpRequest(action.http).catch((error) => { actionError = error.error ?? error.message ?? 'HTTP action failed' })
         if (action.serial != null) sim.serialWrite(action.serial)
         if (action.mqtt) sim.mqttPublish(action.mqtt.topic, action.mqtt.payload)
+        if (action.sticks) sim.setSticks(action.sticks)
+        if (action.tilt) sim.setBenchTilt(action.tilt)
+        if (action.disturbance) sim.disturb(action.disturbance)
       }
-      sim.advance(stepMs)
+      const advanceMs = Math.min(stepMs, runMs - elapsedMs, Math.max(1, (actions[nextAction]?.atMs ?? Infinity) - elapsedMs))
+      sim.advance(advanceMs)
       // Let request promises settle without introducing host timers into deterministic execution.
       await Promise.resolve()
-      elapsedMs += stepMs
+      elapsedMs += advanceMs
       result = report()
       if (result.allPassed) break
     }

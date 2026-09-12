@@ -77,3 +77,19 @@ creation/replacement/revocation and explicit context sharing. Code blocks scroll
 Tutorials show the guide below their prepared circuit. Selected parts expose the same inspector;
 selection and live controls remain active while circuit editing stays read-only. At mobile widths
 panels stack and long configuration/code lines scroll locally, with no page-level horizontal scroll.
+
+## Custom Drone Builder
+
+Use the same light notebook palette and shared header, with a LiPo cell-count power label for drone
+projects. At desktop width retain three resizable columns: Build/Objectives, Bench/Flight, Code/Tune.
+Below 1280 px, keep those panels mounted behind Build, Bench/flight and Code/tune tabs. The center
+has a scrolling view area and a fixed compact transmitter below it so controls stay reachable at
+390 px. Every axis also has a labelled native range input; modes and arm have explicit controls.
+
+The bench uses named mount targets, typed selectable connectors, motor indices/directions and
+visible damage. Invalid moves show a reason; the inspector provides a keyboard placement alternative.
+The flight SVG uses an orbit projection of 3D state, gate progress colors and numerical HUD values;
+render interpolation never advances simulation. The blackbox labels trace colors, units and scales
+and allows sample inspection. Show feasibility numbers before wiring, and causes/fixes for failures.
+Edits to presets/FC assembly and replacement code use existing confirmation modals. The export includes
+model limits and real-build checklist; it must never present simulator helpers as certified firmware.

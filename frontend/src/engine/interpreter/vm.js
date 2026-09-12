@@ -145,6 +145,14 @@ export function createVM(program, host = {}) {
       case 'num': return { pure: true, t: node.t, fn: () => node.v }
       case 'str': return { pure: true, t: 'String', fn: () => node.v }
       case 'var': return lowerVarRead(node)
+      case 'address': {
+        const read = lowerVarRead(node.e).fn, store = storeFor(node.e), wrap = wrapperFor(node.e.t) ?? (v => v)
+        return { pure: true, t: 'array', fn: env => {
+          const ref = [0]
+          Object.defineProperty(ref, '0', { get: () => read(env), set: value => { store(env, wrap(value)) }, enumerable: true })
+          return ref
+        } }
+      }
       case 'free': return lowerFree(node)
       case 'bin': return lowerBinary(node)
       case 'logical': return lowerLogical(node)

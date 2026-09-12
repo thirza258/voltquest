@@ -1,4 +1,7 @@
 import { BOARD_IDS } from '../../engine/boards/index.js'
+import { createDroneDoc, validateDroneDoc } from '../../engine/drone/document.js'
+import { ASSISTED_CODE } from '../../engine/drone/examples.js'
+import { validateConfig } from '../../engine/drone/config.js'
 import { getDef, resolvePins } from '../../engine/components/registry.js'
 import { layoutBreadboards, terminalPosition } from '../../engine/components/breadboard.js'
 
@@ -19,6 +22,8 @@ export function validateProject(data) {
   const doc = data.circuit
   assert(object(doc) && doc.version === 1 && bytes(doc) <= LIMIT, 'Invalid circuit or circuit larger than 200 KiB.')
   assert(doc.mcu === data.board && doc.boardMode === data.boardMode, 'The project board and circuit must match.')
+  if (doc.kind === 'drone') { validateDroneDoc(doc); return { ...data, name: String(data.name || doc.droneConfig.name).slice(0, 80), description: String(data.description || '').slice(0, 1000) } }
+  assert(doc.kind == null || doc.kind === 'breadboard', 'Unknown bench kind.')
   assert(Array.isArray(doc.components) && Array.isArray(doc.wires), 'The circuit needs component and wire arrays.')
   const layout = layoutBreadboards(doc.boardMode)
   assert(Array.isArray(doc.breadboards) && doc.breadboards.length === layout.length && layout.every((b, i) => ['id', 'type', 'x', 'y'].every(k => doc.breadboards[i]?.[k] === b[k])), 'Invalid breadboard geometry.')
@@ -57,6 +62,7 @@ export function parseProjectFile(text) {
   assert(bytes(text) <= LIMIT * 4, 'Project file is too large.')
   let value
   try { value = JSON.parse(text) } catch { throw new Error('This file is not valid JSON.') }
+  if (value?.schemaVersion === 1 && value.airframe?.class === 'quad_x') { validateConfig(value); return validateProject(projectFile({ name: value.name, circuit: createDroneDoc(value), code: ASSISTED_CODE })) }
   assert(value?.format === 'voltquest-project' && value.version === 1, 'Use a version 1 VoltQuest project file.')
   return validateProject(value)
 }

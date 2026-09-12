@@ -68,7 +68,7 @@ export const ESP32_COMMON = {
   pullupOhms: 45000,
   usbSupplyMaxMa: 500,
   pwmDefault: { freqHz: 1000, bits: 8 },
-  libraries: [...AVR_COMMON.libraries, 'WiFi.h', 'WebServer.h', 'PubSubClient.h', 'ESP32Servo.h'],
+  libraries: [...AVR_COMMON.libraries, 'WiFi.h', 'WebServer.h', 'PubSubClient.h', 'ESP32Servo.h', 'MPU6050.h', 'Adafruit_BMP280.h', 'VoltRC.h', 'VoltFlight.h', 'PID.h', 'AHRS.h'],
 }
 
 /** ESP32 DevKit V1 — board-mounted, 30 pins in two rows of 15 (row 2 ten pitches below row 1). */
@@ -126,4 +126,3 @@ export const esp32 = {
     'int is 32 bits and the chip runs at 240 MHz — millions of statements per second, so short delays matter more than loop overhead.',
   ],
 }
-

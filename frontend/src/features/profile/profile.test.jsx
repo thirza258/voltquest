@@ -14,7 +14,7 @@ it('shows earned progress and only lets players select unlocked cosmetics', () =
   installMemoryStorage()
   usePlayerStore.setState({ token: null, player: { display_name: 'Test cadet', xp: 150, level: 2 }, progress: { 'w1-l1': { stars: 3 } }, pendingOps: [] })
   render(<MemoryRouter><ProfilePage /></MemoryRouter>)
-  expect(screen.getByRole('heading', { name: 'Campaign progress · 1/14' })).toBeTruthy()
+  expect(screen.getByRole('heading', { name: 'Campaign progress · 1/20' })).toBeTruthy()
   const locked = screen.getByRole('button', { name: /Mint Lab/ })
   expect(locked.disabled).toBe(true)
   fireEvent.click(locked)

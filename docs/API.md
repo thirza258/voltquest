@@ -130,3 +130,25 @@ metadata is generated as `content/mcp-catalog.json` (see `ASSISTANT.md`). The en
 against `MCP_ALLOWED_HOSTS` and browser Origin against configured CORS origins, the deployed origin,
 and standard loopback dev origins. Add deployment domains explicitly. No tool runs firmware,
 executes shell commands, publishes, deletes projects, or changes the browser's unsaved document.
+
+## Drone projects (additive)
+
+The existing `/api/projects`, `/api/showcase` and `/api/exports` endpoints accept CircuitDoc
+`kind:'drone'` on `esp32`/`esp32s3`. No migration, new authentication or firmware endpoint is added.
+The payload retains `board_mode:'half'` but the document has empty breadboards/wires and uses named
+mounts, typed links, `droneConfig`, `flight`, and `course`; see [DRONE.md](DRONE.md). Full project-field
+UTF-8 limits and ownership rules still apply. Both document and project board/layout must agree.
+Partial updates validate the merged project, including a board_mode-only patch, before any mutation.
+Invalid numeric ranges, ids, mounts, connector types/endpoints, counts, environment or course geometry
+return 422. Incomplete but structurally valid assemblies remain saveable for lessons.
+
+`ProjectSummary`/`ProjectOut` add nullable `drone_config` (the stored specification for a drone, null
+for a breadboard). Clients compute the spec-sheet estimates; derived figures are never trusted as
+input or stored. Save/open, publish/preview, editable fork and ownership work through the same services.
+Drone BOM rows use actual component counts and configured specifications, grouping four logical ESC
+channels into one physical item for a 4-in-1 package.
+
+MCP `get_project_guide()` adds a `drone` section with schema guidance, numeric field intervals, default
+configuration, mounts and firmware notes. `get_component` returns drone mount/socket metadata.
+Existing MCP project creation/update accepts complete valid drone documents; no new publish, delete
+or run tool is exposed. Omitting the circuit still creates the usual breadboard starter.

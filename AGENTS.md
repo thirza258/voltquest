@@ -16,7 +16,7 @@ and what to do next. The specifications in `docs/` remain binding.
 
 ## 1. Current build, not the target product
 
-The main entry points are **`/`** (14 campaign quests), **`/sandbox`** (freeform projects), and **`/tutorials`** (guided lessons).
+The main entry points are **`/`** (20 campaign quests), **`/sandbox`** (freeform projects), and **`/tutorials`** (guided lessons).
 There are **35 tutorials**, ordered Easy → Intermediate → Hard, with editable code,
 real simulation, explanations of program and hardware concepts, exact breadboard placement,
 cable endpoint tables and click-to-highlight wiring. The circuit is prepared/read-only, but
@@ -49,11 +49,11 @@ repository or commit without the user's explicit request.
 ## 2. Verification
 
 Latest full `make check`:
-- **750 frontend tests in 51 files pass.**
-- **82 backend tests pass.**
-- Production build succeeds; initial JS payload is **301.1 KiB gzipped**, below the 1500 KiB budget.
+- **801 frontend tests in 54 files pass.**
+- **98 backend tests pass.**
+- Production build succeeds; initial JS payload is **331.0 KiB gzipped**, below the 1500 KiB budget.
 - ESLint has no errors. Two existing exhaustive-deps warnings remain in
-  `features/campaign/CampaignMap.jsx:83`; these are unrelated to the assistant/localization work.
+  `features/campaign/CampaignMap.jsx:84`; these are unrelated to the assistant/localization work.
 - Node prints the existing jsdom/localStorage warning; persistence tests use the memory-storage helper.
 
 Browser verification uses the actual Web Worker path, separate from the inline/jsdom tests.
@@ -80,11 +80,61 @@ numeric output, command dispatch and LED state transitions on all four C++ board
 
 ## 3. Completed in this continuation
 
+### Custom Drone Builder — D1 / D2 / D3 (2026-09-12)
+
+Open **`/sandbox?bench=drone`** or Project → New custom drone. **Rotor Rising** adds six quests
+(w5-l1…w5-l6), bringing the campaign to 20. All 20 references earn three stars through the shared
+headless gate. The boss also passes with a materially different 3-inch build. Read `docs/DRONE.md`
+and CONTRACTS §15 before changing drone behavior; they record APIs, model assumptions and limits.
+
+`engine/drone/` implements validated quad-X specifications, 3/5/7-inch presets, named mounts,
+typed connectors, live mass/TWR/current/hover estimates, pack/BEC/ESC/wire/motor failures and 1 kHz
+quaternion rigid-body dynamics. The existing Worker scheduler advances mechanics during firmware
+execution and sleeps; seeded sensor noise and inputs remain deterministic. ESP32 and ESP32-S3 use
+existing board ids, interpreter, signal/peripheral bindings and local code editors. Flight firmware
+exposes ESC µs/PWM/OneShot/DShot paths, MPU6050 raw output parameters/ranges, BMP280, VoltRC,
+VoltFlight, PID and AHRS. The rate example calculates its own three PID corrections.
+
+The drone UI includes configurable parts, socket wiring, mouse drag/drop and keyboard mount editing,
+read-only preview inspection, thrust stand/tilt, flight/orbit view, transmitter, telemetry, blackbox
+plots/scrubbing, disturbance, repair, course editing and replay/slow motion. Desktop has three
+resizable columns; below 1280 px Build/Bench/Code tabs retain state and the transmitter remains
+visible at the bottom. Replay records every virtual-clock input and requires unchanged build/code
+and an untruncated timeline. Assembly edits stop the run and preserve damage; explicit reset/Run
+repairs it. High-throttle/props-on bench arming is blocked; receiver loss fails safe.
+
+Existing sandbox save/load/drafts/cache, import, showcase publish/preview/fork and BOM paths accept
+`kind:'drone'`. Standalone specifications also import with confirmation. The export ZIP includes
+project/config JSON, BOM CSV, actual wiring PNG/SVG, sketch.ino and printable checklist. Summaries
+carry nullable `drone_config`; derived figures remain computed. The AI guide shares allowlisted
+specification/links/current telemetry, and MCP guide/component/project tools support drone documents.
+No backend firmware execution or new authentication/storage model was introduced.
+
+Regenerate **both** `content/drone-catalog.json` and `backend/app/domain/drone_catalog.json` with
+`node scripts/export-drone-catalog.mjs` after drone metadata changes; equality tests cover both.
+The domain copy avoids an application-settings import. Also regenerate the existing MCP catalog
+when board profiles or registry footprints/defaults change.
+
+Verified through the real Chromium Worker: takeoff → both gates → gentle landing, no crash/runtime
+error, desktop/390 px without page overflow, transmitter visible, save → publish → read-only preview
+→ editable fork, actual mouse part drop and single undo, and an intact seven-file ZIP with a
+1200 × 2180 wiring PNG (CRC checked). Tests cover input-delta/replay equality, I²C miswiring, raw IMU
+values/ranges, S3 pins, electrical failure/damage, code replacement, malformed atomic project edits,
+ownership and full BOM pricing. Latest `make check`: **801 frontend / 98 backend**, build budget
+**331.0 KiB gzipped**, no lint errors; only the two pre-existing CampaignMap hook warnings remain.
+
+Limits: the pack/wiring branch is a reduced radial electrical model, and accelerometer readings
+use gravity projection. Prop coefficient scale references UIUC static data; motor efficiency/slip,
+thermal thresholds, other prop geometries and pack curves remain explicit teaching assumptions,
+not manufacturer-validated fits. Exported VoltQuest helpers need a verified hardware port. Optional
+GPS fixes/gamepads, new airframes and new user-authored part types are not implemented. The PRD's
+Chromebook/60 FPS and real-device/multi-browser performance matrix remains release verification.
+
 ### Indonesian localization, circuit AI guide and coding-agent MCP (2026-09-12)
 
 English remains the default. The header language selector persists Indonesian in `vq.locale`,
 updates HTML `lang`, and preserves the current code, circuit, simulation and tutorial step checks.
-`frontend/src/i18n/id.json` contains 1,366 display messages, including all 35 tutorial narratives,
+`frontend/src/i18n/id.json` contains 1,567 display messages, including all 35 tutorial narratives,
 campaign guidance and 29 component learning cards. User content, pin identifiers, source code,
 program output and raw runtime/API diagnostics retain their original text. Missing keys fall back
 to English. Language changes must not clone/re-key a lesson or seed and reset its simulation.
@@ -126,7 +176,7 @@ operator's credentials/configuration. See `docs/ASSISTANT.md` for the complete s
 `frontend/vite-sitemap.js` emits `dist/sitemap.xml` during `vite build` for the deployed origin
 `https://pcb.nevatal.id`; `frontend/public/robots.txt` is static. The URL list is derived from
 `content/` at build time, not committed, so newly authored quests and tutorials appear without a
-second edit: 54 URLs today — `/`, the 14 campaign levels in worlds.json order, `/tutorials` plus its
+second edit: 60 URLs today — `/`, the 20 campaign levels in worlds.json order, `/tutorials` plus its
 35 lessons, `/sandbox`, `/showcase` and `/leaderboard`.
 
 `/profile`, `/sandbox/:projectId` and `/showcase/:slug` are excluded and disallowed in robots.txt —
@@ -135,7 +185,7 @@ is a client-rendered app, so blocking the bundle would render every route empty 
 Locked levels are listed on purpose — `campaign/gating.js` drives presentation only, so every
 `/play/` URL is publicly reachable.
 
-Still missing for search: `index.html` carries one hardcoded `<title>` and no description, so all 54
+Still missing for search: `index.html` carries one hardcoded `<title>` and no description, so all 60
 URLs share identical SERP text. Per-route titles/meta need either a prerender step or an SSR host;
 do not paste a static `<link rel="canonical">` into `index.html`, which would declare every route
 canonical to one URL.
@@ -222,7 +272,7 @@ Unknown showcase board filters are rejected. The frontend API client includes th
 
 ## 4. Remaining verification and optional work
 
-The in-scope product implementation is complete; the PRD's full nonfunctional browser/device matrix
+The base product and Drone Builder D1–D3 implementation are complete as teaching subsets; the PRD's full nonfunctional browser/device matrix
 has not been certified. Current browser checks use local Chromium. Safari, Firefox, Edge, real touch
 hardware and throttled-network/frame-time measurements remain release verification work.
 

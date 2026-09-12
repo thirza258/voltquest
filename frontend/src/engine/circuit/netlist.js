@@ -14,11 +14,11 @@ import { netsWithinHops } from './path.js'
 import { operatingPoint } from './evaluate.js'
 
 /** Module roles that receive a signal from the MCU (bound by connectivity alone). */
-const INPUT_ROLES = new Set(['signal', 'din', 'trig', 'in', 'sda', 'scl'])
+const INPUT_ROLES = new Set(['signal', 'din', 'trig', 'in', 'sda', 'scl', 'tx', 'rx'])
 /** Module roles that drive the MCU (bound only when the levels are electrically readable). */
 const OUTPUT_ROLES = new Set(['echo', 'out', 'data'])
 /** Roles that describe the module's supply rather than a signal. */
-const POWER_ROLES = new Set(['vcc', 'gnd'])
+const POWER_ROLES = new Set(['vcc', 'vbat', 'gnd'])
 /** Hop budget of the binding search (§7.3): 0 = same net, 2 = through a divider or a level shifter. */
 const BINDING_MAX_HOPS = 2
 const HIGH_RATIO = 0.6

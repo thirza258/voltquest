@@ -88,6 +88,7 @@ export function AppHeader({
   boardSwitcherEnabled = false,
   onBoardChange,
   powered = true,
+  powerLabel,
   onPoweredChange,
   hintTier = 0,
   hintMax = 3,
@@ -194,7 +195,7 @@ export function AppHeader({
               />
             )}
 
-            <Tooltip content={powered ? t("USB power is on") : t("The board has no power")}>
+            <Tooltip content={powered ? t(powerLabel ? "Pack power is on" : "USB power is on") : t("The board has no power")}>
               <button
                 type="button"
                 onClick={() => onPoweredChange?.(!powered)}
@@ -202,7 +203,7 @@ export function AppHeader({
                 className="inline-flex h-8 items-center gap-1 rounded-md border border-line-strong bg-surface-panel px-2 text-xxs font-medium text-ink ring-brand-500 ring-offset-1 transition-colors duration-150 hover:bg-surface-sunken focus:outline-none focus-visible:ring-2"
               >
                 <Power size={13} className={powered ? 'text-emerald-600' : 'text-slate-500'} />
-                {powered ? t("USB 5 V") : t("Power off")}
+                {powered ? (powerLabel ?? t("USB 5 V")) : t("Power off")}
               </button>
             </Tooltip>
 

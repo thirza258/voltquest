@@ -339,7 +339,13 @@ export function parse(tokens, { intBits = 16, knownNames = null } = {}) {
         if (t.value === '-' && e.k === 'num') return num(-e.v, e.t)
         return { k: 'un', op: t.value, e, t: unaryResultType(t.value, e.t, intBits) }
       }
-      if (t.value === '&') { next(); return parseUnary() }          // address-of: our arrays are handles already
+      if (t.value === '&') {
+        next()
+        const e = parseUnary()
+        // Arrays are already handles. Scalar output parameters use a single-element reference.
+        if (e.k === 'var' && e.t !== 'array' && !e.arrayInfo) return { k: 'address', e, t: 'array', arrayInfo: { base: e.t } }
+        return e
+      }
       if (t.value === '*') {                                        // dereference: element 0 of the handle
         next()
         const e = parseUnary()

@@ -1,4 +1,5 @@
 import { CATALOG } from '../../content/index.js'
+import { droneBomItems } from '../../engine/drone/bom.js'
 import { describeValue, getDef } from '../../engine/components/registry.js'
 
 const MAPPING = { uno: 'arduino_uno', nano: 'arduino_nano', esp32: 'esp32_devkit_v1', esp32s3: 'esp32_s3', potentiometer: 'potentiometer_10k', diode: 'diode_1n4007', transistor_npn: 'transistor_2n2222', servo: 'servo_sg90', neopixel_ring: 'neopixel_ring_12', ultrasonic_hcsr04: 'hcsr04' }
@@ -10,6 +11,7 @@ export function billOfMaterials(doc) {
     const entry = CATALOG[id] ?? {}
     rows.set(key, { qty: 1, part: entry.name ?? fallback, value, catalog_id: id, unit_price_usd: entry.unitPriceUsd ?? 0, vendor: entry.vendors?.[0]?.name ?? '', link: entry.vendors?.[0]?.url ?? '' })
   }
+  if (doc.kind === 'drone') { for (const item of droneBomItems(doc)) add(item.id, item.value); return [...rows.values()] }
   add(doc.boardMode === 'full' ? 'breadboard_full' : 'breadboard_half')
   if (doc.boardMode === 'dual') add('breadboard_half')
   for (const c of doc.components) {

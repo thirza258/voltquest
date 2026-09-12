@@ -4,7 +4,7 @@ import { runLevelSolution, describeFailure } from './headless.js'
 
 describe('authored quest reference solutions', () => {
   it('discovers the authored campaign levels', () => {
-    expect(LEVEL_ORDER).toHaveLength(14)
+    expect(LEVEL_ORDER).toHaveLength(20)
     expect(LEVEL_ORDER).toEqual(WORLDS.flatMap((world) => world.levelIds))
     expect(new Set(LEVEL_ORDER)).toEqual(new Set(Object.keys(LEVELS)))
   })

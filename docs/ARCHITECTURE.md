@@ -146,3 +146,20 @@ Rules for all packages:
   the only file that uses `self`.
 - Every package ships tests for what it owns (`*.test.js` next to the code, vitest; pytest for backend).
 - No TypeScript. Use JSDoc `@typedef` for shapes where helpful.
+
+## Custom Drone Builder ownership and integration
+
+| Package | Paths | Contract |
+| --- | --- | --- |
+| Drone deterministic subsystem | `frontend/src/engine/drone/**` | CONTRACTS §15, DRONE.md |
+| Drone assembly/flight UI and export pack | `frontend/src/features/drone/**` | CONTRACTS §15, DESIGN.md, DRONE.md |
+| Drone project boundary | `backend/app/domain/drone.py`, generated `drone_catalog.json`, `services/drone_bom.py` | API.md, DRONE.md |
+| Drone metadata generation | `scripts/export-drone-catalog.mjs`, `content/drone-catalog.json` | Live board/component/config registries |
+
+The existing worker scheduler owns virtual time for both firmware and 1 kHz mechanics. Mechanics
+calls the separate reduced pack/ESC electrical model with motor load currents. That model reads the
+existing compiled terminal nets; signal and I²C/UART paths use existing peripheral bindings. This
+specialized radial-power branch does not replace the breadboard MNA solver or introduce another VM.
+The new feature chunks load through WorkspacePage's drone branch; the deterministic engine remains
+plain Node-compatible. Domain validation uses generated metadata without importing application
+settings, transports, ORM or UI code. Generation/equality tests keep both metadata copies synchronized.

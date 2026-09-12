@@ -18,7 +18,14 @@ export function createEsp32Extras(core, adc) {
     if (!config) return
     const duty = clamp(value, 0, 2 ** config.bits - 1) / (2 ** config.bits - 1)
     for (const [pin, binding] of attached) {
-      if (binding.channel === channel) core.setPwm(pin, duty, config.freq)
+      if (binding.channel === channel) {
+        const esc = core.bindings.byPin('esc', 'signal', pin)
+        if (esc) {
+          const protocol = core.drone?.state ? core.env.escProtocol : 'pwm'
+          const us = protocol === 'dshot600' ? (value < 48 ? 1000 : 1000 + (Math.min(2047, value) - 48) / 1999 * 1000) : duty / config.freq * 1e6 * (protocol === 'oneshot125' ? 8 : 1)
+          core.peripheral(esc, 'esc', { us })
+        } else core.setPwm(pin, duty, config.freq)
+      }
     }
   }
   return {

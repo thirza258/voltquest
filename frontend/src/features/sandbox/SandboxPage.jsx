@@ -16,6 +16,8 @@ import { AppHeader } from '../workspace/AppHeader.jsx'
 import { parseProjectFile, projectFile, projectPayload, seedFromProject } from './projectFile.js'
 import { billOfMaterials, bomCsv } from './bom.js'
 import { cacheProject, cachedProject, cachedProjects, isOfflineFailure, removeCachedProject } from './projectCache.js'
+import { createDroneDoc } from '../../engine/drone/document.js'
+import { ASSISTED_CODE } from '../../engine/drone/examples.js'
 
 const START = 'void setup() {\n}\n\nvoid loop() {\n}\n'
 const fingerprint = file => JSON.stringify(projectPayload(file))
@@ -23,7 +25,8 @@ function currentFile(name, description) {
   const { code, blocklyXml, editorMode } = useWorkspaceStore.getState()
   return projectFile({ name, description, circuit: useDocumentStore.getState().doc, code, blocklyXml, editorMode })
 }
-function initialProject(from) {
+function initialProject(from, bench) {
+  if (bench === 'drone') { const circuit = createDroneDoc(); return projectFile({ name: circuit.droneConfig.name, circuit, code: ASSISTED_CODE }) }
   const level = getLevel(from)
   const draft = level ? useWorkspaceStore.getState().peekDraft('campaign', from) : null
   const solution = level ? usePlayerStore.getState().progress[from]?.solution : null
@@ -39,7 +42,7 @@ export default function SandboxPage() {
   const cached = location.state?.project?.id === projectId ? location.state : null
   const importedFile = location.state?.imported
   const fetcher = useCallback(async () => {
-    if (!projectId) return importedFile ?? initialProject(search.get('from'))
+    if (!projectId) return importedFile ?? initialProject(search.get('from'), search.get('bench'))
     if (cached) { cacheProject(cached.project); return cached.project }
     await usePlayerStore.getState().ensureGuest()
     try {
@@ -133,8 +136,13 @@ function SandboxEditor({ initial, working }) {
       const filename = name.replace(/[^\p{L}\p{N}_-]+/gu, '-').replace(/^-|-$/g, '') || 'circuit'
       if (kind === 'json') downloadJson(file, `${filename}.json`)
       if (kind === 'code') downloadText(file.code, `${filename}.${file.board?.startsWith('raspberrypi') ? 'py' : 'ino'}`)
-      if (kind === 'png') downloadBlob(await exportCanvasPng(document.querySelector('[data-canvas-svg]')), `${filename}.png`)
+      if (kind === 'png') {
+        let element = document.querySelector('[data-canvas-svg]')
+        if (file.circuit.kind === 'drone') { const { wiringSvg } = await import('../drone/exportPack.js'); element = new DOMParser().parseFromString(wiringSvg(file.circuit), 'image/svg+xml').documentElement }
+        downloadBlob(await exportCanvasPng(element), `${filename}.png`)
+      }
       if (kind === 'csv') downloadText(bomCsv(billOfMaterials(file.circuit)), `${filename}-bom.csv`, 'text/csv;charset=utf-8')
+      if (kind === 'pack') { const { exportBuildPack } = await import('../drone/exportPack.js'); await exportBuildPack(file, filename) }
     } catch (error) { fail(error) }
   }
   async function unpublish() {
@@ -151,16 +159,19 @@ function SandboxEditor({ initial, working }) {
         { label: 'Name and description', onSelect: () => setModal('details') },
         { label: 'My projects', onSelect: openProjects },
         { label: 'New project', onSelect: () => setModal('new') },
+        { label: 'New custom drone', onSelect: () => setModal('newDrone') },
         { label: 'Import JSON', onSelect: () => fileInput.current?.click() },
         { label: 'Export JSON', onSelect: () => exportAs('json') },
         { label: 'Export code', onSelect: () => exportAs('code') },
         { label: 'Export PNG', onSelect: () => exportAs('png') },
         { label: 'Bill of materials', onSelect: () => setModal('bom') },
+        ...(doc.kind === 'drone' ? [{ label: 'Build it for real — export pack', onSelect: () => exportAs('pack') }] : []),
         { label: project.is_public ? 'Share link / Unpublish' : 'Publish to showcase', disabled: busy, onSelect: () => setModal('share') },
         ...(project.id ? [{ label: 'Delete project', danger: true, onSelect: () => setModal('delete') }] : []),
       ]} />
     </>} />
     <input ref={fileInput} type="file" accept=".json,application/json" className="hidden" aria-label={t("Import project file")} onChange={importFile} />
+    <Modal open={modal === 'newDrone'} onClose={() => setModal(null)} title={t('Start a custom drone?')} description={t('Save or export current unsaved work first to keep it. The new project opens a configurable quad-X with an editable flight sketch.')} footer={<><Button variant="secondary" onClick={() => setModal(null)}>{t('Cancel')}</Button><Button onClick={() => { useWorkspaceStore.getState().saveDraft(); useWorkspaceStore.getState().discardDraft('sandbox', 'new'); useWorkspaceStore.getState().setDraftsEnabled(false); setModal(null); navigate('/sandbox?bench=drone', { state: { imported: initialProject(null, 'drone') } }) }}>{t('New custom drone')}</Button></>} />
     <Modal open={modal === 'details'} onClose={() => setModal(null)} title={t("Project details")} footer={<Button onClick={() => setModal(null)}>{t("Done")}</Button>}><div className="space-y-4"><TextInput label={t("Project name")} value={name} maxLength={80} onChange={e => setName(e.target.value)} /><label className="block text-sm">{t("Description")}<textarea className="mt-2 min-h-28 w-full rounded-md border border-line p-2" value={description} maxLength={1000} onChange={e => setDescription(e.target.value)} /></label></div></Modal>
     <Modal open={modal === 'projects'} onClose={() => setModal(null)} title={t("My projects")}>{listError ? <div><p role="alert">{listError}</p><Button onClick={openProjects}>{t("Retry")}</Button></div> : projects == null ? <p role="status">{t("Loading projects…")}</p> : projects.length ? <ul className="space-y-3">{projects.map(p => <li key={p.id}><Link className="font-medium text-brand-700 underline" to={`/sandbox/${p.id}`} onClick={() => setModal(null)}>{p.name}</Link><p className="text-xs text-slate-500">{p.board} · {p.is_public ? t("Public") : t("Private")}</p></li>)}</ul> : <p>{t("No saved projects yet. Save this circuit to keep it in your account.")}</p>}</Modal>
     <Modal open={modal === 'bom'} onClose={() => setModal(null)} title={t("Bill of materials")} footer={<Button onClick={() => exportAs('csv')}>{t("Download CSV")}</Button>}><p className="mb-3 text-sm text-slate-600">{t("Catalog estimates are illustrative; check current vendor prices before buying.")}</p><div className="overflow-x-auto"><table className="w-full text-left text-sm"><thead><tr><th>{t("Qty")}</th><th>{t("Part")}</th><th>{t("Unit USD")}</th></tr></thead><tbody>{rows.map(r => <tr key={`${r.catalog_id}:${r.value}`} className="border-t border-line"><td className="py-2 pr-3">{r.qty}</td><td className="pr-3">{r.part}{r.link && <a className="ml-2 text-brand-700 underline" href={r.link} target="_blank" rel="noreferrer">{t("Vendor")}</a>}</td><td>{r.unit_price_usd.toFixed(2)}</td></tr>)}</tbody></table></div><p className="mt-3 font-semibold">{t("Estimated total: $")}{rows.reduce((sum, r) => sum + r.qty * r.unit_price_usd, 0).toFixed(2)}</p></Modal>

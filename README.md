@@ -9,7 +9,7 @@ breadboard/cable instructions where components are needed. Supported boards: Uno
 ESP32-S3, Raspberry Pi 4 and Raspberry Pi 5. Pi support is a restricted GPIO learning model, **not a
 Linux emulator**; see [`docs/RASPBERRY_PI.md`](docs/RASPBERRY_PI.md) and [`docs/TUTORIALS.md`](docs/TUTORIALS.md).
 
-The **14-quest campaign**, freeform **sandbox**, local **Monaco/Blockly editors**, **virtual phone**,
+The **20-quest campaign**, freeform **sandbox**, local **Monaco/Blockly editors**, **virtual phone**,
 **showcase with interactive previews and forking**, and **profile/leaderboard** are implemented.
 Sandbox projects support account saves, independent local drafts, JSON import, JSON/PNG/code/BOM
 exports, and public sharing. Campaign progress and settings recover after connectivity returns.
@@ -19,6 +19,8 @@ setup for creating and editing saved projects. See [assistant setup](docs/ASSIST
 server key, agent configuration and context-sharing workflow.
 See [`docs/IMPLEMENTATION_STATUS.md`](docs/IMPLEMENTATION_STATUS.md) for implementation evidence
 and [`AGENTS.md`](AGENTS.md) for the current verification results and remaining release checks.
+
+**Custom Drone Builder:** open `/sandbox?bench=drone` to configure a quad-X, wire named mounts and connectors, edit flight code, and fly with the virtual transmitter. Includes 3/5/7-inch presets, live estimates, blackbox plots, replay/slow motion, course editing, public forks and a ZIP build pack with wiring/BOM/sketch/checklist. See [the drone guide](docs/DRONE.md) for controls, firmware APIs, coefficient assumptions and verification limits.
 
 ## Product overview
 
@@ -71,13 +73,13 @@ Stop either stack with `make down`.
 
 ## Feature tour
 
-**A 14-level campaign across four worlds.** *The Spark of Life* teaches power, LEDs, resistors and
+**A 20-level campaign across five worlds.** *The Spark of Life* teaches power, LEDs, resistors and
 buttons (starting with the deliberate magic-smoke failure and its fix). *Signals and Rhythms* covers
 Morse-code timing, an LDR voltage divider, PWM dimming, transistor motor driving, and a Simon Says
 boss level. *The Power Swap* is the transition boss: move a working 5 V circuit onto an ESP32,
 protect its 3.3 V GPIO from a 5 V ultrasonic sensor with a divider, and re-scale your code from a
 10-bit to a 12-bit ADC. *The Connected World* is the ESP32 IoT academy — capacitive touch, a NeoPixel
-ring, a Wi-Fi controlled switch, and a weather station streaming over MQTT.
+ring, a Wi-Fi controlled switch, and a weather station streaming over MQTT. *Rotor Rising* adds six custom-drone quests: props-off ESC tests, propulsion estimates, motor mapping, IMU readings, rate PID and a gate-course flight.
 
 **A breadboard that behaves like a breadboard.** Full-size (830 tie-point) and half-size (400)
 boards on a true 0.1 in pitch, with snap-to-hole placement, continuity highlighting when you hover a

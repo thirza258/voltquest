@@ -7,6 +7,8 @@ import { createNetwork } from './network.js'
 import { createScheduler } from './scheduler.js'
 import { registerLibraries } from './libraries/index.js'
 import { translatePython } from './python.js'
+import { createDynamics, TELEMETRY_US } from '../drone/dynamics.js'
+import { compileCircuit } from '../circuit/index.js'
 
 const LIBRARY_HEADERS = {
   Servo: ['Servo.h', 'ESP32Servo.h'], LiquidCrystal_I2C: ['LiquidCrystal_I2C.h'],
@@ -14,12 +16,13 @@ const LIBRARY_HEADERS = {
   Adafruit_BME280: ['Adafruit_BME280.h'], Adafruit_SSD1306: ['Adafruit_SSD1306.h'],
   TwoWire: ['Wire.h'], Wire: ['Wire.h'], WiFi: ['WiFi.h'], WiFiClient: ['WiFi.h'],
   IPAddress: ['WiFi.h'], WebServer: ['WebServer.h'], PubSubClient: ['PubSubClient.h'],
+  MPU6050: ['MPU6050.h'], VoltRC: ['VoltRC.h'], RC: ['VoltRC.h', 'VoltFlight.h'], VoltFlight: ['VoltFlight.h'], Flight: ['VoltFlight.h'], PID: ['PID.h', 'VoltFlight.h'], AHRS: ['AHRS.h'], Adafruit_BMP280: ['Adafruit_BMP280.h'],
 }
 const CORE_HEADERS = new Set(['Arduino.h', 'stdint.h', 'stdbool.h', 'stddef.h', 'math.h', 'string.h', 'stdlib.h', 'stdio.h'])
 const ESP_NAMES = /^(WiFi|WiFiClient|WebServer|PubSubClient|ESP|touchRead|ledc\w*|dacWrite|hallRead|analogSet\w*|analogReadMilliVolts|esp_random|ADC_\w*|WL_\w*|WIFI_\w*|HTTP_\w*)$/
 const emptyEnv = (board) => ({ digital: {}, analog: {}, touch: {}, peripherals: {}, peripheralMap: [], wifiAllowed: board.family === 'esp32' })
 
-export function createRuntime({ board: profile, post = () => {}, realtime = true, now } = {}) {
+export function createRuntime({ board: profile, post = () => {}, realtime = true, now, droneDoc = null } = {}) {
   const board = normalizeBoard(profile, boards)
   const pins = createPinResolver(board, boards)
   let program = null
@@ -35,6 +38,9 @@ export function createRuntime({ board: profile, post = () => {}, realtime = true
   let changes = []
   let reads = []
   let serialText = ''
+  let droneCompiled = droneDoc ? compileCircuit(droneDoc) : null
+  let nextFlightUs = TELEMETRY_US, lastInputId = 0, lastSampleUs = 0
+  let pendingTimeline = []
   let timers = []
   let pendingInterrupts = []
   const interrupts = new Map()
@@ -43,7 +49,10 @@ export function createRuntime({ board: profile, post = () => {}, realtime = true
   const core = {
     board, pins, intBits: board.intBits, env: emptyEnv(board), shared: {},
     now: () => vm?.now() ?? 0,
-    post: (message) => post({ ...message, t: core.now() }),
+    post: (message) => {
+      if (message.type === 'peripheral' && message.protocol === 'esc') core.drone?.command(message.componentId, message.data.us)
+      post({ ...message, t: core.now() })
+    },
     format: formatValue,
     log(level, code, message) {
       const key = `${code}:${message}`
@@ -125,6 +134,24 @@ export function createRuntime({ board: profile, post = () => {}, realtime = true
   }
 
   function pump() {
+    if (core.drone) {
+      while (core.drone.nextUs <= core.now()) core.drone.step()
+      const flight = core.drone.state
+      Object.assign(core.env, flight.sensors, { drone: flight.derived, escProtocol: droneDoc.droneConfig.esc.protocol })
+      core.env.peripheralMap = droneCompiled.peripheralMap.map(binding => ({ ...binding, powered: flight.electrical.fcPowered && (binding.protocol !== 'esc' || flight.electrical.escEnabled[Number(droneDoc.mounts.find(m => m.componentId === binding.componentId)?.mount?.replace('esc', '')) - 1]) }))
+      if (core.drone.consumeReset()) {
+        const time = core.now()
+        vm = createVM(program, host); vm.start(); vm.advanceTo(time)
+        pinStates = {}; timers = []; interrupts.clear(); pendingInterrupts = []
+      }
+      if (core.now() >= nextFlightUs) {
+        const compact = { ...flight, blackbox: flight.blackbox.filter(r => r.t > lastSampleUs), timeline: flight.timeline.filter(r => r.id > lastInputId) }
+        post({ type: 'flight', t: core.now(), state: JSON.parse(JSON.stringify(compact)) })
+        lastSampleUs = flight.blackbox.at(-1)?.t ?? lastSampleUs
+        lastInputId = flight.timeline.at(-1)?.id ?? lastInputId
+        nextFlightUs += TELEMETRY_US
+      }
+    }
     network.pump()
     while (timers.length && timers[0].atUs <= core.now()) timers.shift().callback()
     if (core.shared.interruptsEnabled === false) return
@@ -147,7 +174,7 @@ export function createRuntime({ board: profile, post = () => {}, realtime = true
     driver: {
       now: core.now,
       advanceTo: (timeUs) => vm.advanceTo(timeUs),
-      nextEventUs: () => Math.min(timers[0]?.atUs ?? Infinity, network.nextEventUs),
+      nextEventUs: () => Math.min(timers[0]?.atUs ?? Infinity, network.nextEventUs, core.drone?.nextUs ?? Infinity),
       beforeSlice: pump,
       step: (budget) => {
         const result = vm.step(budget)
@@ -178,6 +205,9 @@ export function createRuntime({ board: profile, post = () => {}, realtime = true
     runtimeError = null
     core.shared = { wifiConnected: false, interruptsEnabled: true }
     if (clearEnv) core.env = emptyEnv(board)
+    core.drone = droneDoc ? createDynamics(droneDoc, droneCompiled) : null
+    core.drone?.setTimeline(pendingTimeline)
+    nextFlightUs = TELEMETRY_US; lastInputId = 0; lastSampleUs = 0
     const arduino = createArduinoApi(core)
     serial = createSerial(core, { printf: board.family === 'esp32' })
     network = createNetwork(core)
@@ -259,9 +289,17 @@ export function createRuntime({ board: profile, post = () => {}, realtime = true
       case 'serialInput': return serial.handleInput(message.text)
       case 'httpRequest': return network.queueHttpRequest(message)
       case 'mqttInbound': return network.deliverInbound(message.topic, message.payload)
+      case 'sticks': return core.drone?.setSticks(message.sticks)
+      case 'flightSpeed': return scheduler.setSpeed(message.speed)
+      case 'flightTimeline': pendingTimeline = message.timeline ?? []; return core.drone?.setTimeline(pendingTimeline)
+      case 'benchTilt': return core.drone?.setTilt(message.tilt)
+      case 'disturbance': return core.drone?.disturb(message.rates)
+      case 'droneDocument':
+        droneDoc = message.doc; droneCompiled = droneDoc ? compileCircuit(droneDoc) : null
+        return
       case 'env': {
         const previous = core.env.digital
-        for (const field of ['digital', 'analog', 'touch', 'peripherals', 'peripheralMap', 'wifiAllowed']) {
+        for (const field of ['digital', 'analog', 'touch', 'peripherals', 'peripheralMap', 'wifiAllowed', 'imu', 'baro', 'gps', 'rc', 'rpm', 'tune']) {
           if (message[field] !== undefined) core.env[field] = message[field]
         }
         for (const [pin, handler] of interrupts) {

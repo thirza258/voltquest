@@ -9,6 +9,7 @@
  * throwing: wiring rules work at idle because the board is powered at idle, firmware rules do not.
  */
 import { findPath } from '../circuit/index.js'
+import { DRONE_RULES, DRONE_RUNNING_RULES } from '../drone/rules.js'
 import {
   componentMatches,
   describeSelector,
@@ -25,6 +26,7 @@ const no = (detail) => ({ passed: false, detail })
 
 /** Rule types that can only be judged while the sketch is running. */
 const NEEDS_RUNNING = new Set([
+  ...DRONE_RUNNING_RULES,
   'pin_toggles', 'pin_period', 'pin_pattern', 'pin_state', 'pwm_varies', 'pwm_duty_between',
   'analog_read_seen', 'touch_used', 'serial_matches', 'peripheral_state',
   'wifi_connected', 'http_route_exists', 'http_response_matches', 'mqtt_published',
@@ -73,6 +75,7 @@ function regexOf(pattern, flags) {
 const traceOf = (ctx) => ctx.sim?.trace ?? null
 
 const RULES = {
+  ...DRONE_RULES,
   component_present(rule, ctx) {
     const min = rule.min ?? 1
     const found = matchingComponents(ctx.doc, rule).length

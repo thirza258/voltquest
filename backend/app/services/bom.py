@@ -141,6 +141,13 @@ def build_rows(circuit: dict[str, Any]) -> list[dict]:
             order.append(key)
         grouped[key]["qty"] += 1
 
+    if circuit.get('kind') == 'drone':
+        from app.domain.drone import validate_drone
+        from .drone_bom import items
+        validate_drone(circuit, circuit.get('mcu'))
+        for cid, value in items(circuit):
+            add(cid, value)
+        return [grouped[key] for key in order]
     for cid in _breadboard_ids(str(circuit.get("boardMode") or "half")):
         add(cid)
     for component in components:

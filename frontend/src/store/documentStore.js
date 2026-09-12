@@ -49,7 +49,7 @@ export function createDocumentStore({ registry = defaultRegistry, boards = defau
     const doc = { ...emptyDoc(input?.boardMode ?? 'half', breadboard), ...clone(input ?? {}) }
     doc.version = 1
     doc.boardMode = ['half', 'full', 'dual'].includes(doc.boardMode) ? doc.boardMode : 'half'
-    if (!Array.isArray(doc.breadboards) || !doc.breadboards.length) doc.breadboards = layoutFor(doc.boardMode, breadboard)
+    if (doc.kind !== 'drone' && (!Array.isArray(doc.breadboards) || !doc.breadboards.length)) doc.breadboards = layoutFor(doc.boardMode, breadboard)
     doc.components = Array.isArray(doc.components) ? doc.components : []
     doc.wires = Array.isArray(doc.wires) ? doc.wires : []
     doc.meta = doc.meta && typeof doc.meta === 'object' ? doc.meta : {}
@@ -124,7 +124,7 @@ export function createDocumentStore({ registry = defaultRegistry, boards = defau
       set({ doc: nextDoc, past: nextPast, future: [], ...extra })
     }
     const pruneSelection = (doc, selectedIds) => {
-      const ids = new Set([...doc.components.map((c) => c.id), ...doc.wires.map((w) => w.id)])
+      const ids = new Set([...doc.components.map((c) => c.id), ...(doc.links ?? doc.wires).map((w) => w.id)])
       return selectedIds.filter((id) => ids.has(id))
     }
 

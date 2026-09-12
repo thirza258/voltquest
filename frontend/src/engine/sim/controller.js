@@ -7,6 +7,8 @@ import * as defaultCircuit from '../circuit/index.js'
 import { createRuntime as defaultCreateRuntime } from '../runtime/index.js'
 import { createTrace } from './trace.js'
 import { deriveEnv, deriveModuleOutputs, envEquals } from './env.js'
+import { createDynamics } from '../drone/dynamics.js'
+import { validateDroneDoc } from '../drone/document.js'
 
 const FRAME_MS = 16 // Node fallback for requestAnimationFrame
 const INLINE_NOTIFY_MS = 20 // inline mode: at most one notification per 20 virtual ms (≤ 50 / virtual second)
@@ -66,6 +68,7 @@ export function createSimulation({ createWorker = null, inline = null, circuit =
   const useInline = !createWorker || Boolean(inline)
   const createRuntimeFn = (inline && typeof inline === 'object' && inline.createRuntime) || defaultCreateRuntime
   const trace = createTrace()
+  let recordedBuild = null, recordedCode = null
 
   /** Mutable working state; `getState()` freezes a copy lazily. */
   const st = {
@@ -151,6 +154,7 @@ export function createSimulation({ createWorker = null, inline = null, circuit =
       http: { started: st.http.started, port: st.http.port, routes: st.http.routes.slice(), log: st.http.log.slice() },
       mqtt: { connected: st.mqtt.connected, topics: { ...st.mqtt.topics }, log: st.mqtt.log.slice() },
       trace,
+      flight: st.flight ? { ...st.flight, replayAvailable: recordedBuild === JSON.stringify(doc) && recordedCode === code && st.flight.timeline.length > 0 && st.flight.timeline[0].id === 1 } : null,
     })
   }
 
@@ -199,7 +203,7 @@ export function createSimulation({ createWorker = null, inline = null, circuit =
     return {
       kind: 'worker',
       post: (msg) => worker.postMessage(msg),
-      load: (source, board) => worker.postMessage({ type: 'load', source, board: board.id }),
+      load: (source, board) => worker.postMessage({ type: 'load', source, board: board.id, droneDoc: doc?.kind === 'drone' ? doc : null }),
       start: () => worker.postMessage({ type: 'start' }),
       stop: () => worker.postMessage({ type: 'stop' }),
       reset: () => worker.postMessage({ type: 'reset' }),
@@ -214,7 +218,7 @@ export function createSimulation({ createWorker = null, inline = null, circuit =
       post: (msg) => runtime?.handle(msg),
       load: (source, board) => {
         runtime?.stop?.()
-        runtime = createRuntimeFn({ board, post: onMessage, realtime: false })
+        runtime = createRuntimeFn({ board, post: onMessage, realtime: false, droneDoc: doc?.kind === 'drone' ? doc : null })
         return runtime.load(source)
       },
       start: () => runtime?.start(),
@@ -293,6 +297,14 @@ export function createSimulation({ createWorker = null, inline = null, circuit =
 
   /** Evaluates the DC operating point, applies sticky damage, refreshes warnings and pushes a new env if needed. */
   function evaluateCircuit() {
+    if (doc?.kind === 'drone' && st.compiled) {
+      st.flight ??= createDynamics(doc, st.compiled, st.damaged).snapshot()
+      st.damaged = { ...st.damaged, ...st.flight.damaged }
+      if (!st.powered) st.flight = { ...st.flight, armed: false, rpm: [0, 0, 0, 0], electrical: { ...st.flight.electrical, currentA: 0, V_bus: 0, becV: 0, fcPowered: false } }
+      st.evaluation = { ok: true, converged: true, nodeVoltages: {}, mcuPinVoltages: {}, pinCurrents: {}, componentStates: {}, supplyCurrentA: st.flight.electrical.currentA, warnings: st.flight.warnings, events: [] }
+      st.warnings = st.flight.warnings
+      touch(); return
+    }
     if (st.compiled) {
       const components = doc?.components ?? []
       let evaluation = null
@@ -442,6 +454,17 @@ export function createSimulation({ createWorker = null, inline = null, circuit =
     if (disposed || !msg || typeof msg !== 'object') return
     if (typeof msg.t === 'number' && Number.isFinite(msg.t)) st.millis = Math.max(st.millis, Math.floor(msg.t / 1000))
     switch (msg.type) {
+      case 'flight': {
+        if (doc?.kind !== 'drone' || st.status !== 'running') return
+        const previous = st.flight
+        const blackbox = [...(previous?.blackbox ?? []), ...(msg.state.blackbox ?? [])].filter((row, i, all) => i === 0 || row.t !== all[i - 1].t).slice(-3000)
+        const timeline = [...(previous?.timeline ?? [])]
+        for (const a of msg.state.timeline ?? []) if (JSON.stringify(timeline.at(-1)) !== JSON.stringify(a)) timeline.push(a)
+        st.flight = { ...msg.state, blackbox, timeline: timeline.slice(-10000) }
+        st.damaged = st.flight.damaged; st.events = st.flight.events; st.warningCodesSeen = st.flight.warningCodesSeen
+        if (st.flight.warningCodesSeen.reverse_polarity || st.flight.warningCodesSeen.short_circuit) stopRuntime('stopped')
+        return evaluateCircuit()
+      }
       case 'compiled':
         return onCompiled(msg)
       case 'status':
@@ -522,6 +545,7 @@ export function createSimulation({ createWorker = null, inline = null, circuit =
     lastNotifyVirtualMs = -Infinity
     Object.assign(st, {
       status: 'idle',
+      flight: null,
       diagnostics: [],
       runtimeError: null,
       millis: 0,
@@ -573,28 +597,41 @@ export function createSimulation({ createWorker = null, inline = null, circuit =
     /** Replaces the circuit; recompiles, drops damage of removed parts and keeps a running sketch running. */
     setDocument(nextDoc) {
       if (disposed) return
+      const previousKind = doc?.kind
       doc = nextDoc ?? null
+      if (doc?.kind === 'drone') validateDroneDoc(doc)
+      st.flight = null
       const prevBoard = st.board
       const compiled = doc ? circuit.compileCircuit(doc) : null
       st.compiled = compiled
       st.board = compiled?.mcu?.board?.id ?? null
-      const ids = new Set((doc?.components ?? []).map((c) => c.id))
+      const ids = new Set([...(doc?.components ?? []), ...(doc?.links ?? [])].map((c) => c.id))
       st.damaged = pickKeys(st.damaged, ids)
       st.controls = pickKeys(st.controls, ids)
       if (!compiled?.mcu || st.board !== prevBoard) st.burntPins = {}
       st.powered = poweredPref && Boolean(compiled?.mcu)
       const wasRunning = st.status === 'running' || st.status === 'compiling'
-      if (wasRunning && (!compiled?.mcu || st.board !== prevBoard)) stopRuntime('stopped')
+      if (wasRunning && (!compiled?.mcu || st.board !== prevBoard || doc?.kind === 'drone' || previousKind === 'drone')) stopRuntime('stopped')
       evaluateCircuit()
     },
 
     /** Stores the sketch source used by the next `run()`. */
     setCode(source) {
       code = typeof source === 'string' ? source : ''
+      touch()
     },
+    replayFlight() {
+      if (!sim.getState().flight?.replayAvailable) return Promise.resolve({ ok: false })
+      return sim.run({ flightTimeline: st.flight.timeline })
+    },
+    setSticks(sticks) { if (st.status === 'running') transport?.post({ type: 'sticks', sticks }) },
+    setSpeed(speed) { transport?.post({ type: 'flightSpeed', speed }) },
+    setFlightTimeline(timeline) { transport?.post({ type: 'flightTimeline', timeline }) },
+    setBenchTilt(tilt) { transport?.post({ type: 'benchTilt', tilt }) },
+    disturb(rates) { transport?.post({ type: 'disturbance', rates }) },
 
     /** Implicit reset, then compile + start the sketch. Resolves once the runtime reported the compile result. */
-    async run() {
+    async run({ flightTimeline = [] } = {}) {
       if (disposed) return { ok: false, errors: [diagnostic('Simulation was disposed', 'disposed')] }
       clearRunState()
       st.runId += 1
@@ -607,7 +644,7 @@ export function createSimulation({ createWorker = null, inline = null, circuit =
         return { ok: false, errors }
       }
       if (!st.powered) {
-        const errors = [diagnostic('Power is off — turn the USB supply on to run the sketch.', 'unpowered')]
+        const errors = [diagnostic('Power is off — turn the supply on to run the sketch.', 'unpowered')]
         st.status = 'error'
         st.diagnostics = errors
         touch()
@@ -628,6 +665,8 @@ export function createSimulation({ createWorker = null, inline = null, circuit =
       st.status = 'running'
       virtualMs = 0
       lastNotifyVirtualMs = -Infinity
+      recordedBuild = JSON.stringify(doc); recordedCode = code
+      if (doc?.kind === 'drone') transport.post({ type: 'flightTimeline', timeline: flightTimeline })
       transport.start()
       lastEnv = null
       publishEnv(true)
@@ -664,6 +703,7 @@ export function createSimulation({ createWorker = null, inline = null, circuit =
       const powered = poweredPref && Boolean(st.compiled?.mcu)
       if (powered === st.powered) return
       st.powered = powered
+      if (doc?.kind === 'drone') st.flight = null
       if (!powered) {
         if (st.status === 'running' || st.status === 'compiling') {
           pendingCompile?.finish({ ok: false, errors: [diagnostic('Power was switched off', 'unpowered')], warnings: [] })

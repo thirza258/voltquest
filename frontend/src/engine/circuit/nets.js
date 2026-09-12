@@ -140,7 +140,7 @@ export function buildNets(doc, registry, boards) {
   }
 
   // --- wires --------------------------------------------------------------------------------------------------
-  for (const w of doc?.wires ?? []) {
+  for (const w of (doc?.kind === 'drone' ? doc.links : doc?.wires) ?? []) {
     if (!w?.from || !w?.to) continue
     for (const terminal of [w.from, w.to]) {
       uf.add(terminal)

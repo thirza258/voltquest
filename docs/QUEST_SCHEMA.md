@@ -88,3 +88,38 @@ mqtt_published      { topic, pattern?, minCount?=1 }
 control_state       { componentType, field, equals }
 all_of / any_of     { rules } ; not { rule }
 ```
+
+## Drone quest extension (World 5)
+
+World `w5` uses `esp32`, theme `violet`, and levels w5-l1 through w5-l6. Each starter/solution is an
+ordinary level CircuitDoc with `kind:'drone'`; use the document constructor and validation in
+`engine/drone/document.js`. Full schema and firmware APIs are in [DRONE.md](DRONE.md). Use the same
+briefing/learn/objectives/hints/starCriteria structure and `all_of`/`any_of`/`not` composition.
+
+| Predicate | Fields |
+| --- | --- |
+| `drone_config_between` | `field` (derived value), optional `min`, `max` |
+| `esc_pulse_between` | `motor:1..4`, `minUs`, `maxUs`, optional `forMs` |
+| `esc_armed_before_spin` | none; requires an armed ESC to have actually spun |
+| `motor_direction` | `motor:1..4`, `direction:'cw'|'ccw'` |
+| `prop_fitted` | `fitted:boolean`; true requires all four props, false accepts removed/unfitted props |
+| `armed_state` | `armed:boolean`, optional historical `atMs` |
+| `attitude_within` | `axis:'roll'|'pitch'|'yaw'`, `maxDeg`, `forMs` |
+| `hover_held` | `minAltitudeM`, `maxDriftM`, `forMs` |
+| `gates_passed` | `count`, `withinMs` |
+| `landed_safely` | `maxImpactMs2` |
+| `no_crash` | none |
+| `blackbox_oscillation` | `axis`, `maxAmplitudeDeg`, `windowMs`; peak-to-peak attitude span |
+| `imu_read_seen` | `minSamples`; only connected/powered IMU reads count |
+
+Timed windows use 50 Hz blackbox samples, not UI frames. Firmware-dependent rules require a running
+sketch through the existing running-rule gate; static config/direction/prop checks may pass at idle.
+IMU teaching goals also combine `serial_matches` with scripted tilt to verify numerical output.
+
+`solution.actions` additionally accepts `{atMs,sticks:{throttle,roll,pitch,yaw,arm,mode,signal}}`,
+`{atMs,tilt:{roll,pitch,yaw}}` and `{atMs,disturbance:[roll,pitch,yaw]}`. Headless stepping ends exactly
+at action boundaries; no real timers are used. Sticks are normalized (throttle 0..1, other axes -1..1).
+Disturbance units are body deg/s impulses; tilt is degrees on the clamped stand. Reference solutions
+must hold 1000 µs before arming/spinning and use props-off on bench levels. The boss permits editing
+its build and never swaps in a reference circuit on Run. Keep two materially different builds in the
+boss regression. All 20 campaign solutions must earn three stars in the shared headless gate.

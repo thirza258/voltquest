@@ -28,6 +28,10 @@ import './workspace.css'
 
 const VirtualPhone = lazy(() => import('../iot/VirtualPhone.jsx'))
 const IoTInspector = lazy(() => import('../iot/IoTInspector.jsx'))
+const DroneBench = lazy(() => import('../drone/DroneBench.jsx'))
+const DroneConfigurator = lazy(() => import('../drone/DroneConfigurator.jsx'))
+const DroneInspector = lazy(() => import('../drone/DroneConfigurator.jsx').then(m => ({ default: m.DroneInspector })))
+const DroneCodeTools = lazy(() => import('../drone/DroneCodeTools.jsx'))
 const EMPTY = []
 
 /** Shared working bench for campaign, sandbox and public interactive previews. */
@@ -48,10 +52,12 @@ export default function WorkspacePage({ mode = 'campaign', seed = null, sessionI
   const [dualPrompt, setDualPrompt] = useState(false)
   const [smoke, setSmoke] = useState(null)
   const [restartPrompt, setRestartPrompt] = useState(false)
+  const [dronePanel, setDronePanel] = useState('bench')
   const eventsSeen = useRef(new Set())
   const selectedKey = selectedIds.join(',')
   const campaign = mode === 'campaign'
-  const rightTabs = board?.family === 'esp32' ? ['code', 'phone', 'iot'] : ['code']
+  const drone = doc.kind === 'drone'
+  const rightTabs = board?.family === 'esp32' && !drone ? ['code', 'phone', 'iot'] : ['code']
   const rightTab = rightTabs.includes(workspace.rightTab) ? workspace.rightTab : 'code'
   const reportObjectives = objectives?.objectives ?? EMPTY
   const firstUnpassed = reportObjectives.find(o => !o.passed) ?? level?.objectives?.[0]
@@ -60,7 +66,8 @@ export default function WorkspacePage({ mode = 'campaign', seed = null, sessionI
   const boardOptions = useMemo(() => BOARD_IDS.filter(value => !campaign || !level?.allowedComponents || level.allowedComponents.includes(value)).map(value => ({ value, label: getBoard(value).name })), [campaign, level])
   const diagnostics = useMemo(() => [...(state?.diagnostics ?? []), ...(state?.runtimeError ? [{ ...state.runtimeError, severity: 'error' }] : [])], [state?.diagnostics, state?.runtimeError])
 
-  useToneAudio(state?.tones, settings.audio)
+  const tones = useMemo(() => drone && state?.status === 'running' ? { ...state.tones, rotors: state.flight?.armed ? state.flight.rpm.reduce((sum, rpm) => sum + rpm, 0) / 240 : 0 } : state?.tones, [drone, state?.tones, state?.flight, state?.status])
+  useToneAudio(tones, settings.audio)
   useEffect(() => {
     if (selectedKey) useWorkspaceStore.getState().setLeftTab('inspect')
   }, [selectedKey])
@@ -151,6 +158,7 @@ export default function WorkspacePage({ mode = 'campaign', seed = null, sessionI
     store.removeComponents(ids.filter(id => doc.components.some(c => c.id === id)))
   }
   function replaceDamaged() {
+    if (drone) { session.resetSim(); setSmoke(null); return }
     const component = doc.components.find(c => smoke?.componentIds?.includes(c.id))
     if (!component) { session.resetSim(); return }
     const replacement = createComponent(component.type, component.anchor ? { anchor: component.anchor, rotation: component.rotation } : { position: component.position, rotation: component.rotation }, component.props)
@@ -161,34 +169,43 @@ export default function WorkspacePage({ mode = 'campaign', seed = null, sessionI
   const nextId = campaign && level ? nextLevelId(level.id) : null
   const closeModal = () => useWorkspaceStore.getState().closeModal()
   const restart = () => { setRestartPrompt(false); session.restartLevel(); onRestart?.() }
-  return <div className="vq-workspace flex min-h-screen flex-col bg-surface-page text-ink">
-    <AppHeader className="vq-workspace-header" center={campaign ? <LevelHeaderCenter level={level} boardVcc={board?.vcc} onBriefing={() => workspace.openModal('briefing')} /> : title} actions={actions} workspaceControls boardId={session.boardId} boardOptions={boardOptions} boardSwitcherEnabled={!readOnly && (!campaign || level?.boardSwitcher === 'enabled')} onBoardChange={changeBoard} powered={state?.powered !== false} onPoweredChange={useSimStore.getState().setPowered} showHint={campaign} hintTier={tier} hintDisabled={!campaign || !firstUnpassed || objectives?.allPassed} onHint={session.requestHint} onResetSim={session.resetSim} onRestartLevel={readOnly ? undefined : () => setRestartPrompt(true)} onShortcuts={shortcuts} status={status} onRunStop={session.run} runDisabled={!doc.mcu} />
+  return <div data-drone-panel={dronePanel} className={`vq-workspace ${drone ? 'vq-drone' : ''} flex min-h-screen flex-col bg-surface-page text-ink`}>
+    <AppHeader className="vq-workspace-header" center={campaign ? <LevelHeaderCenter level={level} boardVcc={board?.vcc} onBriefing={() => workspace.openModal('briefing')} /> : title} actions={actions} workspaceControls boardId={session.boardId} boardOptions={boardOptions} boardSwitcherEnabled={!drone && !readOnly && (!campaign || level?.boardSwitcher === 'enabled')} onBoardChange={changeBoard} powered={state?.powered !== false} powerLabel={drone ? `${doc.droneConfig.battery.cells}S LiPo` : undefined} onPoweredChange={useSimStore.getState().setPowered} showHint={campaign} hintTier={tier} hintDisabled={!campaign || !firstUnpassed || objectives?.allPassed} onHint={session.requestHint} onResetSim={session.resetSim} onRestartLevel={readOnly ? undefined : () => setRestartPrompt(true)} onShortcuts={shortcuts} status={status} onRunStop={session.run} runDisabled={!doc.mcu} />
     {session.draftOffer && <div className="border-b border-brand-200 bg-brand-50 p-2 text-sm text-brand-900">{t("Saved work is available. ")}<button className="ml-2 underline" onClick={session.resumeDraft}>{t("Resume your work")}</button><button className="ml-3 underline" onClick={session.dismissDraft}>{t("Start fresh")}</button></div>}
     {workspace.draftRestored && <div className="border-b border-line p-2 text-xs text-slate-600">{t("Resumed your work · ")}<button className="underline" onClick={() => setRestartPrompt(true)}>{t("Start over")}</button></div>}
+    {drone && <Tabs aria-label={t("Drone workspace panels")} className="shrink-0 xl:hidden" tabs={[{ id: "build", label: t("Build") }, { id: "bench", label: t("Bench / flight") }, { id: "code", label: t("Code / tune") }]} value={dronePanel} onChange={setDronePanel} />}
     <main className="vq-workbench flex min-h-0 flex-1 flex-col xl:flex-row">
       <aside className="vq-left flex min-h-0 flex-col border-b border-line bg-white xl:border-b-0 xl:border-r" style={{ '--panel-width': `${workspace.panels.left}px` }}>
         <Tabs aria-label={t("Circuit panels")} size="sm" className="overflow-x-auto shrink-0" tabs={(campaign ? ['objectives', 'parts', 'inspect', 'learn', 'assistant'] : ['parts', 'inspect', 'learn', 'assistant']).map(id => ({ id, label: id === 'assistant' ? 'AI' : id[0].toUpperCase() + id.slice(1) }))} value={workspace.leftTab} onChange={workspace.setLeftTab} />
         <div className="min-h-0 flex-1 overflow-auto">
           {workspace.leftTab === 'objectives' && campaign && <ObjectivesPanel level={level} report={objectives} hintTier={workspace.hintTier} smoke={smoke} onDismissSmoke={() => setSmoke(null)} onShowWhy={() => { useDocumentStore.getState().select(smoke?.componentIds ?? []); workspace.setLeftTab('inspect') }} onReplacePart={replaceDamaged} />}
-          {workspace.leftTab === 'parts' && <PartsDrawer allowed={campaign ? level?.allowedComponents : null} onAdd={add} readOnly={readOnly} />}
-          {workspace.leftTab === 'inspect' && <Inspector doc={doc} selectedIds={selectedIds} state={state} readOnly={readOnly} onProps={useDocumentStore.getState().setProps} onRotate={rotate} onRemove={remove} onWireColor={(id, color) => useDocumentStore.getState().updateWire(id, { color })} onControl={useSimStore.getState().setControl} />}
-          {workspace.leftTab === 'learn' && <CircuitInsights level={campaign ? level : null} state={state} />}
+          {workspace.leftTab === 'parts' && !drone && <PartsDrawer allowed={campaign ? level?.allowedComponents : null} onAdd={add} readOnly={readOnly} />}
+          {workspace.leftTab === 'inspect' && !drone && <Inspector doc={doc} selectedIds={selectedIds} state={state} readOnly={readOnly} onProps={useDocumentStore.getState().setProps} onRotate={rotate} onRemove={remove} onWireColor={(id, color) => useDocumentStore.getState().updateWire(id, { color })} onControl={useSimStore.getState().setControl} />}
+          {workspace.leftTab === 'learn' && !drone && <CircuitInsights level={campaign ? level : null} state={state} />}
+          <Suspense fallback={<p className="p-3">{t('Loading drone tools…')}</p>}>
+            {drone && workspace.leftTab === 'parts' && <DroneConfigurator doc={doc} readOnly={readOnly} />}
+            {drone && workspace.leftTab === 'inspect' && <DroneInspector doc={doc} state={state} selectedIds={selectedIds} readOnly={readOnly} />}
+            {drone && workspace.leftTab === 'learn' && <div className="space-y-3 p-3 text-sm"><h2 className="font-semibold">{t(level?.learn?.title ?? 'Flight bench')}</h2><p className="whitespace-pre-wrap text-slate-600">{t(level?.learn?.body ?? 'Configure the build, match motor and prop direction, and connect each ESC signal to its intended FC pin. The sketch controls the motors. Use the blackbox to compare gyro response against the setpoint.')}</p></div>}
+          </Suspense>
           <div hidden={workspace.leftTab !== 'assistant'}><AssistantPanel key={`${mode}:${id}:${doc.mcu}`} mode={mode} title={campaign ? t(level?.title) : projectName ?? seed?.title ?? doc.meta?.name} doc={doc} code={code} state={state} selectedIds={selectedIds} lesson={campaign ? level : null} objectives={objectives} /></div>
         </div>
       </aside>
       <ResizeHandle side="left" value={workspace.panels.left} onChange={px => workspace.setPanelSize('left', px)} />
       <section className="vq-bench relative min-w-0 flex-1" aria-label={t("Circuit workbench")}>
+        {drone ? <Suspense fallback={<p className="p-4">{t('Loading drone bench…')}</p>}><DroneBench doc={doc} state={state} selectedIds={selectedIds} ghost={workspace.showGhost ? level?.solution?.circuit : null} readOnly={readOnly} sandbox={!campaign} /></Suspense> : <>
         <div className="absolute right-3 top-3 z-10 flex max-w-[calc(100%-24px)] flex-wrap justify-end gap-2 rounded-lg border border-line bg-white p-1.5">
           <SegmentedControl size="sm" value={workspace.tool} onChange={workspace.setTool} options={[{ value: 'select', label: 'Select' }, { value: 'wire', label: 'Wire' }]} aria-label={t("Canvas tool")} />
           <Button size="sm" variant="secondary" onClick={() => workspace.setLeftTab('assistant')}>{t("Ask AI")}</Button>
           {!readOnly && <div className="flex flex-wrap gap-1" aria-label={t("Wire palette")}>{WIRE_COLORS.map(color => <button key={color} aria-label={t('{color} wire', { color: t(color) })} aria-pressed={workspace.wireColor === color} title={t('{color} wire', { color: t(color) })} className={`h-7 w-7 rounded border-2 ${workspace.wireColor === color ? 'border-brand-600' : 'border-line'}`} style={{ backgroundColor: color }} onClick={() => workspace.setWireColor(color)} />)}</div>}
         </div>
         <BreadboardCanvas doc={doc} simState={state} readOnly={readOnly} selectedIds={selectedIds} tool={workspace.tool} wireColor={workspace.wireColor} cosmetics={settings} ghost={workspace.showGhost ? level?.solution?.circuit : null} highlights={workspace.hintTargets} onSelect={useDocumentStore.getState().select} onAddComponent={dropPart} onMoveComponent={useDocumentStore.getState().moveComponent} onRotateComponent={rotate} onRemove={remove} onAddWire={useDocumentStore.getState().addWire} onRemoveWire={id => useDocumentStore.getState().removeWires([id])} onControl={useSimStore.getState().setControl} onToolChange={workspace.setTool} onWireColorChange={workspace.setWireColor} onDropRejected={reject} onEspNeedsDualBoard={() => setDualPrompt(true)} toolbarExtra={!readOnly && (!campaign || level?.boardSwitcher === 'enabled') ? <SegmentedControl size="sm" options={['half', 'full', 'dual'].map(value => ({ value, label: value[0].toUpperCase() + value.slice(1) }))} value={doc.boardMode} onChange={layout} aria-label={t("Breadboard layout")} /> : null} />
+        </>}
       </section>
       <ResizeHandle side="right" value={workspace.panels.right} onChange={px => workspace.setPanelSize('right', px)} />
       <aside className="vq-right flex min-h-0 flex-col border-t border-line bg-white xl:border-l xl:border-t-0" style={{ '--panel-width': `${workspace.panels.right}px` }}>
         <Tabs size="sm" aria-label={t("Program panels")} tabs={rightTabs.map(id => ({ id, label: id === 'iot' ? 'IoT' : id[0].toUpperCase() + id.slice(1) }))} value={rightTab} onChange={workspace.setRightTab} />
         <div className="min-h-0 flex-1 overflow-auto">
+          {drone && <Suspense fallback={null}><DroneCodeTools code={code} onCode={workspace.setCode} readOnly={readOnly} board={doc.mcu} /></Suspense>}
           {rightTab === 'code' && <CodePanel key={`${id}:${doc.mcu}`} code={code} xml={workspace.blocklyXml} editorMode={workspace.editorMode} board={board} diagnostics={diagnostics} readOnly={readOnly} onCode={workspace.setCode} onMode={workspace.setEditorMode} onBlocks={(xml, code) => { workspace.setBlocklyXml(xml); workspace.setCode(code, { fromBlocks: true }) }} />}
           <Suspense fallback={<p role="status" className="p-3 text-sm text-slate-600">{t("Loading network tools…")}</p>}>
             {rightTab === 'phone' && <VirtualPhone state={state} onRequest={useSimStore.getState().httpRequest} />}

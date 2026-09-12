@@ -16,6 +16,7 @@ import { LevelCard } from './LevelCard.jsx'
 
 /** Static class maps — Tailwind only keeps classes it can see in the source. */
 const THEME = {
+  violet: 'border-violet-200 bg-violet-50',
   amber: 'border-volt-200 bg-volt-50',
   teal: 'border-brand-200 bg-brand-50',
   rose: 'border-rose-200 bg-rose-50',
@@ -179,6 +180,7 @@ export function CampaignMap({
             <p className="text-xxs text-slate-500">{t("No objectives, every part unlocked. Build whatever you like and publish it to the showcase.")}</p>
           </div>
         </div>
+        <Button variant="secondary" onClick={() => navigate('/sandbox?bench=drone')}>{t("Build a custom drone")}</Button>
         <Button variant="secondary" onClick={openSandbox} iconRight={<ArrowRight size={15} />}>{t("Open the sandbox")}</Button>
       </Card>
     </div>

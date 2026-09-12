@@ -426,3 +426,57 @@ supplies the unsaved sandbox or public project's name independently of its rende
 remain active through response-body consumption. Chat does not edit code or circuits. MCP exposes
 only catalog/context and owned project creation/update tools; it never executes firmware or publishes.
 Wire protocol, credentials and limits are binding in `API.md`; usage is described in `ASSISTANT.md`.
+
+## 15. Custom Drone Builder extension (2026-09-12)
+
+`engine/drone/{config,document,electrical,dynamics,rules,bom,examples}.js` defines the quad-X teaching
+subsystem. The complete schema, units, coefficients, firmware subset and verification limits are in
+[DRONE.md](DRONE.md). These additions extend §§3–9 and §11; existing breadboard shapes remain valid.
+
+- `CircuitDoc.kind` is optional (`breadboard` by default) or `drone`. Drone docs retain `version:1`,
+  matching `mcu`/`droneConfig.fc.board`, and `boardMode:'half'` as a storage compatibility marker.
+  Empty `breadboards`/`wires` accompany `mounts:[{componentId,mount}]`, typed
+  `links:[{id,from,to,kind,awg,lengthM}]`, a version-1 `droneConfig`, `course:[{x,y,z,radius}]`,
+  and `flight:{seed,bench,wind:[x,y,z]}`. No new board id exists. Limit: 32 parts, 100 links, 24 gates.
+- `listDefs({bench:'drone'})` selects frame, brushless motor, prop, ESC, LiPo and sensor/receiver
+  definitions; default `listDefs()` remains breadboard-only. `getDef` resolves either kind.
+  `resolvePins` uses named mounts and component terminals for drones, never synthetic breadboard holes.
+  `createDroneDoc`, `validateDroneDoc`, `deriveConfig`, `feasibility`, `CONFIG_FIELDS`, `PRESETS` and
+  `DEFAULT_CONFIG` are named exports from their respective document/config modules.
+- Link kinds are `power|phase|signal|i2c|uart`; phase is one bundle. Existing terminal-net and
+  PeripheralBinding resolution adds ESC (`signal,vbat,gnd`), IMU/baro (`sda,scl,vcc,gnd`, addresses
+  0x68/0x76), receiver and optional GPS connector roles (`tx,rx,vcc,gnd`). The analytical drone power
+  branch runs on this compiled topology; breadboard MNA and its timing are unchanged.
+- Electrical → dynamics: `V_bus` in V, `escEnabled[4]` booleans, FC rail/brownout/cutoff.
+  Dynamics → electrical: `motorCurrentA[4]` in A. Physics fixes its step at 1000 µs, owns the seed/PRNG,
+  and is pumped at scheduler event boundaries during firmware sleeps. UI interpolation never drives it.
+- Runtime accepts optional `droneDoc` at construction/load. Inbound messages add `sticks`,
+  `flightTimeline`, `benchTilt`, `disturbance`, `flightSpeed`. `env` adds `imu`, `baro`, `rc`, `rpm`
+  (reserved optional `gps`). ESC writes use the existing `peripheral` message with protocol `esc`,
+  componentId and `{us}`. Sensor APIs require actual binding/power and board-correct I²C pins.
+- Outbound `{type:'flight',t,state}` carries bounded deltas at ≤50 Hz. `SimState.flight` merges them
+  into immutable telemetry: µs `t`, SI `position/velocity`, quaternion, rad/s body `rates`, degree
+  `attitude`, RPM, µs pulses, currents/thrust, electrical state, RC, armed/crashed/landed/gates,
+  sensor snapshots, damage/events, blackbox (3000 rows) and inputs (10000 rows). Inputs have monotonic
+  ids and virtual `atMs`, with `sticks`, `tilt` or `disturbance`. Replay requires complete input history.
+- `Simulation.run({flightTimeline}?)` still implies reset; `replayFlight()` captures the current
+  recording and starts it before execution. `setSticks`, `setFlightTimeline`, `setBenchTilt`, `disturb`
+  and `setSpeed(.25|.5|1)` are additive methods. Drone assembly edits stop firmware, invalidate replay,
+  recompile topology and retain damage until explicit repair/reset; changing code invalidates replay.
+- Warning vocabulary adds `reverse_polarity`, `esc_overcurrent`, `motor_overheat`, `wire_overcurrent`,
+  `bec_overload`, `brownout`, `lipo_overdischarge`, `prop_direction_mismatch`, `no_prop_guard`, `desync`,
+  `crash`, `receiver_loss`, `arm_throttle_high`; all have corrective explanations. Pack shorts use
+  `short_circuit`. Reverse/short abort; brownout resets firmware at the current virtual time.
+- Scalar unary address expressions (`&ax`) can be passed as writable one-element references to
+  teaching native libraries; existing array-address behavior remains unchanged. This does not add
+  general pointer arithmetic or arbitrary native memory access.
+- `/sandbox?bench=drone` uses the existing project/draft/save/import/showcase flows. Imports accept a
+  complete project or standalone validated drone specification; code examples replace code only with
+  confirmation. The build ZIP contains project/config JSON, BOM CSV, wiring PNG/SVG, `.ino`, checklist.
+  `ProjectSummary.drone_config` is nullable; all displayed estimates remain derived, never persisted.
+- Assistant snapshots add allowlisted drone specification, mounts, connectors, course and flight
+  telemetry. MCP guide/component metadata describes the same drone schema, with the same existing
+  ownership and private-project/timestamp constraints. No firmware executes on the backend.
+
+Custom numeric parameters of known drone parts are in scope. The deferred Custom Component Creator
+in §13 still means authoring entirely new part definitions; this feature does not implement it.

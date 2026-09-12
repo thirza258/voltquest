@@ -7,6 +7,7 @@
 import { newId } from '../../lib/ids.js'
 import { PITCH, holeAtWorld, holeLocalPosition, holeWorldPosition, layoutBreadboards } from './geometry.js'
 import { ALL_DEFS } from './defs/index.js'
+import { positionOf } from '../drone/document.js'
 import { LED_PARAMS, RESISTOR_VALUES, WIRE_COLORS, ldrOhms } from './defs/shared.js'
 
 export { RESISTOR_VALUES, WIRE_COLORS, LED_PARAMS, ldrOhms }
@@ -31,8 +32,8 @@ export function getDef(type) {
  * Definitions, optionally filtered by category and/or recommended board, in drawer order.
  * @param {{ category?: string, board?: string }} [filter]
  */
-export function listDefs({ category, board } = {}) {
-  return ALL_DEFS.filter((def) => (!category || def.category === category) && (!board || def.recommendedBoards.includes(board))).sort(
+export function listDefs({ category, board, bench = 'breadboard' } = {}) {
+  return ALL_DEFS.filter((def) => (def.bench ?? 'breadboard') === bench && (!category || def.category === category) && (!board || def.recommendedBoards.includes(board))).sort(
     (a, b) => CATEGORY_ORDER.indexOf(a.category) - CATEGORY_ORDER.indexOf(b.category),
   )
 }
@@ -158,6 +159,10 @@ function bondGroups(def) {
  * @returns {{ pins: { [pinId]: { terminal: string, hole: string|null, x: number, y: number } }, valid: boolean, invalidPins: string[], shorts: string[][] }}
  */
 export function resolvePins(component, doc) {
+  if (doc?.kind === 'drone') {
+    const [x, y] = positionOf(doc, component.id)
+    return { pins: Object.fromEntries((getDef(component.type)?.footprint.pins ?? []).map((p, i) => [p.id, { terminal: `${component.id}:${p.id}`, hole: null, x: x + i * 5, y }])), valid: true, invalidPins: [] }
+  }
   const def = getDef(component?.type)
   if (!def) return { pins: {}, valid: false, invalidPins: [], shorts: [] }
   const positions = pinPositions(component, doc)

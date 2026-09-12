@@ -8,6 +8,7 @@ from sqlalchemy import update
 
 from app.core.config import get_settings
 from app.db.models import Project, utcnow
+from app.domain.drone import CATALOG as DRONE_CATALOG
 from app.domain.errors import Conflict, InvalidInput, NotFound
 from app.schemas.projects import ProjectIn, ProjectPatch
 from app.services import projects
@@ -28,6 +29,7 @@ def guide():
     return {"boards": list(data["boards"]), "components": [{"type": d["type"], "name": d["name"], "mount": d["mount"]} for d in data["components"].values()],
             "schema": {"version": 1, "mcu": "board id", "boardMode": "half|full|dual", "breadboards": "use get_board layouts", "components": [{"id": "c_unique", "type": "registry type", "props": {}, "rotation": 0, "anchor": {"board": "bb1", "hole": "e20"}}], "wires": [{"id": "w_unique", "from": "componentId:pinName or bb1:hole", "to": "another terminal", "color": "red"}], "meta": {"name": "optional"}},
             "placement": "Board-mounted parts require anchor; free-mounted parts require position {x,y} in pixels. Rotation is 0/90/180/270. Pitch is 24px. Footprint dx follows numbered columns; dy follows letter rows (a=4,b=5,c=6,d=7,e=8,f=11,g=12,h=13,i=14,j=15). The trench separates e/f. a-e of one number are connected; f-j form another strip. Power rails need explicit supply/ground wires. Do not occupy the same hole with a jumper and a leg; use another hole on the same strip. Use catalog defaults for props. Exactly one matching controller is required.",
+            "drone": {"kind": "drone", "boardMode": "half", "breadboards": [], "wires": [], "defaultConfig": DRONE_CATALOG["defaultConfig"], "fields": DRONE_CATALOG["fields"], "mounts": DRONE_CATALOG["mounts"], "partTypes": [p["type"] for p in DRONE_CATALOG["parts"]], "placement": "Use mounts [{componentId,mount}] and links [{id,from,to,kind,awg,lengthM}], not anchors or breadboard wires. Link kinds: power, phase, signal, i2c, uart. Supply flight {seed,bench,wind:[0,0,0]} and course [{x,y,z,radius}]. Set props direction cw/ccw for motors and props; fitted boolean for props. Reuse esp32 or esp32s3, with exactly one FC. Get component metadata for sockets and compatible mounts.", "firmware": "ESP32Servo writes 1000-2000 us; hold low for 1 s and arm RC before spin. MPU6050, VoltRC, VoltFlight, PID and AHRS teaching helpers are available. Flight.update runs all four ESC channels on GPIO18/19/23/25 (S3:4/5/6/7). All execution remains in the simulator."},
             "workflow": "Read current context and get_board/get_component first. create_project without circuit makes a valid starter. Supply complete circuit and code to build. update_project requires the updated_at returned by get_project. Returned /sandbox links open saved results. Tools do not execute code, publish projects or modify the learner's unsaved browser document. Raspberry Pi supports restricted GPIO Python only; no ADC, Linux, arbitrary functions or network. Firmware execution stays in the browser."}
 
 
@@ -38,6 +40,9 @@ def get_board(board):
 
 
 def get_component(component_type):
+    for part in DRONE_CATALOG["parts"]:
+        if part["type"] == component_type:
+            return part
     if component_type not in catalog()["components"]:
         raise NotFound("Unsupported component")
     return catalog()["components"][component_type]
@@ -64,6 +69,10 @@ def validate_circuit(doc, board, mode):
         if not ok:
             raise InvalidInput(message)
     require(doc.get("version") == 1 and doc.get("mcu") == board and doc.get("boardMode") == mode, "Circuit version, board and layout must match the project")
+    if doc.get('kind') == 'drone':
+        from app.domain.drone import validate_drone
+        validate_drone(doc, board)
+        return
     require(mode in catalog()["layouts"] and doc.get("breadboards") == catalog()["layouts"][mode], "Use the breadboard layouts returned by get_board")
     comps, wires = doc.get("components"), doc.get("wires")
     require(isinstance(comps, list) and len(comps) <= 200 and isinstance(wires, list) and len(wires) <= 400, "Provide at most 200 components and 400 wires")

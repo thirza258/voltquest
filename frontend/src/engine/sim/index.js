@@ -7,7 +7,13 @@ export { deriveEnv, deriveModuleOutputs } from './env.js'
  * @typedef {object} Simulation
  * @property {(doc: object) => void} setDocument
  * @property {(source: string) => void} setCode
- * @property {() => Promise<{ ok: boolean, errors: Array }>} run
+ * @property {(options?: {flightTimeline?: Array}) => Promise<{ ok: boolean, errors: Array }>} run
+ * @property {(sticks: object) => void} setSticks
+ * @property {(actions: Array) => void} setFlightTimeline
+ * @property {(tilt: object) => void} setBenchTilt
+ * @property {(rates: number[]) => void} disturb
+ * @property {(speed: number) => void} setSpeed
+ * @property {() => Promise<{ok: boolean}>} replayFlight
  * @property {() => void} stop
  * @property {() => void} reset
  * @property {(componentId: string, patch: object) => void} setControl

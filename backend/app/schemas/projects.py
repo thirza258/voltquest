@@ -90,6 +90,7 @@ class ProjectPatch(ProjectPayload):
 
 
 class ProjectSummaryOut(BaseModel):
+    drone_config: dict[str, Any] | None = None
     id: str
     owner_id: str
     owner_name: str

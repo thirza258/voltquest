@@ -138,3 +138,18 @@ invalid geometry; and frontend snapshot, language, cancellation and configuratio
 Chromium verification exercised context sharing → MCP create/edit → saved sandbox → real blinking
 LED, plus English/Indonesian switching and a 390 px layout. A live paid OpenRouter answer and actual
 Claude Code/Codex CLI sessions still require the operator's credentials and configuration.
+
+## Drone context and agents
+
+Drone workspaces use the same guide and explicit Share current context control. Snapshots add only
+known drone specification fields, mounts, typed connector endpoints, course/flight settings and live
+attitude/RPM/rail/gate telemetry. Arbitrary metadata and full blackbox histories are excluded. Selected
+connectors remain in the selection context; current unsaved code is retained and hidden solutions
+remain excluded. Language switching does not recreate the build or simulation.
+
+The MCP guide includes the drone schema, allowed parameters, mounts and teaching firmware notes;
+component lookup includes drone sockets and compatible mounts. Existing project tools can create
+and edit owned private drone projects using complete CircuitDocs. Agent saves never overwrite an
+open tab, publish a project or run firmware. See [DRONE.md](DRONE.md) for the actual APIs and pin map.
+Regenerate `scripts/export-drone-catalog.mjs` output after drone metadata changes as well as the
+existing MCP board/catalog export after board changes.

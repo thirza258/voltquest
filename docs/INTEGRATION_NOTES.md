@@ -184,3 +184,36 @@ The regression suite checks that no cable hole is occupied by a component or ano
 - Footprints spanning two breadboards (ESP32/S3) must be validated in world coordinates, not solely
   against the anchor board's holes. `scripts/export-mcp-catalog.mjs` exports the actual registry,
   layouts and profiles; frontend equality tests reject drift. No deterministic engine imports React.
+
+## Custom Drone Builder — 2026-09-12
+
+- Chose D1–D3 full flight, quad-X only and existing ESP32/S3. Numeric known-part customization does
+  not depend on the deferred Custom Component Creator. `docs/DRONE.md` records coefficient evidence,
+  teaching assumptions and optional/unverified work; do not claim manufacturer-calibrated accuracy.
+- Drone docs preserve empty breadboards: document normalization must not auto-seed a breadboard.
+  Keep typed links and mounts through project/draft/undo/import/backend/share round trips. Default
+  registry listings stay breadboard-only; named drone terminals resolve through `resolvePins`.
+- Four logical ESC channels represent one 4-in-1 physical package in the BOM. Motor position follows
+  the phase bundle, not merely signal-pin numbering. Runtime adapters resolve the real ESC binding.
+  SDA/SCL presence alone is insufficient: they must match the board's actual I²C pins and power nets.
+- Fixed 1 ms mechanics is a scheduler event, including inside VM sleeps. Idle electrical checks
+  use the same compiled topology; the pack/BEC model is a reduced radial network, not full 1 kHz MNA.
+  Gravity projection is the accelerometer teaching approximation. UI animation is never a clock.
+- Mixing acts on thrust; assisted control converts mixed thrust to speed with square root. Hover
+  compensation must use the voltage at hover equilibrium, not the full-throttle sagged voltage.
+  Unfiltered gyro derivatives caused yaw oscillation: PID D terms use a low-pass derivative.
+- Scalar address outputs require references into VM storage; copying a scalar to a temporary array
+  silently breaks MPU6050.getMotion6. Existing array-address semantics are preserved and raw range
+  outputs are asserted numerically through the actual interpreter.
+- Sending only the last RC input per 20 ms loses intermediate stick events. Monotonic input ids,
+  complete message deltas and replay-before-start preserve trajectories. Code/build edits invalidate
+  replay; an input ring with a lost prefix cannot be replayed accurately and disables the control.
+- Assembly edits stop drone runs, preserve damage for surviving parts/links and recompute rails.
+  Reverse/short aborts after visible damage; Repair/Run reset intentionally clear it. Supply-off HUD
+  must not show a powered FC or pack current. A code edit alone affects the next run.
+- Frontend and domain validation metadata are generated together. Domain modules cannot import
+  `app.core.config`; the generated adjacent JSON avoids that dependency and ships in the app image.
+  Update-only board_mode changes still need merged-state validation for drone projects.
+- Vite HMR may serve store modules with `?t=` timestamps. Browser instrumentation must use the actual
+  loaded module URL (or reload cleanly); importing the bare URL can create an unused store instance.
+  Real browser checks use the actual Worker, separately from the deterministic inline test suite.

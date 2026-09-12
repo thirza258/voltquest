@@ -76,6 +76,7 @@ def project_summary(project: Project, owner_name: str | None = None) -> dict:
         "description": project.description or "",
         "board": project.board,
         "board_mode": project.board_mode,
+        "drone_config": project.circuit.get('droneConfig') if isinstance(project.circuit, dict) and project.circuit.get('kind') == 'drone' else None,
         "thumbnail": project.thumbnail,
         "is_public": project.is_public,
         "share_slug": project.share_slug,

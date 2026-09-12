@@ -1280,7 +1280,13 @@
         "WiFi.h",
         "WebServer.h",
         "PubSubClient.h",
-        "ESP32Servo.h"
+        "ESP32Servo.h",
+        "MPU6050.h",
+        "Adafruit_BMP280.h",
+        "VoltRC.h",
+        "VoltFlight.h",
+        "PID.h",
+        "AHRS.h"
       ],
       "ledBuiltin": "GPIO2",
       "i2c": {
@@ -2042,7 +2048,13 @@
         "WiFi.h",
         "WebServer.h",
         "PubSubClient.h",
-        "ESP32Servo.h"
+        "ESP32Servo.h",
+        "MPU6050.h",
+        "Adafruit_BMP280.h",
+        "VoltRC.h",
+        "VoltFlight.h",
+        "PID.h",
+        "AHRS.h"
       ],
       "ledBuiltin": "GPIO48",
       "i2c": {

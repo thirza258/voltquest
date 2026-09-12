@@ -59,6 +59,8 @@ export function createScheduler({
   let wakeAtUs = null
   let nextTickUs = tickIntervalUs
   let wallStartMs = 0
+  let wallOffsetUs = 0
+  let speed = 1
   /** Virtual µs the deterministic driver has been granted so far. */
   let budgetUs = 0
   let generation = 0
@@ -129,7 +131,7 @@ export function createScheduler({
 
   /** Wall-derived virtual target: virtual time may lag behind wall time but never lead it. */
   function wallTargetUs() {
-    return Math.max(0, Math.round((now() - wallStartMs) * 1000))
+    return Math.max(0, wallOffsetUs + Math.round((now() - wallStartMs) * 1000 * speed))
   }
 
   function schedule() {
@@ -158,6 +160,7 @@ export function createScheduler({
       wakeAtUs = null
       nextTickUs = tickIntervalUs
       if (realtime) wallStartMs = now()
+      wallOffsetUs = driver.now()
       budgetUs = driver.now()
       if (realtime) schedule()
     },
@@ -166,6 +169,11 @@ export function createScheduler({
     stop() {
       running = false
       clearPending()
+    },
+    setSpeed(value) {
+      if (![.25, .5, 1].includes(value)) return
+      if (realtime && running) { wallOffsetUs = wallTargetUs(); wallStartMs = now() }
+      speed = value
     },
 
     /** Forgets sleep and tick bookkeeping; call after the VM has been rebuilt. */

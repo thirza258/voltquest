@@ -564,3 +564,495 @@ Is binary in IndexedDB Cache? ──Yes──► \[Feed binary to Xtensa WASM En
 *   
 * **Multi-Breadboard Drag**: Canvas automatically warns users when dropping an ESP32 onto a single breadboard: *"This board covers all available pin rows. Would you like to snap a secondary breadboard alongside it?"* with a 1-click auto-expand option.
 
+---
+
+# **Product Requirements Document (PRD) Addendum: Custom Drone Builder & Flight Bench**
+
+**Product:** VoltQuest
+
+**Document Version:** 1.0.0
+
+**Document Status:** Proposed — **not implemented.** No requirement in this addendum is built today; nothing in `AGENTS.md`, `docs/CONTRACTS.md` or `docs/IMPLEMENTATION_STATUS.md` covers it yet.
+
+**Update Scope:** A player-configurable multirotor ("custom drone") that can be specified, wired, programmed, flown and exported from inside VoltQuest.
+
+**Engine note:** the base PRD and the ESP32 addendum above still describe avr8js, a cloud `arduino-cli` build farm and NestJS. The shipped engine is a **single custom Arduino-C++ interpreter running in a Web Worker**, a **DC MNA circuit solver**, an **SVG canvas**, and a **FastAPI** backend. For this feature, the stack described here supersedes the older references; the binding module contracts remain `docs/CONTRACTS.md`.
+
+## **1. Intent, Scope & Non-Goals**
+
+### **1.1 What "custom drone" means here**
+
+The player does not pick a finished drone off a shelf. They **specify** one — frame class, motor Kv, prop size, cell count, pack capacity, all-up weight — then wire it, write its firmware, tune it, fly it, and (optionally) export a real-world parts list and sketch to build the same machine on a bench. The configurator is the feature; the flight is the reward that proves the configuration was sane.
+
+This extends the product's existing promise (*"risk-free virtual laboratory"*) to the one class of beginner project where real-world mistakes are most expensive and most dangerous: a 4S LiPo, four brushless motors and spinning carbon props.
+
+### **1.2 In scope**
+
+1. A **Drone Bench** canvas mode: chassis-and-connector assembly, distinct from the breadboard canvas.
+2. A **Custom Drone Configurator**: a typed, validated build specification with derived performance figures.
+3. A **flight dynamics subsystem** running alongside (not inside) the circuit solver.
+4. New catalog parts, firmware API surface, quest content, validator rules and exports.
+
+### **1.3 Non-goals (explicitly out)**
+
+* Betaflight/ArduPilot/PX4 firmware emulation, CLI compatibility or config-dump import.
+* Fixed-wing, VTOL, helicopter/collective, and >4 rotor airframes in the first release (the mixer must not preclude them).
+* Aerodynamic fidelity beyond a coefficient-based rotor model: no blade-element theory, no vortex ring state, no wind field beyond a constant + gust term.
+* Real radio-link, video-transmitter or telemetry-radio RF modelling.
+* Any payload-carrying, tracking, or weaponization content (see §13).
+* Real flight-worthiness certification. The simulator is a teaching tool, never a sign-off.
+
+## **2. The Core Constraint: A Quadcopter Does Not Fit the Breadboard Abstraction**
+
+Everything shipped so far rests on three assumptions: parts sit on **0.1-inch tie-points**, connections are solved by a **DC MNA solver**, and behaviour is decided by **per-pin logic levels**. A quadcopter breaks all three — three-phase brushless motors at tens of amps, a LiPo pack with meaningful internal resistance, soldered/XT60 joints, and six degrees of rigid-body freedom.
+
+If this feature is specified as "add drone parts to the existing parts drawer," it is not implementable. It must be specified as a **second bench**.
+
+| Concern | Breadboard bench (shipped) | Drone bench (this addendum) |
+| :---- | :---- | :---- |
+| Placement | Holes on a 2.54 mm grid; `Placement` anchors (CONTRACTS §3/§4.2) | Named **mount points** on a frame: arm 1–4 motor pads, FC stack plate, PDB pads, battery strap, RX bay |
+| Connection | Jumper wire hole→hole | **Connector-level links**: XT60, 3-phase motor leads (bullet/solder pad), 3-pin servo lead, JST/SH cable, solder joint |
+| Currents | Milliamps; pin-level `overcurrent_pin` | **Amps to tens of amps**; pack sag, wire gauge, ESC rating |
+| Physics | Steady-state DC operating point | DC operating point **plus** a 6-DOF dynamics integration |
+| Failure | Magic smoke on a part | Magic smoke **and** a crash, with the airframe's damage persisted |
+
+### **2.1 What the drone bench reuses vs. replaces**
+
+**Reuses, unchanged in behaviour (must not be forked or duplicated):**
+
+* The document/persistence model — the drone build is a `CircuitDoc` variant (§5.4), so save/load, undo, JSON import/export, publish, preview and fork keep working.
+* The parts drawer, the inspector, selection, and the hint tiers 1–3 (tier 3 ghost = the solution build).
+* Run/Stop, reset semantics (`run()` implies reset), the serial monitor, and the objective/validator loop.
+* The "magic smoke" effect vocabulary (`SmokePuff`, `CrackOverlay`, `Sparkle`) and the sticky-damage model (`damaged`, `events`, `warningCodesSeen`).
+* PNG export, BOM CSV export, sketch export, showcase publish/fork.
+
+**Replaces or adds:**
+
+* Breadboard geometry, hole snapping and terminal continuity → frame mount points and connector sockets.
+* A **flight view** (§8) and a **virtual transmitter** (§8.2) — new panels with no breadboard equivalent.
+* A **high-current electrical domain** (§3.2) layered on the existing solver rather than replacing it.
+
+## **3. Architecture: Two Loops, One Explicit Interface**
+
+Flight dynamics is a **new subsystem running alongside the circuit solver**, not inside it. The solver owns the electrical domain; the dynamics loop owns thrust and attitude. Their contact surface is small and must be written down before either is built.
+
+```
+  [Interpreter / Runtime  (Web Worker) ]
+        |  ESC command per motor (µs pulse, or duty, or DShot value)
+        v
+  +----------------------------+        motor currents I1..I4        +---------------------------+
+  |   Electrical domain        | <--------------------------------- |   Flight dynamics loop    |
+  |   (MNA solver + pack model)| ---------------------------------> |   (6-DOF rigid body)      |
+  |   - pack V_oc, R_int, sag  |   available pack voltage V_bus      |   - motor/prop model      |
+  |   - BEC / 5 V rail         |                                     |   - mixer, forces, torques|
+  |   - wire / ESC I^2R losses |                                     |   - integrator, collision |
+  +----------------------------+                                     +---------------------------+
+        |                                                                   |
+        | brownout / cutoff / smoke events                                   | IMU, baro, GPS, RPM
+        v                                                                   v
+  [ Warnings, damage, HUD ]                             [ env -> Runtime: sensor reads, telemetry ]
+```
+
+### **3.1 The interface contract (binding, both directions)**
+
+**Dynamics ← Electrical, per dynamics step:**
+
+* `V_bus` — the sagged pack voltage available to each ESC.
+* `escEnabled[i]` — false when an ESC is unpowered, burnt, or the FC is browned out.
+
+**Electrical ← Dynamics, per dynamics step:**
+
+* `motorCurrentA[i]` — drawn from the mechanical load, fed back as the pack's load current.
+* `rpm[i]`, `omega[i]` — for the RPM telemetry channel and audio.
+
+**Runtime ← Dynamics, via the existing `env` message (CONTRACTS §7.1):**
+
+* IMU: accelerometer (m/s², body frame), gyro (deg/s, body frame), optional magnetometer.
+* Barometric altitude, optional GPS fix (lat/lon/alt/sats), optional RPM per motor.
+* Receiver channel values (from the virtual transmitter, §8.2).
+
+**Dynamics ← Runtime, via the existing `peripheral` message (CONTRACTS §7.2):**
+
+* `{ type: 'peripheral', protocol: 'esc', componentId, data: { us } }` — one per ESC signal write.
+
+### **3.2 Rates, stepping and determinism**
+
+| Loop | Rate | Note |
+| :---- | :---- | :---- |
+| Flight dynamics integration | Fixed step, **TBD** (start 1 kHz; must be ≥ 4× the firmware's control loop) | Semi-implicit Euler or RK4; fixed step is non-negotiable for reproducibility |
+| Electrical solve | Lower rate, **TBD** (start 100–250 Hz), plus an immediate solve on any topology or damage change | Full MNA at 1 kHz is unaffordable; the pack model may be integrated at dynamics rate |
+| Firmware slices | Existing worker slicing (CONTRACTS §8) | Unchanged |
+| Flight view render | 60 FPS, interpolated from the last two dynamics states | Never drives physics |
+
+**Determinism requirement:** given the same build, the same sketch, the same stick input timeline and the same seed, a run must produce a bit-identical trajectory. Headless quest validation (`solution.actions`, §9.3) depends on it. All noise sources (IMU noise, vibration, gusts) draw from a single seeded PRNG owned by the dynamics subsystem.
+
+## **4. Drone Bench: Assembly & Electrical Requirements**
+
+### **4.1 New parts (catalog)**
+
+Each part ships a catalog entry in the **existing four-field shape** of `content/catalog.json` — `{ name, unitPriceUsd, vendors[{ name, url }], notes }` — so BOM CSV export and vendor links keep working with no export changes.
+
+| Part | Proposed catalog ids | Key modelled properties |
+| :---- | :---- | :---- |
+| Frame (quad X) | `frame_3in`, `frame_5in`, `frame_7in` | wheelbase, mass, arm count, max prop diameter, mount pattern |
+| Brushless motor | `motor_1404_4600kv`, `motor_2207_1750kv`, `motor_2806_1300kv` | Kv, stator size, mass, `maxCurrentA`, `R_phase`, `I_0` |
+| Propeller | `prop_3in_3b`, `prop_5in_3b`, `prop_7in_2b` | diameter, pitch, blade count, mass, direction (CW/CCW) |
+| ESC (4-in-1 or single) | `esc_4in1_45a`, `esc_single_30a` | continuous/burst amps, protocol support, BEC rail & amps |
+| Flight-controller carrier | `fc_carrier_esp32` | stack plate, 4 ESC signal headers, IMU, baro, RX header, BEC input |
+| IMU | `imu_mpu6050` | I²C address, ranges, noise/bias parameters |
+| Barometer | `baro_bmp280` | I²C address, resolution, noise |
+| LiPo pack | `lipo_4s_1500mah`, `lipo_3s_2200mah`, `lipo_6s_1300mah` | cells, mAh, C rating, mass, `R_int` |
+| RC receiver | `rx_elrs_2400` | channel count, protocol, failsafe behaviour |
+| Cabling & connectors | `xt60_pair`, `silicone_wire_16awg`, `jst_sh_cable` | gauge, resistance per metre, current rating |
+| Bench accessories | `thrust_stand`, `prop_guards`, `smoke_stopper` | used by the safe bench quests (§9.2) |
+
+Single-part-level user authoring (a part nobody shipped) is **not specified here** — it depends on the **Custom Component Creator**, which is PRD Phase 3 and currently deferred (`docs/ARCHITECTURE.md`, `docs/CONTRACTS.md` §13). See §14.2.
+
+### **4.2 Assembly rules**
+
+1. **Mount points, not holes.** A frame exposes named mounts; a part declares which mount kinds it accepts. Drops onto an incompatible or occupied mount are rejected through the existing `onDropRejected(reason)` path.
+2. **Motor position and rotation direction are both part of the build.** Each arm carries a motor index (1–4) and a commanded direction; each prop carries a CW/CCW handedness. A mismatch between prop handedness and motor direction is a first-class, detectable build error — not a silent failure.
+3. **Three-phase leads are modelled as a bundle, not three independent nets.** The player connects "motor → ESC output", not phase A/B/C individually. Phase-level wiring adds no pedagogy and triples the netlist.
+4. **Polarity is enforced where it matters.** Reversing the XT60 is an instant, visible, teachable failure (§4.4).
+5. **Signal wiring is conventional.** ESC signal + ground to four FC pins, RX to a UART, IMU/baro on I²C — all resolved through the **existing PeripheralBinding role table** (CONTRACTS §7.3) with new roles, not a parallel binding mechanism.
+
+### **4.3 High-current electrical model (extends the existing solver)**
+
+* **Pack:** `V = V_oc(SoC, cells) − I_total · R_int`. State of charge integrates consumed mAh. Per-cell voltage drives the low-voltage warning and cutoff.
+* **Wiring losses:** each conductor carries a resistance from gauge and length; `I²R` heating feeds the overcurrent/burn model.
+* **ESC:** models continuous and burst current limits, a thermal accumulator, and a BEC rail with its own current limit that powers the FC and RX.
+* **Brownout:** when the BEC or FC rail drops below the board's minimum, the runtime is reset mid-flight — exactly as a real brownout behaves — and the flight ends in a crash. This is a required teaching moment, not an edge case.
+
+### **4.4 New failure states ("magic smoke", extended)**
+
+These extend the existing warning-code vocabulary (CONTRACTS §5.4). Proposed codes:
+
+| Code | Trigger | Player-visible outcome |
+| :---- | :---- | :---- |
+| `reverse_polarity` | Pack connected backwards | Immediate FC/ESC destruction, smoke, run aborted |
+| `esc_overcurrent` | Sustained current over the ESC's rating | ESC burns; that motor stops; asymmetric thrust → crash |
+| `motor_overheat` | `I²R` thermal accumulator exceeds limit | Motor degrades then fails; visible scorch |
+| `bec_overload` | BEC rail current over rating | Brownout → FC reset mid-air |
+| `lipo_overdischarge` | Cell voltage below the safe floor | Pack puff animation, capacity permanently reduced for the session |
+| `prop_direction_mismatch` | Prop handedness ≠ motor direction | Downforce instead of lift; the quad flips on takeoff |
+| `no_prop_guard` | Arming with props fitted during a bench quest | Blocked with a safety callout, not a silent pass |
+| `desync` | Commanded RPM step exceeds the motor's achievable slew | Motor stalls briefly; audible desync; recoverable |
+
+### **4.5 Crash model**
+
+A crash is a collision with the ground or a course obstacle above a velocity threshold (**TBD**). Outcomes scale with impact energy: prop chip → prop break → arm break → FC damage. Damage is sticky through the existing `damaged`/`events` mechanism until reset, so "fix what you broke" is a real step. A **Repair** action restores parts and is always free in sandbox; in quests it may cost time on the star clock.
+
+## **5. The Custom Drone Configurator**
+
+This is the feature the player actually came for, and it must be usable **before** any wiring: pick or clone a preset, change numbers, see immediately what those numbers do.
+
+### **5.1 Build specification (schema)**
+
+Stored with the document (`CircuitDoc.droneConfig`, §5.4) and shareable on its own. All units explicit.
+
+```json
+{
+  "schemaVersion": 1,
+  "name": "My 5-inch freestyle",
+  "airframe": { "class": "quad_x", "wheelbaseMm": 220, "frameMassG": 110, "maxPropIn": 5.1 },
+  "motors": { "count": 4, "kv": 1750, "stator": "2207", "massG": 32,
+              "maxCurrentA": 35, "phaseResistanceMohm": 65, "noLoadCurrentA": 1.1 },
+  "props":  { "diameterIn": 5.1, "pitchIn": 4.6, "blades": 3, "massG": 4.5 },
+  "esc":    { "kind": "4in1", "continuousA": 45, "burstA": 55,
+              "protocol": "dshot600", "becVolts": 5, "becAmps": 2 },
+  "battery":{ "cells": 4, "chemistry": "lipo", "capacityMah": 1500, "cRating": 95,
+              "massG": 178, "internalResistanceMohm": 12 },
+  "fc":     { "board": "esp32", "carrier": "fc_carrier_esp32",
+              "imu": "imu_mpu6050", "baro": "baro_bmp280" },
+  "extras": [ { "id": "rx_elrs_2400", "massG": 3 } ],
+  "payloadG": 0
+}
+```
+
+### **5.2 Derived quantities**
+
+Derived values are **computed, never stored**, and recomputed on every edit. The doc gives the **formula shape and its inputs**; every coefficient is **TBD — calibrate against reference builds and published thrust-stand data before implementation.** A wrong constant written into a PRD gets implemented as truth.
+
+| Derived value | Formula shape | Calibration inputs (TBD) |
+| :---- | :---- | :---- |
+| All-up weight (AUW) | Σ part masses + payload | — (exact) |
+| Motor speed | `RPM ≈ Kv · V_bus · throttle · k_slip` (Kv is RPM per volt) | `k_slip` (load slip factor) |
+| Rotor rate | `n = RPM / 60` (rev/s), `ω = 2π · n` (rad/s) | — (exact) |
+| Thrust per motor | `T = C_T · ρ · n² · D⁴`, **D in metres** (`diameterIn × 0.0254`) | `C_T` per prop family, air density ρ |
+| Shaft torque | `Q = C_Q · ρ · n² · D⁵`, **D in metres** | `C_Q` per prop family |
+| Motor current | `I ≈ (Q · ω) / (η · V_bus) + I_0` | efficiency η, no-load current `I_0` |
+| Hover throttle | throttle where `Σ T = AUW · g` | inherits the above |
+| Thrust-to-weight (TWR) | `Σ T_max / (AUW · g)` | inherits the above |
+| Estimated hover time | `(capacityMah · usableFraction) / I_hover_mA × 60` min | `usableFraction` |
+| Pack sag at full throttle | `V_oc − I_total · R_int` | measured `R_int` per pack class |
+
+### **5.3 Feasibility checks (shown live, before flight)**
+
+Warnings, not blocks — the player is allowed to build something bad and watch it fail, which is the pedagogy. Each check states the number, the threshold and the fix.
+
+* TWR below a floor (**TBD**, ~1.5): "it may not lift itself."
+* TWR above a ceiling (**TBD**, ~10): "unflyable for a beginner; throttle resolution collapses."
+* Peak current above the ESC's continuous rating, or above the pack's `C × capacity`.
+* Prop diameter above the frame's `maxPropIn` — physical interference.
+* Kv × cell count outside the sane band for the stator size.
+* Estimated hover time below a floor (**TBD**, ~2 minutes).
+* Motor count ≠ mount count; missing IMU; no receiver and no autonomous mode.
+
+### **5.4 Document model**
+
+The drone build is a `CircuitDoc` (CONTRACTS §4.1) with `kind: "drone"`, `droneConfig` as above, `mounts` in place of breadboard placements, and `links` (typed connectors) in place of `wires`. Consequences are deliberate: persistence, undo, JSON import/export, publish/preview/fork, and the backend project payload all continue to work untouched. `kind: "breadboard"` is the implicit default for every existing document; loaders must treat a missing `kind` as breadboard.
+
+## **6. Flight Dynamics & Control**
+
+### **6.1 Rigid body**
+
+* 6-DOF: position, velocity, orientation (quaternion), body angular rates. Fixed-step integration (§3.2).
+* Inertia tensor derived from the configured part masses and their mount geometry — so a heavier pack **actually** makes the drone lazier in yaw.
+* Forces: rotor thrust along the body-Z axis, weight, translational drag (coefficient **TBD**), optional constant wind + gust term.
+* Torques: roll/pitch from thrust differential across the arm moment, yaw from the **reaction torque** difference between CW and CCW rotors, plus gyroscopic and rotor-inertia terms.
+* Motor response: first-order lag on RPM with a time constant derived from rotor inertia (**TBD**), so PID tuning has something real to fight.
+
+### **6.2 Mixer**
+
+Quad-X default, expressed as a sign matrix per motor over `[throttle, roll, pitch, yaw]`, configurable per build so hex/tri/plus layouts are a data change rather than a rewrite. Motor output saturation uses proportional scaling (airmode-style, **TBD**) rather than clipping, and saturation must be visible in the telemetry HUD — it is the cause of half of all "why did it flip?" questions.
+
+### **6.3 Sensors**
+
+Simulated, not idealised, with parameters **TBD**:
+
+* Gyro/accel: bias, white noise, scale error, and **frame vibration proportional to rotor RPM** — the reason real builds need soft mounting and filtering.
+* Barometer: slow noise, drift, and prop-wash-induced error near the ground.
+* Optional GPS: fix delay, position noise, update rate far below the control loop.
+
+### **6.4 Control modes and the player's role**
+
+| Mode | Who writes the loop | Purpose |
+| :---- | :---- | :---- |
+| **Raw throttle** (bench) | Player | One motor, no props, on a thrust stand. First quest. |
+| **Rate / acro** | Player writes the rate PID | The teaching centrepiece: read gyro → PID → mixer → ESC. |
+| **Angle / self-level** | Player writes the outer loop; library provides fusion | Introduces cascaded control. |
+| **Assisted hover** | Library-provided | Lets a player fly a course without having tuned a loop, for build-focused quests. |
+
+Arming/disarming, a stick-command arm gesture, a throttle-low safety check, receiver-loss failsafe, and low-voltage cutoff are **required behaviours**, exercised by quests — not optional extras.
+
+## **7. Firmware API Surface (What the Interpreter Must Expose)**
+
+### **7.1 Board decision**
+
+**Reuse the existing `esp32` / `esp32s3` board profiles for v1.** The FC is an ESP32 on a carrier board. This adds **no new board id, no new interpreter core and no new emulation architecture** — the single-interpreter decision that makes the "100 % client-side" NFR achievable stays intact. A dedicated STM32-class FC board id (`fc_f405`) is deferred to a later phase and must not be assumed by any content authored now.
+
+### **7.2 New peripheral roles and protocols**
+
+Added to the role table of CONTRACTS §7.3, resolved by the existing `findPath` binding rule:
+
+| Type | Protocol | Roles | Direction |
+| :---- | :---- | :---- | :---- |
+| `esc` | `esc` | `signal`, `vbat`, `gnd` | MCU → ESC (pulse µs / DShot value) |
+| `imu_mpu6050` | `imu_i2c` | `sda`, `scl` + `i2cAddress` | bidirectional |
+| `baro_bmp280` | `baro_i2c` | `sda`, `scl` + `i2cAddress` | sensor → MCU |
+| `rx_elrs` | `rc_serial` | `tx`, `rx` | receiver → MCU |
+| `gps` | `gps_uart` | `tx`, `rx` | sensor → MCU |
+
+### **7.3 Required libraries and calls**
+
+* **ESC output:** `ESP32Servo`'s `writeMicroseconds()` (1000–2000 µs) as the beginner path, and `ledcWrite`-based OneShot/DShot helpers for the advanced path. ESC arming (the low-throttle hold) must be required before spin-up, exactly as on real hardware.
+* **IMU:** an `MPU6050` library over the existing no-op `Wire` — `begin()`, `getMotion6()`, `getAcceleration()`, `getRotation()`, range setters.
+* **Barometer:** reuse the existing `Adafruit_BME280`-style surface where possible; add `BMP280` if the part differs.
+* **Receiver:** channel access via a small `VoltRC` helper (`readChannel(n)`, `hasSignal()`, `failsafe()`), so a beginner is not parsing CRSF frames in quest 1.
+* **Control helpers (optional, never mandatory):** a `PID` class with `setGains/compute/reset` and an `AHRS` complementary/Mahony filter. Every quest that can be solved with these must also be solvable without them — the player who wants to write their own loop must not be locked out.
+
+### **7.4 New worker messages**
+
+Additive to CONTRACTS §7.1/§7.2; nothing existing changes shape:
+
+* Inbound `env` gains `imu`, `baro`, `gps`, `rc`, `rpm` blocks.
+* Outbound `{ type: 'peripheral', protocol: 'esc', data: { us } }` per ESC write.
+* Outbound `{ type: 'flight', armed, mode, attitude, altitude, batteryV, motorOutputs }` for the HUD, at a throttled rate (**TBD**, ≤ 50 Hz).
+
+## **8. UI / UX: The Drone Bench**
+
+```
++------------------------------------------------------------------------------------+
+| VoltQuest | Build: [ My 5-inch freestyle v ]  4S · TWR 6.2 · hover 4:10 | [Run >] |
++---------------------------+--------------------------------+---------------------+
+| LEFT: Build & Objectives  | CENTER: Bench / Flight View    | RIGHT: Code & Tune  |
+|                           |                                |                     |
+| [Configurator]            |   +------------------------+   | [Code | Blocks]     |
+|  Frame   [5 in  v]        |   |      ( flight view )   |   | void loop() {       |
+|  Motors  [2207 1750Kv v]  |   |    quad in a hangar,   |   |   imu.read();       |
+|  Props   [5.1x4.6x3   v]  |   |    gate course, HUD    |   |   pid.compute();    |
+|  ESC     [45 A 4in1   v]  |   +------------------------+   |   esc.write(...);   |
+|  Pack    [4S 1500 95C v]  |                                | }                   |
+|                           |   [ Bench ]  [ Flight ]        |---------------------|
+|  AUW     412 g            |                                | [PID Tune]          |
+|  TWR     6.2 : 1          |   Sticks:  (L) throttle/yaw    |  Roll  P __ I __ D  |
+|  Hover   38 % throttle    |            (R) pitch/roll      |  Pitch P __ I __ D  |
+|  Time    ~4 min 10 s      |            [ARM] [Mode: Rate]  |  Yaw   P __ I __ D  |
+|  ! Peak 52 A > ESC 45 A   |                                |---------------------|
+|                           |   Telemetry: 14.8 V  22 A      | [Serial] [Blackbox] |
++---------------------------+--------------------------------+---------------------+
+```
+
+### **8.1 Views**
+
+* **Bench view:** the frame flat-on, for assembly, wiring and inspection. This is where connector-level wiring happens.
+* **Flight view:** a chase/orbit camera on the airframe in a simple enclosed volume (hangar, then gated course). 2.5-D is acceptable for v1; the physics is 3-D regardless.
+* **Thrust-stand view:** a single motor clamped, with live thrust/current/RPM readouts — the safe first quest, and the calibration lesson.
+* **Blackbox panel:** a scrolling plot of setpoint vs. gyro per axis, motor outputs and pack voltage. This is the tuning feedback loop; without it, PID quests degrade into guessing.
+
+### **8.2 Virtual transmitter**
+
+* Two on-screen sticks (mouse/touch drag), keyboard mapping, and optional Gamepad API support.
+* Explicit `ARM`/`DISARM` toggle and a flight-mode selector; both feed the RC channel block.
+* Stick inputs are **recorded on the virtual clock** so a run can be replayed deterministically and so `solution.actions` can drive a headless flight (§9.3).
+* Accessibility: every stick axis must be drivable from the keyboard, and no quest may require simultaneous four-axis analogue input to pass.
+
+### **8.3 Responsiveness**
+
+The bench must fit the existing 390 px target: the three panels collapse to a tabbed stack, the flight view keeps its aspect ratio, and the transmitter docks to the bottom as a compact two-thumb control.
+
+## **9. Campaign Content**
+
+### **9.1 New world**
+
+Authored in the existing `content/worlds.json` shape (`id`, `order`, `title`, `subtitle`, `theme`, `board`, `intro`, `levelIds`), reusing the `esp32` board id per §7.1:
+
+```json
+{ "id": "w5", "order": 5, "title": "Rotor Rising",
+  "subtitle": "Brushless power, custom builds, and the first hover",
+  "theme": "violet", "board": "esp32",
+  "intro": "Four motors, one pack, and physics that does not forgive a sign error.",
+  "levelIds": ["w5-l1","w5-l2","w5-l3","w5-l4","w5-l5","w5-l6"] }
+```
+
+`theme` is not free-form: `CampaignMap.jsx` keeps a static `THEME` map (`amber`, `teal`, `rose`, `indigo`) because Tailwind only retains classes it can see in the source. A `violet` world requires adding that entry — or the world reuses an existing theme value.
+
+### **9.2 Levels**
+
+Each is a level file in the existing `content/quests/<levelId>.json` shape (`docs/QUEST_SCHEMA.md`), with `briefing`, `learn`, `objectives[].rules`, three-tier hints, `starCriteria` and a headless-verifiable `solution`.
+
+| Level | Title | Teaches | Shape of the win condition |
+| :---- | :---- | :---- | :---- |
+| w5-l1 | **Bench Test** | ESC arming, µs pulses, *props off* | One motor on the stand spins after a correct arming sequence; `no_prop` enforced |
+| w5-l2 | **Power Math** | The configurator: Kv, cells, props, TWR | Reach a target TWR band and hover time with a given pack — no soldering iron required |
+| w5-l3 | **Four Corners** | Motor order, rotation direction, prop handedness | All four motors mapped and spinning the right way; `prop_direction_mismatch` absent |
+| w5-l4 | **Level Head** | IMU reading and attitude | Printed roll/pitch tracks the bench tilt within tolerance |
+| w5-l5 | **The Loop** | Rate PID, saturation, blackbox reading | Hold attitude against a scripted disturbance without oscillation |
+| w5-l6 | **First Flight** (boss) | Everything, on **the player's own build** | Take off, hold a hover, pass gates, land — with the drone they configured |
+
+The boss level is deliberately parameterised by the player's own `droneConfig`: any build that passes the feasibility checks must be able to complete the course. That is the difference between "a drone level" and "a **custom** drone level."
+
+### **9.3 Validator vocabulary**
+
+New rule types **extend** the predicate vocabulary of `docs/QUEST_SCHEMA.md` — same JSON rule shape, same `all_of`/`any_of`/`not` composition. They do not introduce a parallel validation mechanism.
+
+```
+drone_config_between  { field: "twr"|"auwG"|"hoverThrottle"|"hoverMinutes"|"peakCurrentA", min?, max? }
+esc_pulse_between     { motor: 1..4, minUs, maxUs, forMs? }
+esc_armed_before_spin { }                                  // low-throttle hold honoured before any spin-up
+motor_direction       { motor: 1..4, direction: "cw"|"ccw" }
+prop_fitted           { fitted: boolean }                  // bench-safety quests
+armed_state           { armed: boolean, atMs? }
+attitude_within       { axis: "roll"|"pitch"|"yaw", maxDeg, forMs }
+hover_held            { minAltitudeM, maxDriftM, forMs }
+gates_passed          { count, withinMs }
+landed_safely         { maxImpactMs2 }
+no_crash              { }
+blackbox_oscillation  { axis, maxAmplitudeDeg, windowMs }  // catches a badly tuned P term
+imu_read_seen         { minSamples }
+```
+
+Extend `solution.actions` with a stick timeline — `{ atMs, sticks: { throttle, roll, pitch, yaw, arm, mode } }` — applied on the virtual clock exactly like the existing `select`/`patch`, `http`, `serial` and `mqtt` actions. Every drone level must pass the same headless test gate as every existing level: load `solution.circuit` + `solution.code`, replay the actions, require `allPassed` inside `solutionRunMs`.
+
+## **10. Sandbox, Sharing & the Real Build**
+
+* **Sandbox:** free configuration and free flight with no objectives, a course editor for gates, and a slow-motion/replay control for watching a crash back.
+* **Sharing:** publish, preview and fork reuse the existing showcase path. A shared drone shows its spec sheet (AUW, TWR, hover time) on the preview card.
+* **"Build it for real" pack** — the payoff of a *custom* build, assembled from mechanisms that already exist:
+  * BOM CSV from the existing catalog shape, with vendor links and a total.
+  * The wiring diagram as a PNG from the existing exporter.
+  * The sketch as `.ino`.
+  * A printable pre-flight checklist, including the safety items of §13.
+  * A plain warning on the export: simulated performance figures are estimates from calibrated coefficients, not measurements of the parts anyone actually ships.
+
+## **11. Backend (FastAPI) Additions**
+
+Deliberately thin — the feature is client-side, and nothing here requires a compile service:
+
+* Persist `kind: "drone"` documents through the **existing** project endpoints; no new storage model.
+* Optional preset library: read-only drone configurations served from `content/`, same pattern as worlds/quests.
+* Optional course leaderboard: best `w5-l6` course time per user, reusing the existing leaderboard service.
+* No new authentication, no new rate-limited surface.
+
+## **12. Non-Functional Requirements**
+
+| Metric | Requirement | Justification |
+| :---- | :---- | :---- |
+| Flight view frame rate | 60 FPS with the dynamics loop running | A stuttering flight view makes manual flight impossible, not merely ugly |
+| Dynamics determinism | Identical build + code + stick timeline + seed → identical trajectory | Headless quest validation and fair leaderboard times both require it |
+| Dynamics step budget | One fixed step within its wall-clock slice on a mid-range Chromebook | Classroom hardware is the floor, per the base PRD |
+| Added payload | Initial JS delta **TBD**, inside the existing 1500 KiB gzipped budget | Current build is 301.1 KiB gzipped; the flight view must not blow the budget |
+| Client-side execution | 100 % in-browser, no compile service | Preserves the existing zero-install NFR |
+| Headless level test | Every drone level passes in CI within its `solutionRunMs` | Same gate as all 14 existing levels |
+| Accessibility | Full keyboard control of arming, sticks and modes | No quest may be gated behind analogue input |
+
+## **13. Safety, Legal & Content Boundaries**
+
+* Bench quests run **props off**; fitting props to a bench test is blocked with an explicit callout (`no_prop_guard`, §4.4).
+* LiPo handling is taught where it is relevant: no over-discharge, no charging unattended, no puffed packs, storage voltage between sessions.
+* Reverse polarity and short-circuit consequences are shown in simulation precisely so they are not discovered on a real bench.
+* Any real build is subject to local aviation rules — registration, weight thresholds, line-of-sight, no-fly zones. VoltQuest states this on the export and does not enumerate jurisdiction-specific rules it cannot keep current.
+* No payload-delivery, tracking, surveillance or weaponization content, in quests, sandbox presets, or showcase copy.
+* Simulated performance is an estimate from calibrated coefficients. It is never presented as a flight-worthiness assessment.
+
+## **14. Open Questions — Decision Required Before Implementation**
+
+### **14.1 Does flight dynamics ship in v1?**
+
+The single biggest scope fork in this addendum. Three viable answers:
+
+| Option | Scope | Trade-off |
+| :---- | :---- | :---- |
+| **A — Electronics only** | Drone bench, configurator, high-current model, thrust stand, bench quests. No 6-DOF flight. | Cheapest, fits the existing engine almost entirely, and still teaches the expensive mistakes. But "custom drone" without a hover will read as unfinished. |
+| **B — Full flight (recommended)** | Everything in this addendum. | Matches the product promise and makes the configurator meaningful; the dynamics loop, flight view and determinism work are the bulk of the cost. |
+| **C — Phased (A then B)** | Ship A, then add the dynamics subsystem behind the interface of §3.1. | Longest calendar time, lowest risk, and §3.1 is specifically written so that A does not have to be rewritten to become B. |
+
+The phasing in §15 **is** how B is delivered: D1 builds the bench and configurator, D2 adds the dynamics subsystem behind the §3.1 interface, D3 adds the course and the export pack. Choosing **A** therefore means stopping after D1 and dropping w5-l4 to w5-l6; choosing **C** means the same sequence with an explicit ship-and-reassess gate after D1. The work in D1 is identical under all three answers, so implementation of D1 does not block on this decision — content scope does.
+
+### **14.2 Dependency on the deferred Custom Component Creator**
+
+Player-authored **parts** (a motor nobody shipped, with custom pin/port definitions) is the Custom Component Creator — PRD Phase 3, currently deferred. This addendum's configurator deliberately depends only on **numeric parameters of known part kinds**, which does not need it. Confirm that boundary: if players must define entirely new part types, the Creator becomes a hard prerequisite and must be un-deferred, not reimplemented alongside.
+
+### **14.3 Remaining decisions**
+
+* **Coefficient calibration source:** which published thrust-stand datasets or reference builds are authoritative for `C_T`, `C_Q`, η and `R_int`? Every **TBD** in §5.2 and §6 blocks on this.
+* **Player-written control loop vs. provided flight stack:** how much of w5-l5's PID must the player write before the boss level is reachable?
+* **Airframe breadth:** does v1 ship quad-X only, or does the mixer's data-driven design get exercised by a hex/tri at launch?
+* **Dedicated FC board id:** is an STM32-class `fc_f405` profile ever needed, or is the ESP32 carrier the permanent answer?
+
+## **15. Phasing & Acceptance Criteria**
+
+### **Phase D1 — Bench & Configurator**
+
+Drone canvas mode, mount/connector model, new catalog parts, configurator with live derived figures and feasibility checks, high-current electrical model, thrust-stand view, quests w5-l1 to w5-l3.
+
+*Accepted when:* a player can specify a build, see AUW/TWR/hover time change as they edit it, wire and arm one motor on a stand with props off, reverse the pack and get smoke instead of a hover, and export a BOM that prices the whole thing.
+
+### **Phase D2 — Flight**
+
+Dynamics subsystem behind the §3.1 interface, mixer, simulated IMU/baro, flight view, virtual transmitter, blackbox plot, quests w5-l4 and w5-l5.
+
+*Accepted when:* a player-written rate loop holds attitude against a scripted disturbance; a replayed stick timeline reproduces the same trajectory bit-for-bit; brownout and prop-direction mismatch produce the documented, visible failures.
+
+### **Phase D3 — Course, Sandbox & Real Build**
+
+Boss level on the player's own build, gate course, sandbox course editor, replay/slow-motion, showcase spec cards, the "Build it for real" pack.
+
+*Accepted when:* two materially different player builds that both pass the feasibility checks can both complete w5-l6, and the exported pack contains a BOM, a diagram, a sketch and a checklist.
+
+### **KPIs**
+
+1. **Configurator engagement:** ≥ 60 % of players who open the drone bench edit at least three specification fields before their first run.
+2. **Failure comprehension:** ≥ 70 % of players who trigger a drone failure state resolve it with in-game hints rather than abandoning the session — the base PRD's error-recovery bar, applied to a harder subject.
+3. **Custom completion:** ≥ 40 % of w5-l6 completions are flown on a build the player configured themselves rather than a shipped preset.
+4. **Real-build intent:** ≥ 15 % of players who complete World 5 export a BOM or sketch pack.

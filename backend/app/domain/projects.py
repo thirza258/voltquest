@@ -5,6 +5,12 @@ from .errors import InvalidInput
 
 
 def validate_board(board: str, circuit: dict, editor_mode: str) -> None:
+    if circuit.get('kind') == 'drone':
+        from .drone import validate_drone
+        validate_drone(circuit, board)
+        return
+    if circuit.get('kind') not in (None, 'breadboard'):
+        raise InvalidInput('Unknown bench kind')
     if board not in BOARDS:
         raise InvalidInput("Unsupported project board")
     if circuit.get("mcu") is not None and circuit["mcu"] != board:

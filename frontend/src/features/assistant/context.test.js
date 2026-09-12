@@ -43,3 +43,13 @@ it('keeps the MCP catalog identical to the actual registry, layouts and board pr
   for (const id of BOARD_IDS) expect(catalog.boards[id]).toEqual(JSON.parse(JSON.stringify({ ...getBoard(id), placements: Object.fromEntries(['half', 'full', 'dual'].map(mode => [mode, defaultMcuPlacement(id, mode)])) })))
   for (const def of listDefs()) expect(catalog.components[def.type]).toEqual(JSON.parse(JSON.stringify({ name: def.name, type: def.type, mount: def.mount, category: def.category, footprint: def.footprint, props: def.props, learn: def.learn })))
 })
+
+
+it('shares bounded drone specifications, selected connectors and live flight without arbitrary metadata', async () => {
+  const { createDroneDoc } = await import('../../engine/drone/document.js')
+  const doc = createDroneDoc(); doc.droneConfig.privateNotes = 'secret'.repeat(20000); doc.links[0].privateNotes = 'not context'
+  const result = buildAssistantContext({ mode: 'sandbox', doc, code: '// unsaved', selectedIds: [doc.links[0].id], state: { flight: { armed: true, position: [1, 2, 3] } } })
+  expect(result.circuit.kind).toBe('drone'); expect(result.circuit.droneConfig.motors.kv).toBe(1750)
+  expect(result.selection[0].from).toBe(doc.links[0].from); expect(result.simulation.flight.armed).toBe(true)
+  expect(JSON.stringify(result)).not.toContain('privateNotes'); expect(JSON.stringify(result).length).toBeLessThan(80000)
+})

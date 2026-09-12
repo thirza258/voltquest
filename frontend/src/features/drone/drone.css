@@ -1,0 +1,20 @@
+.drone-stick { position: relative; width: 88px; height: 88px; flex: 0 0 88px; touch-action: none; border: 1px solid #cbd5e1; border-radius: 50%; background: #f1f5f9; }
+.drone-stick::before { content: ''; position: absolute; left: 50%; top: 0; height: 100%; border-left: 1px solid #cbd5e1; }
+.drone-stick::after { content: ''; position: absolute; left: 0; top: 50%; width: 100%; border-top: 1px solid #cbd5e1; }
+.drone-stick-dot { pointer-events: none; position: absolute; width: 18px; height: 18px; border-radius: 50%; transform: translate(-50%, -50%); background: #0d9488; z-index: 1; }
+.drone-bench svg { max-height: 480px; }
+.vq-workspace.vq-drone .vq-bench { height: auto; min-height: 640px; }
+@media (min-width: 1280px) { .vq-workspace.vq-drone .vq-bench { min-height: 0; } }
+@media (max-width: 639px) { .drone-stick { width: 68px; height: 68px; flex-basis: 68px; } .vq-workspace.vq-drone .vq-left { max-height: 400px; } }
+
+@media (max-width: 1279px) {
+  .vq-workspace.vq-drone .vq-left { max-height: none; }
+  .vq-drone[data-drone-panel="build"] .vq-bench, .vq-drone[data-drone-panel="build"] .vq-right,
+  .vq-drone[data-drone-panel="bench"] .vq-left, .vq-drone[data-drone-panel="bench"] .vq-right,
+  .vq-drone[data-drone-panel="code"] .vq-left, .vq-drone[data-drone-panel="code"] .vq-bench { display: none; }
+  .vq-workspace.vq-drone .vq-bench { min-height: 0; }
+}
+
+.vq-workspace.vq-drone { height: 100dvh; min-height: 650px; }
+.vq-workspace.vq-drone .vq-bench { min-height: 0; flex: 1; }
+@media (max-width: 1279px) { .vq-workspace.vq-drone .vq-right { min-height: 0; } }
