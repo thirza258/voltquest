@@ -134,6 +134,7 @@ voltquest/
 | H1 localization and assistant | `frontend/src/i18n/**`, `frontend/src/features/assistant/**` | CONTRACTS §14, API.md, DESIGN.md, ASSISTANT.md |
 | H2 code/iot/sandbox/showcase | `frontend/src/features/{code,iot,sandbox,showcase}/**` | CONTRACTS §7, §9, §11 |
 | H2 tutorials | `frontend/src/features/tutorials/**` | TUTORIALS.md, RASPBERRY_PI.md |
+| H2 courses | `frontend/src/features/courses/**`, `content/courses.json` | COURSES.md, DESIGN.md, CONTRACTS §11 |
 | I devops | `docker-compose.yml`, `*/Dockerfile`, `frontend/nginx.conf`, `.env.example`, `scripts/**`, `README.md` | ARCHITECTURE |
 | J ui kit | `frontend/src/ui/**`, `tailwind.config.js` theme | DESIGN.md, CONTRACTS §12 |
 
@@ -163,3 +164,14 @@ specialized radial-power branch does not replace the breadboard MNA solver or in
 The new feature chunks load through WorkspacePage's drone branch; the deterministic engine remains
 plain Node-compatible. Domain validation uses generated metadata without importing application
 settings, transports, ORM or UI code. Generation/equality tests keep both metadata copies synchronized.
+
+### Robotics and vision learning extensions
+
+H2 owns `features/courses`, `features/robotics`, `features/vision`, `content/courses.json`,
+`content/robotics.json` and `content/vision.json`. The deterministic model boundary owns
+`engine/robotics` and `engine/vision`; no DOM or host scheduling belongs there. UI adapters own the
+50 ms robotics timer, local OpenCV initialization, and separate connected-device simulation instances.
+Courses expose a backend public catalogue; robotics/vision catalogues are frontend-only lazy content.
+`StudyLesson` shares assessments and local progress across the advanced curricula. Distinct formats,
+explicit replace confirmations and separate storage keys keep circuit/drone workspaces isolated.
+The OpenCV dependency is prebuilt and locally emitted, not added to the firmware VM or Pi Python subset.

@@ -45,7 +45,7 @@ describe('tutorial pages', () => {
     page('/tutorials?board=raspberrypi4&difficulty=Hard')
     fireEvent.click(screen.getByRole('button', { name: 'Explore Arduino / ESP32 code lessons' }))
     expect(screen.getByRole('status').textContent).toContain('10 tutorials')
-    const headings = screen.getAllByRole('heading', { level: 2 }).map((heading) => heading.textContent)
+    const headings = screen.getAllByRole('heading', { level: 2 }).map((heading) => heading.textContent).filter(title => TUTORIALS.some(tutorial => tutorial.title === title))
     expect(headings[0]).toBe('C++ basics: setup, loop and your first message')
     expect(headings.at(-1)).toBe('C++ state machines: build a two-flash beacon')
     fireEvent.click(screen.getByRole('button', { name: '3. Hard' }))

@@ -1,0 +1,1407 @@
+{
+  "tutorials": [
+    {
+      "id": "opencv-foundations",
+      "version": 1,
+      "order": 1,
+      "title": "1. OpenCV fundamentals for IoT visual sensors",
+      "summary": "Represent images as arrays, convert color, threshold pixels and publish a useful measurement.",
+      "difficulty": "Easy",
+      "minutes": 30,
+      "lessons": [
+        {
+          "id": "pixels",
+          "title": "Pixels, channels and memory",
+          "text": "An image is an array with height, width and channels. The browser supplies RGBA bytes: red, green, blue and alpha, each from 0 to 255. Python OpenCV normally loads files in BGR order, so the conversion flag must match the source. These labs create 128 × 128 synthetic scenes and process them with actual local OpenCV. A microcontroller can consume the resulting event even when a more capable companion computer performs the image processing."
+        },
+        {
+          "id": "threshold",
+          "title": "Turn intensity into a mask",
+          "text": "Grayscale conversion combines color channels into one intensity value. A binary threshold selects a pixel when its grayscale value exceeds T. The white pixels in the output are the selected set, not a confidence score. Change scene brightness while holding T constant: a lamp can disappear from the mask without physically moving. Gaussian smoothing can suppress small variations but also softens boundaries. Always inspect the source and processed images together."
+        },
+        {
+          "id": "measurement",
+          "title": "Reduce a mask to a device message",
+          "text": "Count selected pixels and divide by the total image area to obtain a fraction. The IoT preview reports a detected event when at least 16 pixels are selected. This is a deliberately simple rule: a bright reflection could also trigger it. Open the integration bench, start its virtual ESP32 and send the observation. The browser calls the virtual /on or /off HTTP route and displays the actual response. Pixel processing and device transport are separate stages."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Grayscale intensity",
+          "equation": "Y ≈ 0.299R + 0.587G + 0.114B",
+          "symbols": "R, G, B: 8-bit channel values; Y: approximate grayscale intensity. This is a conventional image conversion, not calibrated optical power.",
+          "example": "For R = 100, G = 150, B = 200, Y ≈ 140.75, rounded to an 8-bit value."
+        },
+        {
+          "title": "Binary selection and area fraction",
+          "equation": "M(x,y) = 1 if Y(x,y) > T else 0;  f = ΣM / (WH)",
+          "symbols": "T: intensity threshold; M: binary selection; W, H: image dimensions (pixels); f: dimensionless selected fraction.",
+          "example": "512 selected pixels in 128 × 128 gives 512/16384 = 0.03125, or 3.125%."
+        }
+      ],
+      "steps": [
+        "Inspect the default IoT scene and threshold mask. Record selected pixels and centroid.",
+        "Lower brightness to 0.4 at threshold 150. Explain why the visual event disappears.",
+        "Lower the threshold until the target returns, then observe when background pixels are also selected.",
+        "Connect the integration bench, start devices and send both a detected and a no-target observation. Compare HTTP /on and /off responses."
+      ],
+      "practice": [
+        {
+          "id": "q0",
+          "prompt": "How many pixels are in a 128 × 128 image?",
+          "options": [
+            {
+              "id": "a",
+              "text": "16384"
+            },
+            {
+              "id": "b",
+              "text": "256"
+            },
+            {
+              "id": "c",
+              "text": "49152"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Multiply width by height. Channels affect byte count, not the number of pixels.",
+          "lessonId": "pixels"
+        },
+        {
+          "id": "q1",
+          "prompt": "Which source channel order does browser ImageData use?",
+          "options": [
+            {
+              "id": "a",
+              "text": "BGR only"
+            },
+            {
+              "id": "b",
+              "text": "HSV"
+            },
+            {
+              "id": "c",
+              "text": "RGBA"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "ImageData stores red, green, blue and alpha; Python cv2.imread normally returns BGR.",
+          "lessonId": "pixels"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "q2",
+            "prompt": "For a binary threshold of 150, grayscale intensity 150 is…",
+            "options": [
+              {
+                "id": "a",
+                "text": "A probability of 150%"
+              },
+              {
+                "id": "b",
+                "text": "Not selected"
+              },
+              {
+                "id": "c",
+                "text": "Always selected"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "THRESH_BINARY selects values strictly greater than the threshold.",
+            "lessonId": "threshold"
+          },
+          {
+            "id": "q3",
+            "prompt": "512 selected pixels in a 128 × 128 image occupy…",
+            "options": [
+              {
+                "id": "a",
+                "text": "3.125%"
+              },
+              {
+                "id": "b",
+                "text": "31.25%"
+              },
+              {
+                "id": "c",
+                "text": "0.03125%"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "512/16384 = 0.03125; multiply by 100 to express percent.",
+            "lessonId": "measurement"
+          },
+          {
+            "id": "q4",
+            "prompt": "What can a darker scene do with a fixed threshold?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Automatically recalibrate the camera"
+              },
+              {
+                "id": "b",
+                "text": "Change the physical pixel count"
+              },
+              {
+                "id": "c",
+                "text": "Make a real target disappear from the mask"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "A threshold responds to measured intensity; lighting affects that measurement.",
+            "lessonId": "threshold"
+          },
+          {
+            "id": "q5",
+            "prompt": "Must an ESP32 run the entire vision pipeline to receive an event?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only if it has a propeller"
+              },
+              {
+                "id": "b",
+                "text": "No; a companion can process images and send a bounded event"
+              },
+              {
+                "id": "c",
+                "text": "Yes; image processing and transport are identical"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Separate perception from device control through a defined message interface.",
+            "lessonId": "measurement"
+          },
+          {
+            "id": "q6",
+            "prompt": "Does a white mask pixel mean the detector is 100% confident?",
+            "options": [
+              {
+                "id": "a",
+                "text": "No, it only passed the pixel rule"
+              },
+              {
+                "id": "b",
+                "text": "Yes, always"
+              },
+              {
+                "id": "c",
+                "text": "Only for RGB images"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "A binary mask encodes selection rather than calibrated confidence.",
+            "lessonId": "threshold"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "OpenCV.js color conversion",
+          "url": "https://docs.opencv.org/4.12.0/db/d64/tutorial_js_colorspaces.html"
+        },
+        {
+          "title": "OpenCV.js thresholding",
+          "url": "https://docs.opencv.org/4.12.0/d7/dd0/tutorial_js_thresholding.html"
+        }
+      ],
+      "exampleIds": [
+        "opencv-threshold"
+      ],
+      "config": {
+        "kind": "vision",
+        "version": 1,
+        "theme": "iot",
+        "mode": "threshold",
+        "threshold": 150,
+        "edgeLow": 50,
+        "edgeHigh": 120,
+        "hueMin": 40,
+        "hueMax": 90,
+        "blur": 0,
+        "brightness": 1,
+        "offset": 0,
+        "noise": 0,
+        "occlusion": 0,
+        "patchSize": 16,
+        "query": 36,
+        "temperature": 1,
+        "positionWeight": 0.5
+      },
+      "integrated": false
+    },
+    {
+      "id": "opencv-drone",
+      "version": 1,
+      "order": 2,
+      "title": "2. OpenCV color segmentation for drone alignment",
+      "summary": "Find a landing-marker color, calculate an image offset and translate it into a device signal.",
+      "difficulty": "Easy",
+      "minutes": 30,
+      "lessons": [
+        {
+          "id": "hsv",
+          "title": "Choose a color space for the task",
+          "text": "HSV separates hue, saturation and value. OpenCV uses hue 0–179 for an 8-bit HSV image, while saturation and value use 0–255. The sandbox selects hue 40–90, saturation at least 80 and value at least 60 to find the green pad. Its white H decoration is intentionally excluded. Color segmentation does not recognize an H or prove the surface is suitable for landing; it selects pixels matching a configured color range."
+        },
+        {
+          "id": "centroid",
+          "title": "Find the center of selected pixels",
+          "text": "The centroid is the average x and y of selected pixels. Image x increases rightward and image y downward. Normalize horizontal displacement by half the image width to express a scale-independent offset near −1 to 1. Move the pad with the offset slider and inspect the sign. If the mask is empty, the centroid is undefined: produce a no-target observation instead of inventing a center coordinate."
+        },
+        {
+          "id": "drone-port",
+          "title": "Separate visual alignment from flight control",
+          "text": "A camera offset is not directly a motor command. A deployed drone needs camera calibration, camera-to-body transforms, target validation and a flight controller that handles attitude and failsafe behavior. This lab exposes a normalized offset and an aligned flag. The integration bench maps left, center and right observations to 1150, 1200 and 1250 µs on one clamped, props-off ESC. That demonstrates an interface, not an autonomous landing controller."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Mask centroid",
+          "equation": "cx = Σ(xM) / ΣM;  cy = Σ(yM) / ΣM",
+          "symbols": "M: binary mask; x, y: pixel coordinates; cx, cy: centroid in pixels. Defined only when ΣM > 0.",
+          "example": "Two selected pixels at x = 20 and x = 40 give cx = 30 px."
+        },
+        {
+          "title": "Normalized horizontal offset",
+          "equation": "ex = (cx − (W−1)/2) / ((W−1)/2)",
+          "symbols": "cx: horizontal centroid (px); W: image width (px); ex: dimensionless signed offset. Camera orientation must be handled before using it on hardware.",
+          "example": "For W = 128 and cx = 95.25, ex = (95.25−63.5)/63.5 = 0.5."
+        }
+      ],
+      "steps": [
+        "Keep HSV mode and move the landing marker to offset +25 px. Inspect positive horizontal error.",
+        "Narrow the hue interval so green is excluded; verify no target and an undefined centroid.",
+        "Restore hue 40–90, add occlusion and compare centroid shift with the visible target.",
+        "Start connected devices and send left, center and right observations. Inspect the actual props-off ESC pulse changes."
+      ],
+      "practice": [
+        {
+          "id": "q0",
+          "prompt": "What hue range does OpenCV use for 8-bit HSV?",
+          "options": [
+            {
+              "id": "a",
+              "text": "0–179"
+            },
+            {
+              "id": "b",
+              "text": "0–359 for this representation"
+            },
+            {
+              "id": "c",
+              "text": "−1 to 1"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "The 8-bit OpenCV hue representation uses half-degree scaling across 0–179.",
+          "lessonId": "hsv"
+        },
+        {
+          "id": "q1",
+          "prompt": "Why is the white H missing from the green mask?",
+          "options": [
+            {
+              "id": "a",
+              "text": "White pixels do not exist"
+            },
+            {
+              "id": "b",
+              "text": "The detector understands letters"
+            },
+            {
+              "id": "c",
+              "text": "It has too little saturation for this selection"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "The mask requires saturation at least 80; nearly white pixels have low saturation.",
+          "lessonId": "hsv"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "q2",
+            "prompt": "Selected x coordinates 10, 20 and 30 have centroid…",
+            "options": [
+              {
+                "id": "a",
+                "text": "10 px"
+              },
+              {
+                "id": "b",
+                "text": "20 px"
+              },
+              {
+                "id": "c",
+                "text": "60 px"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Add coordinates and divide by the count: 60/3 = 20.",
+            "lessonId": "centroid"
+          },
+          {
+            "id": "q3",
+            "prompt": "What should an empty mask produce?",
+            "options": [
+              {
+                "id": "a",
+                "text": "No target; centroid undefined"
+              },
+              {
+                "id": "b",
+                "text": "A guaranteed center at x = 0"
+              },
+              {
+                "id": "c",
+                "text": "An automatic landing command"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Division by zero cannot produce a meaningful centroid.",
+            "lessonId": "centroid"
+          },
+          {
+            "id": "q4",
+            "prompt": "A marker to the right of the image center has…",
+            "options": [
+              {
+                "id": "a",
+                "text": "Negative error in every camera convention"
+              },
+              {
+                "id": "b",
+                "text": "No measurable offset"
+              },
+              {
+                "id": "c",
+                "text": "Positive normalized horizontal error"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "This image convention assigns increasing x to the right.",
+            "lessonId": "centroid"
+          },
+          {
+            "id": "q5",
+            "prompt": "What does the props-off ESC integration demonstrate?",
+            "options": [
+              {
+                "id": "a",
+                "text": "A calibrated camera pose estimate"
+              },
+              {
+                "id": "b",
+                "text": "Mapping a perception result into a bounded device signal"
+              },
+              {
+                "id": "c",
+                "text": "A complete autonomous landing system"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The clamped motor experiment tests a signal adapter without implementing flight navigation.",
+            "lessonId": "drone-port"
+          },
+          {
+            "id": "q6",
+            "prompt": "Which is required before using image offsets on a real drone?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Camera calibration and camera-to-body coordinate handling"
+              },
+              {
+                "id": "b",
+                "text": "Removing all feedback"
+              },
+              {
+                "id": "c",
+                "text": "Treating every green object as safe ground"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Image coordinates must be related to the vehicle and the target validated.",
+            "lessonId": "drone-port"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "OpenCV HSV and inRange",
+          "url": "https://docs.opencv.org/4.12.0/db/d64/tutorial_js_colorspaces.html"
+        }
+      ],
+      "exampleIds": [
+        "opencv-color"
+      ],
+      "config": {
+        "kind": "vision",
+        "version": 1,
+        "theme": "drone",
+        "mode": "color",
+        "threshold": 150,
+        "edgeLow": 50,
+        "edgeHigh": 120,
+        "hueMin": 40,
+        "hueMax": 90,
+        "blur": 0,
+        "brightness": 1,
+        "offset": 0,
+        "noise": 0,
+        "occlusion": 0,
+        "patchSize": 16,
+        "query": 36,
+        "temperature": 1,
+        "positionWeight": 0.5
+      },
+      "integrated": false
+    },
+    {
+      "id": "opencv-robotics",
+      "version": 1,
+      "order": 3,
+      "title": "3. OpenCV edges and ROS 2 robot integration",
+      "summary": "Extract a line boundary, compute steering and publish a Twist with a clear coordinate convention.",
+      "difficulty": "Intermediate",
+      "minutes": 40,
+      "lessons": [
+        {
+          "id": "edges",
+          "title": "Edges describe intensity changes",
+          "text": "An edge is a local intensity transition. Canny uses image derivatives, suppresses broad responses and links weaker edges to stronger ones through hysteresis thresholds. The sandbox first applies optional Gaussian blur, then calls cv.Canny with a 3 × 3 derivative aperture and L2 gradient magnitude. The output outlines the white line instead of filling its interior. A boundary map is not a semantic label: floor texture and shadows can also create edges."
+        },
+        {
+          "id": "steering",
+          "title": "Convert image error into a steering request",
+          "text": "The line centroid provides a simple horizontal error. In this lab, a line to the right requests negative robot yaw because positive ROS yaw is counterclockwise. The adapter uses angular.z = −ex rad/s and a fixed forward request of 0.15 m/s when a target exists. With no selected target it requests zero velocity. This rule assumes an upright forward-facing camera and a simple scene; the browser does not simulate perspective calibration or a real camera mount."
+        },
+        {
+          "id": "ros-port",
+          "title": "Publish perception results through a ROS 2 node",
+          "text": "A real integration reads frames, validates detection, creates a geometry_msgs/msg/Twist and publishes it on the driver topic. The accompanying Python example shows a ROS 2 timer node reading a saved test frame, with camera acquisition left as a separate deployment step. Match the subscription name and units. Configure a driver timeout independently of the publisher: a crashed perception node must not leave a stale velocity request active indefinitely."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Image gradient magnitude",
+          "equation": "G = √(Gx² + Gy²)",
+          "symbols": "Gx, Gy: horizontal and vertical image derivatives in intensity units per pixel; G: gradient magnitude. Canny also includes suppression and hysteresis.",
+          "example": "For Gx = 3 and Gy = 4, G = 5 intensity units per pixel."
+        },
+        {
+          "title": "Image-based yaw request",
+          "equation": "ωcmd = −K ex",
+          "symbols": "ωcmd: yaw rate (rad/s); ex: normalized horizontal image error; K: gain in rad/s per unit error, 1 in this adapter. Assumes an upright forward camera.",
+          "example": "For ex = +0.25 and K = 1, request angular.z = −0.25 rad/s, a clockwise turn."
+        }
+      ],
+      "steps": [
+        "Compare the source line with the Canny edge map; identify its two boundaries.",
+        "Move the line right and verify negative angular.z in the message preview.",
+        "Compare no blur with a 5 × 5 Gaussian kernel after increasing pixel noise.",
+        "Start the integration bench and send the observation. Compare robot yaw before and after the one-second motion interval."
+      ],
+      "practice": [
+        {
+          "id": "q0",
+          "prompt": "Gx = 3 and Gy = 4 produce which L2 gradient magnitude?",
+          "options": [
+            {
+              "id": "a",
+              "text": "5"
+            },
+            {
+              "id": "b",
+              "text": "7"
+            },
+            {
+              "id": "c",
+              "text": "25"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "The magnitude is √(3²+4²) = 5.",
+          "lessonId": "edges"
+        },
+        {
+          "id": "q1",
+          "prompt": "Does a Canny edge map fill the whole object?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Yes, every interior pixel is selected"
+            },
+            {
+              "id": "b",
+              "text": "It only produces a class name"
+            },
+            {
+              "id": "c",
+              "text": "No, it emphasizes boundaries"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "Edges represent intensity changes around boundaries.",
+          "lessonId": "edges"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "q2",
+            "prompt": "A line at ex = +0.25 produces which yaw request here?",
+            "options": [
+              {
+                "id": "a",
+                "text": "+25 rad/s"
+              },
+              {
+                "id": "b",
+                "text": "−0.25 rad/s"
+              },
+              {
+                "id": "c",
+                "text": "+0.25 m/s"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The adapter applies ωcmd = −ex rad/s for its camera convention.",
+            "lessonId": "steering"
+          },
+          {
+            "id": "q3",
+            "prompt": "Which message carries the robot velocity command?",
+            "options": [
+              {
+                "id": "a",
+                "text": "geometry_msgs/msg/Twist"
+              },
+              {
+                "id": "b",
+                "text": "sensor_msgs/msg/Image only"
+              },
+              {
+                "id": "c",
+                "text": "A battery capacity value"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Twist carries linear and angular velocity components.",
+            "lessonId": "ros-port"
+          },
+          {
+            "id": "q4",
+            "prompt": "Why add Gaussian blur before edge detection?",
+            "options": [
+              {
+                "id": "a",
+                "text": "To guarantee correct object recognition"
+              },
+              {
+                "id": "b",
+                "text": "To convert seconds into pixels"
+              },
+              {
+                "id": "c",
+                "text": "To reduce small image variations before differentiation"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Differentiation is sensitive to noise; smoothing trades detail for reduced variation.",
+            "lessonId": "edges"
+          },
+          {
+            "id": "q5",
+            "prompt": "What should this adapter send when no target is found?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Maximum forward speed"
+              },
+              {
+                "id": "b",
+                "text": "Zero linear and angular velocity"
+              },
+              {
+                "id": "c",
+                "text": "The previous command forever"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "No-target behavior should be explicit; this teaching adapter requests stop.",
+            "lessonId": "steering"
+          },
+          {
+            "id": "q6",
+            "prompt": "Where should the stale-command timeout be enforced?",
+            "options": [
+              {
+                "id": "a",
+                "text": "In the receiving driver/controller, independently of perception"
+              },
+              {
+                "id": "b",
+                "text": "Only in a page title"
+              },
+              {
+                "id": "c",
+                "text": "It is automatic for every ROS topic"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "A receiver must handle missing updates even if the publisher has crashed.",
+            "lessonId": "ros-port"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "OpenCV Canny",
+          "url": "https://docs.opencv.org/4.12.0/d7/de1/tutorial_js_canny.html"
+        },
+        {
+          "title": "ROS 2 Python publisher and subscriber",
+          "url": "https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Publisher-And-Subscriber.html"
+        }
+      ],
+      "exampleIds": [
+        "opencv-edges",
+        "ros-vision-node"
+      ],
+      "config": {
+        "kind": "vision",
+        "version": 1,
+        "theme": "robotics",
+        "mode": "edges",
+        "threshold": 150,
+        "edgeLow": 50,
+        "edgeHigh": 120,
+        "hueMin": 40,
+        "hueMax": 90,
+        "blur": 5,
+        "brightness": 1,
+        "offset": 0,
+        "noise": 0,
+        "occlusion": 0,
+        "patchSize": 16,
+        "query": 36,
+        "temperature": 1,
+        "positionWeight": 0.5
+      },
+      "integrated": false
+    },
+    {
+      "id": "vision-transformers",
+      "version": 1,
+      "order": 4,
+      "title": "4. Vision transformers: patches, tokens and attention",
+      "summary": "Explore the mathematics behind ViT by changing patch size, query location and attention temperature.",
+      "difficulty": "Intermediate",
+      "minutes": 40,
+      "lessons": [
+        {
+          "id": "patches",
+          "title": "Turn an image into a token sequence",
+          "text": "A vision transformer divides an image into patches, maps each flattened patch to an embedding and adds position information. Those tokens pass through transformer blocks. A trained model can then support classification or other vision tasks through a suitable head. This sandbox uses mean patch RGB plus coordinates as a five-value teaching embedding. It is intentionally much smaller than a ViT and has no trained patch projection, classifier, class token or prediction labels."
+        },
+        {
+          "id": "attention",
+          "title": "Queries compare with keys and mix values",
+          "text": "For one selected query patch, compute dot products with all key vectors, divide by the square root of their dimension and apply softmax to obtain nonnegative weights summing to one. The weighted average of value vectors is the context. Here Q and K use the identity projection and V is mean RGB. Temperature changes the concentration of weights. Clicking a different patch changes the query; bright heatmap cells show where this head mixes information, not where an object was detected."
+        },
+        {
+          "id": "training",
+          "title": "Distinguish model architecture from learned ability",
+          "text": "A useful vision model learns weights from data and must be evaluated on images representative of deployment. A full transformer also contains normalization, residual connections, feed-forward layers and usually multiple heads and blocks. This explorer computes one attention row with fixed features; it cannot classify a drone pad or a robot obstacle. Use it to understand token cost and attention mathematics. Device actions require a validated perception output, so the integration bench rejects attention-only output."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Patch tokens and attention pairs",
+          "equation": "N = (H/P)(W/P);  pairs = N²",
+          "symbols": "H, W: image dimensions (pixels); P: square patch width (pixels); N: token count, excluding any class token. Assumes dimensions divide evenly.",
+          "example": "A 128 × 128 image with P = 16 has 64 tokens and 4096 pairs. P = 8 gives 256 tokens and 65536 pairs: 16 times as many pairs."
+        },
+        {
+          "title": "Scaled dot-product attention",
+          "equation": "A = softmax(QKᵀ / √dk);  Z = AV",
+          "symbols": "Q, K: query/key matrices; V: value matrix; dk: key dimension; A: row-normalized attention weights; Z: weighted context. Explorer temperature additionally divides the logits.",
+          "example": "Two equal logits give weights [0.5, 0.5]. With scalar values [0.2, 0.8], the context is 0.5."
+        }
+      ],
+      "steps": [
+        "Choose a patch on the pad, then a background patch. Compare weights and context RGB.",
+        "Change patch size from 16 to 8 and compare token count and the full-matrix pair count.",
+        "Lower attention temperature and inspect whether weights become more concentrated.",
+        "Set position feature weight to zero and explain which spatial information this teaching embedding loses. Verify that attention mode cannot command connected devices."
+      ],
+      "practice": [
+        {
+          "id": "q0",
+          "prompt": "A 128 × 128 image with 16 × 16 patches has how many tokens before a class token?",
+          "options": [
+            {
+              "id": "a",
+              "text": "64"
+            },
+            {
+              "id": "b",
+              "text": "16"
+            },
+            {
+              "id": "c",
+              "text": "128"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "There are 8 patches across and 8 down: 8 × 8 = 64.",
+          "lessonId": "patches"
+        },
+        {
+          "id": "q1",
+          "prompt": "What must each softmax weight row sum to?",
+          "options": [
+            {
+              "id": "a",
+              "text": "The image width"
+            },
+            {
+              "id": "b",
+              "text": "0"
+            },
+            {
+              "id": "c",
+              "text": "1"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "Softmax divides positive exponentials by their sum.",
+          "lessonId": "attention"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "q2",
+            "prompt": "Halving patch width from 16 to 8 changes the full attention pair count by…",
+            "options": [
+              {
+                "id": "a",
+                "text": "One half"
+              },
+              {
+                "id": "b",
+                "text": "16 times"
+              },
+              {
+                "id": "c",
+                "text": "2 times"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Token count quadruples, and its square grows by a factor of 16.",
+            "lessonId": "patches"
+          },
+          {
+            "id": "q3",
+            "prompt": "What does a bright cell in this attention heatmap mean?",
+            "options": [
+              {
+                "id": "a",
+                "text": "A larger mixing weight for the selected query"
+              },
+              {
+                "id": "b",
+                "text": "A guaranteed detected object"
+              },
+              {
+                "id": "c",
+                "text": "A calibrated probability of safe landing"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Attention weights describe information mixing, not detection confidence.",
+            "lessonId": "attention"
+          },
+          {
+            "id": "q4",
+            "prompt": "Does this fixed attention explorer perform trained ViT classification?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Yes; it contains a pretrained classifier"
+              },
+              {
+                "id": "b",
+                "text": "Only when the patch size is 8"
+              },
+              {
+                "id": "c",
+                "text": "No; it demonstrates part of the computation"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "The explorer has fixed features and no trained head or model weights.",
+            "lessonId": "training"
+          },
+          {
+            "id": "q5",
+            "prompt": "Equal logits over values 0.2 and 0.8 produce context…",
+            "options": [
+              {
+                "id": "a",
+                "text": "0.16"
+              },
+              {
+                "id": "b",
+                "text": "0.5"
+              },
+              {
+                "id": "c",
+                "text": "1.0"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Equal logits yield equal weights: 0.5×0.2 + 0.5×0.8 = 0.5.",
+            "lessonId": "attention"
+          },
+          {
+            "id": "q6",
+            "prompt": "Why include position information in image tokens?",
+            "options": [
+              {
+                "id": "a",
+                "text": "To distinguish where image content appears"
+              },
+              {
+                "id": "b",
+                "text": "To replace all training data"
+              },
+              {
+                "id": "c",
+                "text": "To convert pixels into motor voltage"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Without position information, the token features alone do not encode their spatial arrangement.",
+            "lessonId": "patches"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "An Image is Worth 16x16 Words",
+          "url": "https://arxiv.org/abs/2010.11929"
+        },
+        {
+          "title": "Attention Is All You Need",
+          "url": "https://arxiv.org/abs/1706.03762"
+        }
+      ],
+      "exampleIds": [
+        "attention-head"
+      ],
+      "config": {
+        "kind": "vision",
+        "version": 1,
+        "theme": "drone",
+        "mode": "attention",
+        "threshold": 150,
+        "edgeLow": 50,
+        "edgeHigh": 120,
+        "hueMin": 40,
+        "hueMax": 90,
+        "blur": 0,
+        "brightness": 1,
+        "offset": 0,
+        "noise": 0,
+        "occlusion": 0,
+        "patchSize": 16,
+        "query": 36,
+        "temperature": 1,
+        "positionWeight": 0.5
+      },
+      "integrated": false
+    },
+    {
+      "id": "vision-deployment",
+      "version": 1,
+      "order": 5,
+      "title": "5. Integrating OpenCV and trained vision models",
+      "summary": "Design a perception interface, evaluate a pipeline and connect it to IoT, drone and robot software.",
+      "difficulty": "Intermediate",
+      "minutes": 40,
+      "lessons": [
+        {
+          "id": "pipeline",
+          "title": "Give perception one explicit output contract",
+          "text": "An integration pipeline separates acquisition, preprocessing, inference or image rules, validation and device adapters. OpenCV can prepare images and compute masks; a trained transformer can supply a different detector or classifier when its task and weights are appropriate. Both should produce a documented observation rather than directly controlling motors. Our teaching contract contains detected, normalized_x and area_fraction. The capstone routes this single observation to HTTP, serial and a ROS-style Twist interface."
+        },
+        {
+          "id": "evaluation",
+          "title": "Measure errors on representative examples",
+          "text": "Evaluate images that vary in brightness, clutter, target position and occlusion. The sandbox knows the synthetic target mask and can report intersection-over-union for filled masks. Canny outlines are not compared to a filled target, so their IoU is marked not applicable. A high score on one generated image does not establish real-world performance. A trained model needs held-out evaluation and task-appropriate metrics; its confidence threshold must be chosen from evidence rather than from an attention heatmap."
+        },
+        {
+          "id": "deployment",
+          "title": "Keep units, freshness and failure behavior explicit",
+          "text": "A deployed adapter should check message shape, units, coordinate frame and age before accepting a measurement. Run heavy vision on a suitable companion processor and send compact observations to a controller. Include acquisition and inference time in the latency budget. The examples use a saved image and explicit local test endpoints; they do not install a camera, ROS or MQTT broker in the browser. The browser integration uses fresh button-triggered observations and the robot driver has a one-second command timeout."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Segmentation overlap",
+          "equation": "IoU = |prediction ∩ target| / |prediction ∪ target|",
+          "symbols": "IoU: dimensionless intersection-over-union. Compare compatible masks; this sandbox evaluates filled target masks only.",
+          "example": "An intersection of 80 pixels and union of 100 pixels gives IoU = 0.8."
+        },
+        {
+          "title": "End-to-end latency and travel",
+          "equation": "L = tacquire + tprocess + ttransport + tactuate;  d = vL",
+          "symbols": "L: total latency (s); each t: stage duration (s); v: speed (m/s); d: travel during latency (m), ignoring acceleration.",
+          "example": "20 ms acquisition + 40 ms processing + 10 ms transport + 10 ms actuation = 80 ms. At 0.5 m/s, travel is 0.04 m."
+        }
+      ],
+      "steps": [
+        "Record the default IoT threshold IoU. Increase occlusion and compare the score.",
+        "Lower the threshold enough to select background. Explain why a large selected area is not necessarily a good detection.",
+        "Inspect the JSON observation and each adapter payload in the integration bench. Trace units and signs.",
+        "Read the companion examples. Identify where a trained model could replace the mask producer while preserving downstream adapter contracts."
+      ],
+      "practice": [
+        {
+          "id": "q0",
+          "prompt": "Intersection 80 and union 100 give which IoU?",
+          "options": [
+            {
+              "id": "a",
+              "text": "0.8"
+            },
+            {
+              "id": "b",
+              "text": "1.25"
+            },
+            {
+              "id": "c",
+              "text": "180"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Divide intersection size by union size.",
+          "lessonId": "evaluation"
+        },
+        {
+          "id": "q1",
+          "prompt": "Four stages taking 20, 40, 10 and 10 ms total…",
+          "options": [
+            {
+              "id": "a",
+              "text": "40 ms"
+            },
+            {
+              "id": "b",
+              "text": "0.8 ms"
+            },
+            {
+              "id": "c",
+              "text": "80 ms"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "Add all serial stage durations in the latency path.",
+          "lessonId": "deployment"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "q2",
+            "prompt": "Where can a trained transformer fit into the integration pipeline?",
+            "options": [
+              {
+                "id": "a",
+                "text": "As an automatic replacement for every controller"
+              },
+              {
+                "id": "b",
+                "text": "As a perception stage producing a validated observation"
+              },
+              {
+                "id": "c",
+                "text": "As an unexplained direct battery connection"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Keep task-specific perception separate from transport and actuation.",
+            "lessonId": "pipeline"
+          },
+          {
+            "id": "q3",
+            "prompt": "Why is Canny IoU not shown against the filled target here?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Edge pixels and filled regions are different representations"
+              },
+              {
+                "id": "b",
+                "text": "Edges are always perfect"
+              },
+              {
+                "id": "c",
+                "text": "IoU requires internet access"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "An outline should be evaluated against a compatible boundary target or boundary metric.",
+            "lessonId": "evaluation"
+          },
+          {
+            "id": "q4",
+            "prompt": "At 0.5 m/s during 80 ms latency, the robot travels…",
+            "options": [
+              {
+                "id": "a",
+                "text": "40 m"
+              },
+              {
+                "id": "b",
+                "text": "0.4 m"
+              },
+              {
+                "id": "c",
+                "text": "0.04 m"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Convert 80 ms to 0.08 s, then multiply by 0.5 m/s.",
+            "lessonId": "deployment"
+          },
+          {
+            "id": "q5",
+            "prompt": "Which data split should measure a trained model beyond its fitting examples?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The topic-name list"
+              },
+              {
+                "id": "b",
+                "text": "Held-out evaluation data"
+              },
+              {
+                "id": "c",
+                "text": "Only the exact training frames"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Independent examples help reveal generalization errors.",
+            "lessonId": "evaluation"
+          },
+          {
+            "id": "q6",
+            "prompt": "What should a receiver verify before acting on perception?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Shape, units, frame and freshness"
+              },
+              {
+                "id": "b",
+                "text": "Only that JSON contains a number"
+              },
+              {
+                "id": "c",
+                "text": "Only the file extension"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "A syntactically valid number can still use the wrong unit, frame or timestamp.",
+            "lessonId": "deployment"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "OpenCV image processing",
+          "url": "https://docs.opencv.org/4.12.0/db/d64/tutorial_js_colorspaces.html"
+        },
+        {
+          "title": "ROS 2 communication patterns",
+          "url": "https://docs.ros.org/en/jazzy/How-To-Guides/Topics-Services-Actions.html"
+        }
+      ],
+      "exampleIds": [
+        "iot-http-adapter",
+        "ros-vision-node"
+      ],
+      "config": {
+        "kind": "vision",
+        "version": 1,
+        "theme": "iot",
+        "mode": "threshold",
+        "threshold": 150,
+        "edgeLow": 50,
+        "edgeHigh": 120,
+        "hueMin": 40,
+        "hueMax": 90,
+        "blur": 0,
+        "brightness": 1,
+        "offset": 0,
+        "noise": 0,
+        "occlusion": 0,
+        "patchSize": 16,
+        "query": 36,
+        "temperature": 1,
+        "positionWeight": 0.5
+      },
+      "integrated": false
+    },
+    {
+      "id": "vision-integration",
+      "version": 1,
+      "order": 6,
+      "title": "6. Capstone: connect vision, IoT, drones and robotics",
+      "summary": "Run one vision observation through three working simulated device adapters, then inspect failure cases.",
+      "difficulty": "Intermediate",
+      "minutes": 40,
+      "lessons": [
+        {
+          "id": "shared-observation",
+          "title": "One measurement, different device responsibilities",
+          "text": "Start with the green drone-pad scene and an HSV mask. The perception stage computes selected area and horizontal centroid. A valid mask creates detected = true; an empty or tiny mask creates detected = false. Every click of Send observation captures the current result and routes it to three different devices. This teaches separation of responsibilities: the IoT endpoint represents an event, the drone bench exposes a pulse adapter, and the robot interprets a velocity message."
+        },
+        {
+          "id": "connected-devices",
+          "title": "Follow the complete path to observable behavior",
+          "text": "Start connected devices and wait for the 1.2-second low ESC signal. Sending a detected observation calls GET /on on the actual virtual ESP32 WebServer, transmits L, C or R to the actual clamped drone firmware, and publishes a Twist into the differential-drive model. The panels show the HTTP response, measured ESC pulse and motor RPM, and the robot pose after one second. Inspect these outputs instead of assuming that constructing a JSON payload completed the integration."
+        },
+        {
+          "id": "failure-cases",
+          "title": "Test no target and separate learning models",
+          "text": "Move the pad left and right, then exclude green with the hue controls. No target maps to HTTP /off, serial X with disarm, and zero robot velocity. Attention-only mode supplies no observation and disables sending; fixed attention weights are not detector output. The three demonstrations share a perception contract but do not form a physical autonomous team. The ESC is props-off, the camera scenes are generated, and the robot world does not provide a camera. These boundaries make each observed response interpretable."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Bounded adapter outputs",
+          "equation": "ωrobot = −ex rad/s;  pulse = 1150 (left), 1200 (center), 1250 (right) µs",
+          "symbols": "ex: normalized image error; left: ex < −0.1; right: ex > 0.1; otherwise center. No target gives 1000 µs and disarm. These ESC values are teaching signals, not a flight mix.",
+          "example": "For ex = +0.3, the robot requests −0.3 rad/s and the props-off ESC receives serial R, requesting 1250 µs."
+        },
+        {
+          "title": "Verify response with a measured delta",
+          "equation": "Δpose = poseafter − posebefore;  expected straight Δx = vΔt",
+          "symbols": "Pose: x/y position (m) and yaw (rad); v: forward speed (m/s); Δt: virtual interval (s). The straight case assumes yaw zero and no obstacle.",
+          "example": "A centered observation requests 0.15 m/s. Over one second at yaw zero, expected forward travel is 0.15 m."
+        }
+      ],
+      "steps": [
+        "Start connected devices. Keep HSV hue 40–90 and send the initial centered pad observation. Verify HTTP 200, ESC 1200 µs and changed robot pose.",
+        "Move the pad right by 25 px, send again and verify serial R, ESC 1250 µs and negative robot yaw correction.",
+        "Exclude green by setting hue minimum and maximum to 0, then send the no-target result. Verify LED off, ESC 1000 µs and no additional robot motion.",
+        "Switch to attention mode. Explain why sending is disabled, then export measurements and settings to document the experiment."
+      ],
+      "practice": [
+        {
+          "id": "q0",
+          "prompt": "Which observation field is shared by all three adapters?",
+          "options": [
+            {
+              "id": "a",
+              "text": "detected"
+            },
+            {
+              "id": "b",
+              "text": "A physical motor connector"
+            },
+            {
+              "id": "c",
+              "text": "A browser password"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Each device can interpret the same detected/no-target observation in its own way.",
+          "lessonId": "shared-observation"
+        },
+        {
+          "id": "q1",
+          "prompt": "What verifies the virtual IoT command actually reached the server?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Only the preview JSON"
+            },
+            {
+              "id": "b",
+              "text": "Only the color of a course card"
+            },
+            {
+              "id": "c",
+              "text": "The HTTP response returned by the simulated WebServer"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "The returned status and body provide application-level evidence of handling.",
+          "lessonId": "connected-devices"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "q2",
+            "prompt": "For ex = +0.3, which drone serial code does this adapter send?",
+            "options": [
+              {
+                "id": "a",
+                "text": "X"
+              },
+              {
+                "id": "b",
+                "text": "R"
+              },
+              {
+                "id": "c",
+                "text": "L"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Positive error above 0.1 maps to the right-hand teaching signal R.",
+            "lessonId": "connected-devices"
+          },
+          {
+            "id": "q3",
+            "prompt": "What happens on a no-target observation?",
+            "options": [
+              {
+                "id": "a",
+                "text": "LED off, ESC low/disarmed and robot stop"
+              },
+              {
+                "id": "b",
+                "text": "All devices accelerate"
+              },
+              {
+                "id": "c",
+                "text": "The previous action is repeated forever"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Each adapter has an explicit no-target mapping.",
+            "lessonId": "failure-cases"
+          },
+          {
+            "id": "q4",
+            "prompt": "Why does attention-only mode disable Send observation?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The image has no pixels"
+              },
+              {
+                "id": "b",
+                "text": "Transformers cannot use numbers"
+              },
+              {
+                "id": "c",
+                "text": "Its weights are not a validated detection result"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "This fixed attention explorer supplies no detector observation.",
+            "lessonId": "failure-cases"
+          },
+          {
+            "id": "q5",
+            "prompt": "At 0.15 m/s for 1 s with zero yaw, expected travel is…",
+            "options": [
+              {
+                "id": "a",
+                "text": "15 m"
+              },
+              {
+                "id": "b",
+                "text": "0.15 m"
+              },
+              {
+                "id": "c",
+                "text": "1.5 m"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Distance is speed times time.",
+            "lessonId": "connected-devices"
+          },
+          {
+            "id": "q6",
+            "prompt": "Does this capstone implement autonomous drone landing?",
+            "options": [
+              {
+                "id": "a",
+                "text": "No; the drone demonstration is a clamped props-off signal adapter"
+              },
+              {
+                "id": "b",
+                "text": "Yes; color alone proves a safe landing site"
+              },
+              {
+                "id": "c",
+                "text": "Only if the HTTP status is 200"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "A landing controller requires additional state estimation, calibration and flight control beyond this signal demonstration.",
+            "lessonId": "failure-cases"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "ROS 2 topics, services and actions",
+          "url": "https://docs.ros.org/en/jazzy/How-To-Guides/Topics-Services-Actions.html"
+        },
+        {
+          "title": "OpenCV.js usage and memory management",
+          "url": "https://docs.opencv.org/4.12.0/d0/d84/tutorial_js_usage.html"
+        }
+      ],
+      "exampleIds": [
+        "iot-http-adapter",
+        "ros-vision-node"
+      ],
+      "config": {
+        "kind": "vision",
+        "version": 1,
+        "theme": "drone",
+        "mode": "color",
+        "threshold": 150,
+        "edgeLow": 50,
+        "edgeHigh": 120,
+        "hueMin": 40,
+        "hueMax": 90,
+        "blur": 0,
+        "brightness": 1,
+        "offset": 0,
+        "noise": 0,
+        "occlusion": 0,
+        "patchSize": 16,
+        "query": 36,
+        "temperature": 1,
+        "positionWeight": 0.5
+      },
+      "integrated": true
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 import { useI18n } from '../../i18n/index.jsx'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, Check, Play, RotateCcw, Square } from 'lucide-react'
 import { TUTORIALS } from '../../content/index.js'
@@ -12,6 +12,7 @@ import { tutorialCircuit, tutorialCode } from './circuits.js'
 import { WiringGuide } from './WiringGuide.jsx'
 import AssistantPanel from '../assistant/AssistantPanel.jsx'
 import Inspector from '../workspace/Inspector.jsx'
+const DroneLessonBench = lazy(() => import('./DroneLessonBench.jsx'))
 
 function TutorialLab({ tutorial, boardId }) {
   const { t } = useI18n()
@@ -66,10 +67,10 @@ function TutorialLab({ tutorial, boardId }) {
         </section>
         <section className="min-w-0 overflow-hidden rounded-lg border border-line bg-white" aria-label={t("Tutorial circuit")}>
           <div className="border-b border-line px-4 py-3"><h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t("Your circuit")}</h2><p className="mt-1 text-xs text-slate-500">{t("Ready to run · buttons and sensor controls stay interactive")}</p></div>
-          <div id="tutorial-circuit" className="h-[440px]"><BreadboardCanvas doc={doc} simState={state} readOnly selectedIds={selectedIds} onSelect={ids => { setSelectedIds(ids); setSelectedWire(null) }} highlights={highlightedWire ? { terminals: [highlightedWire.from, highlightedWire.to] } : null} onControl={(id, patch) => simulation.current?.setControl(id, patch)} /></div>
-          {selectedIds.length > 0 && <div className="max-h-64 overflow-y-auto border-t border-line"><Inspector doc={doc} selectedIds={selectedIds} state={state} readOnly onControl={(id, patch) => simulation.current?.setControl(id, patch)} /></div>}
+          {tutorial.kind === 'drone' ? <Suspense fallback={<p className="p-4">{t('Loading drone bench…')}</p>}><DroneLessonBench doc={doc} state={state} simulation={simulation} selectedIds={selectedIds} onSelect={setSelectedIds} /></Suspense> : <div id="tutorial-circuit" className="h-[440px]"><BreadboardCanvas doc={doc} simState={state} readOnly selectedIds={selectedIds} onSelect={ids => { setSelectedIds(ids); setSelectedWire(null) }} highlights={highlightedWire ? { terminals: [highlightedWire.from, highlightedWire.to] } : null} onControl={(id, patch) => simulation.current?.setControl(id, patch)} /></div>}
+          {tutorial.kind !== 'drone' && selectedIds.length > 0 && <div className="max-h-64 overflow-y-auto border-t border-line"><Inspector doc={doc} selectedIds={selectedIds} state={state} readOnly onControl={(id, patch) => simulation.current?.setControl(id, patch)} /></div>}
           {!!state?.warnings?.length && <div className="border-t border-line p-3 text-xs text-amber-800">{state.warnings.slice(0, 4).map((warning, index) => <p key={index} className="mb-2">{warning.message} {warning.hint}</p>)}</div>}
-          {tutorial.id === 'esp32-web' && <form onSubmit={request} className="border-t border-line p-4"><label className="mb-2 block text-sm font-medium" htmlFor="http-path">{t("Virtual HTTP request")}</label><div className="flex gap-2"><input id="http-path" value={path} onChange={(event) => setPath(event.target.value)} className="min-w-0 flex-1 rounded border border-line-strong px-2 font-mono text-sm" /><Button size="sm" type="submit" disabled={!running}>{t("GET")}</Button></div><p role="status" className="mt-2 break-words text-xs text-slate-600">{response}</p></form>}
+          {(tutorial.id === 'esp32-web' || tutorial.http) && <form onSubmit={request} className="border-t border-line p-4"><label className="mb-2 block text-sm font-medium" htmlFor="http-path">{t("Virtual HTTP request")}</label><div className="flex gap-2"><input id="http-path" value={path} onChange={(event) => setPath(event.target.value)} className="min-w-0 flex-1 rounded border border-line-strong px-2 font-mono text-sm" /><Button size="sm" type="submit" disabled={!running}>{t("GET")}</Button></div><p role="status" className="mt-2 break-words text-xs text-slate-600">{response}</p></form>}
           {state?.wifi?.status !== 'idle' && state?.wifi?.status && <p className="border-t border-line p-3 text-xs text-slate-600">{t("WiFi: ")}{state.wifi.status} · {state.wifi.ip ?? t("Waiting for an address")}</p>}
           {state?.mqtt?.log?.length > 0 && <pre aria-label={t("MQTT messages")} className="max-h-40 overflow-auto border-t border-line p-3 text-xs">{state.mqtt.log.slice(-10).map((entry) => `${entry.dir} ${entry.topic ?? ''} ${entry.payload ?? ''}`).join('\n')}</pre>}
           <div className="border-t border-line"><AssistantPanel mode="tutorial" title={t(tutorial.title)} doc={doc} code={code} selectedIds={selectedWire ? [selectedWire] : selectedIds} state={state} lesson={tutorial} completedSteps={completed} /></div>
@@ -81,7 +82,7 @@ function TutorialLab({ tutorial, boardId }) {
         </section>
       </div>
       <div className="mt-6 grid gap-5 lg:grid-cols-2">{[['Hardware concepts', tutorial.hardwareConcepts], ['Program concepts', tutorial.programConcepts]].map(([title, concepts]) => <section key={title} className="rounded-lg border border-line bg-white p-5"><h2 className="mb-4 text-lg font-semibold">{t(title)}</h2><div className="space-y-5">{concepts?.map((concept) => <div key={concept.title}><h3 className="mb-2 text-sm font-semibold text-brand-700">{t(concept.title)}</h3><p className="text-sm leading-relaxed text-ink-secondary">{t(concept.text)}</p></div>)}</div></section>)}</div>
-      <WiringGuide doc={doc} selectedWire={selectedWire} onSelectWire={(id) => { setSelectedWire(id); document.getElementById('tutorial-circuit')?.scrollIntoView?.({ behavior: 'auto', block: 'center' }) }} />
+      {tutorial.kind !== 'drone' && <WiringGuide doc={doc} selectedWire={selectedWire} onSelectWire={(id) => { setSelectedWire(id); document.getElementById('tutorial-circuit')?.scrollIntoView?.({ behavior: 'auto', block: 'center' }) }} />}
       {tutorial.language === 'python' && <div className="mt-5"><Callout tone="info" title={t("Raspberry Pi GPIO learning environment")}>{t("Supports the Python and GPIO calls used in these tutorials. Linux, external Python packages, arbitrary functions, and camera or network emulation are not available.")}</Callout></div>}
     </>
   )

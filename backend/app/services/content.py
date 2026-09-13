@@ -37,6 +37,8 @@ _levels: dict[str, dict] = {}
 _catalog: dict[str, dict] = {}
 _cosmetics: dict[str, list] = {"skins": [], "wirePalettes": []}
 _tutorials: list[dict] = []
+_courses: list[dict] = []
+_course_tracks: list[dict] = []
 _loaded = False
 
 
@@ -117,12 +119,13 @@ def _load_cosmetics(root: Path) -> dict[str, list]:
 
 def load_content(content_dir: str | Path | None = None) -> None:
     """(Re)load every content file from ``content_dir`` (default: CONTENT_DIR)."""
-    global _worlds, _levels, _catalog, _cosmetics, _tutorials, _loaded
+    global _worlds, _levels, _catalog, _cosmetics, _tutorials, _courses, _course_tracks, _loaded
     root = Path(content_dir) if content_dir else get_settings().content_path
     if not root.is_dir():
         log.warning("content: CONTENT_DIR %s does not exist - serving empty content", root)
         _worlds, _levels, _catalog, _cosmetics = [], {}, {}, {"skins": [], "wirePalettes": []}
         _tutorials = []
+        _courses, _course_tracks = [], []
         _loaded = True
         return
     _worlds = _load_worlds(root)
@@ -145,6 +148,23 @@ def load_content(content_dir: str | Path | None = None) -> None:
     )
     tiers = {"Easy": 0, "Intermediate": 1, "Hard": 2}
     _tutorials.sort(key=lambda entry: (tiers.get(entry.get("difficulty"), 3), entry.get("order", 0)))
+    course_data = _read_json(root / "courses.json")
+    if not isinstance(course_data, dict):
+        course_data = {}
+    tracks = course_data.get("tracks", [])
+    _course_tracks = [entry for entry in tracks if isinstance(entry, dict) and isinstance(entry.get("id"), str) and entry["id"] and isinstance(entry.get("title"), str) and entry["title"]] if isinstance(tracks, list) else []
+    track_order = {entry["id"]: i for i, entry in enumerate(_course_tracks)}
+    entries = course_data.get("courses", [])
+    _courses = [
+        entry for entry in entries
+        if isinstance(entry, dict) and isinstance(entry.get("id"), str) and entry["id"]
+        and isinstance(entry.get("title"), str) and entry["title"]
+        and isinstance(entry.get("track"), str) and entry["track"] in track_order and isinstance(entry.get("order"), int)
+        and entry.get("difficulty") in ("Fundamental", "Intermediate")
+        and isinstance(entry.get("lessons"), list) and isinstance(entry.get("practice"), list)
+        and isinstance(entry.get("exam"), dict)
+    ] if isinstance(entries, list) else []
+    _courses.sort(key=lambda entry: (track_order[entry["track"]], entry["order"]))
     _loaded = True
     log.info("content: loaded %d world(s), %d level(s) from %s", len(_worlds), len(_levels), root)
 
@@ -187,6 +207,16 @@ def get_cosmetics() -> dict[str, list]:
 def get_tutorials() -> list[dict]:
     ensure_loaded()
     return _tutorials
+
+
+def get_courses() -> list[dict]:
+    ensure_loaded()
+    return _courses
+
+
+def get_course_tracks() -> list[dict]:
+    ensure_loaded()
+    return _course_tracks
 
 
 def level_summary(level: dict) -> dict:

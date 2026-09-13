@@ -1,6 +1,6 @@
 # VoltQuest — agent handoff log
 
-**Last verified: 2026-09-12.** This is the state document: what exists, what remains unfinished,
+**Last verified: 2026-09-13.** This is the state document: what exists, what remains unfinished,
 and what to do next. The specifications in `docs/` remain binding.
 
 | Read | When |
@@ -17,7 +17,7 @@ and what to do next. The specifications in `docs/` remain binding.
 ## 1. Current build, not the target product
 
 The main entry points are **`/`** (20 campaign quests), **`/sandbox`** (freeform projects), and **`/tutorials`** (guided lessons).
-There are **35 tutorials**, ordered Easy → Intermediate → Hard, with editable code,
+There are **41 firmware tutorials**, ordered Easy → Intermediate → Hard, with editable code,
 real simulation, explanations of program and hardware concepts, exact breadboard placement,
 cable endpoint tables and click-to-highlight wiring. The circuit is prepared/read-only, but
 buttons, pots, touch and sensor controls remain interactive.
@@ -27,9 +27,9 @@ Ten tutorials form an Arduino/ESP32 C++ programming path:
 - Intermediate: functions, loops, arrays.
 - Hard: non-blocking timing, serial command parsing, state machines.
 
-The other 25 lessons cover ten Uno/Nano circuits, eight ESP32/ESP32-S3 topics and seven Pi
-Python/GPIO topics. Each Uno/Nano offers 20 lessons, each ESP32 offers 18, and each Pi offers seven.
-All **90 tutorial/board combinations** are exercised through the real inline simulation.
+The other 31 lessons include circuit/Pi topics plus three IoT foundation labs and three drone labs.
+Each Uno/Nano offers 22 lessons, each ESP32 offers 24, and each Pi offers seven.
+All **106 tutorial/board combinations** are exercised through the real inline simulation.
 The hub has search, board/difficulty filters and a programming-path shortcut.
 
 Supported board ids: `uno`, `nano`, `esp32`, `esp32s3`, `raspberrypi4`, `raspberrypi5`.
@@ -49,9 +49,9 @@ repository or commit without the user's explicit request.
 ## 2. Verification
 
 Latest full `make check`:
-- **801 frontend tests in 54 files pass.**
-- **98 backend tests pass.**
-- Production build succeeds; initial JS payload is **331.0 KiB gzipped**, below the 1500 KiB budget.
+- **923 frontend tests in 62 files pass.**
+- **101 backend tests pass.**
+- Production build succeeds; initial JS payload is **423.1 KiB gzipped**, below the 1500 KiB budget.
 - ESLint has no errors. Two existing exhaustive-deps warnings remain in
   `features/campaign/CampaignMap.jsx:84`; these are unrelated to the assistant/localization work.
 - Node prints the existing jsdom/localStorage warning; persistence tests use the memory-storage helper.
@@ -79,6 +79,56 @@ their explanation or timing is correct. `features/tutorials/programming.test.js`
 numeric output, command dispatch and LED state transitions on all four C++ boards.
 
 ## 3. Completed in this continuation
+
+### Courses, IoT/drone foundations, robotics and computer vision (2026-09-13)
+
+The new study paths are linked from Tutorials and Courses:
+- `/courses`: 10 electrical engineering courses, 10 IoT parts courses, IoT/Arduino foundations and
+  drone foundations. These 22 courses have 66 theory sections, 46 formula cards, worked examples,
+  application exercises, related labs, 2 practice questions and a 5-question exam each.
+- Three new IoT firmware tutorials cover hysteresis, explicit telemetry and HTTP command/status;
+  three drone tutorials cover IMU tilt, props-off ESC signals and assisted hover/landing, on both ESPs.
+- `/robotics`: 5 Easy → Intermediate tutorials about motion, ROS 2 nodes/topics, sensor frames,
+  services/parameters and waypoint actions. The user explicitly selected ROS 2 **concepts** with an
+  interactive browser sandbox. `/sandbox?bench=robotics` has editable geometry/world JSON, real
+  deterministic motion, graph wiring, Twist publishing, sensor messages, parameters and actions.
+- `/vision`: 6 courses/labs on OpenCV/IoT fundamentals, HSV drone markers, Canny/ROS steering,
+  transformer patches/attention, deployment integration and a distinct cross-device capstone.
+  `/sandbox?bench=vision` has editable generated scenes and actual local OpenCV 4.12 processing.
+  `/vision/vision-integration` routes a fresh observation through actual virtual ESP32 HTTP,
+  props-off drone serial firmware and the shared robot motion model, showing observed responses.
+
+Across the three catalogues there are 33 study units, 68 formula cards, 231 questions and 33 exams.
+Assessments require complete answers, grade at 80%, reveal explanations on submit, permit retries and
+persist best scores/section checks in `vq.courses.v1`. These are local self-study scores, not campaign
+XP or secure certification. Robotics and vision settings have separate local save/load, import with
+confirmation, and JSON exports. They do not extend CircuitDoc, account project APIs, MCP or showcase.
+The 22-course public list/detail API is `/api/courses`; robotics/vision catalogues load in frontend routes.
+All authored public paths are included in the generated sitemap: **102 URLs**.
+
+OpenCV is pinned as `@techstark/opencv-js@4.12.0-release.1`; Vite emits its 10.9 MB raw JS/WASM as
+an optional local asset. **Do not await the Emscripten `cv` module directly**: its self-resolving thenable
+loops. Resolve `{cv}` after initialization; Node tests use `createRequire`. Every native Mat is deleted.
+The transformer lab computes one fixed attention head and exposes token count, softmax and context;
+it has no trained classifier or pretrained inference. The drone integration is a clamped signal adapter,
+not autonomous landing. Pi remains the restricted GPIO model. See `docs/COURSES.md`, `ROBOTICS.md`,
+`VISION.md`, CONTRACTS §16 and INTEGRATION_NOTES before extending these features.
+
+English remains default. New electrical/IoT/drone course narratives and robotics narratives plus the
+advanced UI are translated into Indonesian. Vision narratives/companion explanations use English
+fallback where translations are not authored. Locale changes retain edited scenes, simulation and answers.
+Six companion Python examples are viewable/downloadable; they pass syntax compilation but require
+external OpenCV/NumPy or a sourced ROS 2 environment to run. They are never executed by the backend.
+
+Full `make check`: **923 frontend / 101 backend**, production build and **423.1 KiB** initial gzip
+budget pass; only the two existing CampaignMap hook warnings remain. New tests include all 106
+firmware tutorial variants, actual OpenCV/WASM operations and allocation cleanup, robot mechanics,
+message delivery/watchdogs/actions/collisions, assessments/persistence, and all three capstone ports.
+Production Chromium verified local OpenCV loading, centered/right/no-target responses (HTTP 200,
+1200/1250/1000 µs ESC, actual robot motion/stop), robot goal success and saved-project reload, drone
+hover to 1.13 m then landing, plus desktop/390 px without overflow. No application errors occurred in
+production checks. Browser/device performance beyond local Chromium remains release verification.
+
 
 ### Custom Drone Builder — D1 / D2 / D3 (2026-09-12)
 

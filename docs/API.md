@@ -74,6 +74,17 @@ projects(id, owner_id fk, name, description, board, board_mode, circuit json, co
 JSON columns: use `sqlalchemy.JSON` (works on SQLite and Postgres).
 Env: `DATABASE_URL` (default `sqlite:///./voltquest.db`), `JWT_SECRET` (default dev secret + startup warning), `CONTENT_DIR` (default `../content`), `CORS_ORIGINS`.
 
+## Public self-study courses (2026-09-13)
+
+- `GET /api/courses?track=&difficulty=&q=` → `{ tracks, courses, total }` in track/course order.
+  Difficulty is `Fundamental|Intermediate`; track ids come from `content/courses.json`; search is
+  case-insensitive over titles, summaries and lesson titles (maximum 200 characters).
+- `GET /api/courses/{course_id}` → complete course or 404. Invalid filters return 422.
+
+Both endpoints are public. Missing content returns an empty catalog. Answer keys and explanations
+are public study material. Assessment progress is browser-local; there is no server grading or XP.
+`api.courses.list(params)` and `api.courses.get(id)` expose the endpoints in the frontend API client.
+
 ## AI assistant (2026-09-12 extension)
 
 - `GET /api/assistant/status` (public) → `{ enabled: boolean }`; exposes no provider credentials.

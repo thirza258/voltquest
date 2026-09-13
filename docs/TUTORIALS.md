@@ -3,6 +3,8 @@
 `/tutorials` is the searchable tutorial hub; `/tutorials/:tutorialId?board=<boardId>` opens a
 guided simulation. The campaign remains at `/` and links prominently to the tutorial hub.
 The shared header includes Tutorials. These routes are lazy-loaded.
+The hub also links to self-study courses at `/courses`, with lessons, worked examples, practice
+questions and exams. See `COURSES.md`; courses link to related labs without altering their circuits.
 
 The shared `content/tutorials.json` currently contains 35 tutorials: ten Uno/Nano hardware lessons,
 eight ESP32/ESP32-S3 hardware lessons, seven Raspberry Pi 4/5 lessons and ten C++ programming
@@ -91,3 +93,20 @@ Every question snapshots the current edited code, board, prepared circuit, live 
 steps. Explicit Share current context makes the same snapshot available to a connected coding agent,
 which can create a separate saved sandbox project. Tutorial circuits remain read-only and no XP or
 persistent tutorial completion is introduced. See `ASSISTANT.md` for configuration and boundaries.
+
+## 2026-09-13 curriculum extensions
+
+The six-board catalogue now contains 41 tutorials and 106 tutorial/board combinations. Three new IoT
+labs teach hysteresis sense/act, explicit telemetry units and HTTP command/status endpoints; the
+access-point lesson uses `WiFi.softAP`. The new IoT potentiometer presets orient the endpoints so a
+higher interactive control value produces a higher ADC value; old presets retain their behavior.
+Three drone labs teach IMU tilt, props-off ESC signals and assisted hover/landing on ESP32 and ESP32-S3.
+Drone tutorials use `kind:'drone'`, prepared read-only assemblies and `DroneLessonBench` with local
+simulation refs. They share the existing flight engine, include socket tables, and preserve interactive
+tilt/transmitter/serial controls. Tutorial diagrams must not write to global document/simulation stores.
+`http:true` enables the HTTP form for additional IoT lessons.
+
+The 22-course path adds explicit theory/formulas and links to these labs; see COURSES.md.
+Five robotics tutorials and six computer-vision courses/labs have dedicated hubs and distinct sandbox
+formats; see ROBOTICS.md and VISION.md. They are not counted as six-board firmware tutorial variants.
+The vision capstone connects prepared IoT and drone firmware to real virtual inputs plus the robot model.

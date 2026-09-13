@@ -160,6 +160,8 @@ function SandboxEditor({ initial, working }) {
         { label: 'My projects', onSelect: openProjects },
         { label: 'New project', onSelect: () => setModal('new') },
         { label: 'New custom drone', onSelect: () => setModal('newDrone') },
+        { label: 'Open computer vision sandbox', onSelect: () => { useWorkspaceStore.getState().saveDraft(); navigate('/sandbox?bench=vision') } },
+        { label: 'Open robotics sandbox', onSelect: () => { useWorkspaceStore.getState().saveDraft(); navigate('/sandbox?bench=robotics') } },
         { label: 'Import JSON', onSelect: () => fileInput.current?.click() },
         { label: 'Export JSON', onSelect: () => exportAs('json') },
         { label: 'Export code', onSelect: () => exportAs('code') },

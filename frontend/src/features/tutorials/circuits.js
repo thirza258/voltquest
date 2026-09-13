@@ -2,6 +2,8 @@ import { makeDoc, place, wire } from '../../engine/components/seeds.js'
 import { getBoard } from '../../engine/boards/index.js'
 import { resolvePins } from '../../engine/components/registry.js'
 import { findBreadboard, holesInStrip, stripOf } from '../../engine/components/breadboard.js'
+import { createDroneDoc } from '../../engine/drone/document.js'
+import { DEFAULT_CONFIG } from '../../engine/drone/config.js'
 
 export function tutorialCode(tutorial, boardId) {
   return tutorial.codeOverrides?.[boardId] ?? tutorial.code
@@ -26,6 +28,7 @@ function allocateCableHoles(doc) {
 }
 
 export function tutorialCircuit(tutorial, boardId) {
+  if (tutorial.kind === 'drone') return createDroneDoc({ ...structuredClone(DEFAULT_CONFIG), fc: { ...DEFAULT_CONFIG.fc, board: boardId } }, { bench: tutorial.preset !== 'drone-hover' })
   const board = getBoard(boardId)
   const doc = makeDoc({ mcu: boardId, boardMode: board.family === 'esp32' ? 'dual' : 'half', name: tutorial.title })
   const controller = `c_${boardId}`
@@ -58,8 +61,10 @@ export function tutorialCircuit(tutorial, boardId) {
   }
   if (tutorial.preset === 'pot') {
     const pot = place(doc, 'potentiometer', controlBoard, 'f20', {}, 0, 'c_pot')
-    connect(`${pot}:end1`, ground, 'black')
-    connect(`${pot}:end2`, power, 'red')
+    // These introductory lessons use a rising knob percentage as a rising ADC value.
+    const rising = tutorial.track === 'iot-foundations'
+    connect(`${pot}:end1`, rising ? power : ground, rising ? 'red' : 'black')
+    connect(`${pot}:end2`, rising ? ground : power, rising ? 'black' : 'red')
     connect(`${pot}:wiper`, `${controller}:${board.family === 'avr' ? 'A0' : boardId === 'esp32s3' ? 'GPIO4' : 'GPIO34'}`)
   }
   if (tutorial.preset === 'touch') {

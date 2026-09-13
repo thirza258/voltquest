@@ -125,6 +125,10 @@ export const api = {
     list: (params = {}) => get('/tutorials', { query: params }),
     get: (id) => get(`/tutorials/${encodeURIComponent(id)}`),
   },
+  courses: {
+    list: (params = {}) => get('/courses', { query: params }),
+    get: (id) => get(`/courses/${encodeURIComponent(id)}`),
+  },
   players: {
     /** POST /api/players/guest → { token, player } */
     guest: () => post('/players/guest'),

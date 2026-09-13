@@ -62,7 +62,7 @@ function Wiring({ doc, readOnly }) {
   </details>
 }
 
-export function DroneDiagram({ doc, state, selectedIds, ghost, readOnly }) {
+export function DroneDiagram({ doc, state, selectedIds, ghost, readOnly, onSelect = select }) {
   const { t } = useI18n(), [moving, setMoving] = useState(null), [error, setError] = useState('')
   const drag = useRef(null), suppressClick = useRef(false), [preview, setPreview] = useState(null)
   useEffect(() => {
@@ -76,7 +76,7 @@ export function DroneDiagram({ doc, state, selectedIds, ghost, readOnly }) {
   function release(e) {
     const active = drag.current; if (!active || active.pointer !== e.pointerId) return
     drag.current = null; setPreview(null)
-    if (Math.hypot(e.clientX - active.x, e.clientY - active.y) < 4) { select(active.id); return }
+    if (Math.hypot(e.clientX - active.x, e.clientY - active.y) < 4) { onSelect(active.id); return }
     suppressClick.current = true
     const p = doc.components.find(c => c.id === active.id)
     try { const mount = nearest(point(e), droneDef(p.type)?.mounts ?? ['stack']); if (mount !== mountOf(doc, p.id)) commitDrone({ ...doc, mounts: doc.mounts.map(m => m.componentId === p.id ? { ...m, mount } : m) }); setError('') } catch (err) { setError(err.message) }
@@ -87,18 +87,18 @@ export function DroneDiagram({ doc, state, selectedIds, ghost, readOnly }) {
   }
   return <div className="relative"><svg data-canvas-svg viewBox="0 0 600 500" className="w-full" style={{ touchAction: readOnly ? 'auto' : 'none' }} role="img" aria-label={t('Drone assembly and connector diagram')}
     onDragOver={e => { if (!readOnly && [...e.dataTransfer.types].includes(DND_MIME)) e.preventDefault() }}
-    onDrop={e => { if (readOnly) return; e.preventDefault(); const type = e.dataTransfer.getData(DND_MIME), def = droneDef(type); if (!def) return; try { const next = addDronePart(doc, type, nearest(point(e), def.mounts)); commitDrone(next); select(next.components.at(-1).id); setError('') } catch (err) { setError(err.message) } }}
+    onDrop={e => { if (readOnly) return; e.preventDefault(); const type = e.dataTransfer.getData(DND_MIME), def = droneDef(type); if (!def) return; try { const next = addDronePart(doc, type, nearest(point(e), def.mounts)); commitDrone(next); onSelect(next.components.at(-1).id); setError('') } catch (err) { setError(err.message) } }}
     onPointerDown={e => { suppressClick.current = false; const id = e.target.closest('[data-drone-part]')?.dataset.dronePart; if (readOnly || !id || e.button !== 0) return; drag.current = { id, pointer: e.pointerId, x: e.clientX, y: e.clientY }; e.currentTarget.setPointerCapture(e.pointerId) }}
     onPointerMove={e => { if (drag.current?.pointer === e.pointerId) setPreview(point(e)) }} onPointerUp={release} onPointerCancel={() => { drag.current = null; setPreview(null) }} onLostPointerCapture={() => { drag.current = null; setPreview(null) }}>
     <rect width="600" height="500" fill="#f8fafc" /><path d="M160 110L440 390M440 110L160 390" stroke="#cbd5e1" strokeWidth="30" /><rect x="252" y="200" width="96" height="105" rx="12" fill="#e2e8f0" stroke="#94a3b8" />
     <text x="300" y="28" textAnchor="middle" fill="#475569" fontSize="13">{t('FRONT ↑ · Quad-X · named mounts')}</text>
     {ghost && <g opacity="0.3" stroke="#14b8a6" strokeWidth="3" strokeDasharray="6 4">{ghost.links.map(l => { const a = positionOf(ghost, l.from.split(':')[0]), b = positionOf(ghost, l.to.split(':')[0]); return <line key={l.id} x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} /> })}</g>}
-    {doc.links.map(l => { const a = positionOf(doc, l.from.split(':')[0]), b = positionOf(doc, l.to.split(':')[0]); return <g key={l.id} tabIndex={0} role="button" aria-label={`${l.from} to ${l.to}`} onClick={() => select(l.id)} onKeyDown={e => { if (['Enter', ' '].includes(e.key)) { e.preventDefault(); select(l.id) } }}><line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke="transparent" strokeWidth="12" /><line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={selectedIds.includes(l.id) ? '#0f172a' : COLORS[l.kind]} strokeWidth={selectedIds.includes(l.id) ? 4 : 1.7} /><title>{l.from} → {l.to} · {l.awg} AWG</title></g> })}
+    {doc.links.map(l => { const a = positionOf(doc, l.from.split(':')[0]), b = positionOf(doc, l.to.split(':')[0]); return <g key={l.id} tabIndex={0} role="button" aria-label={`${l.from} to ${l.to}`} onClick={() => onSelect(l.id)} onKeyDown={e => { if (['Enter', ' '].includes(e.key)) { e.preventDefault(); onSelect(l.id) } }}><line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke="transparent" strokeWidth="12" /><line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={selectedIds.includes(l.id) ? '#0f172a' : COLORS[l.kind]} strokeWidth={selectedIds.includes(l.id) ? 4 : 1.7} /><title>{l.from} → {l.to} · {l.awg} AWG</title></g> })}
     {Object.entries(MOUNTS).filter(([m]) => !m.startsWith('prop') && m !== 'frame').map(([mount, [x, y]]) => <g key={mount} role="button" tabIndex={moving ? 0 : -1} aria-label={`${t('Place at')} ${mount}`} onClick={() => place(mount)} onKeyDown={e => { if (e.key === 'Enter') place(mount) }}><circle cx={x} cy={y} r="26" fill="none" stroke={moving ? '#14b8a6' : '#94a3b8'} strokeDasharray="4 3" /><text x={x} y={y + 46} fontSize="11" textAnchor="middle" fill="#475569">{mount}</text></g>)}
     {doc.components.filter(p => p.type !== 'drone_frame').map(p => {
       const [x, y] = positionOf(doc, p.id), damaged = state?.damaged?.[p.id], motor = p.type === 'brushless_motor', prop = p.type === 'drone_prop'
       if (prop && !p.props.fitted) return null
-      return <g key={p.id} data-drone-part={p.id} transform={`translate(${x} ${y})`} tabIndex={0} role="button" aria-label={`${droneDef(p.type)?.name ?? p.type} ${mountOf(doc, p.id)}`} style={{ cursor: 'pointer' }} onClick={e => { e.stopPropagation(); if (suppressClick.current) { suppressClick.current = false; return } if (moving) place(mountOf(doc, p.id)); else select(p.id) }} onDoubleClick={() => { if (!readOnly && !prop) setMoving(p.id) }} onKeyDown={e => { if (e.key === 'Enter') select(p.id); if (e.key === 'Escape') setMoving(null) }}>
+      return <g key={p.id} data-drone-part={p.id} transform={`translate(${x} ${y})`} tabIndex={0} role="button" aria-label={`${droneDef(p.type)?.name ?? p.type} ${mountOf(doc, p.id)}`} style={{ cursor: 'pointer' }} onClick={e => { e.stopPropagation(); if (suppressClick.current) { suppressClick.current = false; return } if (moving) place(mountOf(doc, p.id)); else onSelect(p.id) }} onDoubleClick={() => { if (!readOnly && !prop) setMoving(p.id) }} onKeyDown={e => { if (e.key === 'Enter') onSelect(p.id); if (e.key === 'Escape') setMoving(null) }}>
         {prop ? <ellipse rx="56" ry="11" fill={damaged ? '#fda4af' : '#99f6e4'} fillOpacity="0.65" stroke={selectedIds.includes(p.id) ? '#0f172a' : '#0d9488'} transform={`rotate(${p.props.direction === 'cw' ? 35 : -35})`} /> : motor ? <circle r="22" fill={damaged ? '#ffe4e6' : '#fff'} stroke={selectedIds.includes(p.id) ? '#0d9488' : '#475569'} strokeWidth="3" /> : <rect x="-29" y="-16" width="58" height="32" rx="5" fill={damaged ? '#ffe4e6' : '#fff'} stroke={selectedIds.includes(p.id) ? '#0d9488' : '#64748b'} strokeWidth="2" />}
         {!prop && <text textAnchor="middle" y="4" fontSize="10" fill="#0f172a">{motor ? p.props.direction.toUpperCase() : p.type === doc.mcu ? 'ESP32 FC' : p.type.replace('imu_', '').replace('baro_', '').replace('rx_', '')}</text>}
         {damaged && <><path d="M-10 -25Q-30 -50 -5 -65Q15 -75 0 -95" fill="none" stroke="#64748b" strokeWidth="8" opacity=".6" /><text y="-28" textAnchor="middle" fill="#be123c" fontSize="12">{t('DAMAGED')}</text></>}
@@ -108,7 +108,7 @@ export function DroneDiagram({ doc, state, selectedIds, ghost, readOnly }) {
   </svg>{moving && <p className="absolute inset-x-2 bottom-1 rounded bg-white p-2 text-xs">{t('Select a compatible empty mount.')} <button className="underline" onClick={() => setMoving(null)}>{t('Cancel move')}</button></p>}{error && <p role="alert" className="p-2 text-xs text-rose-700">{t(error)}</p>}</div>
 }
 
-function FlightView({ flight, doc }) {
+export function FlightView({ flight, doc }) {
   const frames = useRef({ from: [0, 0, 0, 0], to: [0, 0, 0, 0], at: 0 }), [pose, setPose] = useState([0, 0, 0, 0])
   useEffect(() => { const previous = frames.current; frames.current = { from: previous.to, to: [...(flight?.position ?? [0, 0, 0]), flight?.attitude[1] ?? 0], at: performance.now() } }, [flight])
   useEffect(() => {

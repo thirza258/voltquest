@@ -1,5 +1,13 @@
 # Integration notes
 
+## Course assessments (2026-09-13)
+
+Courses share authored JSON between lazy frontend routes and the public API. Progress is a separate
+versioned localStorage record, not player progress. Keep canonical answer/lesson identifiers when
+translating; a locale change must not remount the course. Course identity does reset unsaved choices.
+Only complete exam submissions record attempts; practice and duplicate submissions do not.
+Lab links open separately so navigating to a simulator does not discard the course's current answers.
+
 Cross-package facts discovered while building, that `docs/CONTRACTS.md` did not originally state.
 Each was verified against the code. Read this before wiring packages together.
 
@@ -217,3 +225,21 @@ The regression suite checks that no cable hole is occupied by a component or ano
 - Vite HMR may serve store modules with `?t=` timestamps. Browser instrumentation must use the actual
   loaded module URL (or reload cleanly); importing the bare URL can create an unused store instance.
   Real browser checks use the actual Worker, separately from the deterministic inline test suite.
+
+### Robotics and vision integration (2026-09-13)
+
+- The requested robotic OS environment is ROS 2 **concepts**, implemented by a deterministic 2D model,
+  not an installed ROS process. Keep its JSON files and local storage outside CircuitDoc/account APIs.
+- All new foundation tutorial examples run through the actual interpreter. Behavioral tests caught the
+  reversed potentiometer orientation and unsupported network credentials; rising ADC controls and
+  `WiFi.softAP` now match the authored experiments.
+- Use an injected initialized OpenCV module for deterministic tests; all native Mats require `delete()`
+  in `finally`. The pinned Emscripten module is a self-resolving thenable: resolve `{cv}`, never `cv`.
+  Vitest imports must use `createRequire` for that package to avoid thenable assimilation.
+- Vite `?url` emits the full OpenCV JS/WASM as a local optional asset. Check production loading as well
+  as Node algorithms; browser script initialization differs from Node module initialization.
+- An OpenCV result is valid only for its exact current configuration. Scene edits invalidate the prior
+  observation until the new computation completes. Fixed transformer attention cannot send commands.
+- The connected capstone sends one bounded observation through three actual teaching paths: virtual
+  ESP32 HTTP, serial to props-off drone firmware, and the shared robot model. It shows observed responses.
+  The drone adapter is deliberately not a flight controller; vision does not add Pi camera simulation.

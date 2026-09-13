@@ -41,11 +41,22 @@ export function collectRoutes(contentDir) {
   const tutorials = (readJson(path.join(contentDir, 'tutorials.json')).tutorials ?? [])
     .map((tutorial) => tutorial.id)
     .filter(Boolean)
+  const courses = (readJson(path.join(contentDir, 'courses.json')).courses ?? [])
+    .map(course => course.id)
+    .filter(Boolean)
+  const robotics = (readJson(path.join(contentDir, 'robotics.json')).tutorials ?? []).map(item => `/robotics/${item.id}`)
+  const vision = (readJson(path.join(contentDir, 'vision.json')).tutorials ?? []).map(item => `/vision/${item.id}`)
   return [
     '/',
     ...levelRoutes(contentDir),
     '/tutorials',
     ...tutorials.map((id) => `/tutorials/${id}`),
+    '/courses',
+    ...courses.map(id => `/courses/${id}`),
+    '/vision',
+    ...vision,
+    '/robotics',
+    ...robotics,
     '/sandbox',
     '/showcase',
     '/leaderboard',

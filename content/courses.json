@@ -1,0 +1,4665 @@
+{
+  "tracks": [
+    {
+      "id": "electrical",
+      "title": "Electrical engineering foundations",
+      "summary": "Ten courses from voltage and current to signal conditioning and reliable IoT design."
+    },
+    {
+      "id": "iot-parts",
+      "title": "IoT parts and device building",
+      "summary": "Ten courses on choosing, connecting and validating the parts of a connected device."
+    },
+    {
+      "id": "iot-foundations",
+      "title": "IoT / Arduino fundamentals",
+      "summary": "Start with a local circuit, then learn telemetry and verified web commands in three guided labs."
+    },
+    {
+      "id": "drone-foundations",
+      "title": "Drone fundamentals",
+      "summary": "Learn the quad-X parts and practise sensor checks, a props-off motor test and assisted hover."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ee-circuits",
+      "version": 1,
+      "track": "electrical",
+      "order": 1,
+      "title": "Voltage, current and complete circuits",
+      "summary": "Trace energy and charge through a sensor node before connecting its first wire.",
+      "difficulty": "Fundamental",
+      "minutes": 20,
+      "prerequisites": [],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "A circuit needs a return path",
+          "text": "A supply transfers energy to a load when charge can circulate through a complete path. An open switch interrupts that path. Conventional current flows from the positive supply through the load toward the negative terminal; electrons in metal drift the other way. A wire bypassing the load creates a short with potentially excessive current."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Voltage is a difference",
+          "text": "Voltage measures energy per charge between two points, in volts (V). Current is charge flow per second, in amperes (A). Resistance opposes current, in ohms (Ω). Ground is the chosen 0 V reference, not a place where current disappears. Connected non-isolated modules normally need a common signal reference."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Read values with units",
+          "text": "1 A equals 1,000 mA; 1 mA equals 1,000 µA. A 3.3 V output means 3.3 V relative to its ground. It does not promise any particular load current. Before powering a node, identify the supply, load, signal and return conductors, and check the required supply polarity and voltage."
+        }
+      ],
+      "workedExample": "A sensor takes 0.008 A from a 3.3 V supply: its current is 8 mA. A voltmeter between VCC and GND should read about 3.3 V. Disconnecting the return opens the intended circuit; do not assume the data wire is a substitute return. Restore the correct ground connection before evaluating its readings.",
+      "application": "Draw a sensor node with four labelled connections: supply positive, supply return, sensor supply and sensor data. Trace the complete power loop separately from the information path.",
+      "lab": {
+        "tutorialId": "uno-first-light",
+        "task": "Follow the LED current path from the output, through the resistor and LED, back to ground. Use the inspector to compare voltage and current units."
+      },
+      "practice": [
+        {
+          "prompt": "Convert 0.012 A to milliamperes.",
+          "explanation": "Multiply amperes by 1,000: 0.012 × 1,000 = 12 mA.",
+          "lessonId": "lesson-3",
+          "id": "practice-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "0.12 mA"
+            },
+            {
+              "id": "b",
+              "text": "12 mA"
+            },
+            {
+              "id": "c",
+              "text": "1,200 mA"
+            }
+          ],
+          "answerId": "b"
+        },
+        {
+          "prompt": "What does a 3.3 V signal need as its reference?",
+          "explanation": "A voltage is always a difference between two points.",
+          "lessonId": "lesson-2",
+          "id": "practice-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "The wire colour"
+            },
+            {
+              "id": "b",
+              "text": "The program name"
+            },
+            {
+              "id": "c",
+              "text": "The signal ground"
+            }
+          ],
+          "answerId": "c"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "An ideal open switch is in series with a lamp. What happens?",
+            "explanation": "The open switch breaks the complete conducting path.",
+            "lessonId": "lesson-1",
+            "id": "exam-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "Current doubles"
+              },
+              {
+                "id": "b",
+                "text": "Steady current stops"
+              },
+              {
+                "id": "c",
+                "text": "Ground generates current"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "Which quantity is measured in amperes?",
+            "explanation": "Amperes measure charge flow per second.",
+            "lessonId": "lesson-2",
+            "id": "exam-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "Voltage"
+              },
+              {
+                "id": "b",
+                "text": "Resistance"
+              },
+              {
+                "id": "c",
+                "text": "Current"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "Two connected non-isolated modules have separate supplies. What signal connection is normally needed?",
+            "explanation": "A common reference lets the receiver interpret the transmitted voltage. Do not join unequal positive supplies.",
+            "lessonId": "lesson-2",
+            "id": "exam-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "A shared ground reference"
+              },
+              {
+                "id": "b",
+                "text": "A short between both positive rails"
+              },
+              {
+                "id": "c",
+                "text": "No return connection"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "A sensor draws 250 µA. What is that in mA?",
+            "explanation": "Divide microamperes by 1,000 to obtain milliamperes.",
+            "lessonId": "lesson-3",
+            "id": "exam-4",
+            "options": [
+              {
+                "id": "a",
+                "text": "25 mA"
+              },
+              {
+                "id": "b",
+                "text": "0.25 mA"
+              },
+              {
+                "id": "c",
+                "text": "250,000 mA"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "Why is a wire directly across supply positive and ground a fault?",
+            "explanation": "A low-resistance bypass can draw more current than the supply or wiring can safely carry.",
+            "lessonId": "lesson-1",
+            "id": "exam-5",
+            "options": [
+              {
+                "id": "a",
+                "text": "It increases the load resistance"
+              },
+              {
+                "id": "b",
+                "text": "It converts ground into an input"
+              },
+              {
+                "id": "c",
+                "text": "It bypasses the intended load with very low resistance"
+              }
+            ],
+            "answerId": "c"
+          }
+        ]
+      },
+      "sources": [],
+      "formulas": [
+        {
+          "title": "Charge flow and voltage",
+          "equation": "I = Q / t; V = E / Q",
+          "symbols": "I: current (A); Q: charge (C); t: time (s); E: energy (J); V: voltage (V).",
+          "assumptions": "Use constant current or an interval average. Charge is not consumed by a resistor; energy is transferred.",
+          "example": "Given 0.02 C passing in 2 s: I = 0.01 A = 10 mA. Transferring 3 J per 1 C corresponds to 3 V."
+        },
+        {
+          "title": "Ohm’s law",
+          "equation": "V = I × R; I = V / R; R = V / I",
+          "symbols": "V: resistor voltage (V); I: current (A); R: resistance (Ω).",
+          "assumptions": "Use an ohmic resistor and the voltage across that resistor. Convert mA to A before substituting.",
+          "example": "Given 3.3 V across 1,000 Ω: I = 3.3 / 1,000 = 0.0033 A = 3.3 mA."
+        }
+      ]
+    },
+    {
+      "id": "ee-ohms-law",
+      "version": 1,
+      "track": "electrical",
+      "order": 2,
+      "title": "Ohm’s law and resistor selection",
+      "summary": "Calculate current, choose an LED resistor and allow for real component tolerances.",
+      "difficulty": "Fundamental",
+      "minutes": 20,
+      "prerequisites": [
+        "ee-circuits"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Relate voltage, current and resistance",
+          "text": "For an ohmic resistor, V = I × R. Rearrange to I = V / R or R = V / I. Use volts, amperes and ohms in the same calculation. The voltage in this equation is the drop across the resistor itself, not automatically the entire supply."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Size a current-limiting resistor",
+          "text": "An LED is nonlinear and needs current limiting. In a simple series circuit, subtract its assumed forward voltage from the supply, then divide by target current. Select a standard resistor at or above the result to avoid exceeding that target under the stated assumptions. Check the GPIO current capability separately."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Design for variation",
+          "text": "Resistor tolerance means the actual resistance differs from its label. LED forward voltage and supply voltage also vary. The highest LED current occurs with the highest supply, lowest forward voltage and lowest resistance. Absolute maximum ratings are damage boundaries, not sensible operating targets. Leave margin and verify the actual part datasheet."
+        }
+      ],
+      "workedExample": "Assume a 5 V supply, a 2 V LED drop and a 10 mA target. R = (5 − 2) / 0.010 = 300 Ω. Choosing 330 Ω gives about 9.1 mA. The resistor dissipates (3 V)² / 330 Ω ≈ 0.027 W. This is a nominal estimate; the simulated LED and GPIO have additional resistance, so live values can differ.",
+      "application": "For a status indicator, write down supply range, LED forward-voltage range, target current, selected resistance and power rating before wiring.",
+      "lab": {
+        "tutorialId": "uno-first-light",
+        "task": "Run the LED lab and inspect its resistor current. Compare the live value with a hand estimate and explain the model differences."
+      },
+      "practice": [
+        {
+          "prompt": "What current flows through 1 kΩ with 3.3 V across it?",
+          "explanation": "3.3 / 1,000 = 0.0033 A = 3.3 mA.",
+          "lessonId": "lesson-1",
+          "id": "practice-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "3.3 A"
+            },
+            {
+              "id": "b",
+              "text": "330 mA"
+            },
+            {
+              "id": "c",
+              "text": "3.3 mA"
+            }
+          ],
+          "answerId": "c"
+        },
+        {
+          "prompt": "Why subtract the LED forward voltage when sizing its resistor?",
+          "explanation": "The supply voltage divides between series components.",
+          "lessonId": "lesson-2",
+          "id": "practice-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "Only the remaining voltage drops across the resistor"
+            },
+            {
+              "id": "b",
+              "text": "The LED stores the entire supply"
+            },
+            {
+              "id": "c",
+              "text": "Resistance is measured in volts"
+            }
+          ],
+          "answerId": "a"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "A 2 kΩ resistor carries 2 mA. What is its voltage drop?",
+            "explanation": "V = 0.002 × 2,000 = 4 V.",
+            "lessonId": "lesson-1",
+            "id": "exam-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "1 V"
+              },
+              {
+                "id": "b",
+                "text": "4,000 V"
+              },
+              {
+                "id": "c",
+                "text": "4 V"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "With 3.3 V supply, 2.1 V LED drop and 6 mA target, what is the calculated resistance?",
+            "explanation": "R = (3.3 − 2.1) / 0.006 = 200 Ω.",
+            "lessonId": "lesson-2",
+            "id": "exam-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "200 Ω"
+              },
+              {
+                "id": "b",
+                "text": "550 Ω"
+              },
+              {
+                "id": "c",
+                "text": "0.2 Ω"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "Which resistor is a suitable next standard value above 200 Ω?",
+            "explanation": "220 Ω reduces nominal current slightly below the target; 100 Ω increases it.",
+            "lessonId": "lesson-2",
+            "id": "exam-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "100 Ω"
+              },
+              {
+                "id": "b",
+                "text": "220 Ω"
+              },
+              {
+                "id": "c",
+                "text": "0 Ω"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "A 1 kΩ resistor has ±5% tolerance. Which value is within tolerance?",
+            "explanation": "The range is 950–1,050 Ω.",
+            "lessonId": "lesson-3",
+            "id": "exam-4",
+            "options": [
+              {
+                "id": "a",
+                "text": "800 Ω"
+              },
+              {
+                "id": "b",
+                "text": "1,200 Ω"
+              },
+              {
+                "id": "c",
+                "text": "970 Ω"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "Which combination produces the greatest current in the same LED branch?",
+            "explanation": "I = (Vsupply − Vf) / R grows with the numerator and falls with resistance.",
+            "lessonId": "lesson-3",
+            "id": "exam-5",
+            "options": [
+              {
+                "id": "a",
+                "text": "Higher supply, lower LED drop, lower resistance"
+              },
+              {
+                "id": "b",
+                "text": "Lower supply, higher resistance"
+              },
+              {
+                "id": "c",
+                "text": "An open series switch"
+              }
+            ],
+            "answerId": "a"
+          }
+        ]
+      },
+      "sources": [],
+      "formulas": [
+        {
+          "title": "Ohm’s law",
+          "equation": "V = I × R; I = V / R; R = V / I",
+          "symbols": "V: resistor voltage (V); I: current (A); R: resistance (Ω).",
+          "assumptions": "Use an ohmic resistor and the voltage across that resistor. Convert mA to A before substituting.",
+          "example": "Given 3.3 V across 1,000 Ω: I = 3.3 / 1,000 = 0.0033 A = 3.3 mA."
+        },
+        {
+          "title": "LED series resistance",
+          "equation": "R = (Vsupply − Vf) / Itarget",
+          "symbols": "R: resistor (Ω); Vsupply: supply (V); Vf: LED forward drop (V); Itarget: desired current (A).",
+          "assumptions": "This uses a fixed forward-drop approximation. Check supply/LED tolerances, GPIO limits and resistor power separately.",
+          "example": "Given 5 V, Vf = 2 V and 10 mA: R = (5 − 2) / 0.010 = 300 Ω; choose 330 Ω for a lower nominal current."
+        },
+        {
+          "title": "Electrical power",
+          "equation": "P = V × I; Presistor = I² × R",
+          "symbols": "P: power (W); V: voltage (V); I: current (A); R: resistance (Ω).",
+          "assumptions": "P = V × I applies to steady DC here. The I²R form is the heat dissipated in a resistor.",
+          "example": "Given 5 V and 20 mA: P = 5 × 0.020 = 0.10 W."
+        }
+      ]
+    },
+    {
+      "id": "ee-networks",
+      "version": 1,
+      "track": "electrical",
+      "order": 3,
+      "title": "Series, parallel and voltage dividers",
+      "summary": "Use circuit laws to distribute power and scale sensor voltages.",
+      "difficulty": "Fundamental",
+      "minutes": 20,
+      "prerequisites": [
+        "ee-ohms-law"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Series paths and loop voltage",
+          "text": "Series components share one current because there is no branch between them. Their resistances add: Rtotal = R1 + R2. Kirchhoff’s voltage law says the signed voltage changes around a closed loop sum to zero. A 5 V source can therefore balance resistor drops of 2 V and 3 V."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Parallel branches and node current",
+          "text": "Parallel components share the same two nodes and therefore the same voltage. Branch currents add at the supply. Kirchhoff’s current law says current entering a node equals current leaving it. For two parallel resistors, Req = R1 × R2 / (R1 + R2); it is smaller than either resistor."
+        },
+        {
+          "id": "lesson-3",
+          "title": "A divider is a signal source",
+          "text": "With Rtop from input to output and Rbottom from output to ground, an unloaded divider gives Vout = Vin × Rbottom / (Rtop + Rbottom). A connected load is in parallel with Rbottom and changes the ratio. A divider can scale a high-impedance measurement input; it is a poor replacement for a regulated module power supply."
+        }
+      ],
+      "workedExample": "A 5 V signal feeds 10 kΩ on top and 20 kΩ below: Vout ≈ 3.33 V without a load. Adding a 20 kΩ load makes the lower equivalent 10 kΩ, so Vout falls to 2.5 V. For a real 3.3 V input, also check input limits and worst-case tolerances; a nominal ratio alone does not establish compatibility.",
+      "application": "Sketch a battery measurement divider. Label the input range, resistor values, ADC reference and maximum allowed input. Recalculate with the ADC or other load included.",
+      "lab": {
+        "tutorialId": "uno-potentiometer",
+        "task": "Turn the potentiometer and observe how the wiper voltage changes while the endpoint voltages stay fixed."
+      },
+      "practice": [
+        {
+          "prompt": "What is 1 kΩ in series with 2.2 kΩ?",
+          "explanation": "Series resistances add.",
+          "lessonId": "lesson-1",
+          "id": "practice-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "3.2 kΩ"
+            },
+            {
+              "id": "b",
+              "text": "0.69 kΩ"
+            },
+            {
+              "id": "c",
+              "text": "1.2 kΩ"
+            }
+          ],
+          "answerId": "a"
+        },
+        {
+          "prompt": "Two 10 kΩ resistors are parallel. What is their equivalent?",
+          "explanation": "Two equal parallel resistors have half the individual resistance.",
+          "lessonId": "lesson-2",
+          "id": "practice-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "20 kΩ"
+            },
+            {
+              "id": "b",
+              "text": "5 kΩ"
+            },
+            {
+              "id": "c",
+              "text": "10 kΩ"
+            }
+          ],
+          "answerId": "b"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "Two parallel sensor branches draw 8 mA and 12 mA. What current enters the junction?",
+            "explanation": "Current conservation gives 8 + 12 = 20 mA.",
+            "lessonId": "lesson-2",
+            "id": "exam-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "20 mA"
+              },
+              {
+                "id": "b",
+                "text": "4 mA"
+              },
+              {
+                "id": "c",
+                "text": "96 mA"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "A 3.3 V source feeds two equal divider resistors without a load. What is the midpoint?",
+            "explanation": "Equal resistances split the source voltage in half.",
+            "lessonId": "lesson-3",
+            "id": "exam-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "3.3 V"
+              },
+              {
+                "id": "b",
+                "text": "1.65 V"
+              },
+              {
+                "id": "c",
+                "text": "6.6 V"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "What quantity is equal through two series resistors?",
+            "explanation": "One unbranched path carries the same current through both resistors.",
+            "lessonId": "lesson-1",
+            "id": "exam-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "Resistance"
+              },
+              {
+                "id": "b",
+                "text": "Power in every case"
+              },
+              {
+                "id": "c",
+                "text": "Current"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "Why does a divider output fall when a load is connected to ground?",
+            "explanation": "The load is parallel with the bottom resistor, changing the division ratio.",
+            "lessonId": "lesson-3",
+            "id": "exam-4",
+            "options": [
+              {
+                "id": "a",
+                "text": "The load reduces the effective bottom resistance"
+              },
+              {
+                "id": "b",
+                "text": "The top resistor becomes a battery"
+              },
+              {
+                "id": "c",
+                "text": "The input voltage must double"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "A loop has a 9 V source and a 4 V resistor drop. What remaining drop balances it?",
+            "explanation": "The two drops must total 9 V: 9 − 4 = 5 V.",
+            "lessonId": "lesson-1",
+            "id": "exam-5",
+            "options": [
+              {
+                "id": "a",
+                "text": "13 V"
+              },
+              {
+                "id": "b",
+                "text": "5 V"
+              },
+              {
+                "id": "c",
+                "text": "36 V"
+              }
+            ],
+            "answerId": "b"
+          }
+        ]
+      },
+      "sources": [],
+      "formulas": [
+        {
+          "title": "Series and parallel resistance",
+          "equation": "Rseries = R1 + R2; Rparallel = R1 × R2 / (R1 + R2)",
+          "symbols": "R1, R2 and equivalent resistances are all in Ω.",
+          "assumptions": "The parallel formula shown is for two resistors connected to the same two nodes.",
+          "example": "Given two 1 kΩ resistors: series = 2 kΩ; parallel = 500 Ω."
+        },
+        {
+          "title": "Unloaded voltage divider",
+          "equation": "Vout = Vin × Rbottom / (Rtop + Rbottom)",
+          "symbols": "Vin, Vout: voltages (V); Rtop: input-to-output resistance (Ω); Rbottom: output-to-ground resistance (Ω).",
+          "assumptions": "Assume negligible output load. A load in parallel with Rbottom changes the ratio; a divider is not a regulated power supply.",
+          "example": "Given 5 V, Rtop = 10 kΩ and Rbottom = 20 kΩ: Vout = 5 × 20 / 30 ≈ 3.33 V."
+        },
+        {
+          "title": "Kirchhoff’s circuit laws",
+          "equation": "ΣIin = ΣIout; ΣVloop = 0",
+          "symbols": "I: signed branch current (A); V: signed voltage change around a closed loop (V).",
+          "assumptions": "Use a consistent current direction and voltage sign convention. These are conservation laws for the lumped circuits used here.",
+          "example": "At a node, 8 mA + 12 mA = 20 mA leaving. Around a loop, +5 V − 2 V − 3 V = 0."
+        }
+      ]
+    },
+    {
+      "id": "ee-power",
+      "version": 1,
+      "track": "electrical",
+      "order": 4,
+      "title": "Power, energy and battery budgets",
+      "summary": "Estimate heat and runtime while separating average consumption from current peaks.",
+      "difficulty": "Fundamental",
+      "minutes": 20,
+      "prerequisites": [
+        "ee-networks"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Power becomes work and heat",
+          "text": "Electrical power is P = V × I, measured in watts. For a resistor, P = I²R = V²/R. Energy is power multiplied by time; watt-hours are convenient for batteries. A resistor’s wattage rating describes heat-handling capability under specified conditions. It does not set the current by itself."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Average current predicts runtime",
+          "text": "For states repeating in a cycle, multiply each state current by its fraction of the cycle, then add. Capacity in mAh divided by average mA gives an ideal runtime in hours only when both refer to the same battery-side current. Regulators, temperature, ageing and cutoff reduce usable energy."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Peak current sizes the supply",
+          "text": "A radio may sleep most of the time but demand a brief burst during transmission. The supply, regulator and wiring must support that peak without the voltage falling below operating limits. Average current determines energy use; peak current and voltage drop determine whether the node stays running."
+        }
+      ],
+      "workedExample": "Assume battery-side current is 80 mA for 10% of each cycle and 1 mA for 90%. Iavg = 80 × 0.1 + 1 × 0.9 = 8.9 mA. A nominal 1,000 mAh battery gives an ideal 112 hours. This estimate excludes capacity loss and does not prove the supply can deliver the 80 mA peak.",
+      "application": "Make a state table for sensing, processing, transmitting and sleeping. Record duration, battery-side current and the maximum simultaneous load.",
+      "lab": {
+        "tutorialId": "uno-pwm",
+        "task": "Compare the LED at low and high duty cycle. Use the average-load concept, but calculate battery runtime separately; this lab does not model a battery discharge curve."
+      },
+      "practice": [
+        {
+          "prompt": "A load takes 20 mA at 5 V. What is its power?",
+          "explanation": "P = 5 × 0.020 = 0.1 W.",
+          "lessonId": "lesson-1",
+          "id": "practice-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "100 W"
+            },
+            {
+              "id": "b",
+              "text": "0.1 W"
+            },
+            {
+              "id": "c",
+              "text": "4 W"
+            }
+          ],
+          "answerId": "b"
+        },
+        {
+          "prompt": "Which current is needed to size a regulator for radio bursts?",
+          "explanation": "A regulator must handle the burst even when average use is small.",
+          "lessonId": "lesson-3",
+          "id": "practice-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "Only sleep current"
+            },
+            {
+              "id": "b",
+              "text": "Only the daily average"
+            },
+            {
+              "id": "c",
+              "text": "Peak simultaneous current"
+            }
+          ],
+          "answerId": "c"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "A 0.5 W load runs for 4 hours. How much energy is used?",
+            "explanation": "Energy = power × time = 0.5 × 4 = 2 Wh.",
+            "lessonId": "lesson-1",
+            "id": "exam-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "0.125 Wh"
+              },
+              {
+                "id": "b",
+                "text": "2 Wh"
+              },
+              {
+                "id": "c",
+                "text": "8 Wh"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "A device draws 30 mA for half a cycle and 2 mA for the other half. What is the average?",
+            "explanation": "30 × 0.5 + 2 × 0.5 = 16 mA.",
+            "lessonId": "lesson-2",
+            "id": "exam-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "32 mA"
+              },
+              {
+                "id": "b",
+                "text": "28 mA"
+              },
+              {
+                "id": "c",
+                "text": "16 mA"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "At constant battery-side 10 mA, what ideal runtime does 500 mAh give?",
+            "explanation": "500 mAh / 10 mA = 50 h, before real losses.",
+            "lessonId": "lesson-2",
+            "id": "exam-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "50 hours"
+              },
+              {
+                "id": "b",
+                "text": "5 hours"
+              },
+              {
+                "id": "c",
+                "text": "5,000 hours"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "A resistor dissipates 0.4 W. Is a 0.25 W rating sufficient?",
+            "explanation": "Dissipation exceeds the rating even before temperature derating.",
+            "lessonId": "lesson-1",
+            "id": "exam-4",
+            "options": [
+              {
+                "id": "a",
+                "text": "Yes; wattage is unrelated to heat"
+              },
+              {
+                "id": "b",
+                "text": "No; use a suitable higher rating with margin"
+              },
+              {
+                "id": "c",
+                "text": "Yes; resistance prevents heating"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "A node resets only while transmitting. What should you measure first?",
+            "explanation": "A transient supply dip can cause a brownout despite adequate nominal capacity.",
+            "lessonId": "lesson-3",
+            "id": "exam-5",
+            "options": [
+              {
+                "id": "a",
+                "text": "The enclosure colour"
+              },
+              {
+                "id": "b",
+                "text": "Only battery capacity printed on the label"
+              },
+              {
+                "id": "c",
+                "text": "Supply voltage during the current burst"
+              }
+            ],
+            "answerId": "c"
+          }
+        ]
+      },
+      "sources": [],
+      "formulas": [
+        {
+          "title": "Electrical power",
+          "equation": "P = V × I; Presistor = I² × R",
+          "symbols": "P: power (W); V: voltage (V); I: current (A); R: resistance (Ω).",
+          "assumptions": "P = V × I applies to steady DC here. The I²R form is the heat dissipated in a resistor.",
+          "example": "Given 5 V and 20 mA: P = 5 × 0.020 = 0.10 W."
+        },
+        {
+          "title": "Energy and ideal battery runtime",
+          "equation": "E = P × t; runtime = capacity / Iaverage",
+          "symbols": "E: energy (Wh) when P is W and t is hours; capacity: mAh; Iaverage: battery-side mA; runtime: hours.",
+          "assumptions": "Use current measured at the battery side. The simple runtime omits temperature, ageing, cutoff and conversion losses.",
+          "example": "Given 500 mAh and 10 mA at the battery: ideal runtime = 500 / 10 = 50 h. A 0.5 W load for 4 h uses 2 Wh."
+        },
+        {
+          "title": "Time-weighted average current",
+          "equation": "Iaverage = Σ(Istate × tstate) / Tcycle",
+          "symbols": "Istate: current in each state (mA); tstate: its duration (s); Tcycle: sum of state durations (s).",
+          "assumptions": "All currents must be referred to the same supply side and the state durations must cover one complete repeating cycle.",
+          "example": "Given 80 mA for 1 s and 1 mA for 9 s: Iaverage = (80 × 1 + 1 × 9) / 10 = 8.9 mA."
+        }
+      ]
+    },
+    {
+      "id": "ee-measurement",
+      "version": 1,
+      "track": "electrical",
+      "order": 5,
+      "title": "Breadboards, schematics and measurement",
+      "summary": "Turn a schematic into connected nodes and use measurements to find wiring mistakes.",
+      "difficulty": "Fundamental",
+      "minutes": 20,
+      "prerequisites": [
+        "ee-power"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Read connectivity, not drawing distance",
+          "text": "A schematic describes electrical connections, not physical placement. A node includes every point joined by an ideal wire. Junction dots distinguish connected crossings from unconnected crossings. Identify component pin names and polarity before translating the drawing into breadboard holes; adjacent-looking holes are not always connected."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Understand the breadboard strips",
+          "text": "In VoltQuest, holes a–e in one numbered row form a strip; f–j form another across the centre gap. Power rails are separate from these strips and from each other. Real breadboards can have split rails: inspect markings and test continuity while unpowered. Give each component leg and cable plug its own physical hole."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Measure the right quantity",
+          "text": "Measure voltage across two points with the meter in parallel. Measure current by opening the path and inserting a correctly configured, fused meter in series. Never put a meter in current mode directly across a supply. Resistance and continuity tests require an unpowered circuit; discharge capacitors appropriately first. Use low-voltage circuits for these exercises."
+        }
+      ],
+      "workedExample": "An LED leg is in a20 and its jumper is in b20, so both share one strip. A jumper in b21 would be a different node. If the LED stays dark, compare measured voltages along the expected path, then remove power and check continuity. Do not diagnose a missing connection by increasing the supply voltage.",
+      "application": "Annotate a simple schematic with node names, then create a connection checklist. Verify one node at a time before running firmware.",
+      "lab": {
+        "tutorialId": "uno-first-light",
+        "task": "Open the placement and cable tables. Highlight each cable and confirm that its endpoint shares a strip with the intended component leg."
+      },
+      "practice": [
+        {
+          "prompt": "In the same VoltQuest breadboard, which hole connects internally to a12?",
+          "explanation": "a12 through e12 share the upper strip; f12 is across the centre gap.",
+          "lessonId": "lesson-2",
+          "id": "practice-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "a13"
+            },
+            {
+              "id": "b",
+              "text": "f12"
+            },
+            {
+              "id": "c",
+              "text": "e12"
+            }
+          ],
+          "answerId": "c"
+        },
+        {
+          "prompt": "How is a voltmeter connected to measure an LED voltage?",
+          "explanation": "Voltage is a difference, so measure in parallel between the LED terminals.",
+          "lessonId": "lesson-3",
+          "id": "practice-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "Across its two terminals"
+            },
+            {
+              "id": "b",
+              "text": "Instead of the only return wire in current mode"
+            },
+            {
+              "id": "c",
+              "text": "Across the supply in resistance mode"
+            }
+          ],
+          "answerId": "a"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "Which test requires removing circuit power?",
+            "explanation": "The meter supplies its own test stimulus for resistance and continuity.",
+            "lessonId": "lesson-3",
+            "id": "exam-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "Operating supply voltage"
+              },
+              {
+                "id": "b",
+                "text": "A live logic-high voltage"
+              },
+              {
+                "id": "c",
+                "text": "Resistance or continuity"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "What does a schematic node represent?",
+            "explanation": "Connectivity, not drawing position, defines a node.",
+            "lessonId": "lesson-1",
+            "id": "exam-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "Electrically connected points"
+              },
+              {
+                "id": "b",
+                "text": "Every part drawn close together"
+              },
+              {
+                "id": "c",
+                "text": "Only a physical screw terminal"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "Can a20 and f20 be assumed connected across the breadboard centre gap?",
+            "explanation": "The centre trench separates upper and lower groups.",
+            "lessonId": "lesson-2",
+            "id": "exam-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "Yes; the row number makes one conductor"
+              },
+              {
+                "id": "b",
+                "text": "No; they are separate strips"
+              },
+              {
+                "id": "c",
+                "text": "Only when their cable colours match"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "How should a current meter enter a load circuit?",
+            "explanation": "Current must flow through the meter; placing it across the supply can short it.",
+            "lessonId": "lesson-3",
+            "id": "exam-4",
+            "options": [
+              {
+                "id": "a",
+                "text": "Directly across the power rails"
+              },
+              {
+                "id": "b",
+                "text": "Between two unconnected plastic holes"
+              },
+              {
+                "id": "c",
+                "text": "In series with the load using the correct input and range"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "A real breadboard rail is marked with a break. What is the best next step?",
+            "explanation": "Physical rail layouts vary; verify the actual board.",
+            "lessonId": "lesson-2",
+            "id": "exam-5",
+            "options": [
+              {
+                "id": "a",
+                "text": "Check unpowered continuity and add a bridge if the design requires it"
+              },
+              {
+                "id": "b",
+                "text": "Assume every red marking is connected"
+              },
+              {
+                "id": "c",
+                "text": "Increase the supply until current jumps the gap"
+              }
+            ],
+            "answerId": "a"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Arduino: Multimeter basics",
+          "url": "https://docs.arduino.cc/learn/electronics/multimeter-basics/"
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Ohm’s law",
+          "equation": "V = I × R; I = V / R; R = V / I",
+          "symbols": "V: resistor voltage (V); I: current (A); R: resistance (Ω).",
+          "assumptions": "Use an ohmic resistor and the voltage across that resistor. Convert mA to A before substituting.",
+          "example": "Given 3.3 V across 1,000 Ω: I = 3.3 / 1,000 = 0.0033 A = 3.3 mA."
+        },
+        {
+          "title": "Unloaded voltage divider",
+          "equation": "Vout = Vin × Rbottom / (Rtop + Rbottom)",
+          "symbols": "Vin, Vout: voltages (V); Rtop: input-to-output resistance (Ω); Rbottom: output-to-ground resistance (Ω).",
+          "assumptions": "Assume negligible output load. A load in parallel with Rbottom changes the ratio; a divider is not a regulated power supply.",
+          "example": "Given 5 V, Rtop = 10 kΩ and Rbottom = 20 kΩ: Vout = 5 × 20 / 30 ≈ 3.33 V."
+        }
+      ]
+    },
+    {
+      "id": "ee-capacitors",
+      "version": 1,
+      "track": "electrical",
+      "order": 6,
+      "title": "Capacitors, RC timing and decoupling",
+      "summary": "Explain transient behaviour and choose where capacitors belong in an IoT power path.",
+      "difficulty": "Intermediate",
+      "minutes": 25,
+      "prerequisites": [
+        "ee-measurement"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Store charge, oppose rapid voltage changes",
+          "text": "A capacitor stores charge according to Q = C × V. Capacitance is measured in farads, commonly µF and nF. Its current follows I = C × dV/dt, so abrupt voltage changes require current. An ideal capacitor carries no steady DC current after settling, but real parts have leakage, resistance and voltage limits."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Predict an RC response",
+          "text": "A resistor charging a capacitor creates a time constant τ = R × C. Starting from zero, the capacitor reaches about 63% of a constant applied voltage after one τ and over 99% after five τ. This is an exponential approach, not a linear ramp. Increasing R or C slows the response."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Decouple near the load",
+          "text": "A local decoupling capacitor supplies short current changes while the upstream supply responds. Short connections reduce unwanted inductance. Bulk capacitance supports longer changes, but cannot fix an undersized supply indefinitely. Follow the device and regulator requirements for capacitance and ESR. Respect electrolytic polarity and voltage rating."
+        }
+      ],
+      "workedExample": "For 10 kΩ and 10 µF, τ = 10,000 × 0.000010 = 0.1 s. With a 3.3 V step, the capacitor reaches about 2.09 V after 0.1 s and 3.28 V after 0.5 s. These are analytical RC values; the breadboard teaching solver does not reproduce this full transient curve.",
+      "application": "Draw local decoupling beside a sensor supply pin and a bulk capacitor beside a pulsed load. Explain which current interval each supports and what still determines the supply rating.",
+      "lab": {
+        "tutorialId": "uno-debounce",
+        "task": "Observe software debounce in the button lab. Compare it on paper with an RC filter; the lab demonstrates software timing rather than capacitor transients."
+      },
+      "practice": [
+        {
+          "prompt": "What is 100 nF expressed in µF?",
+          "explanation": "1 µF equals 1,000 nF.",
+          "lessonId": "lesson-1",
+          "id": "practice-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "0.1 µF"
+            },
+            {
+              "id": "b",
+              "text": "100,000 µF"
+            },
+            {
+              "id": "c",
+              "text": "10 µF"
+            }
+          ],
+          "answerId": "a"
+        },
+        {
+          "prompt": "What happens to τ when capacitance doubles with resistance unchanged?",
+          "explanation": "τ = R × C is proportional to capacitance.",
+          "lessonId": "lesson-2",
+          "id": "practice-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "It halves"
+            },
+            {
+              "id": "b",
+              "text": "It doubles"
+            },
+            {
+              "id": "c",
+              "text": "It becomes zero"
+            }
+          ],
+          "answerId": "b"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "What is τ for 1 kΩ and 100 µF?",
+            "explanation": "1,000 × 100 × 10⁻⁶ = 0.1 s.",
+            "lessonId": "lesson-2",
+            "id": "exam-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "0.1 s"
+              },
+              {
+                "id": "b",
+                "text": "100 s"
+              },
+              {
+                "id": "c",
+                "text": "0.0001 s"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "After one time constant, an initially empty capacitor has reached approximately what fraction of a step?",
+            "explanation": "For an RC step, 1 − exp(−1) is approximately 0.632.",
+            "lessonId": "lesson-2",
+            "id": "exam-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "100% exactly"
+              },
+              {
+                "id": "b",
+                "text": "63%"
+              },
+              {
+                "id": "c",
+                "text": "10%"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "Where should a local decoupling capacitor usually connect?",
+            "explanation": "Local, short paths help supply rapid changes at the device.",
+            "lessonId": "lesson-3",
+            "id": "exam-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "In series with every data wire"
+              },
+              {
+                "id": "b",
+                "text": "Only at the far end of a long cable"
+              },
+              {
+                "id": "c",
+                "text": "Between device supply and ground with short paths"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "Can a larger capacitor permanently compensate for an overloaded supply?",
+            "explanation": "A capacitor bridges a transient; the supply must still meet sustained demand.",
+            "lessonId": "lesson-3",
+            "id": "exam-4",
+            "options": [
+              {
+                "id": "a",
+                "text": "No; stored energy is finite"
+              },
+              {
+                "id": "b",
+                "text": "Yes; it generates continuous energy"
+              },
+              {
+                "id": "c",
+                "text": "Yes; it removes all load current"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "What steady current flows through an ideal capacitor after settling on DC?",
+            "explanation": "With constant voltage, dV/dt = 0, so ideal capacitor current is zero.",
+            "lessonId": "lesson-1",
+            "id": "exam-5",
+            "options": [
+              {
+                "id": "a",
+                "text": "Infinite current"
+              },
+              {
+                "id": "b",
+                "text": "Zero"
+              },
+              {
+                "id": "c",
+                "text": "Current set only by its printed voltage rating"
+              }
+            ],
+            "answerId": "b"
+          }
+        ]
+      },
+      "sources": [],
+      "formulas": [
+        {
+          "title": "RC charging from zero",
+          "equation": "τ = R × C; Vc(t) = Vs × (1 − e^(−t/τ))",
+          "symbols": "τ: time constant (s); R: resistance (Ω); C: capacitance (F); t: elapsed time (s); Vc, Vs: voltages (V).",
+          "assumptions": "Assume an initially uncharged ideal capacitor and a constant voltage step through one resistor. This curve is calculated, not reproduced by the DC breadboard solver.",
+          "example": "Given 10 kΩ and 10 µF: τ = 0.1 s. After one τ, Vc is 63.2% of Vs; for 3.3 V that is about 2.09 V."
+        }
+      ]
+    },
+    {
+      "id": "ee-drivers",
+      "version": 1,
+      "track": "electrical",
+      "order": 7,
+      "title": "Diodes, transistors and load drivers",
+      "summary": "Control a larger load with a small logic signal and manage inductive energy.",
+      "difficulty": "Intermediate",
+      "minutes": 25,
+      "prerequisites": [
+        "ee-capacitors"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Diodes conduct directionally",
+          "text": "A diode conducts strongly in its forward direction and blocks reverse current within its limits. Forward voltage is not a universal constant: it depends on device type, current and temperature. Check polarity, current rating and reverse-voltage rating. A diode used for polarity protection introduces a voltage drop and heat."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Separate control from load power",
+          "text": "A GPIO is a signal source with limited current. An NPN transistor or suitable logic-level MOSFET can switch a load supplied from a separate power branch. A low-side NPN places its emitter at ground and collector at the load return, with a base resistor. MOSFET selection uses on-resistance at the actual gate voltage, not threshold voltage alone."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Give coil current a turn-off path",
+          "text": "Motors and relay coils store magnetic energy. Interrupting their current can create a high voltage. For a simple DC low-side coil driver, a flyback diode is connected across the coil, cathode toward supply positive and anode toward the switched low side. It normally blocks and conducts during turn-off. Choose a driver and diode for the actual load."
+        }
+      ],
+      "workedExample": "Suppose a small NPN switch needs 5 mA base drive and has an assumed 0.7 V base-emitter drop. From a 3.3 V GPIO, Rbase = (3.3 − 0.7) / 0.005 = 520 Ω. This only sizes a nominal base resistor; verify saturation, GPIO limits, transistor dissipation and load startup current before selecting real parts.",
+      "application": "Draw the signal path and load-current path in different colours for a low-voltage fan controller. Include a default-off bias and the appropriate inductive protection.",
+      "lab": {
+        "tutorialId": "uno-servo",
+        "task": "Identify signal, supply and return on the servo module. Relate this separation to driver circuits; its internal driver and coil transients are not exposed in this lab."
+      },
+      "practice": [
+        {
+          "prompt": "Why should a motor not be powered directly from a GPIO?",
+          "explanation": "Use a rated driver and supply branch for the motor.",
+          "lessonId": "lesson-2",
+          "id": "practice-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "Motors require no current"
+            },
+            {
+              "id": "b",
+              "text": "Startup current and inductive effects exceed a signal pin’s role"
+            },
+            {
+              "id": "c",
+              "text": "GPIO ground is always isolated"
+            }
+          ],
+          "answerId": "b"
+        },
+        {
+          "prompt": "In a simple low-side DC coil driver, where does the flyback diode cathode go?",
+          "explanation": "This orientation blocks during normal coil energising and provides a turn-off current path.",
+          "lessonId": "lesson-3",
+          "id": "practice-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "Directly to the GPIO"
+            },
+            {
+              "id": "b",
+              "text": "The transistor base"
+            },
+            {
+              "id": "c",
+              "text": "The coil’s positive supply side"
+            }
+          ],
+          "answerId": "c"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "What limits base current in a simple NPN GPIO switch?",
+            "explanation": "The base-emitter junction needs controlled drive current.",
+            "lessonId": "lesson-2",
+            "id": "exam-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "A wire shorting base to supply"
+              },
+              {
+                "id": "b",
+                "text": "A series base resistor"
+              },
+              {
+                "id": "c",
+                "text": "The program filename"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "What is the main purpose of a coil flyback diode?",
+            "explanation": "Stored magnetic energy must dissipate when the switch opens.",
+            "lessonId": "lesson-3",
+            "id": "exam-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "Increase WiFi range"
+              },
+              {
+                "id": "b",
+                "text": "Make the coil draw no power"
+              },
+              {
+                "id": "c",
+                "text": "Provide a path for decaying inductive current"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "Which MOSFET specification is most useful for low-loss switching at 3.3 V gate drive?",
+            "explanation": "Threshold marks the start of conduction, not guaranteed low-resistance operation.",
+            "lessonId": "lesson-2",
+            "id": "exam-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "On-resistance specified at a suitable gate voltage"
+              },
+              {
+                "id": "b",
+                "text": "Threshold voltage alone"
+              },
+              {
+                "id": "c",
+                "text": "Package colour"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "Using a 5 V GPIO, assumed 0.7 V base drop and 2 mA base current, what is Rbase?",
+            "explanation": "(5 − 0.7) / 0.002 = 2,150 Ω.",
+            "lessonId": "lesson-2",
+            "id": "exam-4",
+            "options": [
+              {
+                "id": "a",
+                "text": "2.15 Ω"
+              },
+              {
+                "id": "b",
+                "text": "2.15 kΩ"
+              },
+              {
+                "id": "c",
+                "text": "10 kΩ"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "Which load condition must a motor driver handle besides normal running?",
+            "explanation": "Motor current can rise substantially before rotation or when stalled.",
+            "lessonId": "lesson-3",
+            "id": "exam-5",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only the LED indicator current"
+              },
+              {
+                "id": "b",
+                "text": "Only the average packet size"
+              },
+              {
+                "id": "c",
+                "text": "Startup or stall current"
+              }
+            ],
+            "answerId": "c"
+          }
+        ]
+      },
+      "sources": [],
+      "formulas": [
+        {
+          "title": "NPN base resistor estimate",
+          "equation": "Rb = (Vgpio − Vbe) / Ib",
+          "symbols": "Rb: base resistor (Ω); Vgpio: output voltage (V); Vbe: assumed base-emitter drop (V); Ib: chosen base current (A).",
+          "assumptions": "Select base drive from the actual transistor/load requirements. Check GPIO current and saturation; do not assume small-signal gain guarantees switching saturation.",
+          "example": "Given 3.3 V output, 0.7 V drop and 5 mA base current: Rb = 2.6 / 0.005 = 520 Ω."
+        },
+        {
+          "title": "Electrical power",
+          "equation": "P = V × I; Presistor = I² × R",
+          "symbols": "P: power (W); V: voltage (V); I: current (A); R: resistance (Ω).",
+          "assumptions": "P = V × I applies to steady DC here. The I²R form is the heat dissipated in a resistor.",
+          "example": "Given 5 V and 20 mA: P = 5 × 0.020 = 0.10 W."
+        }
+      ]
+    },
+    {
+      "id": "ee-signals",
+      "version": 1,
+      "track": "electrical",
+      "order": 8,
+      "title": "Analog signals, ADCs and PWM",
+      "summary": "Convert sensor voltage into numbers and control output with timed digital pulses.",
+      "difficulty": "Intermediate",
+      "minutes": 25,
+      "prerequisites": [
+        "ee-drivers"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Separate analog and digital meaning",
+          "text": "An analog signal represents a continuous quantity, such as a potentiometer position encoded as voltage. A digital input classifies voltage into logic states using thresholds. Voltages between valid low and high ranges are not reliable logic values. Neither type of input may exceed its electrical limits."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Quantisation is not accuracy",
+          "text": "An N-bit ADC offers 2ᴺ codes. In a simple endpoint-scaled teaching conversion, code ≈ Vin / Vref × (2ᴺ − 1). More bits give finer code spacing, but reference error, noise and calibration still affect accuracy. Actual ESP32 input ranges depend on attenuation and chip configuration; the lab uses a simplified 0–3.3 V model."
+        },
+        {
+          "id": "lesson-3",
+          "title": "PWM changes time, not pulse height",
+          "text": "Pulse-width modulation switches an output between low and high. Duty cycle is on-time divided by period. Frequency is cycles per second. An ideal 3.3 V waveform at 25% duty has a time-average of 0.825 V, but the instantaneous high is still 3.3 V. Filtering and load behaviour determine the resulting physical output."
+        }
+      ],
+      "workedExample": "For an ideal 10-bit, 5 V endpoint model, 2.5 V maps to about 512 of 0–1023. An 8-bit PWM command of 64 out of 255 gives about 25% duty. These numbers describe separate operations: the ADC measures an input; PWM schedules output pulses. PWM is not a DAC producing a steady quarter-supply voltage.",
+      "application": "Plan a dimmable sensor indicator: specify the input voltage range, ADC scaling, output duty range and how you will handle out-of-range readings.",
+      "lab": {
+        "tutorialId": "esp32-adc",
+        "task": "Move the potentiometer through its range and compare the printed ADC number with the 12-bit endpoint estimate."
+      },
+      "practice": [
+        {
+          "prompt": "How many distinct codes does a 12-bit ADC have?",
+          "explanation": "2¹² = 4,096 codes, numbered 0 through 4,095.",
+          "lessonId": "lesson-2",
+          "id": "practice-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "12"
+            },
+            {
+              "id": "b",
+              "text": "1,024"
+            },
+            {
+              "id": "c",
+              "text": "4,096"
+            }
+          ],
+          "answerId": "c"
+        },
+        {
+          "prompt": "A pulse is high for 2 ms in a 10 ms period. What is the duty cycle?",
+          "explanation": "Duty = 2 / 10 = 0.2 = 20%.",
+          "lessonId": "lesson-3",
+          "id": "practice-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "20%"
+            },
+            {
+              "id": "b",
+              "text": "5%"
+            },
+            {
+              "id": "c",
+              "text": "80%"
+            }
+          ],
+          "answerId": "a"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "In an ideal 10-bit 5 V endpoint model, what code is nearest to 1 V?",
+            "explanation": "1 / 5 × 1,023 = 204.6, approximately 205.",
+            "lessonId": "lesson-2",
+            "id": "exam-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "1,023"
+              },
+              {
+                "id": "b",
+                "text": "5"
+              },
+              {
+                "id": "c",
+                "text": "205"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "What remains true of a 5 V digital PWM signal at 10% duty?",
+            "explanation": "Duty changes the fraction of time high, not the driven high voltage.",
+            "lessonId": "lesson-3",
+            "id": "exam-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "Each high pulse still reaches about 5 V"
+              },
+              {
+                "id": "b",
+                "text": "Its high level becomes 0.5 V"
+              },
+              {
+                "id": "c",
+                "text": "It is always low"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "Does doubling ADC resolution guarantee lower measurement error?",
+            "explanation": "Code spacing and physical accuracy are different properties.",
+            "lessonId": "lesson-2",
+            "id": "exam-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "Yes; bits remove all noise"
+              },
+              {
+                "id": "b",
+                "text": "No; reference, noise and calibration still matter"
+              },
+              {
+                "id": "c",
+                "text": "Yes; voltage limits disappear"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "What frequency corresponds to a 5 ms PWM period?",
+            "explanation": "f = 1 / 0.005 = 200 Hz.",
+            "lessonId": "lesson-3",
+            "id": "exam-4",
+            "options": [
+              {
+                "id": "a",
+                "text": "5 Hz"
+              },
+              {
+                "id": "b",
+                "text": "5,000 Hz"
+              },
+              {
+                "id": "c",
+                "text": "200 Hz"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "What should happen before feeding a sensor voltage above the ADC limit?",
+            "explanation": "Software cannot protect an input from excessive physical voltage.",
+            "lessonId": "lesson-1",
+            "id": "exam-5",
+            "options": [
+              {
+                "id": "a",
+                "text": "Use an appropriate scaling or conditioning circuit"
+              },
+              {
+                "id": "b",
+                "text": "Clamp only the number after reading it"
+              },
+              {
+                "id": "c",
+                "text": "Increase the bit count"
+              }
+            ],
+            "answerId": "a"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Arduino: PWM output",
+          "url": "https://support.arduino.cc/hc/en-us/articles/9350537961500-Use-PWM-output-with-Arduino"
+        }
+      ],
+      "formulas": [
+        {
+          "title": "ADC endpoint scaling",
+          "equation": "code ≈ Vin / Vref × (2ᴺ − 1)",
+          "symbols": "code: integer ADC reading; Vin: input (V); Vref: full-scale reference (V); N: resolution (bits).",
+          "assumptions": "This is an ideal endpoint teaching model with rounding. Real ADC transfer functions, attenuation, reference errors and calibration differ.",
+          "example": "Given Vin = 2.5 V, Vref = 5 V and N = 10: code ≈ 2.5 / 5 × 1023 ≈ 512."
+        },
+        {
+          "title": "PWM duty and frequency",
+          "equation": "D = ton / T; f = 1 / T; Vaverage = D × Vhigh",
+          "symbols": "D: duty fraction (0–1); ton: high time (s); T: period (s); f: frequency (Hz); Vhigh: pulse voltage (V).",
+          "assumptions": "Assume ideal pulses from 0 V to Vhigh. Average voltage is not an instantaneous DAC voltage or a guarantee of motor speed.",
+          "example": "Given ton = 2 ms, T = 10 ms and Vhigh = 5 V: D = 0.2 = 20%, f = 100 Hz and Vaverage = 1 V."
+        }
+      ]
+    },
+    {
+      "id": "ee-logic",
+      "version": 1,
+      "track": "electrical",
+      "order": 9,
+      "title": "Logic levels, pull-ups and shared buses",
+      "summary": "Connect digital devices without floating inputs, voltage conflicts or bus contention.",
+      "difficulty": "Intermediate",
+      "minutes": 25,
+      "prerequisites": [
+        "ee-signals"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Match electrical levels first",
+          "text": "A module supply rating is different from its signal-pin tolerance. A 5 V-powered module may emit a 5 V signal that is unsuitable for a 3.3 V-only input. Check output-high/low and input-high/low specifications, absolute limits and common reference. A level translator must match voltage, direction and signalling type."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Give an input a default state",
+          "text": "A high-impedance input can float when nothing drives it. A pull-up resistor weakly connects it to the logic supply. A button to ground then reads high when released and low when pressed. Pull-downs reverse the arrangement. A bias resistor sets an electrical default; software debounce separately handles repeated transitions from a mechanical contact."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Open-drain buses need pull-ups",
+          "text": "I2C uses shared SDA and SCL with pull-ups and devices that can pull lines low. Pull-up voltage must suit every connected pin. Smaller resistance improves rise time but increases low-state current; cable and input capacitance limit speed. Push-pull outputs must not fight each other. UART normally connects TX to RX, not TX to TX."
+        }
+      ],
+      "workedExample": "With a 10 kΩ pull-up to 3.3 V and a closed button to ground, about 0.33 mA flows through the resistor. Released, the input is high. Two 4.7 kΩ pull-ups fitted by two modules act in parallel as 2.35 kΩ: account for built-in pull-ups when assembling a bus.",
+      "application": "Create a pin compatibility table for a controller and two sensors: supply, signal voltage, interface, address or select pin, and pull-up ownership.",
+      "lab": {
+        "tutorialId": "uno-button",
+        "task": "Press and release the button and explain the inverted input logic. Distinguish the stable default from the later debounce lesson."
+      },
+      "practice": [
+        {
+          "prompt": "A button connects a pulled-up input to ground when pressed. What is its pressed level?",
+          "explanation": "The closed switch pulls the node close to ground.",
+          "lessonId": "lesson-2",
+          "id": "practice-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "LOW"
+            },
+            {
+              "id": "b",
+              "text": "HIGH"
+            },
+            {
+              "id": "c",
+              "text": "Always floating"
+            }
+          ],
+          "answerId": "a"
+        },
+        {
+          "prompt": "Why check pull-ups already fitted on I2C modules?",
+          "explanation": "Both effective resistance and pull-up voltage affect bus operation.",
+          "lessonId": "lesson-3",
+          "id": "practice-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "They change the sensor’s name"
+            },
+            {
+              "id": "b",
+              "text": "They combine in parallel and may use the wrong rail"
+            },
+            {
+              "id": "c",
+              "text": "They guarantee all voltage levels are compatible"
+            }
+          ],
+          "answerId": "b"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "A 5 V module has a 5 V push-pull output. Can software alone make it safe for a 3.3 V-only input?",
+            "explanation": "The physical voltage reaches the pin before software can process it.",
+            "lessonId": "lesson-1",
+            "id": "exam-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "No; electrical level conversion is needed"
+              },
+              {
+                "id": "b",
+                "text": "Yes; read it less often"
+              },
+              {
+                "id": "c",
+                "text": "Yes; store the result in a smaller variable"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "What problem does a pull-up solve?",
+            "explanation": "A pull-up establishes a default voltage; debounce and syntax are separate concerns.",
+            "lessonId": "lesson-2",
+            "id": "exam-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "All mechanical bouncing"
+              },
+              {
+                "id": "b",
+                "text": "An otherwise undriven input has no defined default"
+              },
+              {
+                "id": "c",
+                "text": "Incorrect firmware syntax"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "What current flows through 4.7 kΩ pulled up to 3.3 V when held at ideal ground?",
+            "explanation": "3.3 / 4,700 ≈ 0.000702 A.",
+            "lessonId": "lesson-3",
+            "id": "exam-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "About 70 mA"
+              },
+              {
+                "id": "b",
+                "text": "About 7 A"
+              },
+              {
+                "id": "c",
+                "text": "About 0.70 mA"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "How should a simple two-device UART connection be wired?",
+            "explanation": "Each receiver needs the other device’s transmitter, at compatible logic levels.",
+            "lessonId": "lesson-3",
+            "id": "exam-4",
+            "options": [
+              {
+                "id": "a",
+                "text": "TX to RX in each direction with a suitable common reference"
+              },
+              {
+                "id": "b",
+                "text": "TX to TX and RX to RX"
+              },
+              {
+                "id": "c",
+                "text": "Both TX pins directly to supply"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "What can happen if two push-pull outputs drive the same wire to opposite levels?",
+            "explanation": "One output sources while the other sinks; do not tie conflicting driven outputs together.",
+            "lessonId": "lesson-3",
+            "id": "exam-5",
+            "options": [
+              {
+                "id": "a",
+                "text": "Automatic averaging into a safe analog voltage"
+              },
+              {
+                "id": "b",
+                "text": "Contention and excessive current"
+              },
+              {
+                "id": "c",
+                "text": "Guaranteed valid I2C communication"
+              }
+            ],
+            "answerId": "b"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Texas Instruments: I2C pull-up calculation",
+          "url": "https://www.ti.com/lit/an/slva689/slva689.pdf"
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Pull-up low-state current",
+          "equation": "I = (Vpullup − Vlow) / Rpullup",
+          "symbols": "I: current (A); Vpullup: pull-up supply (V); Vlow: driven low voltage (V); Rpullup: resistance (Ω).",
+          "assumptions": "Check both the device’s sinking capability and bus rise time. A stronger pull-up uses more current while low.",
+          "example": "Given 3.3 V, ideal 0 V low and 10 kΩ: I = 3.3 / 10,000 = 0.33 mA."
+        }
+      ]
+    },
+    {
+      "id": "ee-reliable-node",
+      "version": 1,
+      "track": "electrical",
+      "order": 10,
+      "title": "Signal conditioning and a reliable IoT node",
+      "summary": "Combine filtering, sampling, power checks and fault handling into an intermediate design review.",
+      "difficulty": "Intermediate",
+      "minutes": 25,
+      "prerequisites": [
+        "ee-logic"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Sample information, not just numbers",
+          "text": "Choose sampling rate from how quickly the measured quantity can change. Frequencies above half the sampling rate can alias into misleading slower signals. Analog filtering before conversion limits unwanted high-frequency content. Averaging can reduce random noise in sampled data, but does not remove systematic offset or undo aliasing."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Make decisions robust",
+          "text": "A single threshold can chatter when readings fluctuate near it. Hysteresis uses separate on and off thresholds and remembers the current state. Validate sensor range and freshness before acting. A disconnected sensor must not silently become a valid zero measurement. Define how the device behaves during stale data, reboot and lost communication."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Review the whole chain",
+          "text": "A useful node has a power path, sensing path, processing step and communication path. Review supply peaks, voltage compatibility, component tolerances and fault states together. Test one change at a time, compare against a known input and record expected versus observed values. Simulator success verifies the teaching model; hardware still needs electrical and environmental validation."
+        }
+      ],
+      "workedExample": "For a fan controller, turn on above 30 °C and turn off below 28 °C. At 29 °C, retain the previous state. If no valid sample arrives within the chosen timeout, enter a documented fault state instead of continuing to display stale data as current. The timeout and fault action depend on the application.",
+      "application": "Capstone: design a room monitor on paper. Include a block diagram, rail/current table, sensor range, sample interval, hysteresis rule and tests for sensor loss and a transmit-time voltage dip.",
+      "lab": {
+        "tutorialId": "esp32-weather",
+        "task": "Change the temperature control and inspect the output. Describe how you would add hysteresis, sample validation and a stale-data indicator around those readings."
+      },
+      "practice": [
+        {
+          "prompt": "Averaging repeatedly reads a sensor with a fixed +2 °C offset. What remains?",
+          "explanation": "Averaging random noise does not calibrate a fixed bias.",
+          "lessonId": "lesson-1",
+          "id": "practice-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "No error of any kind"
+            },
+            {
+              "id": "b",
+              "text": "The systematic offset"
+            },
+            {
+              "id": "c",
+              "text": "Twice the true temperature"
+            }
+          ],
+          "answerId": "b"
+        },
+        {
+          "prompt": "With on above 30 °C and off below 28 °C, what happens at 29 °C?",
+          "explanation": "Inside the hysteresis band, state is retained.",
+          "lessonId": "lesson-2",
+          "id": "practice-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "Always turn on"
+            },
+            {
+              "id": "b",
+              "text": "Switch on and off continuously"
+            },
+            {
+              "id": "c",
+              "text": "Keep the previous output state"
+            }
+          ],
+          "answerId": "c"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "At 100 samples/s, what is the Nyquist frequency?",
+            "explanation": "It is half the sample rate; practical filters require additional margin.",
+            "lessonId": "lesson-1",
+            "id": "exam-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "100 Hz"
+              },
+              {
+                "id": "b",
+                "text": "50 Hz"
+              },
+              {
+                "id": "c",
+                "text": "200 Hz"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "Where must an anti-alias filter act?",
+            "explanation": "Once frequencies alias during sampling, averaging cannot uniquely recover the original signal.",
+            "lessonId": "lesson-1",
+            "id": "exam-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only after storing aliased readings"
+              },
+              {
+                "id": "b",
+                "text": "Only on the enclosure label"
+              },
+              {
+                "id": "c",
+                "text": "Before analog-to-digital sampling"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "Which control rule reduces switching near a noisy threshold?",
+            "explanation": "Hysteresis adds a band where small fluctuations do not reverse the output.",
+            "lessonId": "lesson-2",
+            "id": "exam-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "Separate on and off thresholds with state"
+              },
+              {
+                "id": "b",
+                "text": "Use the same threshold for both directions"
+              },
+              {
+                "id": "c",
+                "text": "Ignore the last output state"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "A sensor stops reporting. What should the device publish?",
+            "explanation": "Validity and age distinguish unavailable data from a real zero measurement.",
+            "lessonId": "lesson-2",
+            "id": "exam-4",
+            "options": [
+              {
+                "id": "a",
+                "text": "A fabricated valid zero"
+              },
+              {
+                "id": "b",
+                "text": "An explicit stale or fault status"
+              },
+              {
+                "id": "c",
+                "text": "The old value labelled as fresh"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "Which capstone test most directly checks power and radio interaction?",
+            "explanation": "A peak-load test can reveal voltage dips missed by idle measurements.",
+            "lessonId": "lesson-3",
+            "id": "exam-5",
+            "options": [
+              {
+                "id": "a",
+                "text": "Change only the dashboard font"
+              },
+              {
+                "id": "b",
+                "text": "Read supply voltage only while unplugged"
+              },
+              {
+                "id": "c",
+                "text": "Measure the rail during maximum transmit activity"
+              }
+            ],
+            "answerId": "c"
+          }
+        ]
+      },
+      "sources": [],
+      "formulas": [
+        {
+          "title": "Sampling limit and Nyquist frequency",
+          "equation": "fNyquist = fs / 2; fs > 2 × fsignal,max",
+          "symbols": "fs: sample rate (samples/s); fsignal,max: highest retained signal frequency (Hz); fNyquist: half the sample rate (Hz).",
+          "assumptions": "The reconstruction condition assumes a band-limited signal. Real anti-alias filters require transition margin; sampling exactly twice a frequency is not a robust practical design.",
+          "example": "Given fs = 100 samples/s: fNyquist = 50 Hz. Filter unwanted higher-frequency content before sampling."
+        },
+        {
+          "title": "Time-weighted average current",
+          "equation": "Iaverage = Σ(Istate × tstate) / Tcycle",
+          "symbols": "Istate: current in each state (mA); tstate: its duration (s); Tcycle: sum of state durations (s).",
+          "assumptions": "All currents must be referred to the same supply side and the state durations must cover one complete repeating cycle.",
+          "example": "Given 80 mA for 1 s and 1 mA for 9 s: Iaverage = (80 × 1 + 1 × 9) / 10 = 8.9 mA."
+        }
+      ]
+    },
+    {
+      "id": "iot-controllers",
+      "version": 1,
+      "track": "iot-parts",
+      "order": 1,
+      "title": "Choose a controller: Arduino, ESP32 or Raspberry Pi",
+      "summary": "Match processing, GPIO and connectivity needs to a board and its actual pin capabilities.",
+      "difficulty": "Fundamental",
+      "minutes": 20,
+      "prerequisites": [
+        "ee-logic"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Microcontroller or Linux computer",
+          "text": "Uno and Nano are microcontroller boards that run a firmware loop. ESP32 adds integrated wireless capabilities. Raspberry Pi 4/5 are computers that can run Linux on real hardware. Select from workload, timing, power and connectivity needs. In VoltQuest, Pi runs only the documented restricted GPIO/Python teaching subset; it does not emulate Linux."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Read the pin map for this board",
+          "text": "Supply pins, grounds and GPIOs have different jobs. Check input-only pins, analog capability, bus pins and startup restrictions. Uno/Nano use 5 V logic; the ESP32 boards and Pi GPIO use 3.3 V logic. A Pi 5 V header supply pin does not make its GPIO 5 V tolerant. Physical pin numbers and GPIO names are different numbering systems."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Select by interfaces and operating budget",
+          "text": "List every required sensor and output before allocating pins. Reserve bus connections and count available ADC channels. Pi 4/5 do not provide general-purpose analog inputs on their header; a real analog sensor needs an external ADC. Confirm the exact ESP32 variant rather than assuming identical ADC, DAC or radio capabilities across the family."
+        }
+      ],
+      "workedExample": "A node needs one analog measurement, a status LED and WiFi. An ESP32 is a plausible starting point: reserve a suitable ADC pin and output pin, then check rail current and WiFi/ADC restrictions. A Pi could do the job with added ADC hardware, but its power and software requirements differ. Choose from requirements, not board size alone.",
+      "application": "Build a pin-allocation table for a weather node: controller, logic voltage, sensor bus, status output, unused pins and power source.",
+      "lab": {
+        "tutorialId": "pi-pin-numbering",
+        "task": "Compare the displayed BCM names with physical header numbers. Keep the selected board’s actual mapping in your design notes."
+      },
+      "practice": [
+        {
+          "prompt": "Does a 5 V supply pin make every GPIO on that board 5 V tolerant?",
+          "explanation": "Power rails and logic input ratings describe different pins and functions.",
+          "lessonId": "lesson-2",
+          "id": "practice-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "Yes, on every board"
+            },
+            {
+              "id": "b",
+              "text": "No; GPIO limits are separate"
+            },
+            {
+              "id": "c",
+              "text": "Only if the USB cable is short"
+            }
+          ],
+          "answerId": "b"
+        },
+        {
+          "prompt": "What extra function does a real Pi 4/5 need to measure a general analog voltage?",
+          "explanation": "The Pi header does not expose a general-purpose analog input converter.",
+          "lessonId": "lesson-3",
+          "id": "practice-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "A different GPIO label"
+            },
+            {
+              "id": "b",
+              "text": "Only a larger Python variable"
+            },
+            {
+              "id": "c",
+              "text": "An external ADC"
+            }
+          ],
+          "answerId": "c"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "Which requirement most directly favours an integrated-wireless microcontroller?",
+            "explanation": "Integrated wireless can reduce extra hardware for a connected firmware-based node.",
+            "lessonId": "lesson-1",
+            "id": "exam-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "A full desktop application with local monitor"
+              },
+              {
+                "id": "b",
+                "text": "A compact sensor node that sends WiFi readings"
+              },
+              {
+                "id": "c",
+                "text": "A passive resistor network with no program"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "Can an input-only GPIO directly drive a status LED?",
+            "explanation": "Input-only pins cannot be configured as driven outputs.",
+            "lessonId": "lesson-2",
+            "id": "exam-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "Yes; all pins can source current"
+              },
+              {
+                "id": "b",
+                "text": "Yes; call analogRead first"
+              },
+              {
+                "id": "c",
+                "text": "No; choose an output-capable pin"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "What does VoltQuest emulate for Raspberry Pi lessons?",
+            "explanation": "The lesson runtime is a documented teaching subset, not a full computer emulator.",
+            "lessonId": "lesson-1",
+            "id": "exam-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "A restricted GPIO/Python learning model"
+              },
+              {
+                "id": "b",
+                "text": "A complete Linux installation"
+              },
+              {
+                "id": "c",
+                "text": "Arbitrary Python packages"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "When moving a circuit from ESP32 to ESP32-S3, what must be checked?",
+            "explanation": "Variants differ in pins and peripherals, so allocation must be revalidated.",
+            "lessonId": "lesson-3",
+            "id": "exam-4",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only the case colour"
+              },
+              {
+                "id": "b",
+                "text": "The specific pin map and peripheral capabilities"
+              },
+              {
+                "id": "c",
+                "text": "Nothing; every numbered pin is identical"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "What should precede assigning pins in a multi-sensor node?",
+            "explanation": "Requirements expose conflicts in ADC, bus, voltage and output capability before wiring.",
+            "lessonId": "lesson-3",
+            "id": "exam-5",
+            "options": [
+              {
+                "id": "a",
+                "text": "Choose arbitrary free-looking holes"
+              },
+              {
+                "id": "b",
+                "text": "Connect all signals to the same output"
+              },
+              {
+                "id": "c",
+                "text": "List interface and electrical requirements for every part"
+              }
+            ],
+            "answerId": "c"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Espressif: ESP32 datasheet",
+          "url": "https://documentation.espressif.com/esp32_datasheet_en.html"
+        },
+        {
+          "title": "Raspberry Pi: GPIO hardware",
+          "url": "https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#gpio"
+        }
+      ],
+      "formulas": [
+        {
+          "title": "ADC endpoint scaling",
+          "equation": "code ≈ Vin / Vref × (2ᴺ − 1)",
+          "symbols": "code: integer ADC reading; Vin: input (V); Vref: full-scale reference (V); N: resolution (bits).",
+          "assumptions": "This is an ideal endpoint teaching model with rounding. Real ADC transfer functions, attenuation, reference errors and calibration differ.",
+          "example": "Given Vin = 2.5 V, Vref = 5 V and N = 10: code ≈ 2.5 / 5 × 1023 ≈ 512."
+        },
+        {
+          "title": "Electrical power",
+          "equation": "P = V × I; Presistor = I² × R",
+          "symbols": "P: power (W); V: voltage (V); I: current (A); R: resistance (Ω).",
+          "assumptions": "P = V × I applies to steady DC here. The I²R form is the heat dissipated in a resistor.",
+          "example": "Given 5 V and 20 mA: P = 5 × 0.020 = 0.10 W."
+        }
+      ]
+    },
+    {
+      "id": "iot-passives",
+      "version": 1,
+      "track": "iot-parts",
+      "order": 2,
+      "title": "Resistors, capacitors and prototyping connections",
+      "summary": "Choose the supporting parts that make sensor modules stable and electrically compatible.",
+      "difficulty": "Fundamental",
+      "minutes": 20,
+      "prerequisites": [
+        "iot-controllers"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Specify more than the nominal value",
+          "text": "A resistor specification includes resistance, tolerance and power rating. A capacitor specification includes capacitance, voltage rating, polarity where applicable and characteristics such as ESR. A BOM should identify a usable part, not just say resistor or capacitor. A physically fitting replacement may still be electrically wrong."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Recognise the circuit role",
+          "text": "A series resistor limits current; two resistors can divide voltage; a pull-up defines an undriven input. Decoupling capacitors connect across the local supply and return. These roles are different, even when the parts look alike. A pull-up is not a replacement for an LED series resistor, and a capacitor is not a regulator."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Connections are components too",
+          "text": "Real jumpers and connectors have resistance, current limits and mechanical failure modes. Label supply polarity, provide strain relief and avoid sharing one hole between a component leg and a cable. Keep long noisy load returns away from sensitive measurements where practical. Verify continuity and pin order rather than trusting wire colours."
+        }
+      ],
+      "workedExample": "A 10 kΩ ±1% pull-up can range from 9.9 to 10.1 kΩ. A 100 nF decoupler is 0.1 µF. In a parts list, add the resistor’s power rating and capacitor’s voltage/type requirements. If the module already contains pull-ups or decoupling, read its schematic before duplicating them.",
+      "application": "Write a small supporting-parts BOM for a button and status LED. Give each resistor a separate role, value, tolerance and power requirement.",
+      "lab": {
+        "tutorialId": "uno-button",
+        "task": "Use the wiring guide to distinguish the button input connection from the LED’s series current path."
+      },
+      "practice": [
+        {
+          "prompt": "Which entry is more useful in a resistor BOM?",
+          "explanation": "A reproducible BOM states the electrical requirements.",
+          "lessonId": "lesson-1",
+          "id": "practice-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "One small part"
+            },
+            {
+              "id": "b",
+              "text": "Any brown cylinder"
+            },
+            {
+              "id": "c",
+              "text": "10 kΩ, ±1%, suitable power rating"
+            }
+          ],
+          "answerId": "c"
+        },
+        {
+          "prompt": "Can wire colour prove that two points are electrically connected?",
+          "explanation": "Colour is a convention, not an electrical connection.",
+          "lessonId": "lesson-3",
+          "id": "practice-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "No; verify the endpoints and continuity"
+            },
+            {
+              "id": "b",
+              "text": "Yes; all red wires share a node"
+            },
+            {
+              "id": "c",
+              "text": "Only for yellow wires"
+            }
+          ],
+          "answerId": "a"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "Which is within the tolerance of 220 Ω ±5%?",
+            "explanation": "The allowed range is 209–231 Ω.",
+            "lessonId": "lesson-1",
+            "id": "exam-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "250 Ω"
+              },
+              {
+                "id": "b",
+                "text": "180 Ω"
+              },
+              {
+                "id": "c",
+                "text": "230 Ω"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "Which part normally provides a defined high on an undriven button input?",
+            "explanation": "A pull-up weakly connects the input to the logic supply.",
+            "lessonId": "lesson-2",
+            "id": "exam-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "A pull-up resistor"
+              },
+              {
+                "id": "b",
+                "text": "A series motor"
+              },
+              {
+                "id": "c",
+                "text": "An open jumper"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "Where does an LED current-limiting resistor belong?",
+            "explanation": "The LED current must also pass through its limiting resistor.",
+            "lessonId": "lesson-2",
+            "id": "exam-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only across the power connector"
+              },
+              {
+                "id": "b",
+                "text": "In series in that LED’s current path"
+              },
+              {
+                "id": "c",
+                "text": "In an unrelated sensor line"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "Why check capacitor voltage rating as well as capacitance?",
+            "explanation": "Capacitance and permitted operating voltage are independent specifications.",
+            "lessonId": "lesson-1",
+            "id": "exam-4",
+            "options": [
+              {
+                "id": "a",
+                "text": "The rating sets the supply automatically"
+              },
+              {
+                "id": "b",
+                "text": "Higher voltage rating always means higher capacitance"
+              },
+              {
+                "id": "c",
+                "text": "The dielectric has a permitted voltage stress"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "A connector works until its cable moves. What is the most relevant check?",
+            "explanation": "Intermittent connections can be mechanical faults, not firmware errors.",
+            "lessonId": "lesson-3",
+            "id": "exam-5",
+            "options": [
+              {
+                "id": "a",
+                "text": "Contact continuity and mechanical strain relief"
+              },
+              {
+                "id": "b",
+                "text": "Increase the ADC bit count"
+              },
+              {
+                "id": "c",
+                "text": "Rename the program variables"
+              }
+            ],
+            "answerId": "a"
+          }
+        ]
+      },
+      "sources": [],
+      "formulas": [
+        {
+          "title": "Ohm’s law",
+          "equation": "V = I × R; I = V / R; R = V / I",
+          "symbols": "V: resistor voltage (V); I: current (A); R: resistance (Ω).",
+          "assumptions": "Use an ohmic resistor and the voltage across that resistor. Convert mA to A before substituting.",
+          "example": "Given 3.3 V across 1,000 Ω: I = 3.3 / 1,000 = 0.0033 A = 3.3 mA."
+        },
+        {
+          "title": "RC charging from zero",
+          "equation": "τ = R × C; Vc(t) = Vs × (1 − e^(−t/τ))",
+          "symbols": "τ: time constant (s); R: resistance (Ω); C: capacitance (F); t: elapsed time (s); Vc, Vs: voltages (V).",
+          "assumptions": "Assume an initially uncharged ideal capacitor and a constant voltage step through one resistor. This curve is calculated, not reproduced by the DC breadboard solver.",
+          "example": "Given 10 kΩ and 10 µF: τ = 0.1 s. After one τ, Vc is 63.2% of Vs; for 3.3 V that is about 2.09 V."
+        }
+      ]
+    },
+    {
+      "id": "iot-leds",
+      "version": 1,
+      "track": "iot-parts",
+      "order": 3,
+      "title": "LEDs, RGB indicators and addressable pixels",
+      "summary": "Choose visual outputs, limit current and budget for more than one light.",
+      "difficulty": "Fundamental",
+      "minutes": 20,
+      "prerequisites": [
+        "iot-passives"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Single-colour indicators",
+          "text": "A discrete LED has an anode and cathode and needs a controlled current path. Forward voltage depends on colour and device construction. Size the series resistor for the selected supply and target current. Reversing polarity normally prevents illumination; excessive reverse voltage can damage the part. Brightness is not a reliable current meter."
+        },
+        {
+          "id": "lesson-2",
+          "title": "RGB means separate channels",
+          "text": "A basic RGB LED contains red, green and blue emitters with a shared anode or cathode. Each active colour channel needs its own current control because forward voltages differ. PWM mixes apparent colour and brightness. Identify the common pin and pin order from the exact part rather than assuming every four-leg LED is identical."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Addressable pixels include a controller",
+          "text": "Addressable pixels accept timed digital data and contain their own channel drivers. Data direction, supply voltage and logic compatibility matter. Pixel count and brightness determine load demand. Follow the selected product’s guidance for power distribution, local capacitance and data-line conditioning. VoltQuest’s pixel model simplifies current and signal timing; a real strip needs its own power calculation."
+        }
+      ],
+      "workedExample": "Assume a selected pixel’s datasheet budget is 45 mA at the intended maximum setting. Twelve pixels then need 12 × 45 = 540 mA, before the controller. This is an exercise assumption, not a universal NeoPixel specification. Reducing brightness may reduce average demand, but the supply and wiring still need a verified worst-case design.",
+      "application": "Design an indicator that shows normal, warning and fault with both colour and blink pattern so the meaning does not depend on colour alone.",
+      "lab": {
+        "tutorialId": "uno-pwm",
+        "task": "Run the brightness ramp and explain the difference between a PWM command, instantaneous LED current and perceived brightness."
+      },
+      "practice": [
+        {
+          "prompt": "Why does a basic RGB LED need separate current limiting for each colour?",
+          "explanation": "Each emitter is a separate current path.",
+          "lessonId": "lesson-2",
+          "id": "practice-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "The channels have different forward voltages and currents"
+            },
+            {
+              "id": "b",
+              "text": "All colours are the same junction"
+            },
+            {
+              "id": "c",
+              "text": "A common pin generates current"
+            }
+          ],
+          "answerId": "a"
+        },
+        {
+          "prompt": "What does DIN identify on an addressable pixel?",
+          "explanation": "Data enters DIN and continues from a pixel’s data output where provided.",
+          "lessonId": "lesson-3",
+          "id": "practice-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "Negative power only"
+            },
+            {
+              "id": "b",
+              "text": "Data input"
+            },
+            {
+              "id": "c",
+              "text": "The analog light output"
+            }
+          ],
+          "answerId": "b"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "With a 3.3 V source, assumed 2.0 V LED drop and 5 mA target, what resistance is calculated?",
+            "explanation": "(3.3 − 2.0) / 0.005 = 260 Ω before choosing a standard value and margin.",
+            "lessonId": "lesson-1",
+            "id": "exam-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "260 Ω"
+              },
+              {
+                "id": "b",
+                "text": "660 Ω"
+              },
+              {
+                "id": "c",
+                "text": "6.5 Ω"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "Eight pixels are budgeted at 40 mA each. What is the pixel-only current?",
+            "explanation": "8 × 40 = 320 mA; add other loads separately.",
+            "lessonId": "lesson-3",
+            "id": "exam-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "5 mA"
+              },
+              {
+                "id": "b",
+                "text": "320 mA"
+              },
+              {
+                "id": "c",
+                "text": "48 mA"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "Can a controller GPIO power a long pixel strip just because it can send its data?",
+            "explanation": "A signal pin is not a high-current supply rail.",
+            "lessonId": "lesson-3",
+            "id": "exam-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "Yes; one data bit supplies each LED"
+              },
+              {
+                "id": "b",
+                "text": "Yes; brightness removes the supply requirement"
+              },
+              {
+                "id": "c",
+                "text": "No; data and load power are separate requirements"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "What must be identified before wiring a four-pin RGB LED?",
+            "explanation": "Different packages may use different common connections and pinouts.",
+            "lessonId": "lesson-2",
+            "id": "exam-4",
+            "options": [
+              {
+                "id": "a",
+                "text": "Common anode or cathode and the channel pin order"
+              },
+              {
+                "id": "b",
+                "text": "Only the plastic diameter"
+              },
+              {
+                "id": "c",
+                "text": "The WiFi channel"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "Which fault indication is easier to interpret without relying on colour?",
+            "explanation": "Redundant visual cues improve interpretation.",
+            "lessonId": "lesson-2",
+            "id": "exam-5",
+            "options": [
+              {
+                "id": "a",
+                "text": "Two barely different green shades"
+              },
+              {
+                "id": "b",
+                "text": "A documented blink pattern plus a text label"
+              },
+              {
+                "id": "c",
+                "text": "An unlabelled brightness change"
+              }
+            ],
+            "answerId": "b"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Adafruit: NeoPixel best practices",
+          "url": "https://learn.adafruit.com/adafruit-neopixel-uberguide/best-practices"
+        }
+      ],
+      "formulas": [
+        {
+          "title": "LED series resistance",
+          "equation": "R = (Vsupply − Vf) / Itarget",
+          "symbols": "R: resistor (Ω); Vsupply: supply (V); Vf: LED forward drop (V); Itarget: desired current (A).",
+          "assumptions": "This uses a fixed forward-drop approximation. Check supply/LED tolerances, GPIO limits and resistor power separately.",
+          "example": "Given 5 V, Vf = 2 V and 10 mA: R = (5 − 2) / 0.010 = 300 Ω; choose 330 Ω for a lower nominal current."
+        },
+        {
+          "title": "PWM duty and frequency",
+          "equation": "D = ton / T; f = 1 / T; Vaverage = D × Vhigh",
+          "symbols": "D: duty fraction (0–1); ton: high time (s); T: period (s); f: frequency (Hz); Vhigh: pulse voltage (V).",
+          "assumptions": "Assume ideal pulses from 0 V to Vhigh. Average voltage is not an instantaneous DAC voltage or a guarantee of motor speed.",
+          "example": "Given ton = 2 ms, T = 10 ms and Vhigh = 5 V: D = 0.2 = 20%, f = 100 Hz and Vaverage = 1 V."
+        }
+      ]
+    },
+    {
+      "id": "iot-inputs",
+      "version": 1,
+      "track": "iot-parts",
+      "order": 4,
+      "title": "Buttons, potentiometers and touch inputs",
+      "summary": "Build user controls with defined states, stable events and sensible input ranges.",
+      "difficulty": "Fundamental",
+      "minutes": 20,
+      "prerequisites": [
+        "iot-leds"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Buttons need bias and debounce",
+          "text": "A momentary button connects contacts only while pressed. A pull-up or pull-down defines its released voltage. Mechanical contacts may bounce through several transitions during one press. Debounce accepts a new state only after suitable stability or timing rules; edge detection then turns a held state into one action."
+        },
+        {
+          "id": "lesson-2",
+          "title": "A potentiometer is an adjustable divider",
+          "text": "Connect the two ends of a potentiometer to the permitted supply and ground, and its wiper to an ADC input. The wiper voltage moves between the endpoint voltages. A wiper is not a high-current power output. Check the selected board has an ADC and handle jitter near boundaries in software."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Touch detects capacitance changes",
+          "text": "A capacitive touch input detects changes in coupling rather than a metal contact closing. Thresholds depend on pad geometry, enclosure, moisture and baseline conditions. Calibrate and test on the target device. The prepared ESP32 touch lab uses a deterministic touched/untouched teaching input rather than reproducing a real electrode’s environment."
+        }
+      ],
+      "workedExample": "A pull-up button reads HIGH when released. To toggle a light once per press, debounce the reading and act only on the accepted HIGH-to-LOW transition. Repeatedly toggling on every loop while LOW makes one held press generate many actions. For a control dial, map the ADC range to a bounded application value.",
+      "application": "Specify three user actions for a thermostat: one event per button press, a bounded dial setting and touch input with a calibrated threshold.",
+      "lab": {
+        "tutorialId": "uno-debounce",
+        "task": "Hold and release the button. Inspect how the example distinguishes a new press from a continuously held state."
+      },
+      "practice": [
+        {
+          "prompt": "Which part of a potentiometer supplies the adjustable signal?",
+          "explanation": "The wiper moves along the resistive element between the endpoints.",
+          "lessonId": "lesson-2",
+          "id": "practice-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "Only the fixed ground end"
+            },
+            {
+              "id": "b",
+              "text": "The wiper"
+            },
+            {
+              "id": "c",
+              "text": "Its plastic shaft"
+            }
+          ],
+          "answerId": "b"
+        },
+        {
+          "prompt": "Why can one mechanical button press appear as multiple transitions?",
+          "explanation": "Contacts can briefly reconnect and disconnect while settling.",
+          "lessonId": "lesson-1",
+          "id": "practice-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "The ADC has too many bits"
+            },
+            {
+              "id": "b",
+              "text": "The supply label is in volts"
+            },
+            {
+              "id": "c",
+              "text": "Contact bounce"
+            }
+          ],
+          "answerId": "c"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "Which event represents a new press for a debounced pull-up button?",
+            "explanation": "Edge detection produces one event instead of repeated actions while held.",
+            "lessonId": "lesson-1",
+            "id": "exam-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "Every loop reading LOW"
+              },
+              {
+                "id": "b",
+                "text": "An accepted HIGH-to-LOW transition"
+              },
+              {
+                "id": "c",
+                "text": "Every loop regardless of state"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "At the midpoint of an ideal unloaded pot between 0 and 3.3 V, what is the wiper voltage?",
+            "explanation": "Equal resistive sections divide the supply in half.",
+            "lessonId": "lesson-2",
+            "id": "exam-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "3.3 V"
+              },
+              {
+                "id": "b",
+                "text": "6.6 V"
+              },
+              {
+                "id": "c",
+                "text": "1.65 V"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "Does software debounce replace an input pull-up?",
+            "explanation": "Debounce filters transitions, but an undriven input still needs a defined voltage.",
+            "lessonId": "lesson-1",
+            "id": "exam-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "No; bias and bounce are separate problems"
+              },
+              {
+                "id": "b",
+                "text": "Yes; timing creates a physical ground"
+              },
+              {
+                "id": "c",
+                "text": "Yes; only one is ever needed"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "Why should a touch threshold be tested after fitting the enclosure?",
+            "explanation": "A threshold that works on an exposed pad may fail behind another material.",
+            "lessonId": "lesson-3",
+            "id": "exam-4",
+            "options": [
+              {
+                "id": "a",
+                "text": "The program language changes automatically"
+              },
+              {
+                "id": "b",
+                "text": "Geometry and materials change capacitive coupling"
+              },
+              {
+                "id": "c",
+                "text": "The GPIO becomes a power output"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "What is a sensible way to handle ADC jitter near a dial setting boundary?",
+            "explanation": "Filtering or a small dead band can stabilise the displayed setting without violating input limits.",
+            "lessonId": "lesson-2",
+            "id": "exam-5",
+            "options": [
+              {
+                "id": "a",
+                "text": "Drive the wiper above the ADC rail"
+              },
+              {
+                "id": "b",
+                "text": "Treat every small change as a fault"
+              },
+              {
+                "id": "c",
+                "text": "Use bounded filtering or hysteresis suited to the control"
+              }
+            ],
+            "answerId": "c"
+          }
+        ]
+      },
+      "sources": [],
+      "formulas": [
+        {
+          "title": "Unloaded voltage divider",
+          "equation": "Vout = Vin × Rbottom / (Rtop + Rbottom)",
+          "symbols": "Vin, Vout: voltages (V); Rtop: input-to-output resistance (Ω); Rbottom: output-to-ground resistance (Ω).",
+          "assumptions": "Assume negligible output load. A load in parallel with Rbottom changes the ratio; a divider is not a regulated power supply.",
+          "example": "Given 5 V, Rtop = 10 kΩ and Rbottom = 20 kΩ: Vout = 5 × 20 / 30 ≈ 3.33 V."
+        },
+        {
+          "title": "Pull-up low-state current",
+          "equation": "I = (Vpullup − Vlow) / Rpullup",
+          "symbols": "I: current (A); Vpullup: pull-up supply (V); Vlow: driven low voltage (V); Rpullup: resistance (Ω).",
+          "assumptions": "Check both the device’s sinking capability and bus rise time. A stronger pull-up uses more current while low.",
+          "example": "Given 3.3 V, ideal 0 V low and 10 kΩ: I = 3.3 / 10,000 = 0.33 mA."
+        }
+      ]
+    },
+    {
+      "id": "iot-environment",
+      "version": 1,
+      "track": "iot-parts",
+      "order": 5,
+      "title": "Temperature, humidity and pressure sensors",
+      "summary": "Read environmental modules with correct interfaces, units and validity checks.",
+      "difficulty": "Fundamental",
+      "minutes": 20,
+      "prerequisites": [
+        "iot-inputs"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Choose the measured quantities",
+          "text": "DHT22 provides temperature and relative humidity using its own timed digital protocol. BME280 provides temperature, humidity and pressure through I2C or SPI on real hardware; the VoltQuest module uses I2C. BMP280 does not add humidity just because its name is similar. Select from range, accuracy, response time and interface, not only the number of printed digits."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Distinguish chip and breakout board",
+          "text": "A bare sensor and a breakout containing a regulator or level translation can have different supply requirements. Verify the exact module schematic and logic levels. I2C devices need the correct address and bus pins; DHT data is not an I2C SDA connection. Physical sensor placement also matters: nearby regulators and sunlight can bias temperature readings."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Publish units and validity",
+          "text": "Read at a cadence supported by the selected sensor rather than as fast as the processor can loop. Check read failures, range and sample age. Relative humidity is a percentage; pressure may be reported in Pa or hPa, with 100 Pa = 1 hPa. Preserve units in messages and distinguish stale data from a fresh measurement."
+        }
+      ],
+      "workedExample": "A weather node receives 101,300 Pa and 24.5 °C. Publish pressure as 1,013 hPa only after dividing by 100, and keep the temperature unit explicit. If the next read fails, report validity=false with the last sample’s age; do not fabricate a 0 °C reading. A timestamp describes freshness, not sensor accuracy.",
+      "application": "Create a weather message schema with value, unit, sample age and validity for each measurement. Include a test for an unplugged or unresponsive sensor.",
+      "lab": {
+        "tutorialId": "esp32-weather",
+        "task": "Adjust temperature and humidity independently. Check which printed field changes and identify the data pin and supply in the wiring guide."
+      },
+      "practice": [
+        {
+          "prompt": "What is 100,000 Pa in hPa?",
+          "explanation": "Divide pascals by 100.",
+          "lessonId": "lesson-3",
+          "id": "practice-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "10,000 hPa"
+            },
+            {
+              "id": "b",
+              "text": "10 hPa"
+            },
+            {
+              "id": "c",
+              "text": "1,000 hPa"
+            }
+          ],
+          "answerId": "c"
+        },
+        {
+          "prompt": "Why can the sensor chip datasheet differ from a breakout’s input rating?",
+          "explanation": "Read both the sensor requirements and the exact board circuitry.",
+          "lessonId": "lesson-2",
+          "id": "practice-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "The breakout may add regulation or translation"
+            },
+            {
+              "id": "b",
+              "text": "The chip changes identity in software"
+            },
+            {
+              "id": "c",
+              "text": "All modules tolerate every voltage"
+            }
+          ],
+          "answerId": "a"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "Which quantities does BME280 measure?",
+            "explanation": "BME280 combines those three environmental measurements.",
+            "lessonId": "lesson-1",
+            "id": "exam-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only distance and light"
+              },
+              {
+                "id": "b",
+                "text": "Motor speed and current"
+              },
+              {
+                "id": "c",
+                "text": "Temperature, relative humidity and pressure"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "Is DHT22 data interchangeable with an I2C SDA wire?",
+            "explanation": "Matching the number of wires does not establish protocol compatibility.",
+            "lessonId": "lesson-2",
+            "id": "exam-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "No; it uses a different protocol"
+              },
+              {
+                "id": "b",
+                "text": "Yes; all digital sensors use I2C"
+              },
+              {
+                "id": "c",
+                "text": "Only when the wires are blue"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "A sensor read fails. Which output best represents the situation?",
+            "explanation": "Consumers need to distinguish missing data from a real measurement.",
+            "lessonId": "lesson-3",
+            "id": "exam-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "A new valid 0 °C value"
+              },
+              {
+                "id": "b",
+                "text": "An invalid or stale flag with sample age"
+              },
+              {
+                "id": "c",
+                "text": "The last value with a fabricated fresh timestamp"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "A temperature sensor sits beside a hot regulator. What error is likely?",
+            "explanation": "Local heating can make the sensor differ from the room air being measured.",
+            "lessonId": "lesson-2",
+            "id": "exam-4",
+            "options": [
+              {
+                "id": "a",
+                "text": "Automatic humidity calibration"
+              },
+              {
+                "id": "b",
+                "text": "A guaranteed lower supply current"
+              },
+              {
+                "id": "c",
+                "text": "Placement-induced temperature bias"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "What determines an appropriate read interval?",
+            "explanation": "Reading faster than useful updates does not create new physical information.",
+            "lessonId": "lesson-3",
+            "id": "exam-5",
+            "options": [
+              {
+                "id": "a",
+                "text": "Sensor update limits and application response needs"
+              },
+              {
+                "id": "b",
+                "text": "Only the fastest possible loop"
+              },
+              {
+                "id": "c",
+                "text": "The length of the variable name"
+              }
+            ],
+            "answerId": "a"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Bosch Sensortec: BME280",
+          "url": "https://www.bosch-sensortec.com/en/products/environmental-sensors/humidity-sensors-bme280"
+        },
+        {
+          "title": "Bosch Sensortec: BMP280",
+          "url": "https://www.bosch-sensortec.com/products/environmental-sensors/pressure-sensors/bmp280/"
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Pressure-unit conversion",
+          "equation": "pressure_hPa = pressure_Pa / 100",
+          "symbols": "Pa: pascals; hPa: hectopascals; 1 hPa = 100 Pa.",
+          "assumptions": "Unit conversion changes representation, not sensor accuracy. Keep the original unit documented.",
+          "example": "Given 101,300 Pa: 101,300 / 100 = 1,013 hPa."
+        }
+      ]
+    },
+    {
+      "id": "iot-detection",
+      "version": 1,
+      "track": "iot-parts",
+      "order": 6,
+      "title": "Light, motion and distance sensors",
+      "summary": "Compare what LDR, PIR and ultrasonic parts can actually tell an IoT device.",
+      "difficulty": "Intermediate",
+      "minutes": 25,
+      "prerequisites": [
+        "iot-environment"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Light-dependent resistance",
+          "text": "An LDR changes resistance with illumination. Place it in a divider to obtain a voltage for an ADC. The voltage direction depends on whether the LDR is above or below the divider midpoint. Its response is nonlinear and part-dependent: an uncalibrated ADC number is not automatically a lux measurement."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Motion is not distance or identity",
+          "text": "A PIR detects changes in received infrared radiation across its sensing zones. A module often presents a digital motion output with its own hold time. It does not identify a person or reliably prove that a still room is empty. Warm-up, field of view and the real module’s supply/output levels need checking."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Ultrasonic time of flight",
+          "text": "An ultrasonic module sends a sound pulse and reports the round-trip echo time. Distance is speed of sound × time / 2. Temperature, surface angle and absorption affect the result. Use an echo timeout and distinguish no echo from zero distance. Check whether a module’s echo output needs scaling before reaching a 3.3 V GPIO."
+        }
+      ],
+      "workedExample": "Assume sound travels at 343 m/s. A 2 ms round trip corresponds to 343 × 0.002 / 2 = 0.343 m, or 34.3 cm. Forgetting the return journey doubles the reported distance. No echo before a timeout means unavailable or out of range, not necessarily an object touching the sensor.",
+      "application": "Choose a sensor for a night light, a motion-triggered alarm and a distance display. State one failure case for each and how the device should report it.",
+      "lab": {
+        "tutorialId": "esp32-adc",
+        "task": "Use the potentiometer as a controllable stand-in for a divider voltage. Practise voltage-to-code scaling; the prepared lab does not contain a PIR or ultrasonic sensor."
+      },
+      "practice": [
+        {
+          "prompt": "Why divide ultrasonic travel distance by two?",
+          "explanation": "Echo time measures the full round trip.",
+          "lessonId": "lesson-3",
+          "id": "practice-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "The pulse travels to the object and back"
+            },
+            {
+              "id": "b",
+              "text": "Two sensors are always required"
+            },
+            {
+              "id": "c",
+              "text": "The output pin halves voltage"
+            }
+          ],
+          "answerId": "a"
+        },
+        {
+          "prompt": "Does a raw LDR ADC value directly mean lux?",
+          "explanation": "LDR resistance and divider voltage are not a universal linear illuminance scale.",
+          "lessonId": "lesson-1",
+          "id": "practice-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "Yes; every ADC is a light meter"
+            },
+            {
+              "id": "b",
+              "text": "No; conversion needs a suitable model or calibration"
+            },
+            {
+              "id": "c",
+              "text": "Only when the resistor is blue"
+            }
+          ],
+          "answerId": "b"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "At 343 m/s, a 4 ms echo round trip implies approximately what distance?",
+            "explanation": "343 × 0.004 / 2 = 0.686 m = 68.6 cm.",
+            "lessonId": "lesson-3",
+            "id": "exam-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "68.6 cm"
+              },
+              {
+                "id": "b",
+                "text": "137.2 cm"
+              },
+              {
+                "id": "c",
+                "text": "0.686 cm"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "What does a PIR most directly detect?",
+            "explanation": "PIR motion indication is not identification or range measurement.",
+            "lessonId": "lesson-2",
+            "id": "exam-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "A person’s identity"
+              },
+              {
+                "id": "b",
+                "text": "Changes in infrared radiation across sensing zones"
+              },
+              {
+                "id": "c",
+                "text": "An exact object distance"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "An LDR is Rtop with a fixed Rbottom. Its resistance falls in bright light. What happens to Vout?",
+            "explanation": "Vout = Vin × Rbottom / (Rtop + Rbottom), so reducing Rtop raises the ratio.",
+            "lessonId": "lesson-1",
+            "id": "exam-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "It falls to zero in every case"
+              },
+              {
+                "id": "b",
+                "text": "It becomes unrelated to the supply"
+              },
+              {
+                "id": "c",
+                "text": "It rises"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "A 5 V echo signal is connected to a 3.3 V-only input. What should change?",
+            "explanation": "Input voltage must be made compatible electrically.",
+            "lessonId": "lesson-3",
+            "id": "exam-4",
+            "options": [
+              {
+                "id": "a",
+                "text": "Add verified level scaling or translation"
+              },
+              {
+                "id": "b",
+                "text": "Only divide the measured time in software"
+              },
+              {
+                "id": "c",
+                "text": "Only sample less frequently"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "What is a suitable interpretation of an ultrasonic timeout?",
+            "explanation": "Absorption, angle or range can prevent an echo; report invalid data.",
+            "lessonId": "lesson-3",
+            "id": "exam-5",
+            "options": [
+              {
+                "id": "a",
+                "text": "The object is exactly at zero"
+              },
+              {
+                "id": "b",
+                "text": "No valid distance was obtained"
+              },
+              {
+                "id": "c",
+                "text": "The object is certainly absent from the whole room"
+              }
+            ],
+            "answerId": "b"
+          }
+        ]
+      },
+      "sources": [],
+      "formulas": [
+        {
+          "title": "Unloaded voltage divider",
+          "equation": "Vout = Vin × Rbottom / (Rtop + Rbottom)",
+          "symbols": "Vin, Vout: voltages (V); Rtop: input-to-output resistance (Ω); Rbottom: output-to-ground resistance (Ω).",
+          "assumptions": "Assume negligible output load. A load in parallel with Rbottom changes the ratio; a divider is not a regulated power supply.",
+          "example": "Given 5 V, Rtop = 10 kΩ and Rbottom = 20 kΩ: Vout = 5 × 20 / 30 ≈ 3.33 V."
+        },
+        {
+          "title": "Ultrasonic round-trip distance",
+          "equation": "d = c × techo / 2",
+          "symbols": "d: one-way distance (m); c: speed of sound (m/s); techo: round-trip duration (s).",
+          "assumptions": "Assume a valid reflected echo and a chosen sound speed. Temperature, target angle and absorption affect real measurements.",
+          "example": "Given c = 343 m/s and techo = 2 ms: d = 343 × 0.002 / 2 = 0.343 m = 34.3 cm."
+        }
+      ]
+    },
+    {
+      "id": "iot-actuators",
+      "version": 1,
+      "track": "iot-parts",
+      "order": 7,
+      "title": "Buzzers, servos, motors and relay modules",
+      "summary": "Turn logic into sound or movement while separating commands from load power.",
+      "difficulty": "Intermediate",
+      "minutes": 25,
+      "prerequisites": [
+        "iot-detection"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Match the actuator to the task",
+          "text": "An active buzzer contains an oscillator; a passive buzzer needs a changing drive signal to produce a tone. A positional hobby servo interprets control pulses as a target position. A DC motor rotates with behaviour set by its electrical and mechanical load; PWM alone does not provide exact speed feedback."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Supply movement from a rated driver",
+          "text": "Servos have separate signal, power and ground connections. Motors need a driver sized for startup and stall current; reverse rotation requires an appropriate bidirectional circuit such as an H-bridge. Shared non-isolated control needs a common reference. A simulation command angle does not certify a real mechanism’s travel, load capacity or endpoint safety."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Relay contacts are separate from the coil",
+          "text": "A relay module’s control side energises a coil; its COM, NO and NC contacts switch a separate load path. NO is open and NC is closed to COM when the coil is de-energised. Check control polarity, contact ratings and any onboard driver/protection. Use only low-voltage loads in these exercises; the lessons do not teach mains wiring."
+        }
+      ],
+      "workedExample": "A 5 V servo may take 120 mA moving freely but an assumed 700 mA at stall. A 200 mA supply looks adequate in the first condition and fails in the second. Budget for the stated peak, check the real servo datasheet, and choose an idle or fault position appropriate to the mechanism.",
+      "application": "Compare a buzzer alarm, servo pointer and low-voltage fan. For each, list the control signal, power path, driver and behaviour after communication loss.",
+      "lab": {
+        "tutorialId": "uno-servo",
+        "task": "Edit the target angle within the example’s range and observe the servo. Locate signal, VCC and GND and explain why the signal wire does not supply motor current."
+      },
+      "practice": [
+        {
+          "prompt": "Which buzzer normally needs an external oscillating signal?",
+          "explanation": "A passive sounder needs changing excitation for a sustained tone.",
+          "lessonId": "lesson-1",
+          "id": "practice-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "An active buzzer with its own oscillator"
+            },
+            {
+              "id": "b",
+              "text": "A passive buzzer"
+            },
+            {
+              "id": "c",
+              "text": "Neither type ever uses a signal"
+            }
+          ],
+          "answerId": "b"
+        },
+        {
+          "prompt": "What does NC mean on relay contacts?",
+          "explanation": "Normal describes the de-energised contact state.",
+          "lessonId": "lesson-3",
+          "id": "practice-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "No current rating exists"
+            },
+            {
+              "id": "b",
+              "text": "Network connected"
+            },
+            {
+              "id": "c",
+              "text": "Normally closed to COM when de-energised"
+            }
+          ],
+          "answerId": "c"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "Which current is essential when sizing a motor driver?",
+            "explanation": "The driver must tolerate the largest relevant load condition.",
+            "lessonId": "lesson-2",
+            "id": "exam-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only controller sleep current"
+              },
+              {
+                "id": "b",
+                "text": "Stall and startup current"
+              },
+              {
+                "id": "c",
+                "text": "Only the signal wire leakage"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "What does a positional hobby servo control pulse request?",
+            "explanation": "The internal servo controller interprets pulses as position requests.",
+            "lessonId": "lesson-1",
+            "id": "exam-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "A guaranteed load current"
+              },
+              {
+                "id": "b",
+                "text": "An unlimited number of rotations"
+              },
+              {
+                "id": "c",
+                "text": "A target position within its supported range"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "Which contact pair conducts on an ideal de-energised relay?",
+            "explanation": "NC is normally closed; NO is normally open.",
+            "lessonId": "lesson-3",
+            "id": "exam-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "COM and NC"
+              },
+              {
+                "id": "b",
+                "text": "COM and NO"
+              },
+              {
+                "id": "c",
+                "text": "VCC and every contact"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "Does applying 50% PWM guarantee a DC motor runs at exactly half speed under all loads?",
+            "explanation": "Precise speed regulation needs suitable feedback and control.",
+            "lessonId": "lesson-1",
+            "id": "exam-4",
+            "options": [
+              {
+                "id": "a",
+                "text": "Yes; duty is an exact speed sensor"
+              },
+              {
+                "id": "b",
+                "text": "No; load and motor characteristics affect speed"
+              },
+              {
+                "id": "c",
+                "text": "Yes; friction disappears with PWM"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "Why document the actuator’s state after lost communication?",
+            "explanation": "A timeout and defined output state prevent accidental indefinite actuation.",
+            "lessonId": "lesson-2",
+            "id": "exam-5",
+            "options": [
+              {
+                "id": "a",
+                "text": "The last command is always safe forever"
+              },
+              {
+                "id": "b",
+                "text": "Relays cannot remain energised"
+              },
+              {
+                "id": "c",
+                "text": "The mechanism needs an intentional fault behaviour"
+              }
+            ],
+            "answerId": "c"
+          }
+        ]
+      },
+      "sources": [],
+      "formulas": [
+        {
+          "title": "Electrical power",
+          "equation": "P = V × I; Presistor = I² × R",
+          "symbols": "P: power (W); V: voltage (V); I: current (A); R: resistance (Ω).",
+          "assumptions": "P = V × I applies to steady DC here. The I²R form is the heat dissipated in a resistor.",
+          "example": "Given 5 V and 20 mA: P = 5 × 0.020 = 0.10 W."
+        },
+        {
+          "title": "PWM duty and frequency",
+          "equation": "D = ton / T; f = 1 / T; Vaverage = D × Vhigh",
+          "symbols": "D: duty fraction (0–1); ton: high time (s); T: period (s); f: frequency (Hz); Vhigh: pulse voltage (V).",
+          "assumptions": "Assume ideal pulses from 0 V to Vhigh. Average voltage is not an instantaneous DAC voltage or a guarantee of motor speed.",
+          "example": "Given ton = 2 ms, T = 10 ms and Vhigh = 5 V: D = 0.2 = 20%, f = 100 Hz and Vaverage = 1 V."
+        }
+      ]
+    },
+    {
+      "id": "iot-displays",
+      "version": 1,
+      "track": "iot-parts",
+      "order": 8,
+      "title": "LCD and OLED display modules",
+      "summary": "Connect shared-bus displays and present measurements without hiding their meaning.",
+      "difficulty": "Intermediate",
+      "minutes": 25,
+      "prerequisites": [
+        "iot-actuators"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Character grids and pixel buffers",
+          "text": "A 16×2 character LCD shows two rows of sixteen character cells. An SSD1306 OLED commonly uses a pixel framebuffer, enabling text and simple graphics. A monochrome 128×64 framebuffer needs 128 × 64 / 8 = 1,024 bytes before other program data. Check memory, readable area and power needs when choosing a display."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Share I2C deliberately",
+          "text": "An I2C display has an address and shares SDA/SCL with compatible devices. Different addresses can coexist; identical fixed addresses need a hardware or configuration solution. Verify the actual backpack or display’s supply, pull-ups and address rather than assuming every LCD is 0x27 or every OLED is 0x3C. These are defaults used by the teaching modules."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Update a useful status screen",
+          "text": "Show units, a stable label and a visible fault or stale-data state. Update at a rate useful to the reader instead of clearing and rewriting continuously. Replacing a long number with a shorter one requires overwriting leftover characters on a character display. Keep sensing and communication responsive while the screen updates."
+        }
+      ],
+      "workedExample": "A line previously says \"Temp: 100 C\". Writing \"Temp: 9 C\" from the same position without clearing the old tail may leave extra characters. Format the complete fixed-width field or pad it with spaces. If the sensor fails, show a clear unavailable marker instead of a fresh-looking old value.",
+      "application": "Sketch a two-line status screen with temperature, unit and connection state. Include a second screen showing exactly what the user sees after sensor loss.",
+      "lab": {
+        "tutorialId": "uno-lcd",
+        "task": "Change the displayed message, run it and locate the LCD address and I2C pins. Try fitting the message within sixteen characters per line."
+      },
+      "practice": [
+        {
+          "prompt": "How many character cells does a 16×2 LCD provide?",
+          "explanation": "16 columns × 2 rows = 32 character cells.",
+          "lessonId": "lesson-1",
+          "id": "practice-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "18"
+            },
+            {
+              "id": "b",
+              "text": "128"
+            },
+            {
+              "id": "c",
+              "text": "32"
+            }
+          ],
+          "answerId": "c"
+        },
+        {
+          "prompt": "Why include units beside a sensor value?",
+          "explanation": "A reading such as 25 could mean temperature, humidity or another quantity.",
+          "lessonId": "lesson-3",
+          "id": "practice-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "The number alone does not identify its physical meaning"
+            },
+            {
+              "id": "b",
+              "text": "Units increase ADC accuracy"
+            },
+            {
+              "id": "c",
+              "text": "Units power the display"
+            }
+          ],
+          "answerId": "a"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "How many bytes store a 128×64 one-bit framebuffer?",
+            "explanation": "There are 8,192 bits; dividing by eight gives 1,024 bytes.",
+            "lessonId": "lesson-1",
+            "id": "exam-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "8,192 bytes"
+              },
+              {
+                "id": "b",
+                "text": "128 bytes"
+              },
+              {
+                "id": "c",
+                "text": "1,024 bytes"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "Two I2C devices have the same fixed address. Is wiring them together enough?",
+            "explanation": "The address must select the intended device unambiguously.",
+            "lessonId": "lesson-2",
+            "id": "exam-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "No; resolve the address conflict"
+              },
+              {
+                "id": "b",
+                "text": "Yes; the controller guesses automatically"
+              },
+              {
+                "id": "c",
+                "text": "Yes; use different wire colours"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "What can cause leftover digits after replacing 100 with 9?",
+            "explanation": "The old characters beyond the new text remain until overwritten.",
+            "lessonId": "lesson-3",
+            "id": "exam-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "Too many ground pins"
+              },
+              {
+                "id": "b",
+                "text": "Writing a shorter field without clearing or padding"
+              },
+              {
+                "id": "c",
+                "text": "The display measures current"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "What should determine a display’s I2C address in a real build?",
+            "explanation": "Teaching defaults are examples, not universal addresses.",
+            "lessonId": "lesson-2",
+            "id": "exam-4",
+            "options": [
+              {
+                "id": "a",
+                "text": "The address of any unrelated tutorial"
+              },
+              {
+                "id": "b",
+                "text": "The display text length"
+              },
+              {
+                "id": "c",
+                "text": "Its actual hardware configuration and documentation"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "Which screen behaviour is best after the sensor becomes stale?",
+            "explanation": "The display should communicate validity as well as a numerical value.",
+            "lessonId": "lesson-3",
+            "id": "exam-5",
+            "options": [
+              {
+                "id": "a",
+                "text": "Show stale or unavailable status explicitly"
+              },
+              {
+                "id": "b",
+                "text": "Keep the old value with no indication"
+              },
+              {
+                "id": "c",
+                "text": "Hide the unit but keep the number"
+              }
+            ],
+            "answerId": "a"
+          }
+        ]
+      },
+      "sources": [],
+      "formulas": [
+        {
+          "title": "Framebuffer storage",
+          "equation": "bytes = width × height × bitsPerPixel / 8",
+          "symbols": "width, height: pixels; bitsPerPixel: bit depth; bytes: storage size.",
+          "assumptions": "Assume a tightly packed image with no padding or metadata. Other library and program memory is additional.",
+          "example": "Given 128 × 64 monochrome pixels at 1 bit/pixel: 128 × 64 / 8 = 1,024 bytes."
+        }
+      ]
+    },
+    {
+      "id": "iot-connectivity",
+      "version": 1,
+      "track": "iot-parts",
+      "order": 9,
+      "title": "WiFi, Bluetooth LE and LoRa communication parts",
+      "summary": "Choose a radio path and distinguish hardware connectivity from application messaging.",
+      "difficulty": "Intermediate",
+      "minutes": 25,
+      "prerequisites": [
+        "iot-displays"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Choose the communication pattern",
+          "text": "WiFi connects an IP-capable node through an access point. Bluetooth LE is useful for nearby device interaction; GATT organises data in services and characteristics. LoRa is a radio modulation used by LoRaWAN, whose network includes gateways and a network server. Choose based on message size, latency, power and infrastructure rather than a promised range alone."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Treat the module as hardware",
+          "text": "A separate radio module may connect by UART or SPI and still needs compatible logic, a stable supply and the specified antenna arrangement. Transmit bursts can dominate peak current. Metal enclosures, obstacles and antenna placement affect real links. The virtual ESP32 network models requests and messages, not RF propagation; BLE and LoRa radios are conceptual course topics."
+        },
+        {
+          "id": "lesson-3",
+          "title": "A link is not the whole application",
+          "text": "HTTP is a request/response pattern; MQTT publishes messages through a broker to subscribed topics. Neither successful WiFi association nor a sent packet proves that an actuator performed an action. Define payload units, validity, acknowledgements, timeouts and reconnect behaviour. Real deployments need appropriate authentication and transport protection; virtual tutorial credentials are examples only."
+        }
+      ],
+      "workedExample": "A room sensor sends a small reading every minute. WiFi with MQTT is convenient where an access point and broker exist. A phone setup interface may suit BLE. A remote sparse-telemetry node may suit a LoRaWAN design if gateway coverage and the required network infrastructure exist. These are design comparisons, not guaranteed range or battery-life claims.",
+      "application": "Draw sensor → radio link → network service → dashboard, then draw the acknowledgement path for a command. Mark where timeouts and stale-data checks belong.",
+      "lab": {
+        "tutorialId": "esp32-mqtt",
+        "task": "Run the virtual publisher and inspect the topic and payload. Explain which behaviour the lab verifies and which real radio or security checks remain outside it."
+      },
+      "practice": [
+        {
+          "prompt": "What component routes MQTT publications to subscribers?",
+          "explanation": "MQTT clients publish and subscribe through a broker.",
+          "lessonId": "lesson-3",
+          "id": "practice-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "A broker"
+            },
+            {
+              "id": "b",
+              "text": "A resistor divider"
+            },
+            {
+              "id": "c",
+              "text": "A servo horn"
+            }
+          ],
+          "answerId": "a"
+        },
+        {
+          "prompt": "Does the virtual WiFi lab prove radio range through a building?",
+          "explanation": "Virtual message delivery does not measure physical radio coverage.",
+          "lessonId": "lesson-2",
+          "id": "practice-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "Yes; HTTP status gives distance"
+            },
+            {
+              "id": "b",
+              "text": "No; RF propagation is not simulated"
+            },
+            {
+              "id": "c",
+              "text": "Yes; all antennas are identical"
+            }
+          ],
+          "answerId": "b"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "Which structure is associated with Bluetooth LE GATT data?",
+            "explanation": "GATT groups characteristics into services.",
+            "lessonId": "lesson-1",
+            "id": "exam-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "Services and characteristics"
+              },
+              {
+                "id": "b",
+                "text": "Only MQTT topics"
+              },
+              {
+                "id": "c",
+                "text": "Resistor colour bands"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "What is the relationship between LoRa and LoRaWAN?",
+            "explanation": "Distinguish the physical radio technology from the network system.",
+            "lessonId": "lesson-1",
+            "id": "exam-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "They are both names for an ADC"
+              },
+              {
+                "id": "b",
+                "text": "LoRa is radio modulation; LoRaWAN defines a network protocol using it"
+              },
+              {
+                "id": "c",
+                "text": "LoRaWAN is a type of LED"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "A device joined WiFi. Does that prove its MQTT broker is reachable?",
+            "explanation": "A working local link does not establish every higher-level service connection.",
+            "lessonId": "lesson-3",
+            "id": "exam-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "Yes; association completes every protocol"
+              },
+              {
+                "id": "b",
+                "text": "Only if the LED is blue"
+              },
+              {
+                "id": "c",
+                "text": "No; broker connection is a separate step"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "Why must a radio supply be checked during transmission?",
+            "explanation": "The physical module can draw more during transmission than at idle.",
+            "lessonId": "lesson-2",
+            "id": "exam-4",
+            "options": [
+              {
+                "id": "a",
+                "text": "Brief current peaks may cause voltage dips"
+              },
+              {
+                "id": "b",
+                "text": "Packets eliminate power consumption"
+              },
+              {
+                "id": "c",
+                "text": "The UART changes all supply ratings"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "Which result best confirms an actuator command was performed?",
+            "explanation": "Sending and physical completion are different events; report the observed outcome.",
+            "lessonId": "lesson-3",
+            "id": "exam-5",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only successful WiFi association"
+              },
+              {
+                "id": "b",
+                "text": "An application acknowledgement with observed resulting state"
+              },
+              {
+                "id": "c",
+                "text": "Only creating a message string"
+              }
+            ],
+            "answerId": "b"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Bluetooth SIG: Bluetooth LE primer",
+          "url": "https://www.bluetooth.com/bluetooth-le-primer/"
+        },
+        {
+          "title": "LoRa Alliance: What is LoRaWAN?",
+          "url": "https://lora-alliance.org/about-lorawan-old/"
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Payload rate estimate",
+          "equation": "payloadRate = payloadBytes × 8 / interval",
+          "symbols": "payloadRate: bit/s; payloadBytes: bytes/report; interval: seconds/report.",
+          "assumptions": "This is payload only. Protocol headers, acknowledgements, retries and radio airtime make actual traffic larger.",
+          "example": "Given a 60-byte report every 10 s: 60 × 8 / 10 = 48 bit/s of payload."
+        },
+        {
+          "title": "Time-weighted average current",
+          "equation": "Iaverage = Σ(Istate × tstate) / Tcycle",
+          "symbols": "Istate: current in each state (mA); tstate: its duration (s); Tcycle: sum of state durations (s).",
+          "assumptions": "All currents must be referred to the same supply side and the state durations must cover one complete repeating cycle.",
+          "example": "Given 80 mA for 1 s and 1 mA for 9 s: Iaverage = (80 × 1 + 1 × 9) / 10 = 8.9 mA."
+        }
+      ]
+    },
+    {
+      "id": "iot-power-integration",
+      "version": 1,
+      "track": "iot-parts",
+      "order": 10,
+      "title": "Power modules, batteries and an IoT parts capstone",
+      "summary": "Select a power path and review a complete connected-device bill of materials.",
+      "difficulty": "Intermediate",
+      "minutes": 25,
+      "prerequisites": [
+        "iot-connectivity"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Regulators solve different problems",
+          "text": "An LDO linear regulator reduces voltage with loss approximately (Vin − Vout) × Iout, plus its own consumption. A buck converter steps down; a boost converter steps up. Check input range, dropout or conversion limits, current rating, efficiency, thermal behaviour and required capacitors. A regulator’s headline current alone is not a full design."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Battery management is a separate function",
+          "text": "A battery’s voltage changes with chemistry, state of charge and load. A charger must match the chemistry and cell count; a regulator is not automatically a charger. Protection, cutoff and power-path management are separate requirements. Use a suitable documented battery module and follow its instructions. These courses cover selection and calculations, not building or improvising battery chargers."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Close the parts and validation loop",
+          "text": "A complete BOM includes controller, sensors, outputs, interface parts, power conversion, connectors and supporting passives. For each part record voltage, peak and average current, interface and a compatibility check. Validate boot, maximum load, low supply, sensor loss and reconnect behaviour. Add procurement part numbers only after reviewing actual datasheets and module schematics."
+        }
+      ],
+      "workedExample": "An LDO supplies 3.3 V at 0.2 A from 5 V. Approximate loss is (5 − 3.3) × 0.2 = 0.34 W, excluding quiescent loss. Output power is 0.66 W, so idealised efficiency is 66%. A switching regulator may reduce loss, but its own efficiency, noise and low-load consumption must be checked for this operating point.",
+      "application": "Capstone: specify a connected room monitor with one sensor, a display, status LED and radio. Produce a BOM, pin table, power budget and five fault tests. Use the exam to check the design reasoning, then try its supported pieces in the linked lab and sandbox.",
+      "lab": {
+        "tutorialId": "esp32-web",
+        "task": "Run a virtual HTTP command and observe the LED. Identify the controller, output and communication path, then add the physical power and fault checks to your capstone plan."
+      },
+      "practice": [
+        {
+          "prompt": "Which converter topology raises a DC voltage?",
+          "explanation": "A boost converter steps up within its specified operating range.",
+          "lessonId": "lesson-1",
+          "id": "practice-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "Buck only"
+            },
+            {
+              "id": "b",
+              "text": "Boost"
+            },
+            {
+              "id": "c",
+              "text": "A plain resistor in series"
+            }
+          ],
+          "answerId": "b"
+        },
+        {
+          "prompt": "Does a 3.3 V regulator automatically charge a rechargeable battery correctly?",
+          "explanation": "Charging, regulation and protection are distinct functions.",
+          "lessonId": "lesson-2",
+          "id": "practice-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "Yes; any fixed voltage is a charger"
+            },
+            {
+              "id": "b",
+              "text": "Only if the output is labelled VCC"
+            },
+            {
+              "id": "c",
+              "text": "No; charging requires chemistry-specific control"
+            }
+          ],
+          "answerId": "c"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "What approximate heat loss does an LDO produce from 5 V to 3.3 V at 100 mA, ignoring quiescent current?",
+            "explanation": "(5 − 3.3) × 0.1 = 0.17 W.",
+            "lessonId": "lesson-1",
+            "id": "exam-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "0.33 W"
+              },
+              {
+                "id": "b",
+                "text": "0.17 W"
+              },
+              {
+                "id": "c",
+                "text": "1.7 W"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "Which regulator property matters as a battery approaches the required output voltage?",
+            "explanation": "A regulator can lose regulation when insufficient input headroom remains.",
+            "lessonId": "lesson-1",
+            "id": "exam-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only its package colour"
+              },
+              {
+                "id": "b",
+                "text": "Only its maximum advertised current"
+              },
+              {
+                "id": "c",
+                "text": "Dropout or minimum input operating requirement"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "What must a selected charger match?",
+            "explanation": "Correct charging requirements depend on the battery system, not just a fitting plug.",
+            "lessonId": "lesson-2",
+            "id": "exam-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "Battery chemistry and cell configuration"
+              },
+              {
+                "id": "b",
+                "text": "Only the connector shape"
+              },
+              {
+                "id": "c",
+                "text": "Only the firmware language"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "Which item is missing from a BOM containing only controller, sensor and display?",
+            "explanation": "A working assembly also needs its power and connection infrastructure.",
+            "lessonId": "lesson-3",
+            "id": "exam-4",
+            "options": [
+              {
+                "id": "a",
+                "text": "A new programming language"
+              },
+              {
+                "id": "b",
+                "text": "Required power, interconnect and supporting parts"
+              },
+              {
+                "id": "c",
+                "text": "A second copy of every title"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "Which test set best supports a complete IoT parts review?",
+            "explanation": "System behaviour must be checked across operating and fault conditions.",
+            "lessonId": "lesson-3",
+            "id": "exam-5",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only one successful idle reading"
+              },
+              {
+                "id": "b",
+                "text": "Only checking the product photos"
+              },
+              {
+                "id": "c",
+                "text": "Boot, peak load, low supply, sensor loss and reconnect"
+              }
+            ],
+            "answerId": "c"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Texas Instruments: TLV757P regulator datasheet",
+          "url": "https://www.ti.com/lit/ds/symlink/tlv757p.pdf"
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Linear regulator loss",
+          "equation": "Ploss ≈ (Vin − Vout) × Iout; η ≈ Vout / Vin",
+          "symbols": "Ploss: heat (W); Vin, Vout: voltages (V); Iout: load current (A); η: efficiency fraction.",
+          "assumptions": "Ignore quiescent current for this estimate and assume the regulator remains in regulation. Verify dropout, capacitors and thermal limits separately.",
+          "example": "Given 5 V to 3.3 V at 0.2 A: Ploss = 1.7 × 0.2 = 0.34 W; η ≈ 3.3 / 5 = 66%."
+        },
+        {
+          "title": "Energy and ideal battery runtime",
+          "equation": "E = P × t; runtime = capacity / Iaverage",
+          "symbols": "E: energy (Wh) when P is W and t is hours; capacity: mAh; Iaverage: battery-side mA; runtime: hours.",
+          "assumptions": "Use current measured at the battery side. The simple runtime omits temperature, ageing, cutoff and conversion losses.",
+          "example": "Given 500 mAh and 10 mA at the battery: ideal runtime = 500 / 10 = 50 h. A 0.5 W load for 4 h uses 2 Wh."
+        }
+      ]
+    },
+    {
+      "id": "iot-foundations",
+      "version": 1,
+      "track": "iot-foundations",
+      "order": 1,
+      "title": "IoT fundamentals: from Arduino input to a connected device",
+      "summary": "Follow sensing, decision-making, actuation and communication through three runnable beginner labs.",
+      "difficulty": "Fundamental",
+      "minutes": 20,
+      "prerequisites": [
+        "ee-circuits"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "The four jobs of an IoT node",
+          "text": "A sensor turns a physical quantity into a signal; a controller reads that signal and decides what to do; an actuator changes an output; a communication interface exchanges information. Arduino Uno/Nano can practise the sensing and control loop without a network. A connected build adds suitable networking hardware or uses a board such as ESP32."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Make a local decision before adding the network",
+          "text": "In an Arduino-style sketch, setup runs once after reset and loop repeats. Configure input and output pins, read the input, validate or scale it, then update the output. Test the local circuit first. A short delay can pace a simple learning example; a device that must service several jobs needs appropriate non-blocking scheduling."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Send meaningful data and confirm commands",
+          "text": "Telemetry is a report from the device, such as an ADC count, temperature with units or an output state. A command requests a change. Keep these meanings separate and document message fields. A network connection does not prove a command ran. Read back the resulting state and define what happens when a request or sensor times out."
+        }
+      ],
+      "workedExample": "A dial sets an ideal ADC count between 0 and 1023 on Uno. Switch the LED on above 60% and off below 40%; retain its state between those limits. First verify that local behaviour, then send a report containing adc, unit=\"count\" and led. A remote /on command should be followed by /status to verify the resulting output state.",
+      "application": "Complete the three linked labs in order. Draw a block diagram for a connected night light, then specify its local threshold, telemetry fields and behaviour if the network disappears.",
+      "lab": {
+        "tutorialId": "iot-sense-act",
+        "task": "Begin with the sensor-to-output loop on Uno, Nano, ESP32 or ESP32-S3. Check both thresholds and the retained state between them."
+      },
+      "practice": [
+        {
+          "prompt": "Which part makes the decision in a simple IoT node?",
+          "explanation": "The controller processes inputs and commands the outputs.",
+          "lessonId": "lesson-1",
+          "id": "practice-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "Only the jumper colour"
+            },
+            {
+              "id": "b",
+              "text": "The controller running firmware"
+            },
+            {
+              "id": "c",
+              "text": "The enclosure label"
+            }
+          ],
+          "answerId": "b"
+        },
+        {
+          "prompt": "Does Arduino Uno need WiFi to practise a local sensor-to-LED decision?",
+          "explanation": "Networking is a separate capability from local GPIO control.",
+          "lessonId": "lesson-1",
+          "id": "practice-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "Yes; every digitalWrite uses the internet"
+            },
+            {
+              "id": "b",
+              "text": "Yes; sensors only work online"
+            },
+            {
+              "id": "c",
+              "text": "No; the local control loop can run independently"
+            }
+          ],
+          "answerId": "c"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "What normally runs once when an Arduino sketch starts after reset?",
+            "explanation": "setup initialises the sketch, then loop repeats.",
+            "lessonId": "lesson-2",
+            "id": "exam-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "loop forever before setup"
+              },
+              {
+                "id": "b",
+                "text": "setup"
+              },
+              {
+                "id": "c",
+                "text": "Every HTTP endpoint"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "Which message is telemetry rather than a command?",
+            "explanation": "Telemetry reports observed data; commands request changes.",
+            "lessonId": "lesson-3",
+            "id": "exam-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "Turn the fan on"
+              },
+              {
+                "id": "b",
+                "text": "Set the target to 30 °C"
+              },
+              {
+                "id": "c",
+                "text": "Measured temperature is 24.5 °C"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "Why test the sensor and LED before connecting a network service?",
+            "explanation": "A known-working local loop makes later fault isolation easier.",
+            "lessonId": "lesson-2",
+            "id": "exam-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "It isolates local wiring and logic from communication problems"
+              },
+              {
+                "id": "b",
+                "text": "It makes every sensor more accurate automatically"
+              },
+              {
+                "id": "c",
+                "text": "It removes the need for power"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "Which fields make a sensor report easier to interpret?",
+            "explanation": "The receiving application needs meaning and freshness as well as a value.",
+            "lessonId": "lesson-3",
+            "id": "exam-4",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only an unexplained number"
+              },
+              {
+                "id": "b",
+                "text": "Value, unit and validity or age"
+              },
+              {
+                "id": "c",
+                "text": "Only the wire colour"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "A remote request was sent. What should verify that the LED changed?",
+            "explanation": "A reported resulting state distinguishes a request from confirmed action.",
+            "lessonId": "lesson-3",
+            "id": "exam-5",
+            "options": [
+              {
+                "id": "a",
+                "text": "Assume all sent requests succeeded"
+              },
+              {
+                "id": "b",
+                "text": "Check only the variable name"
+              },
+              {
+                "id": "c",
+                "text": "Read back the output state"
+              }
+            ],
+            "answerId": "c"
+          }
+        ]
+      },
+      "sources": [],
+      "extraLabs": [
+        {
+          "tutorialId": "iot-telemetry",
+          "task": "Next, publish labelled ADC telemetry through Serial and compare readings on 10-bit and 12-bit boards."
+        },
+        {
+          "tutorialId": "iot-web-control",
+          "task": "Finally, use the virtual ESP32 HTTP server to request /on, /off and /status and verify the LED state."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Ohm’s law",
+          "equation": "V = I × R; I = V / R; R = V / I",
+          "symbols": "V: resistor voltage (V); I: current (A); R: resistance (Ω).",
+          "assumptions": "Use an ohmic resistor and the voltage across that resistor. Convert mA to A before substituting.",
+          "example": "Given 3.3 V across 1,000 Ω: I = 3.3 / 1,000 = 0.0033 A = 3.3 mA."
+        },
+        {
+          "title": "ADC endpoint scaling",
+          "equation": "code ≈ Vin / Vref × (2ᴺ − 1)",
+          "symbols": "code: integer ADC reading; Vin: input (V); Vref: full-scale reference (V); N: resolution (bits).",
+          "assumptions": "This is an ideal endpoint teaching model with rounding. Real ADC transfer functions, attenuation, reference errors and calibration differ.",
+          "example": "Given Vin = 2.5 V, Vref = 5 V and N = 10: code ≈ 2.5 / 5 × 1023 ≈ 512."
+        },
+        {
+          "title": "PWM duty and frequency",
+          "equation": "D = ton / T; f = 1 / T; Vaverage = D × Vhigh",
+          "symbols": "D: duty fraction (0–1); ton: high time (s); T: period (s); f: frequency (Hz); Vhigh: pulse voltage (V).",
+          "assumptions": "Assume ideal pulses from 0 V to Vhigh. Average voltage is not an instantaneous DAC voltage or a guarantee of motor speed.",
+          "example": "Given ton = 2 ms, T = 10 ms and Vhigh = 5 V: D = 0.2 = 20%, f = 100 Hz and Vaverage = 1 V."
+        }
+      ]
+    },
+    {
+      "id": "drone-foundations",
+      "version": 1,
+      "track": "drone-foundations",
+      "order": 1,
+      "title": "Drone fundamentals: build, bench and first hover",
+      "summary": "Understand a quad-X aircraft and practise its sensors, motor signal and assisted flight in the simulator.",
+      "difficulty": "Fundamental",
+      "minutes": 20,
+      "prerequisites": [
+        "ee-power",
+        "iot-controllers"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Follow power, commands and thrust",
+          "text": "A quad-X combines a frame, four motors and props, ESC channels, a battery, a flight controller and sensors. Battery power reaches the motors through ESCs; controller signals command the ESCs. A regulated branch powers the controller. Match each motor and prop direction, confirm connector types and inspect the assembly before interpreting a thrust estimate."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Learn attitude and bench checks with props off",
+          "text": "Roll tilts sideways, pitch tilts forward/backward and yaw rotates the heading. The IMU provides angular-rate and acceleration-related information; the barometer provides pressure-related height information. In the prepared bench lessons, props are removed and the stand is clamped. Confirm sensor response and the intended motor channel at low command before progressing to virtual flight."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Hover balances weight and needs feedback",
+          "text": "In level hover, total upward thrust balances weight, approximately mass × 9.81 m/s². Differential motor thrust changes attitude. A controller uses sensor feedback to correct errors. The VoltQuest assisted hover example makes centred throttle hold height; that is a simulator helper behaviour, not a universal radio convention. Real flight hardware, firmware and operating conditions require separate verification."
+        }
+      ],
+      "workedExample": "A hypothetical 0.5 kg quad needs about 0.5 × 9.81 = 4.905 N total thrust for level hover, or 1.226 N per rotor if shared equally. Thrust-to-weight ratio describes available thrust relative to weight; it does not certify stability or flight time. In the virtual lab, arm with low throttle, climb gently, centre at 50% in assisted hover, descend and disarm after landing.",
+      "application": "Complete the IMU, props-off ESC and assisted-hover tutorials in order. Record the power path, motor signal pins, sensor response and low-throttle arming procedure. Explain why simulator results are not a hardware flight approval.",
+      "lab": {
+        "tutorialId": "drone-imu-basics",
+        "task": "Start with the clamped, props-off assembly. Tilt the stand and compare roll/pitch telemetry with the sketch’s IMU readings."
+      },
+      "practice": [
+        {
+          "prompt": "Which component switches battery power into a brushless motor?",
+          "explanation": "An ESC converts the command into motor drive; the signal wire is not the motor power path.",
+          "lessonId": "lesson-1",
+          "id": "practice-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "The IMU data pin"
+            },
+            {
+              "id": "b",
+              "text": "The ESC"
+            },
+            {
+              "id": "c",
+              "text": "The barometer"
+            }
+          ],
+          "answerId": "b"
+        },
+        {
+          "prompt": "What is removed before the introductory clamped motor bench test?",
+          "explanation": "The props-off bench configuration lets the tutorial inspect motor behaviour without producing propeller thrust.",
+          "lessonId": "lesson-2",
+          "id": "practice-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "Every ground connection"
+            },
+            {
+              "id": "b",
+              "text": "Only the source-code comments"
+            },
+            {
+              "id": "c",
+              "text": "All propellers"
+            }
+          ],
+          "answerId": "c"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "What is the approximate weight of a 1 kg aircraft?",
+            "explanation": "Weight is mass × gravitational acceleration: 1 × 9.81 = 9.81 N.",
+            "lessonId": "lesson-3",
+            "id": "exam-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "1 N"
+              },
+              {
+                "id": "b",
+                "text": "9.81 N"
+              },
+              {
+                "id": "c",
+                "text": "981 N"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "Which axis describes a change in heading?",
+            "explanation": "Yaw rotates the aircraft around its vertical body axis.",
+            "lessonId": "lesson-2",
+            "id": "exam-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "Roll only"
+              },
+              {
+                "id": "b",
+                "text": "Altitude"
+              },
+              {
+                "id": "c",
+                "text": "Yaw"
+              }
+            ],
+            "answerId": "c"
+          },
+          {
+            "prompt": "What does the beginner IMU bench tutorial check?",
+            "explanation": "A sensor-response test verifies one part of the teaching control chain.",
+            "lessonId": "lesson-2",
+            "id": "exam-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "Sensor readings respond to controlled tilt"
+              },
+              {
+                "id": "b",
+                "text": "The real aircraft is approved to fly"
+              },
+              {
+                "id": "c",
+                "text": "Battery charging is complete"
+              }
+            ],
+            "answerId": "a"
+          },
+          {
+            "prompt": "In VoltQuest assisted hover mode, what does 50% throttle request?",
+            "explanation": "The helper maps throttle around the centre to climb or descent requests.",
+            "lessonId": "lesson-3",
+            "id": "exam-4",
+            "options": [
+              {
+                "id": "a",
+                "text": "Always exactly half of maximum motor current"
+              },
+              {
+                "id": "b",
+                "text": "Hold height"
+              },
+              {
+                "id": "c",
+                "text": "A universal real-aircraft takeoff procedure"
+              }
+            ],
+            "answerId": "b"
+          },
+          {
+            "prompt": "What should follow a gentle landing in the tutorial?",
+            "explanation": "Disarming ends motor commands; review telemetry and keep the simulator/hardware boundary explicit.",
+            "lessonId": "lesson-3",
+            "id": "exam-5",
+            "options": [
+              {
+                "id": "a",
+                "text": "Immediately raise throttle to maximum"
+              },
+              {
+                "id": "b",
+                "text": "Treat the exported sketch as verified hardware firmware"
+              },
+              {
+                "id": "c",
+                "text": "Disarm and inspect the flight result"
+              }
+            ],
+            "answerId": "c"
+          }
+        ]
+      },
+      "sources": [],
+      "extraLabs": [
+        {
+          "tutorialId": "drone-esc-basics",
+          "task": "Then drive just motor 1 on the props-off stand and verify that the other three remain stopped."
+        },
+        {
+          "tutorialId": "drone-hover-basics",
+          "task": "Finish with assisted virtual takeoff, a short hover, gentle descent and disarming after landing."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Weight and level hover",
+          "equation": "W = m × g; Thover,total ≈ W; Thover,rotor ≈ W / 4",
+          "symbols": "W: weight (N); m: mass (kg); g: gravitational acceleration (m/s²); T: thrust (N).",
+          "assumptions": "Assume level, steady hover and equal load sharing on a symmetric quad. Tilt and acceleration change the required thrust.",
+          "example": "Given m = 0.5 kg and g = 9.81 m/s²: W = 4.905 N; each rotor provides about 1.226 N."
+        },
+        {
+          "title": "Thrust-to-weight ratio",
+          "equation": "TWR = Tmax,total / (m × g)",
+          "symbols": "TWR: dimensionless ratio; Tmax,total: total available thrust (N); m: mass (kg); g: m/s².",
+          "assumptions": "Use thrust at the stated battery/load condition. A ratio above one indicates potential lift, not stable control or a flight-worthiness certificate.",
+          "example": "Given 15 N available thrust and 0.5 kg: TWR = 15 / 4.905 ≈ 3.06."
+        },
+        {
+          "title": "Electrical power",
+          "equation": "P = V × I; Presistor = I² × R",
+          "symbols": "P: power (W); V: voltage (V); I: current (A); R: resistance (Ω).",
+          "assumptions": "P = V × I applies to steady DC here. The I²R form is the heat dissipated in a resistor.",
+          "example": "Given 5 V and 20 mA: P = 5 × 0.020 = 0.10 W."
+        },
+        {
+          "title": "Energy and ideal battery runtime",
+          "equation": "E = P × t; runtime = capacity / Iaverage",
+          "symbols": "E: energy (Wh) when P is W and t is hours; capacity: mAh; Iaverage: battery-side mA; runtime: hours.",
+          "assumptions": "Use current measured at the battery side. The simple runtime omits temperature, ageing, cutoff and conversion losses.",
+          "example": "Given 500 mAh and 10 mA at the battery: ideal runtime = 500 / 10 = 50 h. A 0.5 W load for 4 h uses 2 Wh."
+        }
+      ]
+    }
+  ]
+}

@@ -623,6 +623,349 @@
       ]
     },
     {
+      "id": "iot-sense-act",
+      "title": "IoT lab: a sensor makes a local decision",
+      "summary": "Use a dial and hysteresis to control an LED before adding networking.",
+      "boards": [
+        "uno",
+        "nano",
+        "esp32",
+        "esp32s3"
+      ],
+      "preset": "pot",
+      "code": "bool lightOn = false;\nvoid setup() { Serial.begin(9600); pinMode(9, OUTPUT); }\nvoid loop() {\n  int value = analogRead(A0);\n  if (value > 614) lightOn = true;\n  if (value < 409) lightOn = false;\n  digitalWrite(9, lightOn);\n  Serial.print(\"adc=\"); Serial.print(value);\n  Serial.print(\" led=\"); Serial.println(lightOn);\n  delay(100);\n}\n",
+      "language": "cpp",
+      "difficulty": "Easy",
+      "minutes": 12,
+      "order": 101,
+      "track": "iot-foundations",
+      "concepts": [
+        "IoT foundations"
+      ],
+      "steps": [
+        {
+          "title": "Trace the prepared node",
+          "text": "Find the potentiometer supply, ground and wiper. Follow the LED’s separate output and series resistor."
+        },
+        {
+          "title": "Cross both thresholds",
+          "text": "Run, turn the dial above 60% to switch on, then below 40% to switch off. Check the printed adc and led fields."
+        },
+        {
+          "title": "Keep the previous state",
+          "text": "Return to 50% after switching on, then after switching off. The different outcomes demonstrate stored state inside the hysteresis band."
+        }
+      ],
+      "hardwareConcepts": [
+        {
+          "title": "One input, one output",
+          "text": "The ADC reads wiper voltage; a different pin drives the resistor and LED. A GPIO never receives an arbitrary voltage above its limits."
+        },
+        {
+          "title": "Board-specific scaling",
+          "text": "Uno/Nano use 0–1023; the ESP32 teaching ADC uses 0–4095. Each prepared sketch uses the correct thresholds and pins."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "State survives between loops",
+          "text": "The global lightOn variable remembers the last accepted output state."
+        },
+        {
+          "title": "Two conditions create a band",
+          "text": "Only a reading above the upper limit or below the lower limit changes the state."
+        }
+      ],
+      "challenge": "Narrow the threshold band while keeping the upper threshold above the lower one. Predict the behaviour at the midpoint before running.",
+      "codeOverrides": {
+        "esp32": "bool lightOn = false;\nvoid setup() { Serial.begin(9600); pinMode(18, OUTPUT); }\nvoid loop() {\n  int value = analogRead(34);\n  if (value > 2457) lightOn = true;\n  if (value < 1638) lightOn = false;\n  digitalWrite(18, lightOn);\n  Serial.print(\"adc=\"); Serial.print(value);\n  Serial.print(\" led=\"); Serial.println(lightOn);\n  delay(100);\n}\n",
+        "esp32s3": "bool lightOn = false;\nvoid setup() { Serial.begin(9600); pinMode(18, OUTPUT); }\nvoid loop() {\n  int value = analogRead(4);\n  if (value > 2457) lightOn = true;\n  if (value < 1638) lightOn = false;\n  digitalWrite(18, lightOn);\n  Serial.print(\"adc=\"); Serial.print(value);\n  Serial.print(\" led=\"); Serial.println(lightOn);\n  delay(100);\n}\n"
+      }
+    },
+    {
+      "id": "iot-telemetry",
+      "title": "IoT lab: readable sensor telemetry",
+      "summary": "Report an ADC value, its unit and scale over Serial on Arduino or ESP32.",
+      "boards": [
+        "uno",
+        "nano",
+        "esp32",
+        "esp32s3"
+      ],
+      "preset": "pot",
+      "code": "void setup() { Serial.begin(9600); }\nvoid loop() {\n  int value = analogRead(A0);\n  Serial.print(\"adc=\"); Serial.print(value);\n  Serial.print(\" unit=count max=\"); Serial.println(1023);\n  delay(500);\n}\n",
+      "language": "cpp",
+      "difficulty": "Easy",
+      "minutes": 12,
+      "order": 102,
+      "track": "iot-foundations",
+      "concepts": [
+        "IoT foundations"
+      ],
+      "steps": [
+        {
+          "title": "Read the message format",
+          "text": "Each line contains adc, unit=count and max. It reports an electrical input code, not a calibrated temperature."
+        },
+        {
+          "title": "Change the physical input",
+          "text": "Run and turn the pot from low to high. Watch complete messages every half-second."
+        },
+        {
+          "title": "Compare controllers",
+          "text": "Switch between Uno and ESP32. The voltage range and maximum ADC count differ; the explicit max field keeps the scale visible."
+        }
+      ],
+      "hardwareConcepts": [
+        {
+          "title": "A divider supplies the signal",
+          "text": "The pot endpoints connect to the board’s logic supply and ground, keeping its wiper in the teaching ADC range."
+        },
+        {
+          "title": "Serial is the local transport",
+          "text": "This lab sends local Serial output. It does not give Uno an integrated WiFi radio or send data onto the real internet."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "Label each field",
+          "text": "Serial.print builds a readable line; println ends one complete sample."
+        },
+        {
+          "title": "Choose an update interval",
+          "text": "delay(500) spaces reports for this simple sketch. More complex concurrent tasks can use millis-based scheduling."
+        }
+      ],
+      "challenge": "Add a second field containing the approximate percentage of full scale. Use floating-point arithmetic or multiply before integer division.",
+      "codeOverrides": {
+        "esp32": "void setup() { Serial.begin(9600); }\nvoid loop() {\n  int value = analogRead(34);\n  Serial.print(\"adc=\"); Serial.print(value);\n  Serial.print(\" unit=count max=\"); Serial.println(4095);\n  delay(500);\n}\n",
+        "esp32s3": "void setup() { Serial.begin(9600); }\nvoid loop() {\n  int value = analogRead(4);\n  Serial.print(\"adc=\"); Serial.print(value);\n  Serial.print(\" unit=count max=\"); Serial.println(4095);\n  delay(500);\n}\n"
+      }
+    },
+    {
+      "id": "iot-web-control",
+      "title": "IoT lab: command and verify over HTTP",
+      "summary": "Use an ESP32 web endpoint to change a light, then read its state back.",
+      "boards": [
+        "esp32",
+        "esp32s3"
+      ],
+      "preset": "led",
+      "code": "#include <WiFi.h>\n#include <WebServer.h>\nWebServer server(80);\nbool lightOn = false;\nvoid setup() {\n  Serial.begin(115200);\n  pinMode(18, OUTPUT);\n  WiFi.softAP(\"VoltQuest-Intro\");\n  server.on(\"/on\", []() { lightOn = true; digitalWrite(18, HIGH); server.send(200, \"text/plain\", \"LED on\"); });\n  server.on(\"/off\", []() { lightOn = false; digitalWrite(18, LOW); server.send(200, \"text/plain\", \"LED off\"); });\n  server.on(\"/status\", []() { if (lightOn) server.send(200, \"text/plain\", \"led=1\"); else server.send(200, \"text/plain\", \"led=0\"); });\n  server.begin();\n}\nvoid loop() { server.handleClient(); delay(10); }\n",
+      "language": "cpp",
+      "difficulty": "Easy",
+      "minutes": 12,
+      "order": 103,
+      "track": "iot-foundations",
+      "concepts": [
+        "IoT foundations"
+      ],
+      "steps": [
+        {
+          "title": "Start the virtual server",
+          "text": "Run and wait for the WiFi access-point status. This is a virtual network inside the browser."
+        },
+        {
+          "title": "Send a command",
+          "text": "Enter /on in the Virtual HTTP request field and press GET. Confirm the response and illuminated LED."
+        },
+        {
+          "title": "Read back the state",
+          "text": "Request /status and expect led=1. Request /off, then /status again and expect led=0. Compare each response to the circuit."
+        }
+      ],
+      "hardwareConcepts": [
+        {
+          "title": "Networking and output have different paths",
+          "text": "The virtual request reaches firmware; GPIO18 then drives the physical teaching LED through its resistor."
+        },
+        {
+          "title": "Keep a current-limiting resistor",
+          "text": "A remote command does not change the LED’s electrical requirements. Its resistor remains necessary."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "Handlers define actions",
+          "text": "/on and /off change the stored state and output; /status reports without changing it."
+        },
+        {
+          "title": "Service requests repeatedly",
+          "text": "handleClient runs in loop so queued virtual requests can reach their handlers. The sample omits production authentication and transport setup."
+        }
+      ],
+      "challenge": "Add a /help endpoint that lists the three existing paths. Keep /status read-only and verify it never toggles the LED.",
+      "http": true
+    },
+    {
+      "id": "drone-imu-basics",
+      "title": "Drone lab: inspect attitude on the bench",
+      "summary": "Read roll and pitch from a wired IMU on a clamped, props-off quad.",
+      "boards": [
+        "esp32",
+        "esp32s3"
+      ],
+      "preset": "drone-imu",
+      "code": "#include <MPU6050.h>\nMPU6050 imu;\nvoid setup() {\n  Serial.begin(115200);\n  imu.begin();\n}\nvoid loop() {\n  Serial.print(\"Roll: \"); Serial.print(imu.getRoll(), 1);\n  Serial.print(\" Pitch: \"); Serial.println(imu.getPitch(), 1);\n  delay(100);\n}\n",
+      "language": "cpp",
+      "difficulty": "Easy",
+      "minutes": 12,
+      "order": 104,
+      "track": "drone-foundations",
+      "concepts": [
+        "Drone basics"
+      ],
+      "steps": [
+        {
+          "title": "Inspect the sensor links",
+          "text": "Find the IMU power, ground, SDA and SCL in the connector table. Pins follow the selected ESP32 variant."
+        },
+        {
+          "title": "Run with props removed",
+          "text": "Run the example. The stand is clamped, all props are removed and this sketch sends no motor commands."
+        },
+        {
+          "title": "Tilt and compare",
+          "text": "Set bench roll to 15 degrees and pitch to -10. Compare the live attitude and printed Roll/Pitch, then return both to zero."
+        }
+      ],
+      "hardwareConcepts": [
+        {
+          "title": "Prepared quad-X wiring",
+          "text": "Power, ESC signal, bundled motor phase, I2C and receiver links are derived from the same drone document used by the simulator."
+        },
+        {
+          "title": "Teaching hardware boundary",
+          "text": "The reduced electrical and flight model is for learning. VoltQuest flight helpers are not verified firmware for a physical drone."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "Initialise the actual sensor",
+          "text": "imu.begin requires the connected sensor and correct I2C wiring."
+        },
+        {
+          "title": "Report angles with units",
+          "text": "getRoll and getPitch report degrees in this teaching library; delay(100) spaces the serial samples."
+        }
+      ],
+      "challenge": "Change the print interval to 200 ms. Predict how many reports appear per virtual second, then compare roll at positive and negative tilt.",
+      "kind": "drone"
+    },
+    {
+      "id": "drone-esc-basics",
+      "title": "Drone lab: a props-off motor signal test",
+      "summary": "Arm at low command, then use Serial to drive only the first motor on the clamped stand.",
+      "boards": [
+        "esp32",
+        "esp32s3"
+      ],
+      "preset": "drone-esc",
+      "code": "#include <ESP32Servo.h>\nServo esc;\nvoid setup() {\n  Serial.begin(115200);\n  esc.attach(18);\n  esc.writeMicroseconds(1000);\n}\nvoid loop() {\n  if (Serial.available()) {\n    char command = Serial.read();\n    if (command == '1') { esc.writeMicroseconds(1250); Serial.println(\"Motor 1: 1250 us\"); }\n    if (command == '0') { esc.writeMicroseconds(1000); Serial.println(\"Motor 1: 1000 us\"); }\n  }\n  delay(10);\n}\n",
+      "language": "cpp",
+      "difficulty": "Easy",
+      "minutes": 12,
+      "order": 105,
+      "track": "drone-foundations",
+      "concepts": [
+        "Drone basics"
+      ],
+      "steps": [
+        {
+          "title": "Confirm the props-off setup",
+          "text": "All four props are removed and the stand is clamped. Find motor 1’s ESC signal and motor phase connection."
+        },
+        {
+          "title": "Run low, then arm",
+          "text": "Run and wait at least one virtual second at the initial 1000 µs command. Keep RC throttle at zero, then press ARM."
+        },
+        {
+          "title": "Command and stop one motor",
+          "text": "Send 1 through Serial to request 1250 µs. Check only motor 1 gains RPM. Send 0 to return to 1000 µs, allow it to slow, then DISARM."
+        }
+      ],
+      "hardwareConcepts": [
+        {
+          "title": "Prepared quad-X wiring",
+          "text": "Power, ESC signal, bundled motor phase, I2C and receiver links are derived from the same drone document used by the simulator."
+        },
+        {
+          "title": "Teaching hardware boundary",
+          "text": "The reduced electrical and flight model is for learning. VoltQuest flight helpers are not verified firmware for a physical drone."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "Board-specific ESC pin",
+          "text": "Motor 1 uses GPIO18 on ESP32 and GPIO4 on ESP32-S3. The selected example uses the matching signal pin."
+        },
+        {
+          "title": "Pulse width is a command",
+          "text": "writeMicroseconds sets the ESC command in microseconds; it does not supply motor power or directly measure RPM."
+        }
+      ],
+      "challenge": "Compare commanded pulse width and measured RPM during spin-up and spin-down. Keep this prepared test props-off and do not exceed the demonstrated command.",
+      "codeOverrides": {
+        "esp32s3": "#include <ESP32Servo.h>\nServo esc;\nvoid setup() {\n  Serial.begin(115200);\n  esc.attach(4);\n  esc.writeMicroseconds(1000);\n}\nvoid loop() {\n  if (Serial.available()) {\n    char command = Serial.read();\n    if (command == '1') { esc.writeMicroseconds(1250); Serial.println(\"Motor 1: 1250 us\"); }\n    if (command == '0') { esc.writeMicroseconds(1000); Serial.println(\"Motor 1: 1000 us\"); }\n  }\n  delay(10);\n}\n"
+      },
+      "kind": "drone"
+    },
+    {
+      "id": "drone-hover-basics",
+      "title": "Drone lab: first assisted hover and landing",
+      "summary": "Use the prepared flight build to take off, hold height and land gently in the virtual hangar.",
+      "boards": [
+        "esp32",
+        "esp32s3"
+      ],
+      "preset": "drone-hover",
+      "code": "#include <VoltFlight.h>\n// ESP32 carrier: motor signals 18, 19, 23, 25.\n// ESP32-S3 carrier: motor signals 4, 5, 6, 7.\n// The helper reads the connected IMU, barometer and receiver.\nvoid setup() {\n  Serial.begin(115200);\n  Flight.begin();\n  Flight.setGains(0.0015, 0.0002, 0.00003);\n}\nvoid loop() {\n  Flight.update();\n  delay(4); // 250 Hz control; 1 kHz physics\n}\n",
+      "language": "cpp",
+      "difficulty": "Easy",
+      "minutes": 12,
+      "order": 106,
+      "track": "drone-foundations",
+      "concepts": [
+        "Drone basics"
+      ],
+      "steps": [
+        {
+          "title": "Inspect the flight configuration",
+          "text": "This flight lesson has props fitted and the stand unclamped. The earlier motor bench test must be understood first. Start with throttle zero and level sticks."
+        },
+        {
+          "title": "Take off and hold",
+          "text": "Run, wait one virtual second and ARM at zero throttle. Raise throttle gently to 65% until near 1 metre, then set 50% to request a height hold in assisted hover mode."
+        },
+        {
+          "title": "Descend and disarm",
+          "text": "Set throttle to 35% for a gentle descent. Watch height and vertical speed; after the landed indicator appears, lower throttle to zero and DISARM. Reset restores the lesson after a crash."
+        }
+      ],
+      "hardwareConcepts": [
+        {
+          "title": "Prepared quad-X wiring",
+          "text": "Power, ESC signal, bundled motor phase, I2C and receiver links are derived from the same drone document used by the simulator."
+        },
+        {
+          "title": "Teaching hardware boundary",
+          "text": "The reduced electrical and flight model is for learning. VoltQuest flight helpers are not verified firmware for a physical drone."
+        }
+      ],
+      "programConcepts": [
+        {
+          "title": "The helper closes the loop",
+          "text": "Flight.update reads the prepared receiver and sensors and updates motor commands. This is a simulator-specific teaching API."
+        },
+        {
+          "title": "Height hold is an assisted mode",
+          "text": "Here 50% throttle requests no vertical movement, while higher or lower requests climb or descent. This does not mean each motor is at 50% power."
+        }
+      ],
+      "challenge": "Repeat the takeoff and landing and compare your peak height and landing speed. Keep roll and pitch centred until you can complete a calm hover.",
+      "kind": "drone"
+    },
+    {
       "id": "uno-potentiometer",
       "title": "Read a voltage divider",
       "boards": [

@@ -1,0 +1,1201 @@
+{
+  "tutorials": [
+    {
+      "id": "robot-motion",
+      "version": 1,
+      "order": 1,
+      "title": "1. Robot motion and differential drive",
+      "summary": "Turn wheel geometry into predictable motion, then test straight lines and turns.",
+      "difficulty": "Easy",
+      "minutes": 25,
+      "lessons": [
+        {
+          "id": "motion",
+          "title": "From wheel rotation to distance",
+          "text": "A mobile robot combines a chassis, power supply, motors, motor drivers, sensors and a controller. In this sandbox, two driven wheels share one axle. A wheel of radius r travels r metres of arc length per radian of rotation, so its ground speed is r times its angular speed. The model assumes rigid wheels rolling on a flat surface without slipping. Real motors need feedback and may not reach the requested speed under load."
+        },
+        {
+          "id": "turns",
+          "title": "Equal wheels translate; unequal wheels turn",
+          "text": "The average wheel speed sets forward speed v. The difference between right and left ground speeds, divided by wheel separation b, sets yaw rate ω. Positive yaw is counterclockwise viewed from above. A positive forward command follows the robot heading, not the screen horizontal axis. Equal and opposite wheel speeds rotate the robot in place. Use metres, seconds and radians consistently; degrees are only a display convenience."
+        },
+        {
+          "id": "experiment",
+          "title": "Predict, step, compare",
+          "text": "Reset the pose to x = 1 m, y = 1 m, yaw = 0. Publish v = 0.4 m/s and ω = 0, then use Step 0.1 s ten times. The robot should reach x = 1.4 m and both wheels should read 8 rad/s while moving. Step again without another message: the one-second command timeout stops motion. Reset and publish v = 0, ω = 1 rad/s to observe a turn without translation."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Wheel speed conversion",
+          "equation": "ωL = (v − ωb/2) / r;  ωR = (v + ωb/2) / r",
+          "symbols": "v: forward speed (m/s); ω: yaw rate (rad/s); b: wheel separation (m); r: wheel radius (m); ωL, ωR: wheel rates (rad/s). Assumes no wheel slip.",
+          "example": "With v = 0.4, ω = 1, b = 0.3 and r = 0.05, left = 5 rad/s and right = 11 rad/s."
+        },
+        {
+          "title": "Straight-line distance",
+          "equation": "Δs = vΔt",
+          "symbols": "Δs: distance (m); v: constant speed (m/s); Δt: elapsed time (s). Applies while heading and speed are constant.",
+          "example": "At 0.4 m/s for 1 s, travel is 0.4 m."
+        }
+      ],
+      "steps": [
+        "Reset pose. Set forward speed to 0.4 and yaw rate to 0. Publish once.",
+        "Step ten times; compare x with 1.4 m. Step once more to see the timeout.",
+        "Reset, set forward speed to 0 and yaw rate to 1, then publish and step.",
+        "Open a sandbox copy, change wheel radius to 0.1 m and compare wheel rates for the same body speed."
+      ],
+      "practice": [
+        {
+          "id": "q0",
+          "prompt": "A 0.05 m wheel rotates at 8 rad/s. What is its ground speed?",
+          "options": [
+            {
+              "id": "a",
+              "text": "0.4 m/s"
+            },
+            {
+              "id": "b",
+              "text": "160 m/s"
+            },
+            {
+              "id": "c",
+              "text": "0.00625 m/s"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Multiply radius by angular speed: 0.05 × 8 = 0.4 m/s.",
+          "lessonId": "motion"
+        },
+        {
+          "id": "q1",
+          "prompt": "Which command turns in place?",
+          "options": [
+            {
+              "id": "a",
+              "text": "v = 1, ω = 0"
+            },
+            {
+              "id": "b",
+              "text": "v = 0, ω = 0"
+            },
+            {
+              "id": "c",
+              "text": "v = 0, ω = 1"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "Zero forward speed and nonzero yaw rate produce opposite wheel rates.",
+          "lessonId": "turns"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "q2",
+            "prompt": "How far does 0.3 m/s travel in 2 s at constant heading?",
+            "options": [
+              {
+                "id": "a",
+                "text": "0.15 m"
+              },
+              {
+                "id": "b",
+                "text": "0.6 m"
+              },
+              {
+                "id": "c",
+                "text": "6 m"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Distance is speed times time: 0.3 × 2 = 0.6 m.",
+            "lessonId": "experiment"
+          },
+          {
+            "id": "q3",
+            "prompt": "What does positive yaw mean in this world?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Counterclockwise from above"
+              },
+              {
+                "id": "b",
+                "text": "Always moving north"
+              },
+              {
+                "id": "c",
+                "text": "Increasing altitude"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Yaw describes orientation around the vertical axis, with positive counterclockwise rotation.",
+            "lessonId": "turns"
+          },
+          {
+            "id": "q4",
+            "prompt": "Both wheels have equal positive speed. What happens?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Rotation in place"
+              },
+              {
+                "id": "b",
+                "text": "No movement"
+              },
+              {
+                "id": "c",
+                "text": "Straight motion along the heading"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Equal wheel speeds give zero difference, hence zero yaw rate.",
+            "lessonId": "turns"
+          },
+          {
+            "id": "q5",
+            "prompt": "Double wheel radius while keeping the same body speed. Required wheel rate is…",
+            "options": [
+              {
+                "id": "a",
+                "text": "Unchanged"
+              },
+              {
+                "id": "b",
+                "text": "Halved"
+              },
+              {
+                "id": "c",
+                "text": "Doubled"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Angular speed equals ground speed divided by radius.",
+            "lessonId": "motion"
+          },
+          {
+            "id": "q6",
+            "prompt": "Why can real wheel odometry differ from this model?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Wheel slip and measurement errors"
+              },
+              {
+                "id": "b",
+                "text": "Metres cannot measure position"
+              },
+              {
+                "id": "c",
+                "text": "Robots never have sensors"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Ideal rolling is an assumption; real wheels slip and encoders have finite resolution.",
+            "lessonId": "motion"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "ROS 2 differential drive controller",
+          "url": "https://control.ros.org/master/doc/ros2_controllers/diff_drive_controller/doc/userdoc.html"
+        }
+      ],
+      "project": {
+        "kind": "robotics",
+        "version": 1,
+        "name": "My mobile robot",
+        "robot": {
+          "wheelRadius": 0.05,
+          "wheelBase": 0.3,
+          "radius": 0.18
+        },
+        "start": {
+          "x": 1,
+          "y": 1,
+          "yaw": 0
+        },
+        "goal": {
+          "x": 3,
+          "y": 1
+        },
+        "obstacles": [],
+        "topics": {
+          "publisher": "/cmd_vel",
+          "subscriber": "/cmd_vel"
+        },
+        "parameters": {
+          "maxSpeed": 0.5,
+          "gain": 1.5,
+          "stopDistance": 0.45
+        }
+      }
+    },
+    {
+      "id": "ros2-topics",
+      "version": 1,
+      "order": 2,
+      "title": "2. ROS 2 nodes, topics and messages",
+      "summary": "Connect a command publisher to a robot driver and diagnose mismatched topic names.",
+      "difficulty": "Easy",
+      "minutes": 25,
+      "lessons": [
+        {
+          "id": "nodes",
+          "title": "A graph of cooperating nodes",
+          "text": "ROS 2 is a framework for building robot software from communicating nodes. A node is a participant with a focused responsibility, such as reading sensors or controlling wheels. This browser models four roles: command publisher, drive node, range sensor and waypoint controller. They are teaching objects in one browser process. An actual ROS 2 installation supplies middleware, discovery, executors and operating-system integration; this sandbox does not run those services."
+        },
+        {
+          "id": "topics",
+          "title": "Names and types form the connection",
+          "text": "Publishers send typed messages on named topics; subscribers receive matching streams. The drive node consumes geometry_msgs/msg/Twist on /cmd_vel. Here linear.x requests forward metres per second and angular.z requests radians per second. Changing the publisher to /wrong_topic still creates a visible message, but the drive subscription no longer receives it. Restore the same name on both sides to reconnect. Real ROS 2 also requires compatible message types and QoS policies."
+        },
+        {
+          "id": "timing",
+          "title": "Streaming and a command timeout",
+          "text": "A velocity message is a request, not proof of movement. Inspect odometry to see what the robot did. Publish once to test the one-second timeout; enable the 10 Hz stream for sustained manual motion. When streaming stops, the last accepted request expires after one virtual second. This watchdog is a rule of our drive model, not automatic ROS 2 behavior. Pause freezes virtual time, so timeout experiments require Run or Step."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Publication period",
+          "equation": "T = 1 / f",
+          "symbols": "T: period (s); f: publication frequency (Hz). This sandbox streams at 10 Hz of virtual time.",
+          "example": "10 Hz gives one message every 0.1 s."
+        },
+        {
+          "title": "Watchdog travel estimate",
+          "equation": "d = |v| τ",
+          "symbols": "d: ideal travel before timeout (m); v: constant speed (m/s); τ: timeout (s). Excludes braking dynamics and obstacles.",
+          "example": "A 0.4 m/s request with a 1 s timeout can travel 0.4 m after the last accepted command."
+        }
+      ],
+      "steps": [
+        "Publish a Twist on /cmd_vel and step. Inspect the delivered message and /odom output.",
+        "Reset pose, change Publisher topic to /wrong_topic, apply the graph and publish again.",
+        "Match both names again. Enable the 10 Hz stream and run; disable streaming to observe timeout.",
+        "Explain why a logged publication alone cannot prove the motor controller accepted it."
+      ],
+      "practice": [
+        {
+          "id": "q0",
+          "prompt": "Which role receives command messages?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Subscriber"
+            },
+            {
+              "id": "b",
+              "text": "Only the publisher"
+            },
+            {
+              "id": "c",
+              "text": "The battery"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "The drive subscription receives messages whose topic matches its configured name.",
+          "lessonId": "topics"
+        },
+        {
+          "id": "q1",
+          "prompt": "What is the period of a 10 Hz stream?",
+          "options": [
+            {
+              "id": "a",
+              "text": "10 s"
+            },
+            {
+              "id": "b",
+              "text": "100 s"
+            },
+            {
+              "id": "c",
+              "text": "0.1 s"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "Period is 1/f = 1/10 = 0.1 s.",
+          "lessonId": "timing"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "q2",
+            "prompt": "What does a ROS 2 node represent?",
+            "options": [
+              {
+                "id": "a",
+                "text": "A wire voltage"
+              },
+              {
+                "id": "b",
+                "text": "A software participant with a responsibility"
+              },
+              {
+                "id": "c",
+                "text": "Always one physical wheel"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Nodes divide robot software into communicating responsibilities.",
+            "lessonId": "nodes"
+          },
+          {
+            "id": "q3",
+            "prompt": "The publisher uses /drive but the subscriber uses /cmd_vel. What happens here?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The command is not delivered to the drive"
+              },
+              {
+                "id": "b",
+                "text": "Names are ignored"
+              },
+              {
+                "id": "c",
+                "text": "The robot automatically renames topics"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The model routes messages by exact topic name.",
+            "lessonId": "topics"
+          },
+          {
+            "id": "q4",
+            "prompt": "What unit belongs to Twist angular.z here?",
+            "options": [
+              {
+                "id": "a",
+                "text": "m/s"
+              },
+              {
+                "id": "b",
+                "text": "V"
+              },
+              {
+                "id": "c",
+                "text": "rad/s"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "angular.z is yaw angular velocity in radians per second.",
+            "lessonId": "topics"
+          },
+          {
+            "id": "q5",
+            "prompt": "Which output helps verify actual simulated motion?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only the publish button label"
+              },
+              {
+                "id": "b",
+                "text": "/odom"
+              },
+              {
+                "id": "c",
+                "text": "/wrong_topic"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Odometry reports the evolving pose; sending a request does not prove movement.",
+            "lessonId": "timing"
+          },
+          {
+            "id": "q6",
+            "prompt": "Is the one-second velocity timeout built into all ROS 2 topics?",
+            "options": [
+              {
+                "id": "a",
+                "text": "No, it is implemented by this drive model"
+              },
+              {
+                "id": "b",
+                "text": "Yes, every topic has it"
+              },
+              {
+                "id": "c",
+                "text": "Only when the battery is full"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Timeout behavior belongs to a controller or driver, not topic transport itself.",
+            "lessonId": "timing"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "ROS 2 nodes",
+          "url": "https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Nodes/Understanding-ROS2-Nodes.html"
+        },
+        {
+          "title": "ROS 2 topics",
+          "url": "https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Topics/Understanding-ROS2-Topics.html"
+        }
+      ],
+      "project": {
+        "kind": "robotics",
+        "version": 1,
+        "name": "My mobile robot",
+        "robot": {
+          "wheelRadius": 0.05,
+          "wheelBase": 0.3,
+          "radius": 0.18
+        },
+        "start": {
+          "x": 1,
+          "y": 1,
+          "yaw": 0
+        },
+        "goal": {
+          "x": 3,
+          "y": 1
+        },
+        "obstacles": [],
+        "topics": {
+          "publisher": "/cmd_vel",
+          "subscriber": "/cmd_vel"
+        },
+        "parameters": {
+          "maxSpeed": 0.5,
+          "gain": 1.5,
+          "stopDistance": 0.45
+        }
+      }
+    },
+    {
+      "id": "robot-sensors",
+      "version": 1,
+      "order": 3,
+      "title": "3. Sensor messages, frames and odometry",
+      "summary": "Read a forward range sensor and relate robot-frame motion to world coordinates.",
+      "difficulty": "Easy",
+      "minutes": 25,
+      "lessons": [
+        {
+          "id": "range",
+          "title": "Measure a direction, not the whole world",
+          "text": "The range sensor sends sensor_msgs/msg/Range on /range ten times per virtual second. It casts one ray forward from the robot centre and returns the nearest circular obstacle or wall, up to 4 m. At the initial pose, the obstacle centre is 1.5 m ahead with radius 0.3 m, so the reading is 1.2 m. A clear forward ray does not prove the sides or rear are clear. This is not a scanning LiDAR or a camera."
+        },
+        {
+          "id": "frames",
+          "title": "Frames give coordinates meaning",
+          "text": "The odom frame is fixed to this world: x points right and y points upward. The base_link frame moves with the robot: its x axis points forward. A forward velocity at yaw π/2 increases world y, not world x. Sensor frame_id identifies where a measurement belongs; odometry names odom as the parent and base_link as the child. This sandbox exposes those labels but does not implement the ROS tf2 transform tree."
+        },
+        {
+          "id": "odometry",
+          "title": "Odometry accumulates a motion estimate",
+          "text": "An encoder counts wheel rotation; a controller converts counts into distance and integrates movement to estimate pose. Our model publishes ideal pose directly as a reduced Odometry preview: x, y and yaw, with no covariance or full quaternion message. Real wheel odometry drifts through slip, uneven surfaces and wheel-size errors. Compare range and pose as different evidence. A range sensor cannot by itself determine an absolute position in an unknown world."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Planar pose rates",
+          "equation": "dx/dt = v cos θ;  dy/dt = v sin θ;  dθ/dt = ω",
+          "symbols": "x, y: world position (m); θ: yaw (rad); v: forward speed (m/s); ω: yaw rate (rad/s). Ideal flat-ground kinematics.",
+          "example": "At θ = π/2 and v = 0.3 m/s, dx/dt = 0 and dy/dt = 0.3 m/s."
+        },
+        {
+          "title": "Encoder distance",
+          "equation": "Δs = 2πr ΔN / Nrev",
+          "symbols": "r: wheel radius (m); ΔN: encoder counts; Nrev: counts per wheel revolution. Theory only: encoder quantization is not simulated.",
+          "example": "With r = 0.05 m, ΔN = 100 and Nrev = 400, distance is about 0.0785 m."
+        }
+      ],
+      "steps": [
+        "Step once to receive /range and /odom. Confirm the starting range is 1.2 m.",
+        "Publish 0.2 m/s forward and step five times. Compare the new range and x coordinate.",
+        "Reset. Turn in place and inspect how the forward ray changes as the robot rotates.",
+        "Inspect frame_id in the message log and explain why range is not an absolute position."
+      ],
+      "practice": [
+        {
+          "id": "q0",
+          "prompt": "What is the initial forward range in this lesson?",
+          "options": [
+            {
+              "id": "a",
+              "text": "1.2 m"
+            },
+            {
+              "id": "b",
+              "text": "1.5 m"
+            },
+            {
+              "id": "c",
+              "text": "0.3 m"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Obstacle centre distance is 2.5 − 1 = 1.5 m; subtract its 0.3 m radius.",
+          "lessonId": "range"
+        },
+        {
+          "id": "q1",
+          "prompt": "At yaw π/2, forward motion increases…",
+          "options": [
+            {
+              "id": "a",
+              "text": "Only world x"
+            },
+            {
+              "id": "b",
+              "text": "Battery voltage"
+            },
+            {
+              "id": "c",
+              "text": "World y"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "sin(π/2) = 1 and cos(π/2) = 0, so forward motion follows positive y.",
+          "lessonId": "frames"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "q2",
+            "prompt": "What does frame_id describe?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The browser password"
+              },
+              {
+                "id": "b",
+                "text": "The coordinate frame of a measurement"
+              },
+              {
+                "id": "c",
+                "text": "A motor voltage setting"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Coordinates require a reference frame to be interpreted correctly.",
+            "lessonId": "frames"
+          },
+          {
+            "id": "q3",
+            "prompt": "A clear forward ray proves…",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only that this ray found no closer obstacle"
+              },
+              {
+                "id": "b",
+                "text": "Every direction is clear"
+              },
+              {
+                "id": "c",
+                "text": "The robot knows its global position"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "A single ray has limited directional coverage.",
+            "lessonId": "range"
+          },
+          {
+            "id": "q4",
+            "prompt": "Which effect causes real wheel odometry drift?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Using SI units"
+              },
+              {
+                "id": "b",
+                "text": "Giving topics names"
+              },
+              {
+                "id": "c",
+                "text": "Wheel slip"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Slip breaks the assumed relationship between wheel rotation and ground travel.",
+            "lessonId": "odometry"
+          },
+          {
+            "id": "q5",
+            "prompt": "100 counts out of 400 counts/revolution on a 0.05 m wheel give about…",
+            "options": [
+              {
+                "id": "a",
+                "text": "12.57 m"
+              },
+              {
+                "id": "b",
+                "text": "0.0785 m"
+              },
+              {
+                "id": "c",
+                "text": "0.4 m"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A quarter revolution travels 2π × 0.05 / 4 ≈ 0.0785 m.",
+            "lessonId": "odometry"
+          },
+          {
+            "id": "q6",
+            "prompt": "What does this sandbox use for /odom?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Ideal simulated pose with a reduced message preview"
+              },
+              {
+                "id": "b",
+                "text": "A real GPS receiver"
+              },
+              {
+                "id": "c",
+                "text": "A full SLAM system"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "It teaches pose and frames without simulating encoder noise, GPS or SLAM.",
+            "lessonId": "odometry"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "sensor_msgs/Range",
+          "url": "https://docs.ros.org/en/jazzy/p/sensor_msgs/msg/Range.html"
+        },
+        {
+          "title": "nav_msgs/Odometry",
+          "url": "https://docs.ros.org/en/jazzy/p/nav_msgs/msg/Odometry.html"
+        }
+      ],
+      "project": {
+        "kind": "robotics",
+        "version": 1,
+        "name": "My mobile robot",
+        "robot": {
+          "wheelRadius": 0.05,
+          "wheelBase": 0.3,
+          "radius": 0.18
+        },
+        "start": {
+          "x": 1,
+          "y": 1,
+          "yaw": 0
+        },
+        "goal": {
+          "x": 4,
+          "y": 1
+        },
+        "obstacles": [
+          {
+            "x": 2.5,
+            "y": 1,
+            "radius": 0.3
+          }
+        ],
+        "topics": {
+          "publisher": "/cmd_vel",
+          "subscriber": "/cmd_vel"
+        },
+        "parameters": {
+          "maxSpeed": 0.5,
+          "gain": 1.5,
+          "stopDistance": 0.45
+        }
+      }
+    },
+    {
+      "id": "ros2-services",
+      "version": 1,
+      "order": 4,
+      "title": "4. Services and controller parameters",
+      "summary": "Use request/response for reset, then tune a live controller with validated parameters.",
+      "difficulty": "Intermediate",
+      "minutes": 35,
+      "lessons": [
+        {
+          "id": "services",
+          "title": "A service completes one request",
+          "text": "A service fits a short operation with a response, such as resetting a pose. Call /reset_pose and observe success plus the restored start coordinates. The browser models a std_srvs/srv/Trigger response with success and message fields; the request has no fields. A topic is better for repeated velocity or sensor messages. A long navigation operation needs progress and cancellation, which the next lesson represents with an action."
+        },
+        {
+          "id": "parameters",
+          "title": "Parameters configure a node",
+          "text": "Parameters hold configuration values, rather than continuously commanding movement. The controller has maxSpeed in m/s, a heading gain in inverse seconds and stopDistance in metres. Apply parameters while paused or running and observe that the pose is preserved. Invalid values are rejected together without partial updates. The stop distance applies to autonomous forward motion; manual driving still permits approaching obstacles until the collision boundary stops it."
+        },
+        {
+          "id": "control",
+          "title": "Gain turns error into a correction",
+          "text": "The controller subtracts current heading from goal bearing, wraps the angle into −π to π, then multiplies by gain. A larger gain asks for a faster turn for the same error, capped at 2 rad/s here. Forward motion begins only when heading error is below 0.4 rad. This simple proportional controller teaches feedback but has no inertia, integral term or motor lag. Tuning a real robot also requires tests of stability and actuator limits."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Proportional heading control",
+          "equation": "ωcmd = clamp(Kp eθ, −2, 2)",
+          "symbols": "ωcmd: requested yaw rate (rad/s); Kp: heading gain (s⁻¹); eθ: wrapped heading error (rad). Clamp represents an actuator limit.",
+          "example": "For Kp = 1.5 s⁻¹ and error = 0.4 rad, command = 0.6 rad/s."
+        },
+        {
+          "title": "Physical stopping distance estimate",
+          "equation": "dstop ≈ vτ + v²/(2a)",
+          "symbols": "v: speed (m/s); τ: reaction delay (s); a: positive braking deceleration (m/s²). Theory only; the browser uses instantaneous velocity changes.",
+          "example": "At v = 0.5, τ = 0.2 and a = 1, estimated travel before stopping is 0.225 m, before adding clearance."
+        }
+      ],
+      "steps": [
+        "Publish a forward command, step and call Reset pose service. Inspect its response.",
+        "Set max speed to 0.2 m/s and apply parameters; a 0.5 m/s request is now limited to 0.2.",
+        "Set a goal above the start in a sandbox copy. Compare heading correction for gain 1 and gain 2.",
+        "Try an invalid maximum speed of 5. Verify rejection and unchanged pose/configuration."
+      ],
+      "practice": [
+        {
+          "id": "q0",
+          "prompt": "Which communication pattern fits resetting a pose?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Service request/response"
+            },
+            {
+              "id": "b",
+              "text": "A continuous image stream"
+            },
+            {
+              "id": "c",
+              "text": "A battery connector"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Reset is a short operation with a success response.",
+          "lessonId": "services"
+        },
+        {
+          "id": "q1",
+          "prompt": "Kp = 2 s⁻¹ and error = 0.3 rad produce which uncapped yaw rate?",
+          "options": [
+            {
+              "id": "a",
+              "text": "6 rad/s"
+            },
+            {
+              "id": "b",
+              "text": "0.15 rad/s"
+            },
+            {
+              "id": "c",
+              "text": "0.6 rad/s"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "Multiply gain and error: 2 × 0.3 = 0.6 rad/s.",
+          "lessonId": "control"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "q2",
+            "prompt": "What kind of value is maxSpeed?",
+            "options": [
+              {
+                "id": "a",
+                "text": "A navigation result"
+              },
+              {
+                "id": "b",
+                "text": "A controller configuration parameter"
+              },
+              {
+                "id": "c",
+                "text": "A sensor image"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It limits allowed speed without itself requesting motion.",
+            "lessonId": "parameters"
+          },
+          {
+            "id": "q3",
+            "prompt": "What happens when this sandbox rejects an invalid parameter update?",
+            "options": [
+              {
+                "id": "a",
+                "text": "All previous parameters and pose remain"
+              },
+              {
+                "id": "b",
+                "text": "Half the fields are applied"
+              },
+              {
+                "id": "c",
+                "text": "The robot teleports"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Validation is atomic: the complete update must be valid before applying it.",
+            "lessonId": "parameters"
+          },
+          {
+            "id": "q4",
+            "prompt": "Why wrap heading error into −π to π?",
+            "options": [
+              {
+                "id": "a",
+                "text": "To change metres into volts"
+              },
+              {
+                "id": "b",
+                "text": "To erase sensor data"
+              },
+              {
+                "id": "c",
+                "text": "To choose the shorter signed angular correction"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Equivalent headings separated by a full revolution should not cause a long unnecessary turn.",
+            "lessonId": "control"
+          },
+          {
+            "id": "q5",
+            "prompt": "With speed capped at 0.2 m/s, a 0.5 m/s request produces at most…",
+            "options": [
+              {
+                "id": "a",
+                "text": "0.7 m/s"
+              },
+              {
+                "id": "b",
+                "text": "0.2 m/s"
+              },
+              {
+                "id": "c",
+                "text": "0.5 m/s"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The drive clips the request to the configured maximum.",
+            "lessonId": "parameters"
+          },
+          {
+            "id": "q6",
+            "prompt": "Which effect is omitted by instantaneous simulated stopping?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Braking travel due to inertia"
+              },
+              {
+                "id": "b",
+                "text": "The existence of a goal"
+              },
+              {
+                "id": "c",
+                "text": "Topic names"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "A physical robot needs time and distance to reduce velocity.",
+            "lessonId": "control"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "ROS 2 services",
+          "url": "https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Services/Understanding-ROS2-Services.html"
+        },
+        {
+          "title": "ROS 2 parameters",
+          "url": "https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Parameters/Understanding-ROS2-Parameters.html"
+        }
+      ],
+      "project": {
+        "kind": "robotics",
+        "version": 1,
+        "name": "My mobile robot",
+        "robot": {
+          "wheelRadius": 0.05,
+          "wheelBase": 0.3,
+          "radius": 0.18
+        },
+        "start": {
+          "x": 1,
+          "y": 1,
+          "yaw": 0
+        },
+        "goal": {
+          "x": 3,
+          "y": 1
+        },
+        "obstacles": [],
+        "topics": {
+          "publisher": "/cmd_vel",
+          "subscriber": "/cmd_vel"
+        },
+        "parameters": {
+          "maxSpeed": 0.5,
+          "gain": 1.5,
+          "stopDistance": 0.45
+        }
+      }
+    },
+    {
+      "id": "robot-waypoints",
+      "version": 1,
+      "order": 5,
+      "title": "5. Waypoint actions and feedback control",
+      "summary": "Combine sensing, topics and parameters to reach a goal, handle obstacles and cancel a task.",
+      "difficulty": "Intermediate",
+      "minutes": 35,
+      "lessons": [
+        {
+          "id": "actions",
+          "title": "A goal has feedback and a result",
+          "text": "An action represents a longer operation: submit a goal, observe progress, then receive a result or cancel. Start waypoint action requests travel to the marked goal. Remaining distance is feedback; succeeded, blocked and cancelled are outcomes in this teaching model. The browser operation illustrates action concepts but is not a ROS action server and does not run Nav2. Topic messages still carry the low-level velocity requests beneath the task."
+        },
+        {
+          "id": "controller",
+          "title": "Close the loop with position feedback",
+          "text": "At each 0.05 s step, the controller computes goal distance and bearing from the latest pose. It turns toward the goal, then moves forward while correcting heading. Speed decreases near the goal and arrival is declared within 0.08 m. Reading new pose every step makes this closed-loop control. A timed sequence of forward commands without checking position is open-loop and cannot correct an unexpected initial heading or displacement."
+        },
+        {
+          "id": "limits",
+          "title": "A blocked goal is useful feedback",
+          "text": "The controller stops when its forward range reaches the configured threshold, with a minimum clearance based on robot radius. It reports blocked and requires a new action request after you change the scene. It does not plan around obstacles. Try an obstacle in the path, compare the range at stopping, then cancel or edit the world and reset. A manual delivered command also cancels the autonomous action so the two control sources do not fight."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Goal geometry",
+          "equation": "d = √((xg − x)² + (yg − y)²);  θg = atan2(yg − y, xg − x)",
+          "symbols": "x, y: current position (m); xg, yg: goal (m); d: remaining distance (m); θg: world goal bearing (rad).",
+          "example": "From (1,1) to (4,4), distance is √18 ≈ 4.24 m and bearing is π/4 ≈ 0.785 rad."
+        },
+        {
+          "title": "Arrival condition",
+          "equation": "d ≤ ε",
+          "symbols": "d: remaining distance (m); ε: acceptance radius, 0.08 m in this model. A tolerance avoids requiring exact floating-point equality.",
+          "example": "At d = 0.06 m, the action succeeds and commands zero velocity."
+        }
+      ],
+      "steps": [
+        "Start the waypoint action and run. Watch turning, forward travel and decreasing remaining distance.",
+        "Verify the succeeded result within 0.08 m of the goal and zero wheel rates.",
+        "Reset and start again, then cancel midway. Step to confirm it remains stopped.",
+        "Open a sandbox copy and place an obstacle on the diagonal path. Run the action to observe blocked; explain why this is not path planning."
+      ],
+      "practice": [
+        {
+          "id": "q0",
+          "prompt": "What is the straight-line distance from (1,1) to (4,4)?",
+          "options": [
+            {
+              "id": "a",
+              "text": "About 4.24 m"
+            },
+            {
+              "id": "b",
+              "text": "6 m"
+            },
+            {
+              "id": "c",
+              "text": "3 m"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Pythagoras gives √(3² + 3²) = √18 ≈ 4.24 m.",
+          "lessonId": "controller"
+        },
+        {
+          "id": "q1",
+          "prompt": "Which action feature supports stopping a long task midway?",
+          "options": [
+            {
+              "id": "a",
+              "text": "A larger wheel radius"
+            },
+            {
+              "id": "b",
+              "text": "Renaming odom"
+            },
+            {
+              "id": "c",
+              "text": "Cancellation"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "Actions allow a goal to be cancelled while it is in progress.",
+          "lessonId": "actions"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "q2",
+            "prompt": "What makes this waypoint controller closed-loop?",
+            "options": [
+              {
+                "id": "a",
+                "text": "It ignores sensor data"
+              },
+              {
+                "id": "b",
+                "text": "It recomputes commands from updated pose"
+              },
+              {
+                "id": "c",
+                "text": "It runs one fixed delay"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Feedback compares the current state with the desired state repeatedly.",
+            "lessonId": "controller"
+          },
+          {
+            "id": "q3",
+            "prompt": "The action reports blocked. What has this model done?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Stopped without planning a detour"
+              },
+              {
+                "id": "b",
+                "text": "Completed a full SLAM map"
+              },
+              {
+                "id": "c",
+                "text": "Reached the goal successfully"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The simple controller stops for an obstacle and has no route planner.",
+            "lessonId": "limits"
+          },
+          {
+            "id": "q4",
+            "prompt": "At 0.06 m remaining with tolerance 0.08 m, what is the result?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Always blocked"
+              },
+              {
+                "id": "b",
+                "text": "Must drive forever"
+              },
+              {
+                "id": "c",
+                "text": "Succeeded and stopped"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "0.06 ≤ 0.08 meets the arrival criterion.",
+            "lessonId": "controller"
+          },
+          {
+            "id": "q5",
+            "prompt": "Which is action feedback in this sandbox?",
+            "options": [
+              {
+                "id": "a",
+                "text": "A power cable type"
+              },
+              {
+                "id": "b",
+                "text": "Remaining distance while active"
+              },
+              {
+                "id": "c",
+                "text": "The name of the browser"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Feedback reports progress before the final result.",
+            "lessonId": "actions"
+          },
+          {
+            "id": "q6",
+            "prompt": "What happens to an active action when a manual command is delivered?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The action is cancelled and manual control takes over"
+              },
+              {
+                "id": "b",
+                "text": "Both controllers add unlimited speed"
+              },
+              {
+                "id": "c",
+                "text": "Nothing can interrupt it"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The sandbox explicitly gives a delivered manual command control authority.",
+            "lessonId": "limits"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "ROS 2 topics, services and actions",
+          "url": "https://docs.ros.org/en/jazzy/How-To-Guides/Topics-Services-Actions.html"
+        },
+        {
+          "title": "ROS 2 actions",
+          "url": "https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Actions/Understanding-ROS2-Actions.html"
+        }
+      ],
+      "project": {
+        "kind": "robotics",
+        "version": 1,
+        "name": "My mobile robot",
+        "robot": {
+          "wheelRadius": 0.05,
+          "wheelBase": 0.3,
+          "radius": 0.18
+        },
+        "start": {
+          "x": 1,
+          "y": 1,
+          "yaw": 0
+        },
+        "goal": {
+          "x": 4,
+          "y": 4
+        },
+        "obstacles": [],
+        "topics": {
+          "publisher": "/cmd_vel",
+          "subscriber": "/cmd_vel"
+        },
+        "parameters": {
+          "maxSpeed": 0.5,
+          "gain": 1.5,
+          "stopDistance": 0.45
+        }
+      }
+    }
+  ]
+}

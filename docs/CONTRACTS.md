@@ -372,6 +372,8 @@ Effects (`canvas/effects/index.js`, G2): `<SmokePuff x y onDone/>`, `<CrackOverl
 Tutorial extension: `/tutorials` and `/tutorials/:tutorialId?board=<boardId>` share the header shell.
 The header adds a Tutorials navigation item. The content, filters, difficulty progression, runnable
 examples and derived wiring-guide contract live in `TUTORIALS.md`. Tutorials do not grant campaign XP.
+Courses use `/courses` and `/courses/:courseId` under Tutorials navigation. The shared curriculum,
+assessment and browser-local progress contracts are in `COURSES.md`. They also grant no campaign XP.
 
 ### 11.2 Stores
 ```js
@@ -480,3 +482,23 @@ subsystem. The complete schema, units, coefficients, firmware subset and verific
 
 Custom numeric parameters of known drone parts are in scope. The deferred Custom Component Creator
 in §13 still means authoring entirely new part definitions; this feature does not implement it.
+
+## 16. Self-study robotics and computer vision
+
+See [ROBOTICS.md](ROBOTICS.md) and [VISION.md](VISION.md) for binding formats and model limits.
+`/robotics` + `/robotics/:lessonId` offer five ROS 2 concept lessons; `/vision` + `/vision/:lessonId`
+offer six computer-vision courses/labs. `/sandbox?bench=robotics|vision` routes to their independent
+browser sandboxes; optional `lesson` selects a preset. These formats do not extend CircuitDoc or the
+six supported board ids, backend project records, MCP project API, firmware language support or showcase.
+
+`engine/robotics/model.js` and `engine/vision/{model,opencv}.js` run in plain Node with no DOM/timers.
+Robotics scheduling and OpenCV script loading belong to feature UI adapters. The vision integration bench
+uses the existing simulation Worker for its IoT/drone devices and the same deterministic robot model.
+All code execution remains client-side and restricted to existing firmware or fixed authored algorithms.
+OpenCV is a pinned local prebuilt asset loaded only for vision; transformer attention uses fixed teaching
+features and is explicitly not pretrained inference. Neither changes the Pi camera-support boundary.
+
+Both content catalogues use three lesson sections, formula cards, guided steps, 2 practice/5 exam
+questions, sources and versioned presets. Assessments use the COURSES.md local progress contract.
+Robotics/vision imports validate their distinct schemas and confirm replacement. They cannot be loaded
+through the saved-circuit project API. No project autosave overwrites another sandbox's work.

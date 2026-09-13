@@ -49,6 +49,15 @@ hardware constraints, and program reasoning. Code-only examples explicitly say n
 Raspberry Pi lessons show BCM and physical pin numbers and disclose the restricted GPIO/Python
 learning model. Do not imply a full Linux computer or arbitrary Python packages are simulated.
 
+## Self-study courses
+
+The tutorial hub links to course tracks. Use light cards, teal links and labelled native search,
+track and difficulty filters. Details have an outline beside readable lessons on desktop and stack
+on mobile. Radio groups use fieldsets, legends and full clickable labels. Submission focuses results
+or the first missing answer. Feedback uses text and colour, and links back to lessons. Separate
+practice from exams, explain the 80% pass threshold and offer retries. Show best/last scores and
+the browser-local progress scope. Language changes preserve choices and checked lessons.
+
 ## Modals
 Briefing (Chip + bubbles, Start). Dual breadboard prompt: title "This board covers all available pin rows.", body "Snap a second breadboard alongside it?", primary "Add second breadboard", secondary "Keep one board". Success: Stars animate one by one, XP counts up, star reasons for missed stars, "Level up! Unlocked: Neon wires" when applicable, buttons "Next level" (or "Back to map" on the last level) / "Replay" / "Open in Sandbox"; "Best ★★ · +0 XP (already earned)" when nothing new. Shortcuts modal (`?`) lists all keys with `Kbd`.
 
@@ -93,3 +102,17 @@ render interpolation never advances simulation. The blackbox labels trace colors
 and allows sample inspection. Show feasibility numbers before wiring, and causes/fixes for failures.
 Edits to presets/FC assembly and replacement code use existing confirmation modals. The export includes
 model limits and real-build checklist; it must never present simulator helpers as certified firmware.
+
+## Robotics and computer vision study labs
+
+Advanced paths are linked from Tutorials and Courses. Use the shared header, teal learning accents,
+white bordered cards, readable formula text and persistent self-study progress. On desktop the robot
+world, message graph and controller form three columns; on mobile they stack. The SVG world has a
+numerical telemetry equivalent. Run/Step/Stop remain real buttons. JSON edits show a confirmation before
+replacing the applied project; save/export describe which version they use.
+
+Vision shows source and result side by side, with controls stacked above on mobile. Heatmap patches
+have keyboard buttons plus a full-sized query-index select for touch users. Native range/select controls
+change the generated scene and pipeline. Do not label attention weights as detection confidence.
+Current device response panels display measured HTTP, ESC and robot state, not just constructed payloads.
+Keep the model and transport boundaries visible where they affect an experiment or hardware interpretation.

@@ -15,6 +15,7 @@ describe('collectRoutes', () => {
   it('lists the public entry points', () => {
     expect(routes).toContain('/')
     expect(routes).toContain('/tutorials')
+    expect(routes).toContain('/courses')
     expect(routes).toContain('/sandbox')
     expect(routes).toContain('/showcase')
     expect(routes).toContain('/leaderboard')
@@ -34,6 +35,12 @@ describe('collectRoutes', () => {
     expect(routes.filter((route) => route.startsWith('/tutorials/'))).toEqual(expected)
   })
 
+  it('covers all course routes', () => {
+    const expected = readJson(path.join(contentDir, 'courses.json')).courses.map(course => `/courses/${course.id}`)
+    expect(expected).toHaveLength(22)
+    expect(routes.filter(route => route.startsWith('/courses/'))).toEqual(expected)
+  })
+
   it('omits per-player and user-generated routes', () => {
     expect(routes).not.toContain('/profile')
     expect(routes.some((route) => route.startsWith('/sandbox/'))).toBe(false)
@@ -51,8 +58,11 @@ describe('collectRoutes', () => {
         worlds: [{ order: 2, levelIds: ['w2-l1'] }, { order: 1, levelIds: ['w1-l1', 'w1-l9'] }],
       }))
       fs.writeFileSync(path.join(dir, 'tutorials.json'), JSON.stringify({ tutorials: [{ id: 'cpp-start' }] }))
+      fs.writeFileSync(path.join(dir, 'courses.json'), JSON.stringify({ courses: [{ id: 'ee-circuits' }] }))
+      fs.writeFileSync(path.join(dir, 'robotics.json'), JSON.stringify({ tutorials: [{ id: 'robot-motion' }] }))
+      fs.writeFileSync(path.join(dir, 'vision.json'), JSON.stringify({ tutorials: [{ id: 'opencv-foundations' }] }))
       expect(collectRoutes(dir)).toEqual([
-        '/', '/play/w1-l1', '/play/w2-l1', '/tutorials', '/tutorials/cpp-start', '/sandbox', '/showcase', '/leaderboard',
+        '/', '/play/w1-l1', '/play/w2-l1', '/tutorials', '/tutorials/cpp-start', '/courses', '/courses/ee-circuits', '/vision', '/vision/opencv-foundations', '/robotics', '/robotics/robot-motion', '/sandbox', '/showcase', '/leaderboard',
       ])
     } finally {
       fs.rmSync(dir, { recursive: true, force: true })

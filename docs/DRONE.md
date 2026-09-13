@@ -213,3 +213,12 @@ Local Chromium checks exercise the real Worker, 390 px tabs, desktop flight and 
 The PRD's 60 FPS/Chromebook/frame-time, real touch-device and multi-browser performance matrix is
 not certified by those checks. Optional GPS dynamics, gamepad input, remote preset/flight-time APIs,
 new airframe classes and new user-authored part definitions are not part of this implementation.
+
+### Foundation and integration labs
+
+`/tutorials/drone-imu-basics`, `/tutorials/drone-esc-basics` and `/tutorials/drone-hover-basics` reuse
+the existing engine with prepared ESP32/S3 assemblies. The first two are clamped and props-off;
+the last is the assisted flight model. `/courses/drone-foundations` supplies theory, formulas and an exam.
+`/vision/vision-integration` additionally routes measured OpenCV offsets to a one-motor props-off serial
+adapter and shows real pulse/RPM. This is signal integration, not autonomous vision landing. Existing
+hardware-port and model-limit guidance still applies.

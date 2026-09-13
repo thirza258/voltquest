@@ -13,9 +13,11 @@ export default function TutorialsPage() {
   const board = params.get('board') ?? ''
   const query = params.get('q') ?? ''
   const difficulty = params.get('difficulty') ?? ''
+  const topic = params.get('topic') ?? ''
   const tutorials = useMemo(() => TUTORIALS.filter((tutorial) => (!board || tutorial.boards.includes(board))
     && (!difficulty || tutorial.difficulty === difficulty)
-    && `${tutorial.title} ${t(tutorial.title)} ${tutorial.summary} ${t(tutorial.summary)} ${tutorial.concepts.map(t).join(' ')}`.toLowerCase().includes(query.toLowerCase())), [board, query, difficulty, t])
+    && (!topic || tutorial.track === topic)
+    && `${tutorial.title} ${t(tutorial.title)} ${tutorial.summary} ${t(tutorial.summary)} ${tutorial.concepts.map(t).join(' ')}`.toLowerCase().includes(query.toLowerCase())), [board, query, difficulty, topic, t])
   function filter(key, value) {
     const next = new URLSearchParams(params)
     if (value) next.set(key, value)
@@ -35,17 +37,38 @@ export default function TutorialsPage() {
           </div>
           <div className="hidden sm:block"><ChipMascot size={100} mood="thinking" /></div>
         </div>
-        <div className="mb-7 grid gap-3 rounded-lg border border-line bg-white p-4 sm:grid-cols-[1fr_240px]">
+        <section className="mb-7 rounded-lg border border-teal-200 bg-teal-50 p-5" aria-labelledby="courses-title">
+          <h2 id="courses-title" className="text-xl font-semibold text-ink">{t('Electrical engineering & IoT courses')}</h2>
+          <p className="mt-2 text-sm leading-relaxed text-ink-secondary">{t('Build your foundations with 10 electrical engineering courses and 10 IoT parts courses, each with lessons, practice questions and an exam.')}</p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Link to="/courses?track=electrical" className="rounded-md border border-brand-600 bg-white px-3 py-2 text-sm font-semibold text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500">{t('Electrical engineering foundations')}</Link>
+            <Link to="/courses?track=iot-parts" className="rounded-md border border-brand-600 bg-white px-3 py-2 text-sm font-semibold text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500">{t('IoT parts and device building')}</Link>
+            <Link to="/courses/iot-foundations" className="rounded-md border border-brand-600 bg-white px-3 py-2 text-sm font-semibold text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500">{t('Study IoT / Arduino foundations')}</Link>
+            <Link to="/courses/drone-foundations" className="rounded-md border border-brand-600 bg-white px-3 py-2 text-sm font-semibold text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500">{t('Study drone foundations')}</Link>
+          </div>
+          <p className="mt-4 text-sm text-ink-secondary">{t('IoT and drone foundations now include theory, formulas and guided practical labs.')}</p>
+        </section>
+        <section className="mb-7 rounded-lg border border-line bg-white p-5">
+          <h2 className="text-xl font-semibold">{t('Robotics & ROS 2 learning path')}</h2>
+          <p className="mt-2 text-sm text-ink-secondary">{t('Five tutorials from robot motion to waypoint control, with formulas, questions, exams and a browser sandbox.')}</p>
+          <div className="mt-4 flex flex-wrap gap-4"><Link to="/robotics" className="text-sm font-semibold text-brand-700 underline">{t('Explore robotics tutorials')}</Link><Link to="/sandbox?bench=robotics" className="text-sm font-semibold text-brand-700 underline">{t('Open robotics sandbox')}</Link></div>
+        </section>
+        <section className="mb-7 rounded-lg border border-line bg-white p-5">
+          <h2 className="text-xl font-semibold">{t('Computer vision: OpenCV, transformers & integration')}</h2><p className="mt-2 text-sm text-ink-secondary">{t('Six courses with hands-on labs, from image processing to a capstone connecting IoT, drones and ROS 2 robotics.')}</p>
+          <div className="mt-4 flex flex-wrap gap-4"><Link to="/vision" className="text-sm font-semibold text-brand-700 underline">{t('Explore computer vision courses')}</Link><Link to="/vision/vision-integration" className="text-sm font-semibold text-brand-700 underline">{t('Open the integration capstone')}</Link></div>
+        </section>
+        <div className="mb-7 grid gap-3 rounded-lg border border-line bg-white p-4 md:grid-cols-[minmax(0,1fr)_220px_220px]">
           <label className="relative block"><span className="sr-only">{t("Search tutorials")}</span><Search size={17} className="absolute left-3 top-3 text-slate-500" /><input type="search" value={query} onChange={(event) => filter('q', event.target.value)} placeholder={t("Search LEDs, Python, WiFi, sensors…")} className="h-10 w-full rounded-md border border-line-strong bg-white pl-10 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" /></label>
           <label><span className="sr-only">{t("Filter by board")}</span><select value={board} onChange={(event) => filter('board', event.target.value)} className="h-10 w-full rounded-md border border-line-strong bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"><option value="">{t("All boards")}</option>{BOARD_IDS.map((id) => <option key={id} value={id}>{getBoard(id).name}</option>)}</select></label>
+          <label><span className="sr-only">{t('Tutorial topic')}</span><select value={topic} onChange={event => filter('topic', event.target.value)} className="h-10 w-full rounded-md border border-line-strong bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"><option value="">{t('All topics')}</option><option value="iot-foundations">{t('IoT / Arduino fundamentals')}</option><option value="drone-foundations">{t('Drone fundamentals')}</option></select></label>
         </div>
         <div className="mb-5 flex flex-wrap gap-2" role="group" aria-label={t("Tutorial difficulty")}>{['', 'Easy', 'Intermediate', 'Hard'].map((tier, index) => <button key={tier} onClick={() => filter('difficulty', tier)} aria-pressed={difficulty === tier} className={`rounded-md border px-4 py-2 text-sm font-medium ${difficulty === tier ? 'border-brand-600 bg-brand-600 text-white' : 'border-line bg-white text-slate-600'}`}>{tier ? `${index}. ${t(tier)}` : t("Full learning path")}</button>)}</div>
-        <div className="mb-5 flex flex-wrap items-center gap-3 text-sm"><button onClick={() => { const next = new URLSearchParams(params); next.set('q', 'C++'); next.delete('difficulty'); next.delete('board'); setParams(next) }} className="rounded-md border border-brand-600 bg-white px-3 py-2 font-medium text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500">{t("Explore Arduino / ESP32 code lessons")}</button><span className="text-slate-600">{t("From setup and variables to serial commands and state machines.")}</span></div>
+        <div className="mb-5 flex flex-wrap items-center gap-3 text-sm"><button onClick={() => { const next = new URLSearchParams(params); next.set('q', 'C++'); next.delete('difficulty'); next.delete('board'); next.delete('topic'); setParams(next) }} className="rounded-md border border-brand-600 bg-white px-3 py-2 font-medium text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500">{t("Explore Arduino / ESP32 code lessons")}</button><span className="text-slate-600">{t("From setup and variables to serial commands and state machines.")}</span></div>
         <p className="mb-4 text-sm text-slate-500" role="status">{tutorials.length}{t(" tutorials")}{board ? ` for ${getBoard(board)?.name ?? board}` : t(" to explore")}{t(" · Easy → Intermediate → Hard")}</p>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {tutorials.map((tutorial) => (
             <Link key={tutorial.id} to={`/tutorials/${tutorial.id}${board ? `?board=${board}` : ''}`} className="group flex flex-col rounded-lg border border-line bg-white p-5 transition-colors hover:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500">
-              <div className="mb-4 flex items-center justify-between gap-2"><Badge tone={tutorial.language === 'python' ? 'info' : 'brand'}>{tutorial.language === 'python' ? t("Raspberry Pi · Python") : tutorial.boards.includes('uno') && tutorial.boards.includes('esp32') ? t("Arduino / ESP32 · C++") : tutorial.boards[0] === 'uno' ? t("Arduino · C++") : t("ESP32 · C++")}</Badge><span className="flex items-center gap-1 text-xs text-slate-500"><Clock size={12} />{tutorial.minutes}{t(" min")}</span></div>
+              <div className="mb-4 flex items-center justify-between gap-2"><Badge tone={tutorial.language === 'python' ? 'info' : 'brand'}>{tutorial.kind === 'drone' ? t('Drone · ESP32') : tutorial.language === 'python' ? t("Raspberry Pi · Python") : tutorial.boards.includes('uno') && tutorial.boards.includes('esp32') ? t("Arduino / ESP32 · C++") : tutorial.boards[0] === 'uno' ? t("Arduino · C++") : t("ESP32 · C++")}</Badge><span className="flex items-center gap-1 text-xs text-slate-500"><Clock size={12} />{tutorial.minutes}{t(" min")}</span></div>
               <h2 className="text-lg font-semibold text-ink group-hover:text-brand-700">{t(tutorial.title)}</h2>
               <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-secondary">{t(tutorial.summary)}</p>
               <div className="my-5 flex flex-wrap gap-1.5">{tutorial.concepts.map((concept) => <span key={concept} className="rounded bg-surface-sunken px-2 py-1 text-xs text-slate-600">{t(concept)}</span>)}</div>

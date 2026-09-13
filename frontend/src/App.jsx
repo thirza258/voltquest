@@ -1,6 +1,6 @@
 import { useI18n } from './i18n/index.jsx'
 import { Component, lazy, Suspense, useEffect } from 'react'
-import { Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route, Link, useSearchParams } from 'react-router-dom'
 import { CampaignPage } from './features/campaign/CampaignPage.jsx'
 import { AppHeader } from './features/workspace/AppHeader.jsx'
 import { usePlayerStore } from './store/playerStore.js'
@@ -8,12 +8,22 @@ import { Toaster } from './ui/index.js'
 
 const TutorialsPage = lazy(() => import('./features/tutorials/TutorialsPage.jsx'))
 const TutorialPage = lazy(() => import('./features/tutorials/TutorialPage.jsx'))
+const VisionPage = lazy(() => import('./features/vision/VisionPage.jsx'))
+const RoboticsPage = lazy(() => import('./features/robotics/RoboticsPage.jsx'))
+const CoursesPage = lazy(() => import('./features/courses/CoursesPage.jsx'))
+const CoursePage = lazy(() => import('./features/courses/CoursePage.jsx'))
 const WorkspacePage = lazy(() => import('./features/workspace/WorkspacePage.jsx'))
 const SandboxPage = lazy(() => import('./features/sandbox/SandboxPage.jsx'))
 const ShowcasePage = lazy(() => import('./features/showcase/ShowcasePage.jsx'))
 const ShowcaseProjectPage = lazy(() => import('./features/showcase/ShowcaseProjectPage.jsx'))
 const ProfilePage = lazy(() => import('./features/profile/ProfilePage.jsx'))
 const LeaderboardPage = lazy(() => import('./features/profile/LeaderboardPage.jsx'))
+
+function SandboxRoute() {
+  const [search] = useSearchParams()
+  if (search.get('bench') === 'vision') return <VisionPage sandbox />
+  return search.get('bench') === 'robotics' ? <RoboticsPage sandbox /> : <SandboxPage />
+}
 
 class AppErrorBoundary extends Component {
   state = { error: null }
@@ -33,8 +43,14 @@ export default function App() {
       <Route path="/" element={<CampaignPage />} />
       <Route path="/tutorials" element={<TutorialsPage />} />
       <Route path="/tutorials/:tutorialId" element={<TutorialPage />} />
+      <Route path="/courses" element={<CoursesPage />} />
+      <Route path="/courses/:courseId" element={<CoursePage />} />
       <Route path="/play/:levelId" element={<WorkspacePage />} />
-      <Route path="/sandbox" element={<SandboxPage />} />
+      <Route path="/sandbox" element={<SandboxRoute />} />
+      <Route path="/vision" element={<VisionPage />} />
+      <Route path="/vision/:lessonId" element={<VisionPage />} />
+      <Route path="/robotics" element={<RoboticsPage />} />
+      <Route path="/robotics/:lessonId" element={<RoboticsPage />} />
       <Route path="/sandbox/:projectId" element={<SandboxPage />} />
       <Route path="/showcase" element={<ShowcasePage />} />
       <Route path="/showcase/:slug" element={<ShowcaseProjectPage />} />
