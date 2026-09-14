@@ -5,6 +5,9 @@ import { AppHeader } from '../workspace/AppHeader.jsx'
 import { Badge, EmptyState } from '../../ui/index.js'
 import { COURSES, COURSE_TRACKS } from './content.js'
 import { readCourseProgress } from './progress.js'
+import { fundamentalsForCourse } from './fundamentals.js'
+import { getLearningTutorial } from './learningCatalog.js'
+import FundamentalsExplorer from './FundamentalsExplorer.jsx'
 
 const fieldClass = 'h-10 w-full rounded-md border border-line-strong bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500'
 export const courseLinkClass = 'inline-flex items-center gap-2 rounded-md font-medium text-brand-700 underline-offset-4 hover:underline focus:outline-none focus:ring-2 focus:ring-brand-500'
@@ -17,7 +20,8 @@ export default function CoursesPage() {
   const query = params.get('q') ?? ''
   const matches = COURSES.filter(course => (!track || course.track === track)
     && (!difficulty || course.difficulty === difficulty)
-    && [course.title, course.summary, ...course.lessons.map(lesson => lesson.title)]
+    && [course.title, course.summary, ...course.lessons.map(lesson => lesson.title),
+      ...fundamentalsForCourse(course.id).flatMap(guide => [guide.topic, getLearningTutorial(guide.tutorialId).title])]
       .flatMap(text => [text, t(text)]).join(' ').toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))
   const progress = Object.fromEntries(COURSES.map(course => [course.id, readCourseProgress(course)]))
   const passed = COURSES.filter(course => progress[course.id].bestPercent >= course.exam.passPercent).length
@@ -40,6 +44,7 @@ export default function CoursesPage() {
         <p className="mt-4 text-sm text-slate-600">{t('Progress is saved in this browser, shared by people using it. These self-study exams do not award campaign XP or certification.')}</p>
       </div>
       <nav className="mb-6 flex flex-wrap gap-4" aria-label={t('Continue your learning path')}><Link to="/robotics" className={courseLinkClass}>{t('Robotics & ROS 2 learning path')}</Link><Link to="/vision" className={courseLinkClass}>{t('Computer vision: OpenCV, transformers & integration')}</Link></nav>
+      <FundamentalsExplorer />
       <div className="mb-7 grid gap-4 rounded-lg border border-line bg-white p-4 md:grid-cols-3">
         <label className="space-y-1 text-sm text-ink-secondary"><span>{t('Search courses')}</span><input type="search" value={query} onChange={event => filter('q', event.target.value)} className={fieldClass} /></label>
         <label className="space-y-1 text-sm text-ink-secondary"><span>{t('Learning track')}</span><select value={track} onChange={event => filter('track', event.target.value)} className={fieldClass}><option value="">{t('All tracks')}</option>{COURSE_TRACKS.map(item => <option key={item.id} value={item.id}>{t(item.title)}</option>)}</select></label>
@@ -58,6 +63,7 @@ export default function CoursesPage() {
               <div className="mb-4 flex flex-wrap items-center justify-between gap-2"><Badge tone={course.difficulty === 'Fundamental' ? 'brand' : 'info'}>{t('Course {number}', { number: course.order })} · {t(course.difficulty)}</Badge><span className="inline-flex items-center gap-1 text-xs text-slate-600"><Clock size={12} />{t('{minutes} min', { minutes: course.minutes })}</span></div>
               <h3 className="text-lg font-semibold text-ink group-hover:text-brand-700">{t(course.title)}</h3><p className="mt-2 flex-1 text-sm leading-relaxed text-ink-secondary">{t(course.summary)}</p>
               <p className="mt-4 text-xs text-slate-600">{t('3 lessons · 2 practice questions · 5-question exam')}</p>
+              {fundamentalsForCourse(course.id).length > 0 && <p className="mt-2 text-xs text-brand-700">{t('Tutorial connections: {count}', { count: fundamentalsForCourse(course.id).length })}</p>}
               <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-line pt-3 text-sm">{result.bestPercent >= course.exam.passPercent ? <span className="inline-flex items-center gap-1 text-emerald-700"><CheckCircle2 size={14} />{t('Passed')} · {result.bestPercent}%</span> : <span className="text-slate-600">{t('{count} of 3 lessons read', { count: result.read.length })}</span>}<span className="inline-flex items-center gap-1 font-medium text-brand-700">{t('Open course')}<ArrowRight size={14} /></span></div>
             </Link>
           })}</div>

@@ -1,0 +1,448 @@
+{
+  "id": "w6-l1",
+  "worldId": "w6",
+  "order": 1,
+  "title": "One Press, One Count",
+  "codeName": "Level 6-1",
+  "difficulty": "intermediate",
+  "board": "uno",
+  "startBoard": "uno",
+  "boardSwitcher": "locked",
+  "boardMode": "half",
+  "xp": 260,
+  "estimatedMinutes": 18,
+  "summary": "Debounce a button, count each press once, and ignore a long hold.",
+  "concepts": [
+    "debouncing",
+    "edge detection",
+    "millis"
+  ],
+  "briefing": [
+    {
+      "mood": "thinking",
+      "text": "Debounce a button, count each press once, and ignore a long hold."
+    },
+    {
+      "mood": "happy",
+      "text": "The parts are placed but unwired. Complete the wiring and sketch, then follow the experiments in Learn to earn each objective."
+    }
+  ],
+  "learn": {
+    "title": "One Press, One Count",
+    "body": "Wire the button between D2 and GND and enable INPUT_PULLUP: pressed reads LOW. Wire D9 → 220 Ω → LED anode, with the cathode to GND.\n\nKeep a raw reading, a stable reading and the time of the last raw change. Accept a new stable state only after 30 ms without a change. Increment only on the stable HIGH-to-LOW edge; a held LOW is not another press. Toggle the LED for each accepted press and print COUNT=1, COUNT=2, and so on.\n\nRun, press and hold for at least half a second, release for at least 100 ms, then press and hold again. The first press lights the LED; the second turns it off. Rapid transitions shorter than 30 ms must not add counts. Use millis(), so the loop can keep observing the button.",
+    "links": []
+  },
+  "starterCircuit": {
+    "version": 1,
+    "boardMode": "half",
+    "breadboards": [
+      {
+        "id": "bb1",
+        "type": "half",
+        "x": 0,
+        "y": 0
+      }
+    ],
+    "mcu": "uno",
+    "components": [
+      {
+        "id": "c_uno",
+        "type": "uno",
+        "props": {},
+        "rotation": 0,
+        "position": {
+          "x": 0,
+          "y": -552
+        }
+      },
+      {
+        "id": "c_button",
+        "type": "pushbutton",
+        "props": {},
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "a1"
+        }
+      },
+      {
+        "id": "c_r0",
+        "type": "resistor",
+        "props": {
+          "ohms": 220
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "f1"
+        }
+      },
+      {
+        "id": "c_led0",
+        "type": "led",
+        "props": {
+          "color": "red"
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "f7"
+        }
+      }
+    ],
+    "wires": [],
+    "meta": {}
+  },
+  "starterCode": "void setup() {\n  Serial.begin(115200);\n  // Configure the parts described in Learn.\n}\n\nvoid loop() {\n  // Implement the challenge and test each input.\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": [
+    "uno",
+    "pushbutton",
+    "resistor",
+    "led"
+  ],
+  "objectives": [
+    {
+      "id": "wiring",
+      "text": "Connect the placed parts using the pin map in Learn",
+      "rules": [
+        {
+          "type": "mcu_is",
+          "board": "uno"
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "pushbutton",
+            "props": {},
+            "index": 0,
+            "pin": "a1"
+          },
+          "contains": {
+            "mcuPin": "D2"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "pushbutton",
+            "props": {},
+            "index": 0,
+            "pin": "b1"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "D9"
+          },
+          "contains": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 220
+            },
+            "index": 0,
+            "pin": "p1"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 220
+            },
+            "index": 0,
+            "pin": "p2"
+          },
+          "contains": {
+            "componentType": "led",
+            "props": {
+              "color": "red"
+            },
+            "index": 0,
+            "pin": "anode"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "led",
+            "props": {
+              "color": "red"
+            },
+            "index": 0,
+            "pin": "cathode"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        }
+      ],
+      "hints": {
+        "tier1": "Use Learn for the exact power, ground and signal pins. Insert cables into free holes on the same breadboard strip as each leg. The third hint shows the complete wiring.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [
+            "uno",
+            "pushbutton",
+            "resistor",
+            "led"
+          ],
+          "text": "Use Learn for the exact power, ground and signal pins. Insert cables into free holes on the same breadboard strip as each leg. The third hint shows the complete wiring."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "first",
+      "text": "Hold the first press: count 1 and keep the LED on",
+      "rules": [
+        {
+          "type": "serial_matches",
+          "pattern": "COUNT=1\\r?\\n"
+        },
+        {
+          "type": "pin_state",
+          "pin": "D9",
+          "level": 1,
+          "forMs": 400
+        }
+      ],
+      "hints": {
+        "tier1": "Detect an edge after 30 ms of stability, then leave the count unchanged while LOW.",
+        "tier2": {
+          "mcuPins": [
+            "D2",
+            "D9"
+          ],
+          "componentTypes": [],
+          "text": "Detect an edge after 30 ms of stability, then leave the count unchanged while LOW."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "second",
+      "text": "Release and hold a second press: count 2 and keep the LED off",
+      "rules": [
+        {
+          "type": "serial_matches",
+          "pattern": "^COUNT=1\\r?\\nCOUNT=2\\r?\\n$"
+        },
+        {
+          "type": "pin_state",
+          "pin": "D9",
+          "level": 0,
+          "forMs": 400
+        }
+      ],
+      "hints": {
+        "tier1": "Update the stable state on release too, but increment only when it becomes LOW.",
+        "tier2": {
+          "mcuPins": [
+            "D2",
+            "D9"
+          ],
+          "componentTypes": [],
+          "text": "Update the stable state on release too, but increment only when it becomes LOW."
+        },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [
+      {
+        "type": "code_not_matches",
+        "pattern": "\\bdelay\\s*\\("
+      }
+    ],
+    "threeText": "Use millis() scheduling without delay()"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "half",
+      "breadboards": [
+        {
+          "id": "bb1",
+          "type": "half",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "mcu": "uno",
+      "components": [
+        {
+          "id": "c_uno",
+          "type": "uno",
+          "props": {},
+          "rotation": 0,
+          "position": {
+            "x": 0,
+            "y": -552
+          }
+        },
+        {
+          "id": "c_button",
+          "type": "pushbutton",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a1"
+          }
+        },
+        {
+          "id": "c_r0",
+          "type": "resistor",
+          "props": {
+            "ohms": 220
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "f1"
+          }
+        },
+        {
+          "id": "c_led0",
+          "type": "led",
+          "props": {
+            "color": "red"
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "f7"
+          }
+        }
+      ],
+      "wires": [
+        {
+          "id": "w_q1",
+          "from": "bb1:c1",
+          "to": "c_uno:D2",
+          "color": "green"
+        },
+        {
+          "id": "w_q2",
+          "from": "bb1:c3",
+          "to": "c_uno:GND",
+          "color": "black"
+        },
+        {
+          "id": "w_q3",
+          "from": "c_uno:D9",
+          "to": "bb1:g1",
+          "color": "green"
+        },
+        {
+          "id": "w_q4",
+          "from": "bb1:g5",
+          "to": "bb1:g7",
+          "color": "green"
+        },
+        {
+          "id": "w_q5",
+          "from": "bb1:g8",
+          "to": "c_uno:GND",
+          "color": "black"
+        }
+      ],
+      "meta": {}
+    },
+    "code": "int raw = HIGH;\nint stable = HIGH;\nint count = 0;\nunsigned long changedAt = 0;\nvoid setup() {\n  Serial.begin(115200);\n  pinMode(2, INPUT_PULLUP);\n  pinMode(9, OUTPUT);\n}\nvoid loop() {\n  int reading = digitalRead(2);\n  unsigned long now = millis();\n  if (reading != raw) { raw = reading; changedAt = now; }\n  if (raw != stable && now - changedAt >= 30) {\n    stable = raw;\n    if (stable == LOW) {\n      count++;\n      digitalWrite(9, count % 2);\n      Serial.print(\"COUNT=\"); Serial.println(count);\n    }\n  }\n}\n",
+    "blocklyXml": null,
+    "actions": [
+      {
+        "atMs": 300,
+        "select": {
+          "componentType": "pushbutton"
+        },
+        "patch": {
+          "pressed": true
+        }
+      },
+      {
+        "atMs": 310,
+        "select": {
+          "componentType": "pushbutton"
+        },
+        "patch": {
+          "pressed": false
+        }
+      },
+      {
+        "atMs": 320,
+        "select": {
+          "componentType": "pushbutton"
+        },
+        "patch": {
+          "pressed": true
+        }
+      },
+      {
+        "atMs": 330,
+        "select": {
+          "componentType": "pushbutton"
+        },
+        "patch": {
+          "pressed": false
+        }
+      },
+      {
+        "atMs": 340,
+        "select": {
+          "componentType": "pushbutton"
+        },
+        "patch": {
+          "pressed": true
+        }
+      },
+      {
+        "atMs": 1100,
+        "select": {
+          "componentType": "pushbutton"
+        },
+        "patch": {
+          "pressed": false
+        }
+      },
+      {
+        "atMs": 1110,
+        "select": {
+          "componentType": "pushbutton"
+        },
+        "patch": {
+          "pressed": true
+        }
+      },
+      {
+        "atMs": 1120,
+        "select": {
+          "componentType": "pushbutton"
+        },
+        "patch": {
+          "pressed": false
+        }
+      },
+      {
+        "atMs": 1500,
+        "select": {
+          "componentType": "pushbutton"
+        },
+        "patch": {
+          "pressed": true
+        }
+      }
+    ]
+  },
+  "solutionRunMs": 7000,
+  "successText": "Your circuit now responds to changing inputs. Try a different input sequence and explain why each output changes."
+}

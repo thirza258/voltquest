@@ -17,7 +17,7 @@ export default defineConfig({
   },
   // Discover heavy lazy editor dependencies at startup, avoiding a dev-page reload on first use.
   optimizeDeps: {
-    include: ['blockly', 'blockly/blocks', '@monaco-editor/react', 'monaco-editor/esm/vs/editor/editor.api', 'monaco-editor/esm/vs/editor/editor.all', 'monaco-editor/esm/vs/basic-languages/python/python.contribution'],
+    include: ['three', 'three/addons/controls/OrbitControls.js', 'three/addons/geometries/RoundedBoxGeometry.js', 'blockly', 'blockly/blocks', '@monaco-editor/react', 'monaco-editor/esm/vs/editor/editor.api', 'monaco-editor/esm/vs/editor/editor.all', 'monaco-editor/esm/vs/basic-languages/python/python.contribution'],
   },
   server: {
     port: 5173,
@@ -38,6 +38,7 @@ export default defineConfig({
           if (id.includes('vite/preload-helper') || id.includes('commonjsHelpers')) return 'vendor'
           if (id.includes('node_modules/monaco-editor') || id.includes('node_modules/@monaco-editor')) return 'monaco'
           if (id.includes('node_modules/blockly')) return 'blockly'
+          if (id.includes('node_modules/three/')) return 'three'
           if (id.includes('/src/engine/')) return 'engine'
           if (id.includes('node_modules/react') || id.includes('node_modules/scheduler') || id.includes('node_modules/zustand') || id.includes('node_modules/react-router')) return 'vendor'
           return undefined
@@ -54,6 +55,6 @@ export default defineConfig({
     testTimeout: 30000,
     hookTimeout: 30000,
     teardownTimeout: 30000,
-    pool: 'forks',
+    pool: 'threads',
   },
 })

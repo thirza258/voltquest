@@ -7,6 +7,8 @@ import { installMemoryStorage } from '../../test-utils/localStorage.js'
 import { usePlayerStore } from '../../store/playerStore.js'
 import { CampaignMap } from './CampaignMap.jsx'
 import { campaignTotals, isAvailable, nextUpLevelId } from './gating.js'
+import { LEVEL_ORDER as AUTHORED_ORDER, LEVELS as AUTHORED_LEVELS } from '../../content/index.js'
+import { LocaleProvider } from '../../i18n/index.jsx'
 
 afterEach(cleanup)
 
@@ -126,6 +128,28 @@ describe('CampaignMap', () => {
     const summary = screen.getByText('Your bench').closest('div').parentElement
     expect(within(summary).getByText('5 / 9 stars')).toBeTruthy()
     expect(within(summary).getByText('2 / 3 levels')).toBeTruthy()
+  })
+
+  it('shows the new difficulty tiers and continues from the original campaign into world 6', () => {
+    const progress = Object.fromEntries(AUTHORED_ORDER.slice(0, 20).map(id => [id, { stars: 3 }]))
+    const open = vi.fn()
+    render(<MemoryRouter><CampaignMap progress={progress} onOpenLevel={open} /></MemoryRouter>)
+    expect(screen.getAllByText('Intermediate', { exact: true })).toHaveLength(6)
+    expect(screen.getAllByText('Hard', { exact: true })).toHaveLength(6)
+    expect(screen.getByText('60 / 96 stars')).toBeTruthy()
+    expect(screen.getByText('20 / 32 levels')).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: /Continue → Level 6-1 One Press/ }))
+    expect(open).toHaveBeenCalledWith('w6-l1')
+    expect(AUTHORED_LEVELS['w7-l6'].title).toBe('Connected Greenhouse')
+  })
+
+  it('translates the new worlds and difficulty badges into Indonesian', () => {
+    localStorage.setItem('vq.locale', JSON.stringify('id'))
+    render(<LocaleProvider><MemoryRouter><CampaignMap progress={{}} /></MemoryRouter></LocaleProvider>)
+    expect(screen.getByRole('heading', { name: 'Mesin yang Responsif' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'Rumah Kaca Terhubung' })).toBeTruthy()
+    expect(screen.getAllByText('Menengah', { exact: true })).toHaveLength(6)
+    expect(screen.getAllByText('Sulit', { exact: true })).toHaveLength(6)
   })
 })
 

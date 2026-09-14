@@ -11,6 +11,7 @@ import { Lcd16x2Renderer, OledRenderer } from './displays.jsx'
 import { BuzzerRenderer, ServoRenderer, DcMotorRenderer, RelayRenderer } from './actuators.jsx'
 import { GenericPartRenderer } from './Generic.jsx'
 import { RaspberryPiRenderer } from './raspberrypi.jsx'
+import { ExtraPartRenderer } from './extra.jsx'
 
 /** Renderer component per component type (CONTRACTS §4.3 table). */
 export const RENDERERS = Object.freeze({
@@ -43,6 +44,14 @@ export const RENDERERS = Object.freeze({
   level_shifter: LevelShifterRenderer,
   relay_5v: RelayRenderer,
   dc_motor: DcMotorRenderer,
+  slide_switch: ExtraPartRenderer,
+  reed_switch: ExtraPartRenderer,
+  tilt_switch: ExtraPartRenderer,
+  trimpot: ExtraPartRenderer,
+  variable_resistor: ExtraPartRenderer,
+  thermistor_ntc: ExtraPartRenderer,
+  force_sensor: ExtraPartRenderer,
+  flex_sensor: ExtraPartRenderer,
 })
 
 /** Renderer for a component type, or `null` when none exists (the canvas then falls back to GenericPartRenderer). */

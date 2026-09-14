@@ -1,0 +1,493 @@
+{
+  "id": "w6-l4",
+  "worldId": "w6",
+  "order": 4,
+  "title": "Guarded Servo",
+  "codeName": "Level 6-4",
+  "difficulty": "intermediate",
+  "board": "uno",
+  "startBoard": "uno",
+  "boardSwitcher": "locked",
+  "boardMode": "half",
+  "xp": 320,
+  "estimatedMinutes": 18,
+  "summary": "Combine a hold-to-enable input, analog positioning and travel limits.",
+  "concepts": [
+    "Servo",
+    "interlock",
+    "map",
+    "constrain"
+  ],
+  "briefing": [
+    {
+      "mood": "thinking",
+      "text": "Combine a hold-to-enable input, analog positioning and travel limits."
+    },
+    {
+      "mood": "happy",
+      "text": "The parts are placed but unwired. Complete the wiring and sketch, then follow the experiments in Learn to earn each objective."
+    }
+  ],
+  "learn": {
+    "title": "Guarded Servo",
+    "body": "Wire the servo signal to D9, VCC to 5V and GND to GND. Wire the pot end1 to 5V, end2 to GND and wiper to A0. Connect the button between D2 and GND with INPUT_PULLUP.\n\nWith the button released, park at 90°. While held, map A0 from 0–1023 to 0–180°, then constrain travel to 30–150°. The enable condition takes priority over the knob: releasing must park immediately. Print PARK on release.\n\nRun, hold the button and move the knob to 0%, then 100%, then release. Observe 30°, 150°, then 90° in the servo inspector. The simulator models commanded angle, not load, stall current or mechanical collision; a physical servo needs a suitable supply and common ground.",
+    "links": []
+  },
+  "starterCircuit": {
+    "version": 1,
+    "boardMode": "half",
+    "breadboards": [
+      {
+        "id": "bb1",
+        "type": "half",
+        "x": 0,
+        "y": 0
+      }
+    ],
+    "mcu": "uno",
+    "components": [
+      {
+        "id": "c_uno",
+        "type": "uno",
+        "props": {},
+        "rotation": 0,
+        "position": {
+          "x": 0,
+          "y": -552
+        }
+      },
+      {
+        "id": "c_button",
+        "type": "pushbutton",
+        "props": {},
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "a1"
+        }
+      },
+      {
+        "id": "c_pot",
+        "type": "potentiometer",
+        "props": {
+          "ohms": 10000
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "a8"
+        }
+      },
+      {
+        "id": "c_servo",
+        "type": "servo",
+        "props": {},
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "a20"
+        }
+      }
+    ],
+    "wires": [],
+    "meta": {}
+  },
+  "starterCode": "void setup() {\n  Serial.begin(115200);\n  // Configure the parts described in Learn.\n}\n\nvoid loop() {\n  // Implement the challenge and test each input.\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": [
+    "uno",
+    "pushbutton",
+    "potentiometer",
+    "servo"
+  ],
+  "objectives": [
+    {
+      "id": "wiring",
+      "text": "Connect the placed parts using the pin map in Learn",
+      "rules": [
+        {
+          "type": "mcu_is",
+          "board": "uno"
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "pushbutton",
+            "props": {},
+            "index": 0,
+            "pin": "a1"
+          },
+          "contains": {
+            "mcuPin": "D2"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "pushbutton",
+            "props": {},
+            "index": 0,
+            "pin": "b1"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "potentiometer",
+            "props": {
+              "ohms": 10000
+            },
+            "index": 0,
+            "pin": "end1"
+          },
+          "contains": {
+            "mcuPin": "5V"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "potentiometer",
+            "props": {
+              "ohms": 10000
+            },
+            "index": 0,
+            "pin": "end2"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "potentiometer",
+            "props": {
+              "ohms": 10000
+            },
+            "index": 0,
+            "pin": "wiper"
+          },
+          "contains": {
+            "mcuPin": "A0"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "servo",
+            "props": {},
+            "index": 0,
+            "pin": "signal"
+          },
+          "contains": {
+            "mcuPin": "D9"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "servo",
+            "props": {},
+            "index": 0,
+            "pin": "vcc"
+          },
+          "contains": {
+            "mcuPin": "5V"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "servo",
+            "props": {},
+            "index": 0,
+            "pin": "gnd"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        }
+      ],
+      "hints": {
+        "tier1": "Use Learn for the exact power, ground and signal pins. Insert cables into free holes on the same breadboard strip as each leg. The third hint shows the complete wiring.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [
+            "uno",
+            "pushbutton",
+            "potentiometer",
+            "servo"
+          ],
+          "text": "Use Learn for the exact power, ground and signal pins. Insert cables into free holes on the same breadboard strip as each leg. The third hint shows the complete wiring."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "low",
+      "text": "Hold enable at 0%: stop at 30°",
+      "rules": [
+        {
+          "type": "control_state",
+          "componentType": "pushbutton",
+          "field": "pressed",
+          "equals": true
+        },
+        {
+          "type": "control_state",
+          "componentType": "potentiometer",
+          "field": "value",
+          "equals": 0
+        },
+        {
+          "type": "peripheral_state",
+          "componentType": "servo",
+          "path": "data.angle",
+          "equals": 30
+        }
+      ],
+      "hints": {
+        "tier1": "Constrain the mapped angle before calling write().",
+        "tier2": {
+          "mcuPins": [
+            "D9",
+            "A0"
+          ],
+          "componentTypes": [],
+          "text": "Constrain the mapped angle before calling write()."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "high",
+      "text": "Keep holding at 100%: stop at 150°",
+      "rules": [
+        {
+          "type": "control_state",
+          "componentType": "pushbutton",
+          "field": "pressed",
+          "equals": true
+        },
+        {
+          "type": "control_state",
+          "componentType": "potentiometer",
+          "field": "value",
+          "equals": 1
+        },
+        {
+          "type": "peripheral_state",
+          "componentType": "servo",
+          "path": "data.angle",
+          "equals": 150
+        }
+      ],
+      "hints": {
+        "tier1": "The upper travel limit applies even at full ADC scale.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "The upper travel limit applies even at full ADC scale."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "park",
+      "text": "Release enable and park at 90°",
+      "rules": [
+        {
+          "type": "control_state",
+          "componentType": "pushbutton",
+          "field": "pressed",
+          "equals": false
+        },
+        {
+          "type": "peripheral_state",
+          "componentType": "servo",
+          "path": "data.angle",
+          "equals": 90
+        },
+        {
+          "type": "serial_matches",
+          "pattern": "PARK"
+        }
+      ],
+      "hints": {
+        "tier1": "Check enable first on every loop, so a release overrides any knob position.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Check enable first on every loop, so a release overrides any knob position."
+        },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [
+      {
+        "type": "code_not_matches",
+        "pattern": "\\bdelay\\s*\\("
+      }
+    ],
+    "threeText": "Use millis() scheduling without delay()"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "half",
+      "breadboards": [
+        {
+          "id": "bb1",
+          "type": "half",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "mcu": "uno",
+      "components": [
+        {
+          "id": "c_uno",
+          "type": "uno",
+          "props": {},
+          "rotation": 0,
+          "position": {
+            "x": 0,
+            "y": -552
+          }
+        },
+        {
+          "id": "c_button",
+          "type": "pushbutton",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a1"
+          }
+        },
+        {
+          "id": "c_pot",
+          "type": "potentiometer",
+          "props": {
+            "ohms": 10000
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a8"
+          }
+        },
+        {
+          "id": "c_servo",
+          "type": "servo",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a20"
+          }
+        }
+      ],
+      "wires": [
+        {
+          "id": "w_q1",
+          "from": "bb1:c1",
+          "to": "c_uno:D2",
+          "color": "green"
+        },
+        {
+          "id": "w_q2",
+          "from": "bb1:c3",
+          "to": "c_uno:GND",
+          "color": "black"
+        },
+        {
+          "id": "w_q3",
+          "from": "bb1:b8",
+          "to": "c_uno:5V",
+          "color": "red"
+        },
+        {
+          "id": "w_q4",
+          "from": "bb1:b10",
+          "to": "c_uno:GND",
+          "color": "black"
+        },
+        {
+          "id": "w_q5",
+          "from": "bb1:b9",
+          "to": "c_uno:A0",
+          "color": "green"
+        },
+        {
+          "id": "w_q6",
+          "from": "bb1:b20",
+          "to": "c_uno:D9",
+          "color": "green"
+        },
+        {
+          "id": "w_q7",
+          "from": "bb1:b21",
+          "to": "c_uno:5V",
+          "color": "red"
+        },
+        {
+          "id": "w_q8",
+          "from": "bb1:b22",
+          "to": "c_uno:GND",
+          "color": "black"
+        }
+      ],
+      "meta": {}
+    },
+    "code": "#include <Servo.h>\nServo arm;\nbool enabledBefore = false;\nvoid setup() { Serial.begin(115200); pinMode(2, INPUT_PULLUP); arm.attach(9); arm.write(90); }\nvoid loop() {\n  bool enabled = digitalRead(2) == LOW;\n  int angle = 90;\n  if (enabled) angle = constrain(map(analogRead(A0), 0, 1023, 0, 180), 30, 150);\n  arm.write(angle);\n  if (!enabled && enabledBefore) Serial.println(\"PARK\");\n  enabledBefore = enabled;\n}\n",
+    "blocklyXml": null,
+    "actions": [
+      {
+        "atMs": 300,
+        "select": {
+          "componentType": "potentiometer"
+        },
+        "patch": {
+          "value": 0
+        }
+      },
+      {
+        "atMs": 300,
+        "select": {
+          "componentType": "pushbutton"
+        },
+        "patch": {
+          "pressed": true
+        }
+      },
+      {
+        "atMs": 1100,
+        "select": {
+          "componentType": "potentiometer"
+        },
+        "patch": {
+          "value": 1
+        }
+      },
+      {
+        "atMs": 2000,
+        "select": {
+          "componentType": "pushbutton"
+        },
+        "patch": {
+          "pressed": false
+        }
+      }
+    ]
+  },
+  "solutionRunMs": 7000,
+  "successText": "Your circuit now responds to changing inputs. Try a different input sequence and explain why each output changes."
+}

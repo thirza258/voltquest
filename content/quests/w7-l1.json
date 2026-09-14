@@ -1,0 +1,367 @@
+{
+  "id": "w7-l1",
+  "worldId": "w7",
+  "order": 1,
+  "title": "Framed Serial Dimmer",
+  "codeName": "Level 7-1",
+  "difficulty": "hard",
+  "board": "esp32",
+  "startBoard": "esp32",
+  "boardSwitcher": "locked",
+  "boardMode": "dual",
+  "xp": 400,
+  "estimatedMinutes": 28,
+  "summary": "Parse complete commands, reject malformed values and recover after an oversized line.",
+  "concepts": [
+    "serial framing",
+    "input validation",
+    "buffers",
+    "PWM"
+  ],
+  "briefing": [
+    {
+      "mood": "thinking",
+      "text": "Parse complete commands, reject malformed values and recover after an oversized line."
+    },
+    {
+      "mood": "happy",
+      "text": "The parts are placed but unwired. Complete the wiring and sketch, then follow the experiments in Learn to earn each objective."
+    }
+  ],
+  "learn": {
+    "title": "Framed Serial Dimmer",
+    "body": "Wire GPIO18 → 220 Ω → LED anode, cathode to GND. Use 8-bit analogWrite values from 0 to 255.\n\nAccept only newline-terminated SET commands followed by one space and one to three decimal digits in range 0–255. For example, SET 64 must apply duty 64 and print OK=64. Do not apply a partial line. Reject extra characters, negative or oversized values, and lines longer than 12 characters with ERR; keep the previous brightness. Ignore carriage returns so the Serial Monitor can send either line ending. After overflow, discard through the next newline and accept the following command normally.\n\nRun and send SET 64, SET 999, SET 12x, a line of 20 x characters, then SET 192. End each line with Send. Expect OK=64, three ERR lines, then OK=192. The LED must keep duty 64 during all errors. Read available characters without a blocking readStringUntil() call.",
+    "links": []
+  },
+  "starterCircuit": {
+    "version": 1,
+    "boardMode": "dual",
+    "breadboards": [
+      {
+        "id": "bb1",
+        "type": "half",
+        "x": 0,
+        "y": 0
+      },
+      {
+        "id": "bb2",
+        "type": "half",
+        "x": 0,
+        "y": 504
+      }
+    ],
+    "mcu": "esp32",
+    "components": [
+      {
+        "id": "c_esp32",
+        "type": "esp32",
+        "props": {},
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "j1"
+        }
+      },
+      {
+        "id": "c_r0",
+        "type": "resistor",
+        "props": {
+          "ohms": 220
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb2",
+          "hole": "f1"
+        }
+      },
+      {
+        "id": "c_led0",
+        "type": "led",
+        "props": {
+          "color": "red"
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb2",
+          "hole": "f7"
+        }
+      }
+    ],
+    "wires": [],
+    "meta": {}
+  },
+  "starterCode": "void setup() {\n  Serial.begin(115200);\n  // Configure the parts described in Learn.\n}\n\nvoid loop() {\n  // Implement the challenge and test each input.\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": [
+    "esp32",
+    "resistor",
+    "led"
+  ],
+  "objectives": [
+    {
+      "id": "wiring",
+      "text": "Connect the placed parts using the pin map in Learn",
+      "rules": [
+        {
+          "type": "mcu_is",
+          "board": "esp32"
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "GPIO18"
+          },
+          "contains": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 220
+            },
+            "index": 0,
+            "pin": "p1"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 220
+            },
+            "index": 0,
+            "pin": "p2"
+          },
+          "contains": {
+            "componentType": "led",
+            "props": {
+              "color": "red"
+            },
+            "index": 0,
+            "pin": "anode"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "led",
+            "props": {
+              "color": "red"
+            },
+            "index": 0,
+            "pin": "cathode"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        }
+      ],
+      "hints": {
+        "tier1": "Use Learn for the exact power, ground and signal pins. Insert cables into free holes on the same breadboard strip as each leg. The third hint shows the complete wiring.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [
+            "esp32",
+            "resistor",
+            "led"
+          ],
+          "text": "Use Learn for the exact power, ground and signal pins. Insert cables into free holes on the same breadboard strip as each leg. The third hint shows the complete wiring."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "accept",
+      "text": "Accept SET 64 and apply PWM duty 64",
+      "rules": [
+        {
+          "type": "serial_matches",
+          "pattern": "OK=64\\r?\\n"
+        },
+        {
+          "type": "pwm_duty_between",
+          "pin": "GPIO18",
+          "min": 0.24898039215686274,
+          "max": 0.25298039215686274
+        }
+      ],
+      "hints": {
+        "tier1": "Wait for newline before parsing, then validate every digit before analogWrite().",
+        "tier2": {
+          "mcuPins": [
+            "GPIO18"
+          ],
+          "componentTypes": [],
+          "text": "Wait for newline before parsing, then validate every digit before analogWrite()."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "reject",
+      "text": "Reject all three invalid lines while preserving duty 64",
+      "rules": [
+        {
+          "type": "serial_matches",
+          "pattern": "OK=64\\r?\\nERR\\r?\\nERR\\r?\\nERR\\r?\\n"
+        },
+        {
+          "type": "pwm_duty_between",
+          "pin": "GPIO18",
+          "min": 0.24898039215686274,
+          "max": 0.25298039215686274
+        }
+      ],
+      "hints": {
+        "tier1": "toInt() alone accepts prefixes such as 12x; scan the whole value and track overflow.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "toInt() alone accepts prefixes such as 12x; scan the whole value and track overflow."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "recover",
+      "text": "Recover on SET 192 and apply PWM duty 192",
+      "rules": [
+        {
+          "type": "serial_matches",
+          "pattern": "ERR\\r?\\nOK=192\\r?\\n"
+        },
+        {
+          "type": "pwm_duty_between",
+          "pin": "GPIO18",
+          "min": 0.7509411764705882,
+          "max": 0.7549411764705882
+        }
+      ],
+      "hints": {
+        "tier1": "Reset both the buffer and overflow flag only at the end of the discarded line.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Reset both the buffer and overflow flag only at the end of the discarded line."
+        },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [
+      {
+        "type": "code_not_matches",
+        "pattern": "\\bdelay\\s*\\("
+      }
+    ],
+    "threeText": "Use millis() scheduling without delay()"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "dual",
+      "breadboards": [
+        {
+          "id": "bb1",
+          "type": "half",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "id": "bb2",
+          "type": "half",
+          "x": 0,
+          "y": 504
+        }
+      ],
+      "mcu": "esp32",
+      "components": [
+        {
+          "id": "c_esp32",
+          "type": "esp32",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "j1"
+          }
+        },
+        {
+          "id": "c_r0",
+          "type": "resistor",
+          "props": {
+            "ohms": 220
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb2",
+            "hole": "f1"
+          }
+        },
+        {
+          "id": "c_led0",
+          "type": "led",
+          "props": {
+            "color": "red"
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb2",
+            "hole": "f7"
+          }
+        }
+      ],
+      "wires": [
+        {
+          "id": "w_q1",
+          "from": "bb1:f9",
+          "to": "bb2:g1",
+          "color": "green"
+        },
+        {
+          "id": "w_q2",
+          "from": "bb2:g5",
+          "to": "bb2:g7",
+          "color": "green"
+        },
+        {
+          "id": "w_q3",
+          "from": "bb2:g8",
+          "to": "bb1:f2",
+          "color": "black"
+        }
+      ],
+      "meta": {}
+    },
+    "code": "String line = \"\";\nbool overflow = false;\nvoid executeLine() {\n  bool valid = !overflow && line.startsWith(\"SET \") && line.length() >= 5 && line.length() <= 7;\n  int value = 0;\n  for (int i = 4; i < line.length(); i++) {\n    char c = line.charAt(i);\n    if (c < '0' || c > '9') valid = false;\n    else value = value * 10 + (c - '0');\n  }\n  if (valid && value <= 255) {\n    analogWrite(18, value);\n    Serial.print(\"OK=\"); Serial.println(value);\n  } else Serial.println(\"ERR\");\n  line = \"\"; overflow = false;\n}\nvoid setup() { Serial.begin(115200); pinMode(18, OUTPUT); analogWrite(18, 0); }\nvoid loop() {\n  while (Serial.available()) {\n    char c = Serial.read();\n    if (c == '\\n') executeLine();\n    else if (c != '\\r' && !overflow) {\n      if (line.length() < 12) line += c;\n      else overflow = true;\n    }\n  }\n}\n",
+    "blocklyXml": null,
+    "actions": [
+      {
+        "atMs": 300,
+        "serial": "SET "
+      },
+      {
+        "atMs": 500,
+        "serial": "64\n"
+      },
+      {
+        "atMs": 900,
+        "serial": "SET 999\n"
+      },
+      {
+        "atMs": 1200,
+        "serial": "SET 12x\n"
+      },
+      {
+        "atMs": 1500,
+        "serial": "xxxxxxxxxxxxxxxxxxxx\n"
+      },
+      {
+        "atMs": 2100,
+        "serial": "SET 192\r\n"
+      }
+    ]
+  },
+  "solutionRunMs": 7000,
+  "successText": "Your circuit now responds to changing inputs. Try a different input sequence and explain why each output changes."
+}

@@ -1,0 +1,622 @@
+{
+  "id": "w7-l4",
+  "worldId": "w7",
+  "order": 4,
+  "title": "Dual Sensor Watch",
+  "codeName": "Level 7-4",
+  "difficulty": "hard",
+  "board": "esp32",
+  "startBoard": "esp32",
+  "boardSwitcher": "locked",
+  "boardMode": "dual",
+  "xp": 460,
+  "estimatedMinutes": 32,
+  "summary": "Combine temperature, humidity and an adjustable setpoint while serving live status.",
+  "concepts": [
+    "sensor fusion",
+    "hysteresis",
+    "ADC1",
+    "HTTP telemetry"
+  ],
+  "briefing": [
+    {
+      "mood": "thinking",
+      "text": "Combine temperature, humidity and an adjustable setpoint while serving live status."
+    },
+    {
+      "mood": "happy",
+      "text": "The parts are placed but unwired. Complete the wiring and sketch, then follow the experiments in Learn to earn each objective."
+    }
+  ],
+  "learn": {
+    "title": "Dual Sensor Watch",
+    "body": "Power DHT22 at 3V3/GND with DATA on GPIO23. Wire pot end1 to 3V3, end2 to GND and wiper to GPIO34. Wire GPIO18 → 220 Ω → LED → GND. GPIO34 is ADC1, so it can be read while WiFi is active; never feed it 5 V.\n\nJoin VoltNet and map the 12-bit ADC reading 0–4095 to a 20–40°C limit. Sample every 100 ms. Turn the alarm on only when temperature is at least the limit AND humidity is at least 70%. Turn it off when temperature falls to limit minus 2°C OR humidity falls to 65%. Otherwise retain state. Serve /status as t=32.0;limit=30;h=75.0;alarm=ON, using current readings and one decimal for the sensor values.\n\nAt knob 50%, set 32°C / 60%: off. Raise humidity to 75%: on. Set 29°C / 68%: retain on. Lower humidity to 60%: off. Request /status in the hot/humid phase. A warm dry room must not trigger this two-condition alarm.",
+    "links": []
+  },
+  "starterCircuit": {
+    "version": 1,
+    "boardMode": "dual",
+    "breadboards": [
+      {
+        "id": "bb1",
+        "type": "half",
+        "x": 0,
+        "y": 0
+      },
+      {
+        "id": "bb2",
+        "type": "half",
+        "x": 0,
+        "y": 504
+      }
+    ],
+    "mcu": "esp32",
+    "components": [
+      {
+        "id": "c_esp32",
+        "type": "esp32",
+        "props": {},
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "j1"
+        }
+      },
+      {
+        "id": "c_pot",
+        "type": "potentiometer",
+        "props": {
+          "ohms": 10000
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "a8"
+        }
+      },
+      {
+        "id": "c_dht",
+        "type": "dht22",
+        "props": {},
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "a20"
+        }
+      },
+      {
+        "id": "c_r0",
+        "type": "resistor",
+        "props": {
+          "ohms": 220
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb2",
+          "hole": "f1"
+        }
+      },
+      {
+        "id": "c_led0",
+        "type": "led",
+        "props": {
+          "color": "red"
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb2",
+          "hole": "f7"
+        }
+      }
+    ],
+    "wires": [],
+    "meta": {}
+  },
+  "starterCode": "void setup() {\n  Serial.begin(115200);\n  // Configure the parts described in Learn.\n}\n\nvoid loop() {\n  // Implement the challenge and test each input.\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": [
+    "esp32",
+    "potentiometer",
+    "dht22",
+    "resistor",
+    "led"
+  ],
+  "objectives": [
+    {
+      "id": "wiring",
+      "text": "Connect the placed parts using the pin map in Learn",
+      "rules": [
+        {
+          "type": "mcu_is",
+          "board": "esp32"
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "potentiometer",
+            "props": {
+              "ohms": 10000
+            },
+            "index": 0,
+            "pin": "end1"
+          },
+          "contains": {
+            "mcuPin": "3V3"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "potentiometer",
+            "props": {
+              "ohms": 10000
+            },
+            "index": 0,
+            "pin": "end2"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "potentiometer",
+            "props": {
+              "ohms": 10000
+            },
+            "index": 0,
+            "pin": "wiper"
+          },
+          "contains": {
+            "mcuPin": "GPIO34"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "dht22",
+            "props": {},
+            "index": 0,
+            "pin": "vcc"
+          },
+          "contains": {
+            "mcuPin": "3V3"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "dht22",
+            "props": {},
+            "index": 0,
+            "pin": "gnd"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "dht22",
+            "props": {},
+            "index": 0,
+            "pin": "data"
+          },
+          "contains": {
+            "mcuPin": "GPIO23"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "GPIO18"
+          },
+          "contains": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 220
+            },
+            "index": 0,
+            "pin": "p1"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 220
+            },
+            "index": 0,
+            "pin": "p2"
+          },
+          "contains": {
+            "componentType": "led",
+            "props": {
+              "color": "red"
+            },
+            "index": 0,
+            "pin": "anode"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "led",
+            "props": {
+              "color": "red"
+            },
+            "index": 0,
+            "pin": "cathode"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        }
+      ],
+      "hints": {
+        "tier1": "Use Learn for the exact power, ground and signal pins. Insert cables into free holes on the same breadboard strip as each leg. The third hint shows the complete wiring.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [
+            "esp32",
+            "potentiometer",
+            "dht22",
+            "resistor",
+            "led"
+          ],
+          "text": "Use Learn for the exact power, ground and signal pins. Insert cables into free holes on the same breadboard strip as each leg. The third hint shows the complete wiring."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "dry",
+      "text": "At 32°C / 60% and knob 50%, keep the alarm off",
+      "rules": [
+        {
+          "type": "control_state",
+          "componentType": "dht22",
+          "field": "temperatureC",
+          "equals": 32
+        },
+        {
+          "type": "control_state",
+          "componentType": "dht22",
+          "field": "humidity",
+          "equals": 60
+        },
+        {
+          "type": "control_state",
+          "componentType": "potentiometer",
+          "field": "value",
+          "equals": 0.5
+        },
+        {
+          "type": "pin_state",
+          "pin": "GPIO18",
+          "level": 0,
+          "forMs": 200
+        },
+        {
+          "type": "analog_read_seen",
+          "pin": "GPIO34",
+          "min": 2000,
+          "max": 2100
+        }
+      ],
+      "hints": {
+        "tier1": "Use AND for entry: heat alone does not satisfy the humidity requirement.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Use AND for entry: heat alone does not satisfy the humidity requirement."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "humid",
+      "text": "At 32°C / 75%, light the alarm and report it over HTTP",
+      "rules": [
+        {
+          "type": "wifi_connected"
+        },
+        {
+          "type": "pin_state",
+          "pin": "GPIO18",
+          "level": 1,
+          "forMs": 0
+        },
+        {
+          "type": "http_response_matches",
+          "path": "/status",
+          "pattern": "^t=32\\.0;limit=30;h=75\\.0;alarm=ON$"
+        }
+      ],
+      "hints": {
+        "tier1": "Build the HTTP response from the variables updated by the sensor task.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Build the HTTP response from the variables updated by the sensor task."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "band",
+      "text": "Retain the alarm at 29°C / 68%",
+      "rules": [
+        {
+          "type": "control_state",
+          "componentType": "dht22",
+          "field": "temperatureC",
+          "equals": 29
+        },
+        {
+          "type": "control_state",
+          "componentType": "dht22",
+          "field": "humidity",
+          "equals": 68
+        },
+        {
+          "type": "pin_state",
+          "pin": "GPIO18",
+          "level": 1,
+          "forMs": 300
+        }
+      ],
+      "hints": {
+        "tier1": "Neither exit threshold has been crossed; preserve the previous state.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Neither exit threshold has been crossed; preserve the previous state."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "reset",
+      "text": "Lower humidity to 60% at 29°C and clear the alarm",
+      "rules": [
+        {
+          "type": "control_state",
+          "componentType": "dht22",
+          "field": "temperatureC",
+          "equals": 29
+        },
+        {
+          "type": "control_state",
+          "componentType": "dht22",
+          "field": "humidity",
+          "equals": 60
+        },
+        {
+          "type": "pin_state",
+          "pin": "GPIO18",
+          "level": 0,
+          "forMs": 200
+        }
+      ],
+      "hints": {
+        "tier1": "Use OR for exit: either low humidity or low temperature can clear it.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Use OR for exit: either low humidity or low temperature can clear it."
+        },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [
+      {
+        "type": "code_not_matches",
+        "pattern": "\\bdelay\\s*\\("
+      }
+    ],
+    "threeText": "Use millis() scheduling without delay()"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "dual",
+      "breadboards": [
+        {
+          "id": "bb1",
+          "type": "half",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "id": "bb2",
+          "type": "half",
+          "x": 0,
+          "y": 504
+        }
+      ],
+      "mcu": "esp32",
+      "components": [
+        {
+          "id": "c_esp32",
+          "type": "esp32",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "j1"
+          }
+        },
+        {
+          "id": "c_pot",
+          "type": "potentiometer",
+          "props": {
+            "ohms": 10000
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a8"
+          }
+        },
+        {
+          "id": "c_dht",
+          "type": "dht22",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a20"
+          }
+        },
+        {
+          "id": "c_r0",
+          "type": "resistor",
+          "props": {
+            "ohms": 220
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb2",
+            "hole": "f1"
+          }
+        },
+        {
+          "id": "c_led0",
+          "type": "led",
+          "props": {
+            "color": "red"
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb2",
+            "hole": "f7"
+          }
+        }
+      ],
+      "wires": [
+        {
+          "id": "w_q1",
+          "from": "bb1:b8",
+          "to": "bb1:f1",
+          "color": "red"
+        },
+        {
+          "id": "w_q2",
+          "from": "bb1:b10",
+          "to": "bb1:f2",
+          "color": "black"
+        },
+        {
+          "id": "w_q3",
+          "from": "bb1:b9",
+          "to": "bb2:b12",
+          "color": "green"
+        },
+        {
+          "id": "w_q4",
+          "from": "bb1:b20",
+          "to": "bb1:g1",
+          "color": "red"
+        },
+        {
+          "id": "w_q5",
+          "from": "bb1:b22",
+          "to": "bb1:g2",
+          "color": "black"
+        },
+        {
+          "id": "w_q6",
+          "from": "bb1:b21",
+          "to": "bb1:f15",
+          "color": "green"
+        },
+        {
+          "id": "w_q7",
+          "from": "bb1:f9",
+          "to": "bb2:g1",
+          "color": "green"
+        },
+        {
+          "id": "w_q8",
+          "from": "bb2:g5",
+          "to": "bb2:g7",
+          "color": "green"
+        },
+        {
+          "id": "w_q9",
+          "from": "bb2:g8",
+          "to": "bb1:h2",
+          "color": "black"
+        }
+      ],
+      "meta": {}
+    },
+    "code": "#include <WiFi.h>\n#include <WebServer.h>\n#include <DHT.h>\nDHT sensor(23, DHT22);\nWebServer server(80);\nbool alarm = false;\nfloat temperature = 0;\nfloat humidity = 0;\nint limit = 30;\nunsigned long sampledAt = 0;\nString statusText() {\n  return \"t=\" + String(temperature, 1) + \";limit=\" + String(limit) + \";h=\" + String(humidity, 1) + \";alarm=\" + (alarm ? \"ON\" : \"OFF\");\n}\nvoid setup() {\n  Serial.begin(115200); pinMode(18, OUTPUT); sensor.begin();\n  WiFi.begin(\"VoltNet\", \"pass\");\n  server.on(\"/status\", []() { server.send(200, \"text/plain\", statusText()); }); server.begin();\n}\nvoid loop() {\n  if (millis() - sampledAt >= 100) {\n    sampledAt = millis();\n    temperature = sensor.readTemperature(); humidity = sensor.readHumidity();\n    limit = map(analogRead(34), 0, 4095, 20, 40);\n    if (temperature >= limit && humidity >= 70) alarm = true;\n    if (temperature <= limit - 2 || humidity <= 65) alarm = false;\n    digitalWrite(18, alarm);\n  }\n  server.handleClient();\n}\n",
+    "blocklyXml": null,
+    "actions": [
+      {
+        "atMs": 0,
+        "select": {
+          "componentType": "potentiometer"
+        },
+        "patch": {
+          "value": 0.5
+        }
+      },
+      {
+        "atMs": 400,
+        "select": {
+          "componentType": "dht22"
+        },
+        "patch": {
+          "temperatureC": 32,
+          "humidity": 60
+        }
+      },
+      {
+        "atMs": 1100,
+        "select": {
+          "componentType": "dht22"
+        },
+        "patch": {
+          "humidity": 75
+        }
+      },
+      {
+        "atMs": 1500,
+        "http": {
+          "method": "GET",
+          "path": "/status"
+        }
+      },
+      {
+        "atMs": 2000,
+        "select": {
+          "componentType": "dht22"
+        },
+        "patch": {
+          "temperatureC": 29,
+          "humidity": 68
+        }
+      },
+      {
+        "atMs": 2900,
+        "select": {
+          "componentType": "dht22"
+        },
+        "patch": {
+          "humidity": 60
+        }
+      }
+    ]
+  },
+  "solutionRunMs": 7000,
+  "successText": "Your circuit now responds to changing inputs. Try a different input sequence and explain why each output changes."
+}

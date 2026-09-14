@@ -8,6 +8,7 @@
  * violation helpers below tell the PWL loop which region to move to.
  */
 import { ldrOhms } from '../components/registry.js'
+import { thermistorOhms, flexOhms, forceOhms } from '../components/sensorCurves.js'
 import { conductance, gBranch, iBranch, vccsBranch } from './mna.js'
 
 /** Base-emitter resistance of a conducting NPN (Ω). */
@@ -89,6 +90,9 @@ export function resolveOhms(element, ctx) {
   if (ohms && typeof ohms === 'object' && ohms.fromControl) {
     const value = ctx.control(element.componentId, ohms.fromControl)
     if (ohms.curve === 'ldr') return ldrOhms(value)
+    if (ohms.curve === 'ntc') return thermistorOhms(value)
+    if (ohms.curve === 'flex') return flexOhms(value)
+    if (ohms.curve === 'force') return forceOhms(value)
     const numeric = Number(value)
     return Number.isFinite(numeric) && numeric > 0 ? numeric : 1
   }

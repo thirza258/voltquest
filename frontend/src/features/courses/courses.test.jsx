@@ -9,6 +9,8 @@ import { getCourse } from './content.js'
 import { COURSE_PROGRESS_KEY, readCourseProgress } from './progress.js'
 import CoursesPage from './CoursesPage.jsx'
 import CoursePage from './CoursePage.jsx'
+import { getTutorialFundamentals } from './fundamentals.js'
+import { getFundamentalReading, LEARNING_TUTORIALS } from './learningCatalog.js'
 
 beforeEach(() => installMemoryStorage())
 afterEach(() => { cleanup(); vi.restoreAllMocks() })
@@ -158,4 +160,56 @@ it('ignores malformed or older-version progress and reports unavailable storage 
   fireEvent.submit(answerForm(course))
   expect(screen.getByRole('alert').textContent).toContain('could not save progress')
   expect(screen.getByText('Best exam score: 100%')).toBeTruthy()
+})
+
+it('offers fundamentals for every tutorial, preserves course filters and translates the selected guide', () => {
+  page('/courses?track=iot-parts&difficulty=Intermediate&tutorial=cpp-arrays')
+  const select = screen.getByLabelText('Choose a tutorial')
+  expect(within(select).getAllByRole('option')).toHaveLength(LEARNING_TUTORIALS.length + 1)
+  expect(select.value).toBe('cpp-arrays')
+  expect(screen.getByText(getTutorialFundamentals('cpp-arrays').explanation)).toBeTruthy()
+  fireEvent.change(select, { target: { value: 'pi-button-dimmer' } })
+  expect(screen.getByLabelText('Learning track').value).toBe('iot-parts')
+  expect(screen.getByLabelText('Course level').value).toBe('Intermediate')
+  expect(screen.getByRole('status').textContent).toBe('5 courses found')
+  fireEvent.change(screen.getByLabelText('Language / Bahasa'), { target: { value: 'id' } })
+  expect(screen.getByLabelText('Pilih tutorial').value).toBe('pi-button-dimmer')
+  expect(screen.getByText(translate('id', getTutorialFundamentals('pi-button-dimmer').explanation))).toBeTruthy()
+})
+
+it.each(['uno-first-light', 'cpp-state-machine', 'pi-blink', 'robot-waypoints', 'vision-integration'])('links %s to real theory sections and its own lab in separate tabs', id => {
+  page(`/courses?tutorial=${id}#tutorial-fundamentals`)
+  const guide = getTutorialFundamentals(id)
+  const links = within(screen.getByRole('navigation', { name: 'Read the course sections' })).getAllByRole('link')
+  expect(links.map(link => link.getAttribute('href'))).toEqual(guide.readings.map(reading => getFundamentalReading(reading).path))
+  for (const link of [...links, screen.getByRole('link', { name: 'Open tutorial in a new tab' })]) {
+    expect(link.getAttribute('target')).toBe('_blank')
+    expect(link.getAttribute('rel')).toContain('noopener')
+  }
+  expect(screen.getByRole('link', { name: 'Open tutorial in a new tab' }).getAttribute('href')).toBe(LEARNING_TUTORIALS.find(tutorial => tutorial.id === id).path)
+})
+
+it('includes tutorial explanations in course details and preserves answers when opening or translating a guide', () => {
+  page('/courses/iot-foundations#fundamentals-cpp-state-machine')
+  const details = document.getElementById('fundamentals-cpp-state-machine')
+  expect(details.open).toBe(true)
+  const guide = getTutorialFundamentals('cpp-state-machine')
+  expect(within(details).getByText(guide.explanation)).toBeTruthy()
+  expect(within(details).getByRole('link', { name: 'Open tutorial in a new tab' }).getAttribute('href')).toBe('/tutorials/cpp-state-machine')
+  answerForm(getCourse('iot-foundations'), 1)
+  fireEvent.click(screen.getByLabelText('Mark lesson 1 as read'))
+  fireEvent.change(screen.getByLabelText('Language / Bahasa'), { target: { value: 'id' } })
+  expect(details.open).toBe(true)
+  expect(within(details).getByText(translate('id', guide.explanation))).toBeTruthy()
+  expect(screen.getByLabelText('Tandai pelajaran 1 sudah dibaca').checked).toBe(true)
+  expect(within(screen.getByRole('form', { name: 'Ujian kursus' })).getAllByRole('radio').filter(input => input.checked)).toHaveLength(1)
+})
+
+it('finds related courses by a tutorial name and handles an invalid tutorial filter', () => {
+  page('/courses?tutorial=not-a-tutorial&q=arrays')
+  expect(screen.getByLabelText('Choose a tutorial').value).toBe('')
+  expect(screen.queryByRole('navigation', { name: 'Read the course sections' })).toBeNull()
+  expect(screen.getByRole('status').textContent).toBe('2 courses found')
+  expect(screen.getByRole('heading', { name: 'Signal conditioning and a reliable IoT node' })).toBeTruthy()
+  expect(screen.getByRole('heading', { name: 'IoT fundamentals: from Arduino input to a connected device' })).toBeTruthy()
 })

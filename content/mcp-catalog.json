@@ -6539,6 +6539,46 @@
         ]
       }
     },
+    "variable_resistor": {
+      "name": "Adjustable resistor",
+      "type": "variable_resistor",
+      "mount": "board",
+      "category": "passive",
+      "footprint": {
+        "pins": [
+          {
+            "id": "p1",
+            "label": "p1",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "p2",
+            "label": "p2",
+            "dx": 4,
+            "dy": 0
+          }
+        ],
+        "width": 5,
+        "height": 1
+      },
+      "props": {},
+      "learn": {
+        "summary": "A two-terminal adjustable resistor lets you vary resistance from 100 Ω to 100 kΩ while the circuit runs.",
+        "pinout": [
+          "p1 / p2: no polarity."
+        ],
+        "tips": [
+          "Start with a high resistance, then reduce it while watching current in the inspector."
+        ],
+        "formulas": [
+          "I = V / R"
+        ],
+        "pitfalls": [
+          "Small resistance can overdrive an LED or GPIO. This part does not automatically limit current to a safe value."
+        ]
+      }
+    },
     "led": {
       "name": "LED",
       "type": "led",
@@ -7516,6 +7556,309 @@
         "pitfalls": [
           "ECHO straight into an ESP32 GPIO burns the pin (5 V > 3.6 V).",
           "A 10 kΩ / 1 kΩ divider is the wrong way round: 0.45 V never reads HIGH."
+        ]
+      }
+    },
+    "slide_switch": {
+      "name": "Slide switch (SPST)",
+      "type": "slide_switch",
+      "mount": "board",
+      "category": "input",
+      "footprint": {
+        "pins": [
+          {
+            "id": "p1",
+            "label": "p1",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "p2",
+            "label": "p2",
+            "dx": 2,
+            "dy": 0
+          }
+        ],
+        "width": 3,
+        "height": 1
+      },
+      "props": {},
+      "learn": {
+        "summary": "A latching slide switch keeps its two contacts connected until you slide it back. Use it for a persistent on/off input.",
+        "pinout": [
+          "p1 / p2: two contacts, no polarity."
+        ],
+        "tips": [
+          "Connect one contact to GND and the other to a digital input with INPUT_PULLUP. Closed reads LOW; open reads HIGH."
+        ],
+        "pitfalls": [
+          "An open switch needs a pull-up or pull-down. These ideal contacts do not simulate mechanical bounce."
+        ]
+      }
+    },
+    "reed_switch": {
+      "name": "Magnetic reed switch",
+      "type": "reed_switch",
+      "mount": "board",
+      "category": "input",
+      "footprint": {
+        "pins": [
+          {
+            "id": "p1",
+            "label": "p1",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "p2",
+            "label": "p2",
+            "dx": 4,
+            "dy": 0
+          }
+        ],
+        "width": 5,
+        "height": 1
+      },
+      "props": {},
+      "learn": {
+        "summary": "A normally open reed switch closes when a magnet is nearby. Toggle the magnet control to test a door or lid sensor.",
+        "pinout": [
+          "p1 / p2: two contacts, no polarity."
+        ],
+        "tips": [
+          "Connect one contact to GND and the other to a digital input with INPUT_PULLUP. Closed reads LOW; open reads HIGH."
+        ],
+        "pitfalls": [
+          "An open switch needs a pull-up or pull-down. These ideal contacts do not simulate mechanical bounce."
+        ]
+      }
+    },
+    "tilt_switch": {
+      "name": "Tilt switch",
+      "type": "tilt_switch",
+      "mount": "board",
+      "category": "input",
+      "footprint": {
+        "pins": [
+          {
+            "id": "p1",
+            "label": "p1",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "p2",
+            "label": "p2",
+            "dx": 2,
+            "dy": 0
+          }
+        ],
+        "width": 3,
+        "height": 1
+      },
+      "props": {},
+      "learn": {
+        "summary": "A ball tilt switch closes its contacts in one orientation. The tilt control selects open or closed; it is not an angle sensor.",
+        "pinout": [
+          "p1 / p2: two contacts, no polarity."
+        ],
+        "tips": [
+          "Connect one contact to GND and the other to a digital input with INPUT_PULLUP. Closed reads LOW; open reads HIGH."
+        ],
+        "pitfalls": [
+          "An open switch needs a pull-up or pull-down. These ideal contacts do not simulate mechanical bounce."
+        ]
+      }
+    },
+    "trimpot": {
+      "name": "Trimpot",
+      "type": "trimpot",
+      "mount": "board",
+      "category": "input",
+      "footprint": {
+        "pins": [
+          {
+            "id": "end1",
+            "label": "1",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "wiper",
+            "label": "W",
+            "dx": 1,
+            "dy": 0
+          },
+          {
+            "id": "end2",
+            "label": "2",
+            "dx": 2,
+            "dy": 0
+          }
+        ],
+        "width": 3,
+        "height": 1
+      },
+      "props": {
+        "ohms": {
+          "type": "enum",
+          "label": "Resistance",
+          "options": [
+            1000,
+            5000,
+            10000,
+            50000,
+            100000
+          ],
+          "default": 10000,
+          "unit": "Ω",
+          "format": "ohms"
+        }
+      },
+      "learn": {
+        "summary": "A trimpot is a small adjustable voltage divider for calibration. Set the adjustment to choose the wiper voltage.",
+        "pinout": [
+          "end1: to 5V (or 3V3 on the ESP32).",
+          "wiper: the middle pin — to an analog input.",
+          "end2: to GND."
+        ],
+        "tips": [
+          "Connect end1 to the supply, end2 to GND, and wiper to an analog input. Adjustment 0 gives GND; adjustment 1 gives the supply voltage."
+        ],
+        "formulas": [
+          "Vwiper = Vcc × adjustment"
+        ],
+        "pitfalls": [
+          "Use 3V3 for ESP32 analog inputs. Raspberry Pi has no built-in analog input."
+        ]
+      }
+    },
+    "thermistor_ntc": {
+      "name": "NTC thermistor (10 kΩ)",
+      "type": "thermistor_ntc",
+      "mount": "board",
+      "category": "input",
+      "footprint": {
+        "pins": [
+          {
+            "id": "p1",
+            "label": "p1",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "p2",
+            "label": "p2",
+            "dx": 2,
+            "dy": 0
+          }
+        ],
+        "width": 3,
+        "height": 1
+      },
+      "props": {},
+      "learn": {
+        "summary": "An NTC thermistor loses resistance as it warms. This nominal 10 kΩ sensor uses a beta of 3950 K and reads 10 kΩ at 25 °C.",
+        "pinout": [
+          "p1 / p2: resistive element, no polarity."
+        ],
+        "tips": [
+          "Connect supply → thermistor → analog input → 10 kΩ resistor → GND. Warming the sensor raises the input voltage.",
+          "Select the part to change its stimulus in the inspector while the simulation runs."
+        ],
+        "formulas": [
+          "R = 10000 × exp(3950 × (1 / (T°C + 273.15) − 1 / 298.15))",
+          "Divider: Vout = Vcc × Rfixed / (Rsensor + Rfixed)"
+        ],
+        "pitfalls": [
+          "Use a fixed resistor to form a voltage divider. ESP32 analog inputs need a 3V3 supply; Raspberry Pi needs an external ADC, which this part does not provide.",
+          "Sensor response is a teaching approximation, not a calibrated hardware measurement."
+        ]
+      }
+    },
+    "force_sensor": {
+      "name": "Force-sensitive resistor",
+      "type": "force_sensor",
+      "mount": "board",
+      "category": "input",
+      "footprint": {
+        "pins": [
+          {
+            "id": "p1",
+            "label": "p1",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "p2",
+            "label": "p2",
+            "dx": 2,
+            "dy": 0
+          }
+        ],
+        "width": 3,
+        "height": 1
+      },
+      "props": {},
+      "learn": {
+        "summary": "A force-sensitive resistor falls from 1 MΩ unloaded to about 1 kΩ at maximum pressure in this teaching model.",
+        "pinout": [
+          "p1 / p2: resistive element, no polarity."
+        ],
+        "tips": [
+          "Connect supply → force sensor → analog input → 10 kΩ resistor → GND. More force raises the input voltage.",
+          "Select the part to change its stimulus in the inspector while the simulation runs."
+        ],
+        "formulas": [
+          "R = 1000000 / (1 + 999 × force / 100)",
+          "Divider: Vout = Vcc × Rfixed / (Rsensor + Rfixed)"
+        ],
+        "pitfalls": [
+          "Use a fixed resistor to form a voltage divider. ESP32 analog inputs need a 3V3 supply; Raspberry Pi needs an external ADC, which this part does not provide.",
+          "Sensor response is a teaching approximation, not a calibrated hardware measurement."
+        ]
+      }
+    },
+    "flex_sensor": {
+      "name": "Flex sensor",
+      "type": "flex_sensor",
+      "mount": "board",
+      "category": "input",
+      "footprint": {
+        "pins": [
+          {
+            "id": "p1",
+            "label": "p1",
+            "dx": 0,
+            "dy": 0
+          },
+          {
+            "id": "p2",
+            "label": "p2",
+            "dx": 2,
+            "dy": 0
+          }
+        ],
+        "width": 3,
+        "height": 1
+      },
+      "props": {},
+      "learn": {
+        "summary": "A flex sensor increases resistance as it bends. This linear teaching model goes from 10 kΩ flat to 30 kΩ at 90 degrees.",
+        "pinout": [
+          "p1 / p2: resistive element, no polarity."
+        ],
+        "tips": [
+          "Connect supply → flex sensor → analog input → 10 kΩ resistor → GND. More bending lowers the input voltage.",
+          "Select the part to change its stimulus in the inspector while the simulation runs."
+        ],
+        "formulas": [
+          "R = 10000 + 20000 × bend / 90",
+          "Divider: Vout = Vcc × Rfixed / (Rsensor + Rfixed)"
+        ],
+        "pitfalls": [
+          "Use a fixed resistor to form a voltage divider. ESP32 analog inputs need a 3V3 supply; Raspberry Pi needs an external ADC, which this part does not provide.",
+          "Sensor response is a teaching approximation, not a calibrated hardware measurement."
         ]
       }
     },

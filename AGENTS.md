@@ -1,6 +1,6 @@
 # VoltQuest — agent handoff log
 
-**Last verified: 2026-09-13.** This is the state document: what exists, what remains unfinished,
+**Last verified: 2026-09-14.** This is the state document: what exists, what remains unfinished,
 and what to do next. The specifications in `docs/` remain binding.
 
 | Read | When |
@@ -16,7 +16,7 @@ and what to do next. The specifications in `docs/` remain binding.
 
 ## 1. Current build, not the target product
 
-The main entry points are **`/`** (20 campaign quests), **`/sandbox`** (freeform projects), and **`/tutorials`** (guided lessons).
+The main entry points are **`/`** (32 campaign quests), **`/sandbox`** (freeform projects), and **`/tutorials`** (guided lessons).
 There are **41 firmware tutorials**, ordered Easy → Intermediate → Hard, with editable code,
 real simulation, explanations of program and hardware concepts, exact breadboard placement,
 cable endpoint tables and click-to-highlight wiring. The circuit is prepared/read-only, but
@@ -41,6 +41,9 @@ All product routes are implemented: campaign workspace, sandbox, public showcase
 preview/fork, profile/account/cosmetics, and leaderboard. The workspace has a parts drawer, inspector,
 local Monaco/Blockly editors, serial monitor, virtual ESP32 phone, IoT inspector, hints and success flow.
 Sandbox supports save/load, JSON import, JSON/PNG/code/BOM exports, publish/unpublish and deletion.
+The breadboard sandbox also has a **2D / 3D** switch and **37 part types**. 3D offers orbit/zoom/pan,
+live output, component/wire picking and inspector controls over the same running circuit; direct
+placement/wiring stays in 2D. Read `docs/SANDBOX_3D.md` before extending this view or its new inputs.
 Read `docs/IMPLEMENTATION_STATUS.md` for requirement-to-implementation evidence and verification limits.
 
 A git repository now exists (baseline `ff79723`). Preserve existing changes. Do not initialize another
@@ -49,9 +52,9 @@ repository or commit without the user's explicit request.
 ## 2. Verification
 
 Latest full `make check`:
-- **923 frontend tests in 62 files pass.**
-- **101 backend tests pass.**
-- Production build succeeds; initial JS payload is **423.1 KiB gzipped**, below the 1500 KiB budget.
+- **1,038 frontend tests in 69 files pass.**
+- **103 backend tests pass.**
+- Production build succeeds; initial JS payload is **476.8 KiB gzipped**, below the 1500 KiB budget.
 - ESLint has no errors. Two existing exhaustive-deps warnings remain in
   `features/campaign/CampaignMap.jsx:84`; these are unrelated to the assistant/localization work.
 - Node prints the existing jsdom/localStorage warning; persistence tests use the memory-storage helper.
@@ -79,6 +82,105 @@ their explanation or timing is correct. `features/tutorials/programming.test.js`
 numeric output, command dispatch and LED state transitions on all four C++ boards.
 
 ## 3. Completed in this continuation
+
+### Sandbox 3D view and eight additional parts (2026-09-14)
+
+`/sandbox` and saved circuit projects now offer a **2D / 3D** switch above the workbench. Three.js
+is pinned locally at 0.186.0 and loads only when 3D first opens. Geometry derives from the existing
+registry, resolved terminals and CircuitDoc, including all six controllers and dual-board ESP32/S3
+footprints. Camera controls support mouse orbit/pan, zoom, keyboard alternatives, Fit and Top view.
+Click a part or cable for the existing inspector; a labelled select provides keyboard part selection.
+LEDs/RGB, NeoPixels, displays, servos, input states and damage consume existing simulation snapshots.
+Part heights, controller bodies and wire arcs are illustrative, not mechanical CAD.
+
+The SVG remains mounted/measured but inert in 3D, preserving its viewport and PNG export. Switching
+views retains the current document, editor, undo history, controls and Worker run. Hidden 3D views
+do not render; disposal releases GPU resources, frames and input listeners. WebGL2 unavailability,
+context loss or lazy-load failure offers Return to 2D. View choice lasts for the mounted workspace;
+it is not saved inside projects. Campaign/tutorial/drone/robotics/vision interfaces are unchanged.
+
+The drawer now contains **37 types**, with search and category filtering. New parts: SPST slide
+switch, magnetic reed switch, tilt switch, trimpot, adjustable resistor, NTC thermistor, force-sensitive
+resistor and flex sensor. They have actual switch/pot/resistor models, controls, 2D/3D artwork,
+English/Indonesian learning notes and illustrative BOM entries. NTC/force/flex curves are deterministic
+teaching approximations. Pi still has no ADC. MCP metadata was regenerated; existing project, import,
+save/fork and BOM paths accept all eight, including trimpot resistance in BOM grouping.
+
+Full `make check`: **1,038 frontend tests / 103 backend tests**, production build and **476.8 KiB**
+initial gzip budget pass, with only the two existing CampaignMap hook warnings. The optional 3D
+chunks are about 149 kB gzipped combined and remain outside the eager payload. New tests exercise
+all controller pin positions/rotations, every part's finite mesh data/disposal, real-solver LED
+emission, firmware switch/ADC behavior, import/BOM/MCP round trips, fallback, localization and
+same-run view switching. Existing tutorial and campaign gates pass in the current shared tree.
+
+Isolated Chromium/SQLite checks verified adding all eight parts, mouse picking and camera orbit,
+slide switch → real Worker GPIO13 → LED brightness 0.792, NTC 25→100 °C → ADC 512→956, unchanged
+run id and SVG viewport across mode switches, saved-project opening, a **1416 × 1728 wiring PNG**
+export while in 3D, and Indonesian at 390 px without page overflow. Production preview loaded the
+local 3D chunks, switched through all six boards and returned to 2D after simulated context loss
+while firmware kept running. No browser application errors occurred. Cross-browser and real-touch
+performance remain release checks. See SANDBOX_3D.md and integration notes for contracts and limits.
+
+### Intermediate and hard campaign expansion (2026-09-14)
+
+The campaign now has **32 quests across seven worlds**, with **96 available stars**. The original
+20 level ids and ordering remain intact; w6-l1 follows w5-l6. Existing progress, drafts, Skip ahead,
+completion XP and replay behavior retain their contracts.
+
+- **Responsive Machines** (w6-l1…w6-l6, Uno, Intermediate): button debounce, ADC hysteresis,
+  independent clocks, guarded servo positioning, shared-I²C climate display, and a crosswalk state machine.
+- **Reliable Connections** (w7-l1…w7-l6, ESP32, Hard): framed serial parsing, expiring HTTP commands,
+  exact MQTT commands/acknowledgements, combined sensor thresholds, median range filtering, and a
+  greenhouse capstone with automatic/manual control and matching MQTT/HTTP telemetry.
+
+Each starter has placed parts but no cables and an unsolved compilable sketch. Learn explains the
+pin map, required behavior, reproducible input sequence and teaching-model limits. Every new title,
+briefing, objective, hint and learning narrative has an Indonesian translation. Campaign cards show
+difficulty badges; public quest summaries expose nullable `difficulty`. No firmware API, simulation
+model or validator rule was added. Reference cables occupy free holes, and wiring selectors use
+component types/properties/pins so parts can be replaced. The generated sitemap now has **114 URLs**.
+
+All **32 reference solutions earn three stars** through the full headless solver/VM/validator.
+`content/campaign.test.js` adds alternate-input regressions for held/bouncing buttons, both hysteresis
+histories, clock responsiveness, servo limits, LCD text replacement, crossing exclusivity, malformed
+serial/MQTT commands, renewed/expired leases, ADC1 setpoints, median outliers, sensor loss and remote
+override priority. It also checks physical placements, unsolved starters and translations. API tests
+load the actual seven worlds and verify detail/summary fields and non-duplicated completion XP.
+
+Full `make check` on the shared workspace (including concurrent component/3D work): **1,038 frontend
+/ 103 backend**, production build and **476.8 KiB** initial gzip budget pass. Only the two existing
+CampaignMap hook warnings and the existing Node localStorage notice remain. Isolated Chromium/Vite
+with a temporary SQLite backend verified the map, 390 px layouts, real Worker hysteresis and the
+greenhouse control sequence, three-star completion, HTTP 200 with matching MQTT/servo/LED state,
+and Indonesian switching that retains the exact circuit, code and run. No browser application errors.
+Browser verification used the development server; production bundling passed the full build gate.
+Cross-browser and real-device checks remain release verification work.
+
+### Fundamentals connecting every tutorial to courses (2026-09-14)
+
+Courses now has **Find the fundamentals for your tutorial**, covering all 41 firmware tutorials,
+five robotics tutorials and six vision labs. `/courses?tutorial=<id>#tutorial-fundamentals` opens
+the selected explanation, an observation to try, exact course-section links and a separate-tab lab
+link. Course search also matches connected tutorial titles/topics; cards show tutorial counts.
+Related course details include expandable **Tutorial fundamentals** guides, with
+`#fundamentals-<tutorialId>` opening a specific explanation. All tutorial pages show the same guide
+before their experiment, including the shared robotics/vision study shell.
+
+`content/tutorial-fundamentals.json` contains 52 authored guides with canonical course/section ids;
+`features/courses/learningCatalog.js` resolves their titles/routes from the actual catalogues.
+All new guide prose and observations have Indonesian translations. These are browser learning
+supplements: the 22-course public API, exams, progress versions and simulation models are unchanged.
+Keep the guide module independent of the combined catalog in tutorial routes. Course and advanced
+study pages scroll to section fragments after lazy content mounts. See COURSES.md and integration notes.
+
+Full `make check`: **934 frontend / 101 backend**, production build and **444.2 KiB** initial gzip
+budget pass; only the two existing CampaignMap hook warnings remain. New coverage checks every
+tutorial/board guide, translated narrative and canonical reading target, plus filtering, separate-tab
+links, expanded guide fragments and preserved assessment choices. Production Chromium with an
+isolated SQLite backend verified course/robotics/vision section anchors, desktop and 390 px layouts,
+Indonesian guides, preserved course answers/read checks, and a real Nano Worker run retaining edited
+code, board and step checks across the course link. No browser application errors were reported.
+Cross-browser and real-device checks remain release verification work.
 
 ### Courses, IoT/drone foundations, robotics and computer vision (2026-09-13)
 

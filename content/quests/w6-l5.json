@@ -1,0 +1,417 @@
+{
+  "id": "w6-l5",
+  "worldId": "w6",
+  "order": 5,
+  "title": "Climate Display",
+  "codeName": "Level 6-5",
+  "difficulty": "intermediate",
+  "board": "uno",
+  "startBoard": "uno",
+  "boardSwitcher": "locked",
+  "boardMode": "half",
+  "xp": 340,
+  "estimatedMinutes": 18,
+  "summary": "Share an I²C bus between a sensor and a display, with timed live updates.",
+  "concepts": [
+    "I2C",
+    "addresses",
+    "LCD",
+    "sensor sampling"
+  ],
+  "briefing": [
+    {
+      "mood": "thinking",
+      "text": "Share an I²C bus between a sensor and a display, with timed live updates."
+    },
+    {
+      "mood": "happy",
+      "text": "The parts are placed but unwired. Complete the wiring and sketch, then follow the experiments in Learn to earn each objective."
+    }
+  ],
+  "learn": {
+    "title": "Climate Display",
+    "body": "Connect BME280 VIN to 3V3, GND to GND, SDA to A4 and SCL to A5. Connect LCD VCC to 5V, GND to GND, SDA to A4 and SCL to A5. The bus is shared, but addresses differ: BME280 0x76 and LCD 0x27. This teaching model abstracts I²C pull-up voltages; verify pull-ups and level compatibility on physical modules.\n\nInitialize Adafruit_BME280 and LiquidCrystal_I2C(0x27, 16, 2). Every 250 ms, read temperature and humidity, clear the old text and show T=24.5 C on row 0 and H=55.0 % on row 1 using one decimal place. Also print the two readings to Serial.\n\nRun at the default 24.5°C / 55% first, then use the BME280 inspector to set 31°C / 70%. Both LCD rows must change to T=31.0 C and H=70.0 %. A display containing fixed strings cannot follow the sensor.",
+    "links": []
+  },
+  "starterCircuit": {
+    "version": 1,
+    "boardMode": "half",
+    "breadboards": [
+      {
+        "id": "bb1",
+        "type": "half",
+        "x": 0,
+        "y": 0
+      }
+    ],
+    "mcu": "uno",
+    "components": [
+      {
+        "id": "c_uno",
+        "type": "uno",
+        "props": {},
+        "rotation": 0,
+        "position": {
+          "x": 0,
+          "y": -552
+        }
+      },
+      {
+        "id": "c_bme",
+        "type": "bme280",
+        "props": {
+          "addr": 118
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "a25"
+        }
+      },
+      {
+        "id": "c_lcd",
+        "type": "lcd16x2_i2c",
+        "props": {
+          "addr": 39
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "a15"
+        }
+      }
+    ],
+    "wires": [],
+    "meta": {}
+  },
+  "starterCode": "void setup() {\n  Serial.begin(115200);\n  // Configure the parts described in Learn.\n}\n\nvoid loop() {\n  // Implement the challenge and test each input.\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": [
+    "uno",
+    "bme280",
+    "lcd16x2_i2c"
+  ],
+  "objectives": [
+    {
+      "id": "wiring",
+      "text": "Connect the placed parts using the pin map in Learn",
+      "rules": [
+        {
+          "type": "mcu_is",
+          "board": "uno"
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "bme280",
+            "props": {
+              "addr": 118
+            },
+            "index": 0,
+            "pin": "vin"
+          },
+          "contains": {
+            "mcuPin": "3V3"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "bme280",
+            "props": {
+              "addr": 118
+            },
+            "index": 0,
+            "pin": "gnd"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "bme280",
+            "props": {
+              "addr": 118
+            },
+            "index": 0,
+            "pin": "sda"
+          },
+          "contains": {
+            "mcuPin": "A4"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "bme280",
+            "props": {
+              "addr": 118
+            },
+            "index": 0,
+            "pin": "scl"
+          },
+          "contains": {
+            "mcuPin": "A5"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "lcd16x2_i2c",
+            "props": {
+              "addr": 39
+            },
+            "index": 0,
+            "pin": "gnd"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "lcd16x2_i2c",
+            "props": {
+              "addr": 39
+            },
+            "index": 0,
+            "pin": "vcc"
+          },
+          "contains": {
+            "mcuPin": "5V"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "lcd16x2_i2c",
+            "props": {
+              "addr": 39
+            },
+            "index": 0,
+            "pin": "sda"
+          },
+          "contains": {
+            "mcuPin": "A4"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "lcd16x2_i2c",
+            "props": {
+              "addr": 39
+            },
+            "index": 0,
+            "pin": "scl"
+          },
+          "contains": {
+            "mcuPin": "A5"
+          }
+        }
+      ],
+      "hints": {
+        "tier1": "Use Learn for the exact power, ground and signal pins. Insert cables into free holes on the same breadboard strip as each leg. The third hint shows the complete wiring.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [
+            "uno",
+            "bme280",
+            "lcd16x2_i2c"
+          ],
+          "text": "Use Learn for the exact power, ground and signal pins. Insert cables into free holes on the same breadboard strip as each leg. The third hint shows the complete wiring."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "initial",
+      "text": "Display the default temperature and humidity on separate rows",
+      "rules": [
+        {
+          "type": "peripheral_state",
+          "componentType": "lcd16x2_i2c",
+          "path": "data.lines.0",
+          "equals": "T=24.5 C        "
+        },
+        {
+          "type": "peripheral_state",
+          "componentType": "lcd16x2_i2c",
+          "path": "data.lines.1",
+          "equals": "H=55.0 %        "
+        }
+      ],
+      "hints": {
+        "tier1": "Use setCursor(0, 0) and setCursor(0, 1), and print each number with one decimal.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Use setCursor(0, 0) and setCursor(0, 1), and print each number with one decimal."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "changed",
+      "text": "Set 31°C / 70% and update both LCD rows",
+      "rules": [
+        {
+          "type": "peripheral_state",
+          "componentType": "lcd16x2_i2c",
+          "path": "data.lines.0",
+          "equals": "T=31.0 C        "
+        },
+        {
+          "type": "peripheral_state",
+          "componentType": "lcd16x2_i2c",
+          "path": "data.lines.1",
+          "equals": "H=70.0 %        "
+        },
+        {
+          "type": "serial_matches",
+          "pattern": "24\\.5,55\\.0[\\s\\S]*31\\.0,70\\.0"
+        }
+      ],
+      "hints": {
+        "tier1": "Read the sensor again inside the timed task; do not reuse setup readings.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Read the sensor again inside the timed task; do not reuse setup readings."
+        },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [
+      {
+        "type": "code_not_matches",
+        "pattern": "\\bdelay\\s*\\("
+      }
+    ],
+    "threeText": "Use millis() scheduling without delay()"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "half",
+      "breadboards": [
+        {
+          "id": "bb1",
+          "type": "half",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "mcu": "uno",
+      "components": [
+        {
+          "id": "c_uno",
+          "type": "uno",
+          "props": {},
+          "rotation": 0,
+          "position": {
+            "x": 0,
+            "y": -552
+          }
+        },
+        {
+          "id": "c_bme",
+          "type": "bme280",
+          "props": {
+            "addr": 118
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a25"
+          }
+        },
+        {
+          "id": "c_lcd",
+          "type": "lcd16x2_i2c",
+          "props": {
+            "addr": 39
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a15"
+          }
+        }
+      ],
+      "wires": [
+        {
+          "id": "w_q1",
+          "from": "bb1:b25",
+          "to": "c_uno:3V3",
+          "color": "red"
+        },
+        {
+          "id": "w_q2",
+          "from": "bb1:b26",
+          "to": "c_uno:GND",
+          "color": "black"
+        },
+        {
+          "id": "w_q3",
+          "from": "bb1:b28",
+          "to": "c_uno:A4",
+          "color": "green"
+        },
+        {
+          "id": "w_q4",
+          "from": "bb1:b27",
+          "to": "c_uno:A5",
+          "color": "yellow"
+        },
+        {
+          "id": "w_q5",
+          "from": "bb1:b15",
+          "to": "c_uno:GND",
+          "color": "black"
+        },
+        {
+          "id": "w_q6",
+          "from": "bb1:b16",
+          "to": "c_uno:5V",
+          "color": "red"
+        },
+        {
+          "id": "w_q7",
+          "from": "bb1:b17",
+          "to": "c_uno:A4",
+          "color": "green"
+        },
+        {
+          "id": "w_q8",
+          "from": "bb1:b18",
+          "to": "c_uno:A5",
+          "color": "green"
+        }
+      ],
+      "meta": {}
+    },
+    "code": "#include <Adafruit_BME280.h>\n#include <LiquidCrystal_I2C.h>\nAdafruit_BME280 sensor;\nLiquidCrystal_I2C lcd(0x27, 16, 2);\nunsigned long sampledAt = 0;\nvoid setup() { Serial.begin(115200); sensor.begin(0x76); lcd.init(); lcd.backlight(); }\nvoid loop() {\n  if (millis() - sampledAt < 250) return;\n  sampledAt = millis();\n  float t = sensor.readTemperature();\n  float h = sensor.readHumidity();\n  lcd.clear(); lcd.setCursor(0, 0); lcd.print(\"T=\"); lcd.print(t, 1); lcd.print(\" C\");\n  lcd.setCursor(0, 1); lcd.print(\"H=\"); lcd.print(h, 1); lcd.print(\" %\");\n  Serial.print(t, 1); Serial.print(\",\"); Serial.println(h, 1);\n}\n",
+    "blocklyXml": null,
+    "actions": [
+      {
+        "atMs": 1500,
+        "select": {
+          "componentType": "bme280"
+        },
+        "patch": {
+          "temperatureC": 31,
+          "humidity": 70
+        }
+      }
+    ]
+  },
+  "solutionRunMs": 7000,
+  "successText": "Your circuit now responds to changing inputs. Try a different input sequence and explain why each output changes."
+}

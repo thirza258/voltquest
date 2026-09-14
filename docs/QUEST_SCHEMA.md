@@ -26,6 +26,7 @@ w4-l1 Touch Lamp (touchRead on GPIO4/T0), w4-l2 Status Ring (NeoPixel), w4-l3 Sm
   "startBoard": null,             // BoardId placed in the starter doc when starterCircuit is null (default = board)
   "boardSwitcher": "locked",      // "locked" | "enabled" — header board switcher (and breadboard layout control) enabled in campaign only when "enabled"
   "boardMode": "half",
+  "difficulty": "intermediate",   // optional: intermediate | hard; worlds 6–7 expose this tier on campaign cards and API summaries
   "xp": 120, "estimatedMinutes": 5,
   "summary": "…", "concepts": ["digitalWrite","pinMode","delay"],
   "briefing": [ { "mood": "happy", "text": "…" }, { "mood": "thinking", "text": "…" } ],
@@ -122,4 +123,38 @@ at action boundaries; no real timers are used. Sticks are normalized (throttle 0
 Disturbance units are body deg/s impulses; tilt is degrees on the clamped stand. Reference solutions
 must hold 1000 µs before arming/spinning and use props-off on bench levels. The boss permits editing
 its build and never swaps in a reference circuit on Run. Keep two materially different builds in the
-boss regression. All 20 campaign solutions must earn three stars in the shared headless gate.
+boss regression. All 32 campaign solutions must earn three stars in the shared headless gate.
+
+## Intermediate and hard expansion (worlds 6–7)
+
+Append worlds after w5 without renumbering or reordering existing quests. World 6 **Responsive
+Machines** uses Uno and `difficulty:'intermediate'`; world 7 **Reliable Connections** uses ESP32
+and `difficulty:'hard'`. Each has six quests, bringing the campaign to 32 levels and 96 stars.
+
+| Level | Challenge | Main behavior |
+| --- | --- | --- |
+| w6-l1 | One Press, One Count | 30 ms debounce, stable falling edges, held-button rejection |
+| w6-l2 | Steady Threshold | 700/300 ADC hysteresis with both midpoint histories |
+| w6-l3 | Two Clocks | Independent 400/700 ms LED periods and responsive button input |
+| w6-l4 | Guarded Servo | Hold-to-enable, analog angle mapping, 30–150° limits, release parks at 90° |
+| w6-l5 | Climate Display | BME280 + LCD on shared I²C, refreshed readings and cleared text |
+| w6-l6 | Crosswalk Controller | Timed state machine, exclusive traffic/walk signals, held request ignored |
+| w7-l1 | Framed Serial Dimmer | Complete lines, exact decimal validation, bounded buffer and recovery |
+| w7-l2 | Fresh Command Only | HTTP on/off/status, renewable 750 ms lease, expiry to off |
+| w7-l3 | MQTT Command Desk | Exact ON/OFF commands, applied-state acknowledgements and errors |
+| w7-l4 | Dual Sensor Watch | Temperature/humidity hysteresis, adjustable ADC1 setpoint, live HTTP |
+| w7-l5 | Range Sentry | Protected echo, five-sample median, timeout clears history, independent heartbeat |
+| w7-l6 | Connected Greenhouse | Automatic vent hysteresis, manual modes, MQTT reports, matching HTTP status |
+
+Star criteria reward non-blocking scheduling or a bounded parts count. Solutions and starters use
+the same placed parts; starters have no cables and an unsolved compilable sketch. Learn supplies
+the exact pin map, program behavior, experiment sequence and relevant teaching-model limits.
+All new display prose and hints have Indonesian translations. Cable endpoints occupy separate
+free holes on the component's actual strip, and objective selectors use types/properties/pins so
+replacement parts can satisfy the wiring requirements. No new validator rule or firmware API is needed.
+
+`frontend/src/content/campaign.test.js` checks content, translations, physical placement, unsolved
+starters and behavior under input sequences distinct from `solution.actions`. It includes negative
+checks for a one-threshold alarm and missing I²C wiring. `engine/headless.test.js` runs every reference
+through the complete solver/VM/validator with a 20-second per-test host timeout for the integrated
+ESP32 quests; simulation deadlines remain the authored virtual `solutionRunMs`.

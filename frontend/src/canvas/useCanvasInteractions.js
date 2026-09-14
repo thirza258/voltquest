@@ -661,7 +661,7 @@ export function useCanvasInteractions({
   const inScope = useCallback(
     (event) => {
       const root = rootRef?.current
-      if (!root) return false
+      if (!root || root.closest('[inert]')) return false
       if (isTextEntry(event.target)) return false
       const active = typeof document !== 'undefined' ? document.activeElement : null
       if (!active || active === document.body || active === document.documentElement) return true

@@ -8,6 +8,7 @@ import { TUTORIALS } from '../../content/index.js'
 import TutorialsPage from './TutorialsPage.jsx'
 import TutorialPage from './TutorialPage.jsx'
 import { LocaleProvider, translate } from '../../i18n/index.jsx'
+import { getTutorialFundamentals } from '../courses/fundamentals.js'
 
 vi.mock('../../canvas/BreadboardCanvas.jsx', () => ({ BreadboardCanvas: ({ highlights }) => <div data-testid="circuit" data-highlight={highlights?.terminals?.join(',') ?? ''}>Interactive circuit</div> }))
 
@@ -21,11 +22,17 @@ function page(path) {
 describe('tutorial pages', () => {
   it('translates lesson challenges and preserves unsaved code and step checks while switching languages', () => {
     page('/tutorials/uno-blink')
+    const guide = getTutorialFundamentals('uno-blink')
+    expect(screen.getByRole('heading', { name: 'Fundamentals behind this tutorial' })).toBeTruthy()
+    expect(screen.getByText(guide.explanation)).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Study related course sections' }).getAttribute('href')).toBe('/courses?tutorial=uno-blink#tutorial-fundamentals')
+    expect(screen.getByRole('link', { name: 'Study related course sections' }).getAttribute('target')).toBe('_blank')
     fireEvent.change(screen.getByLabelText('Example code'), { target: { value: '// my unsaved experiment' } })
     fireEvent.click(screen.getByRole('button', { name: 'Mark step 1 complete' }))
     fireEvent.change(screen.getByLabelText('Language / Bahasa'), { target: { value: 'id' } })
     const lesson = TUTORIALS.find(t => t.id === 'uno-blink')
     expect(screen.getByText(translate('id', lesson.challenge))).toBeTruthy()
+    expect(screen.getByText(translate('id', guide.explanation))).toBeTruthy()
     expect(screen.getByLabelText('Kode contoh').value).toBe('// my unsaved experiment')
     expect(screen.getByRole('button', { name: 'Tandai langkah 1 selesai' }).getAttribute('aria-pressed')).toBe('true')
   })

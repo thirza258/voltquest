@@ -6,9 +6,10 @@ The shared header includes Tutorials. These routes are lazy-loaded.
 The hub also links to self-study courses at `/courses`, with lessons, worked examples, practice
 questions and exams. See `COURSES.md`; courses link to related labs without altering their circuits.
 
-The shared `content/tutorials.json` currently contains 35 tutorials: ten Uno/Nano hardware lessons,
+The shared `content/tutorials.json` currently contains 41 tutorials: ten Uno/Nano hardware lessons,
 eight ESP32/ESP32-S3 hardware lessons, seven Raspberry Pi 4/5 lessons and ten C++ programming
-lessons shared by Uno, Nano, ESP32 and ESP32-S3. Each board has an ordered
+lessons shared by Uno, Nano, ESP32 and ESP32-S3, plus three IoT foundation and three drone lessons.
+Each board has an ordered
 Easy → Intermediate → Hard learning path. Board, difficulty and search filters are reflected
 in the URL. Lessons remain available without an API connection because the frontend bundles
 the same content the backend serves.
@@ -19,8 +20,8 @@ Hard covers non-blocking timing, serial command parsing and state machines. Exam
 expected output and include an editing challenge. Code-only lessons intentionally require no
 jumper cables; the timing and state-machine lessons include a resistor-and-LED circuit.
 
-There are 20 lessons available per Uno/Nano board, 18 per ESP32 board, and seven per Raspberry Pi
-board: 90 runnable tutorial/board combinations in total. `programming.test.js` additionally verifies
+There are 22 lessons available per Uno/Nano board, 24 per ESP32 board, and seven per Raspberry Pi
+board: 106 runnable tutorial/board combinations in total. `programming.test.js` additionally verifies
 explained numeric output, serial command handling, timing and state transitions on all four C++ boards.
 
 ## Content contract
@@ -48,6 +49,13 @@ Every listed tutorial/board combination is exercised by `circuits.test.js` throu
 simulation. Adding a tutorial also adds its runnable variants to this regression test.
 
 ## Tutorial page
+
+Before the simulation, **Fundamentals behind this tutorial** explains the underlying principle,
+connects it to the example and suggests an observation. A separate-tab link opens the corresponding
+guide and exact course-section links in Courses. These supplementary guides come from
+`content/tutorial-fundamentals.json`, cover every tutorial and are translated into Indonesian.
+They leave the current board, edited code, checked steps and simulation mounted. See COURSES.md
+for the shared guide schema and the robotics/vision coverage.
 
 The page provides editable source, Run/Stop, Reset, Restore example, a live circuit and serial
 or Python output. Control inputs on the prepared circuit remain interactive. HTTP lessons include

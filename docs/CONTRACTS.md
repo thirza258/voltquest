@@ -346,6 +346,11 @@ Stars: 1 = allPassed; 2 = 1 and (`level.starCriteria.damageExpected` or (no `blo
 ---------------------------------------------------------------------------------------------------------------
 ## 10. Canvas — `frontend/src/canvas/` (G1 core, G2 renderers)
 
+Sandbox adds an optional 3D viewer over the same document and simulation; see
+[SANDBOX_3D.md](SANDBOX_3D.md) for view lifecycle and the eight additional registry parts.
+The SVG stays mounted for viewport preservation and PNG exports; canvas keyboard handling must
+ignore an `inert` ancestor while another view is active.
+
 ```jsx
 <BreadboardCanvas doc readOnly simState ghost highlights selectedIds tool wireColor
   onSelect onAddComponent(type, placement: Placement) onMoveComponent(id, placement) onRotateComponent(id) onRemove(ids)
@@ -374,6 +379,9 @@ The header adds a Tutorials navigation item. The content, filters, difficulty pr
 examples and derived wiring-guide contract live in `TUTORIALS.md`. Tutorials do not grant campaign XP.
 Courses use `/courses` and `/courses/:courseId` under Tutorials navigation. The shared curriculum,
 assessment and browser-local progress contracts are in `COURSES.md`. They also grant no campaign XP.
+`content/tutorial-fundamentals.json` supplies one explanatory guide per firmware/robotics/vision
+tutorial, plus canonical course-section references. Its shape and browser-only scope are in
+`COURSES.md`. Courses and tutorial pages render the same guide; locale changes retain lab state.
 
 ### 11.2 Stores
 ```js

@@ -32,6 +32,9 @@ Footer 32 px: XP ProgressBar + level, audio Switch, offline pill ("Offline — s
 ## Campaign map (`/`)
 Hero: ChipMascot + primary CTA "Continue → {next level}" (first level without stars), player summary (level, XP, stars). Worlds as sections tinted by `theme` with board Badge; level Cards: codeName, title, summary, minutes, Stars row, state locked (lock icon + "Finish 1-2 first" + small "Skip ahead") / available / completed. Sandbox card always present. World intro shown once (Chip bubble at the top of the world section).
 
+Worlds 6–7 carry Intermediate and Hard badges on each card, translated at rendering. Their world
+subtitles also state the tier. Existing levels keep their authored presentation and progression.
+
 ## Tutorial learning lab (`/tutorials`)
 The hub uses a clean card grid with board/language badges, difficulty, duration, concepts and an
 Open tutorial action. Board, topic and difficulty filters persist in the URL. Default order is
@@ -51,6 +54,12 @@ learning model. Do not imply a full Linux computer or arbitrary Python packages 
 
 ## Self-study courses
 
+Courses begins with a grouped **Find the fundamentals for your tutorial** select covering firmware,
+robotics and vision. A selected guide explains why the example works, puts **What to observe** in a
+subtle inset, and links to named theory sections. Tutorial pages show the same guide before the lab.
+Course details group related guides in native expandable details, with a link in the course outline.
+Course/tutorial links open separately to preserve edited experiments and assessment choices.
+
 The tutorial hub links to course tracks. Use light cards, teal links and labelled native search,
 track and difficulty filters. Details have an outline beside readable lessons on desktop and stack
 on mobile. Radio groups use fieldsets, legends and full clickable labels. Submission focuses results
@@ -65,6 +74,11 @@ Briefing (Chip + bubbles, Start). Dual breadboard prompt: title "This board cove
 Global (ignored while typing in inputs/Monaco): `Ctrl/Cmd+Enter` Run/Stop, `Ctrl/Cmd+Z` / `Shift+Ctrl/Cmd+Z` undo/redo, `Ctrl/Cmd+S` save (sandbox), `H` hint, `?` shortcuts. Canvas (focus inside canvas or body): `V` select, `W` wire, `R` rotate, `Delete/Backspace`, `1–5` wire colors, `Esc`, `+ − 0` zoom, `F` fit.
 
 ## Information density rules
+
+In the breadboard sandbox, put **2D / 3D** in a wrapping toolbar above the canvas. The 3D stage uses
+the light worktop palette and labelled camera buttons, a native part-inspection select and concise
+mouse/touch instructions. The existing inspector supplies live values and input controls. Direct
+placement/wiring uses 2D; the active view must not obscure the mode switch. See SANDBOX_3D.md.
 Tooltips with real numbers on everything on the canvas (V, mA, Ω, net name). Warnings always say cause + fix ("Pin 13 sources 91 mA (max 40). Add a 220 Ω resistor in series."). Colors are also named in text ("Red LED", "green wire"). Empty/loading/error/offline states are explicit and friendly.
 
 ## Chip the mascot

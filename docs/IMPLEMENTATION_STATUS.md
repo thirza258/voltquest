@@ -11,12 +11,13 @@ JavaScript, uses an SVG breadboard, and runs its teaching VM on the client.
 | Breadboard placement, wiring, simulation effects and controls | `canvas`; release-coordinate snapping, pointer ownership/cancellation, stationary viewport and free-device drag regressions; real browser mouse checks | Implemented |
 | DC solver, Arduino VM, Pi GPIO and virtual networking | `engine`; deterministic and Worker checks; explicit supported-language/library subsets in contracts | Implemented teaching subsets |
 | 41 tutorials / 106 board variants, programming path and exact wiring guides | `features/tutorials`; all reference examples run through the inline simulation | Implemented |
-| All 20 campaign quests | `content/quests`; `engine/headless.test.js` discovers every world level and requires three stars for every reference solution | Implemented |
+| All 32 campaign quests | `content/quests`; `engine/headless.test.js` discovers every world level and requires three stars for every reference solution; `content/campaign.test.js` covers the intermediate/hard expansion and alternate inputs | Implemented |
 | Campaign play, briefing, success/XP, hints and damage recovery | `/play/:levelId`, `WorkspacePage`, `useLevelSession`, objective panel and stores; idle completion, three-star references, lifecycle/draft tests | Implemented |
 | Parts drawer, inspector, circuit insights and responsive panels | `features/workspace`; valid placement, MCU/language switching, live values and controls, resistor bands, nets/current/warnings; 390 px and desktop browser checks | Implemented |
 | Local Monaco/Blockly, safe mode switching and serial monitor | `features/code`; generator, confirmation, read-only, Pi mode, serial-clear/baud/input tests; browser Monaco and live Blockly delay edits | Implemented |
 | Virtual phone and IoT inspector | `features/iot`; virtual-only address validation, sanitized sandbox HTML, source/channel guards and response invalidation tests; browser GET / and phone link /on return 200 and light the LED | Implemented |
 | Sandbox, account save/load and independent drafts | `/sandbox`, `/sandbox/:projectId`; create-and-open regression, separate drafts and a bounded owner-checked offline cache; browser save/load and imported-file confirmation | Implemented |
+| Optional sandbox 3D view and expanded parts | `canvas/three`, `CircuitViewport`, eight new registry definitions; 37 available types, actual switch/ADC behavior, preserved run/editor/undo/2D viewport, GPU cleanup and fallback; Chromium desktop/390 px, all six production board views and PNG export from 3D. See [SANDBOX_3D.md](SANDBOX_3D.md) | Implemented teaching visualization |
 | JSON import; JSON, PNG, code and BOM exports | `features/sandbox`, `canvas/exportPng`; board/geometry/terminal/size validation, six-board and campaign-reference round trips, offline BOM and CSV escaping tests; browser PNG export produces a 1416 × 1456 image | Implemented |
 | Gallery, publish/unpublish, preview and fork | `/showcase`, `/showcase/:slug`; search/filter/retry tests and backend ownership/round-trip tests; browser publish → preview → editable fork | Implemented |
 | Guest/account UX, profile, cosmetics and leaderboard | `playerStore`, `features/profile`; deduplicated guests, real completion response shape, queue concurrency, identity-response guards, XP/cosmetics/leaderboard tests; browser claim/logout/login | Implemented |
@@ -47,6 +48,16 @@ Coefficient scale uses UIUC static prop data; motor/pack/thermal and non-referen
 remain teaching assumptions. Optional GPS dynamics/gamepads and the 60 FPS/Chromebook benchmark
 are not certified or claimed. See DRONE.md for the complete evidence boundary.
 
+
+### Campaign expansion (2026-09-14)
+
+Campaign expansion verified 2026-09-14: worlds 6–7 add six intermediate and six hard quests,
+bringing the campaign to 32. Every reference earns three stars; alternate-input regressions cover
+control/command failure cases and the API checks completion XP without duplicate replay rewards.
+Isolated Chromium exercised the actual Uno/ESP32 Worker, hysteresis and greenhouse completion,
+matching HTTP/MQTT output and desktop/390 px layouts with retained state after translation.
+Full `make check` on the shared workspace passes 1,038 frontend / 103 backend tests and a 476.8 KiB
+initial gzip budget. See [QUEST_SCHEMA.md](QUEST_SCHEMA.md) for the new challenge inventory.
 
 ### Learning extensions (2026-09-13)
 

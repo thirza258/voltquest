@@ -1,0 +1,371 @@
+{
+  "id": "w7-l3",
+  "worldId": "w7",
+  "order": 3,
+  "title": "MQTT Command Desk",
+  "codeName": "Level 7-3",
+  "difficulty": "hard",
+  "board": "esp32",
+  "startBoard": "esp32",
+  "boardSwitcher": "locked",
+  "boardMode": "dual",
+  "xp": 440,
+  "estimatedMinutes": 28,
+  "summary": "Separate commands, acknowledgements and errors in a bidirectional MQTT device.",
+  "concepts": [
+    "MQTT",
+    "callbacks",
+    "payload validation",
+    "acknowledgements"
+  ],
+  "briefing": [
+    {
+      "mood": "thinking",
+      "text": "Separate commands, acknowledgements and errors in a bidirectional MQTT device."
+    },
+    {
+      "mood": "happy",
+      "text": "The parts are placed but unwired. Complete the wiring and sketch, then follow the experiments in Learn to earn each objective."
+    }
+  ],
+  "learn": {
+    "title": "MQTT Command Desk",
+    "body": "Wire GPIO18 → 220 Ω → LED → GND. Join virtual VoltNet with password pass and use broker.voltquest.local:1883. Subscribe to bench/lamp/set and service mqtt.loop().\n\nAccept the exact payload ON or OFF. Apply the LED state before publishing the same word to bench/lamp/state. For every other payload publish INVALID to bench/lamp/error and leave the LED unchanged. Build the command from exactly length bytes in the callback; an MQTT payload is not guaranteed to end with a zero byte.\n\nIn IoT, publish ON, then ON!, then OFF to bench/lamp/set, pausing between messages. Confirm the LED stays lit during INVALID, and that only valid commands produce state acknowledgements. Commands and state use separate topics so a device never mistakes its own report for a new command.",
+    "links": []
+  },
+  "starterCircuit": {
+    "version": 1,
+    "boardMode": "dual",
+    "breadboards": [
+      {
+        "id": "bb1",
+        "type": "half",
+        "x": 0,
+        "y": 0
+      },
+      {
+        "id": "bb2",
+        "type": "half",
+        "x": 0,
+        "y": 504
+      }
+    ],
+    "mcu": "esp32",
+    "components": [
+      {
+        "id": "c_esp32",
+        "type": "esp32",
+        "props": {},
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "j1"
+        }
+      },
+      {
+        "id": "c_r0",
+        "type": "resistor",
+        "props": {
+          "ohms": 220
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb2",
+          "hole": "f1"
+        }
+      },
+      {
+        "id": "c_led0",
+        "type": "led",
+        "props": {
+          "color": "red"
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb2",
+          "hole": "f7"
+        }
+      }
+    ],
+    "wires": [],
+    "meta": {}
+  },
+  "starterCode": "void setup() {\n  Serial.begin(115200);\n  // Configure the parts described in Learn.\n}\n\nvoid loop() {\n  // Implement the challenge and test each input.\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": [
+    "esp32",
+    "resistor",
+    "led"
+  ],
+  "objectives": [
+    {
+      "id": "wiring",
+      "text": "Connect the placed parts using the pin map in Learn",
+      "rules": [
+        {
+          "type": "mcu_is",
+          "board": "esp32"
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "GPIO18"
+          },
+          "contains": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 220
+            },
+            "index": 0,
+            "pin": "p1"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 220
+            },
+            "index": 0,
+            "pin": "p2"
+          },
+          "contains": {
+            "componentType": "led",
+            "props": {
+              "color": "red"
+            },
+            "index": 0,
+            "pin": "anode"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "led",
+            "props": {
+              "color": "red"
+            },
+            "index": 0,
+            "pin": "cathode"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        }
+      ],
+      "hints": {
+        "tier1": "Use Learn for the exact power, ground and signal pins. Insert cables into free holes on the same breadboard strip as each leg. The third hint shows the complete wiring.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [
+            "esp32",
+            "resistor",
+            "led"
+          ],
+          "text": "Use Learn for the exact power, ground and signal pins. Insert cables into free holes on the same breadboard strip as each leg. The third hint shows the complete wiring."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "on",
+      "text": "Acknowledge ON after lighting the LED",
+      "rules": [
+        {
+          "type": "wifi_connected"
+        },
+        {
+          "type": "mqtt_published",
+          "topic": "bench/lamp/state",
+          "pattern": "^ON$",
+          "minCount": 1
+        },
+        {
+          "type": "pin_state",
+          "pin": "GPIO18",
+          "level": 1,
+          "forMs": 0
+        }
+      ],
+      "hints": {
+        "tier1": "Install the callback before subscribing, then keep calling mqtt.loop().",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Install the callback before subscribing, then keep calling mqtt.loop()."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "invalid",
+      "text": "Reject ON! while retaining the lit state",
+      "rules": [
+        {
+          "type": "mqtt_published",
+          "topic": "bench/lamp/error",
+          "pattern": "^INVALID$",
+          "minCount": 1
+        },
+        {
+          "type": "pin_state",
+          "pin": "GPIO18",
+          "level": 1,
+          "forMs": 0
+        }
+      ],
+      "hints": {
+        "tier1": "Compare the complete payload, including its length, rather than its first character.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Compare the complete payload, including its length, rather than its first character."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "off",
+      "text": "Acknowledge OFF after turning the LED off",
+      "rules": [
+        {
+          "type": "mqtt_published",
+          "topic": "bench/lamp/state",
+          "pattern": "^OFF$",
+          "minCount": 1
+        },
+        {
+          "type": "pin_state",
+          "pin": "GPIO18",
+          "level": 0,
+          "forMs": 200
+        }
+      ],
+      "hints": {
+        "tier1": "The acknowledgement should describe the output you actually applied.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "The acknowledgement should describe the output you actually applied."
+        },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [
+      {
+        "type": "max_components",
+        "max": 2
+      }
+    ],
+    "threeText": "Use at most 2 parts besides the controller"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "dual",
+      "breadboards": [
+        {
+          "id": "bb1",
+          "type": "half",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "id": "bb2",
+          "type": "half",
+          "x": 0,
+          "y": 504
+        }
+      ],
+      "mcu": "esp32",
+      "components": [
+        {
+          "id": "c_esp32",
+          "type": "esp32",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "j1"
+          }
+        },
+        {
+          "id": "c_r0",
+          "type": "resistor",
+          "props": {
+            "ohms": 220
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb2",
+            "hole": "f1"
+          }
+        },
+        {
+          "id": "c_led0",
+          "type": "led",
+          "props": {
+            "color": "red"
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb2",
+            "hole": "f7"
+          }
+        }
+      ],
+      "wires": [
+        {
+          "id": "w_q1",
+          "from": "bb1:f9",
+          "to": "bb2:g1",
+          "color": "green"
+        },
+        {
+          "id": "w_q2",
+          "from": "bb2:g5",
+          "to": "bb2:g7",
+          "color": "green"
+        },
+        {
+          "id": "w_q3",
+          "from": "bb2:g8",
+          "to": "bb1:f2",
+          "color": "black"
+        }
+      ],
+      "meta": {}
+    },
+    "code": "#include <WiFi.h>\n#include <PubSubClient.h>\nWiFiClient network;\nPubSubClient mqtt(network);\nvoid command(char* topic, byte* payload, unsigned int length) {\n  String text = \"\";\n  for (unsigned int i = 0; i < length; i++) text += char(payload[i]);\n  if (text == \"ON\" || text == \"OFF\") {\n    digitalWrite(18, text == \"ON\");\n    mqtt.publish(\"bench/lamp/state\", text.c_str());\n  } else mqtt.publish(\"bench/lamp/error\", \"INVALID\");\n}\nvoid setup() {\n  Serial.begin(115200); pinMode(18, OUTPUT);\n  WiFi.begin(\"VoltNet\", \"pass\");\n  while (WiFi.status() != WL_CONNECTED) delay(20);\n  mqtt.setServer(\"broker.voltquest.local\", 1883); mqtt.setCallback(command);\n  mqtt.connect(\"command-desk\"); mqtt.subscribe(\"bench/lamp/set\");\n}\nvoid loop() { mqtt.loop(); }\n",
+    "blocklyXml": null,
+    "actions": [
+      {
+        "atMs": 1200,
+        "mqtt": {
+          "topic": "bench/lamp/set",
+          "payload": "ON"
+        }
+      },
+      {
+        "atMs": 1900,
+        "mqtt": {
+          "topic": "bench/lamp/set",
+          "payload": "ON!"
+        }
+      },
+      {
+        "atMs": 2600,
+        "mqtt": {
+          "topic": "bench/lamp/set",
+          "payload": "OFF"
+        }
+      }
+    ]
+  },
+  "solutionRunMs": 7000,
+  "successText": "Your circuit now responds to changing inputs. Try a different input sequence and explain why each output changes."
+}
