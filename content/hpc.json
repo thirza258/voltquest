@@ -1,0 +1,2924 @@
+{
+  "title": "High-performance computing in C & C++",
+  "courses": [
+    {
+      "id": "hpc-correctness",
+      "version": 1,
+      "order": 1,
+      "title": "1. C/C++ foundations for trustworthy computation",
+      "summary": "Build a native numerical program, manage memory safely, and establish a correctness oracle before making it faster. Explore how floating-point order changes an answer.",
+      "difficulty": "Fundamental",
+      "minutes": 60,
+      "lab": "correctness",
+      "outcomes": [
+        "Compile and test C17 and C++17 programs with explicit input bounds.",
+        "Explain contiguous storage, ownership, integer range and floating-point rounding.",
+        "Choose an independent reference and a justified error tolerance."
+      ],
+      "prerequisites": [],
+      "lessons": [
+        {
+          "id": "native-workflow",
+          "title": "A native workflow and a precise problem",
+          "paragraphs": [
+            "HPC begins with a workload and a definition of a correct answer. A numerical kernel may run on one core, many CPU cores, multiple nodes, or accelerators. Start here with command-line programs on a development computer. Install a C/C++ compiler and a terminal; Linux or WSL is convenient, and macOS supports these examples with the noted runtime requirements. Use C17 for the C version or C++17 for the C++ version. These are host programs with main(), not Arduino setup()/loop() sketches.",
+            "Build a debug executable with warnings and address/undefined-behavior instrumentation, run small cases, then make a separate optimized build. Record compiler name, version, flags, input size and expected output. Change one thing at a time. The browser experiment evaluates a bounded numerical model, while the source editor provides a standalone native program you can edit, download and compile. A browser result does not certify an edited native program; run its own tests after every edit."
+          ],
+          "pitfall": "Do not compare a sanitized debug build against an optimized release build and attribute the entire difference to your algorithm."
+        },
+        {
+          "id": "ownership-layout",
+          "title": "Arrays, pointers and ownership",
+          "paragraphs": [
+            "An array gives an index-to-address mapping. For doubles in these examples, element i occupies eight bytes and contiguous elements are adjacent. A pointer names an address; it carries neither a bounds check nor ownership. Pass the pointer together with a length, use indices strictly less than that length, initialize storage before reading it, and ensure multiplication used to size an allocation cannot overflow. The examples cap inputs before multiplying dimensions.",
+            "The C files use calloc and explicit free through BUFFER/RELEASE helpers. Their C++ equivalents use std::vector for initialized contiguous storage and automatic lifetime management. The pointer returned by data() is valid only while the vector storage remains alive and is not reallocated. Passing a vector by value copies its elements; prefer a const reference or a pointer-and-length view for a read-only kernel. Neither language makes a dangling pointer or out-of-bounds access valid."
+          ],
+          "pitfall": "Growing a vector may invalidate pointers into it. Keep storage stable while a kernel or worker uses those pointers."
+        },
+        {
+          "id": "numerical-contract",
+          "title": "Integer and floating-point contracts",
+          "paragraphs": [
+            "Signed integer overflow is undefined behavior in C and C++; a compiler need not preserve a wraparound result. Widen before multiplication: (long long)n * (n + 1) differs from casting an already-overflowed int product. Unsigned modular arithmetic is defined, but a wrapped allocation length is still incorrect. For floating-point work, addition rounds to the representable format, so changing the order of a reduction can change the answer.",
+            "The lab sums 100000000, n copies of 1, then -100000000. With a binary32 accumulator, each small addition can disappear next to the large value. The binary64 path exactly handles these bounded integers. Small-first ordering can help, but even it rounds when a total is not representable. For general scientific values, compare absolute error near zero and relative error at scale. Specify atol + rtol * abs(reference), reject non-finite outputs, and choose tolerances from the numerical problem."
+          ],
+          "pitfall": "A faster result outside the numerical contract is a failed optimization, even if its checksum looks plausible."
+        },
+        {
+          "id": "correctness-oracles",
+          "title": "Tests that can expose a wrong optimization",
+          "paragraphs": [
+            "Use a simple trusted reference, a known analytical answer, or both. Check every output element when feasible; a checksum alone can hide canceling errors. Test a one-element input, odd lengths, lengths around a tile or vector boundary, zero values where allowed, negative inputs and a representative large problem. An unsupported zero-length input should be rejected cleanly rather than silently executing an invalid loop.",
+            "The native correctness example prints the float error but exits successfully only when its double result matches the integer reference. This distinction matters: an intentionally inaccurate demonstration should not be mistaken for a correct production algorithm. AddressSanitizer helps detect invalid memory accesses; UndefinedBehaviorSanitizer catches selected language violations. A clean sanitizer run covers only the executions tested and is not a proof that every future input is safe."
+          ],
+          "pitfall": "Turning on fast-math can change NaN, infinity, signed-zero and reassociation behavior. Revisit the numerical contract before enabling it."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Mixed error tolerance",
+          "equation": "|candidate − reference| ≤ atol + rtol × |reference|",
+          "symbols": "atol has output units; rtol is dimensionless.",
+          "assumptions": "Both values must be finite; tolerances come from the application.",
+          "example": "For reference 100, atol 0.001 and rtol 0.0001, the allowed absolute error is 0.011."
+        },
+        {
+          "title": "Contiguous array storage",
+          "equation": "bytes = N × sizeof(element)",
+          "symbols": "N is the element count; bytes is an allocation size.",
+          "assumptions": "The product must fit size_t and the available memory.",
+          "example": "One million eight-byte doubles occupy 8,000,000 bytes before other arrays or overhead."
+        }
+      ],
+      "steps": [
+        "Run the default float32 forward sum and predict why the result differs from 1000.",
+        "Change only accumulator precision to float64. Run again and inspect the correctness check.",
+        "Use small-first with 1000 and then 1001 ones; explain why reordering is not a universal exactness guarantee.",
+        "Download both native versions, build with warnings, and verify input sizes 1, 1000 and 1001. Repeat a debug build with -fsanitize=address,undefined."
+      ],
+      "native": {
+        "walkthrough": [
+          "argument() validates a decimal integer before any work; malformed or out-of-range values exit with status 2.",
+          "single and wide start at the same magnitude, but each loop addition rounds to their respective types.",
+          "The analytical oracle is n, independent of the accumulation implementation. The deliberate float discrepancy is printed; only the double reference controls the PASS check."
+        ],
+        "tests": [
+          {
+            "command": "./correctness 1",
+            "expect": "double_sum=1 reference=1 and PASS"
+          },
+          {
+            "command": "./correctness 1001",
+            "expect": "double_sum=1001 reference=1001; inspect the float sum"
+          },
+          {
+            "command": "./correctness 0",
+            "expect": "Rejected with exit status 2; zero is outside this example’s input contract."
+          }
+        ]
+      },
+      "challenge": {
+        "task": "Add a small-first native variant and a compensated summation variant. Explain which data distributions each improves instead of claiming all sums become exact.",
+        "acceptance": [
+          "Keep the simple oracle and check every supported test size.",
+          "Document float/double behavior and an application-specific tolerance.",
+          "Run the edited source with warnings and memory/undefined-behavior checks."
+        ]
+      },
+      "practice": [
+        {
+          "id": "hpc-correctness-p1",
+          "prompt": "What must be established before optimizing a numerical kernel?",
+          "options": [
+            {
+              "id": "a",
+              "text": "A workload and an independently checked numerical contract"
+            },
+            {
+              "id": "b",
+              "text": "The maximum thread count"
+            },
+            {
+              "id": "c",
+              "text": "The shortest possible source file"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Without a correct baseline there is no reliable definition of improvement.",
+          "lessonId": "native-workflow"
+        },
+        {
+          "id": "hpc-correctness-p2",
+          "prompt": "What owns memory behind a C++ vector data() pointer?",
+          "options": [
+            {
+              "id": "a",
+              "text": "The raw pointer itself"
+            },
+            {
+              "id": "b",
+              "text": "The operating system until program exit regardless of vector lifetime"
+            },
+            {
+              "id": "c",
+              "text": "The vector’s storage"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "Destroying or reallocating the vector can invalidate the pointer.",
+          "lessonId": "ownership-layout"
+        },
+        {
+          "id": "hpc-correctness-p3",
+          "prompt": "For n=1000, what is the exact real-arithmetic sum in this lab?",
+          "options": [
+            {
+              "id": "a",
+              "text": "100000000"
+            },
+            {
+              "id": "b",
+              "text": "1000"
+            },
+            {
+              "id": "c",
+              "text": "0"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "The two large values cancel; one thousand ones remain.",
+          "lessonId": "numerical-contract"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "hpc-correctness-e1",
+            "prompt": "Which expression widens the multiplication before it occurs?",
+            "options": [
+              {
+                "id": "a",
+                "text": "(long long)(n * (n + 1))"
+              },
+              {
+                "id": "b",
+                "text": "n * (n + 1) with an int result"
+              },
+              {
+                "id": "c",
+                "text": "(long long)n * (n + 1)"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Casting an operand changes the arithmetic type before multiplication; casting the result is too late.",
+            "lessonId": "numerical-contract"
+          },
+          {
+            "id": "hpc-correctness-e2",
+            "prompt": "Why can float32 lose each +1 near 100000000?",
+            "options": [
+              {
+                "id": "a",
+                "text": "All positive float values are exact integers"
+              },
+              {
+                "id": "b",
+                "text": "The representable spacing at that magnitude exceeds 1"
+              },
+              {
+                "id": "c",
+                "text": "The loop never executes"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The operation rounds after each addition; the lost increment never reaches the final subtraction.",
+            "lessonId": "numerical-contract"
+          },
+          {
+            "id": "hpc-correctness-e3",
+            "prompt": "Which test best detects two wrong matrix entries whose errors cancel?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Compare every entry with a reference"
+              },
+              {
+                "id": "b",
+                "text": "Compare only the sum of all entries"
+              },
+              {
+                "id": "c",
+                "text": "Check only that execution did not crash"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "A matching checksum can conceal positive and negative errors.",
+            "lessonId": "correctness-oracles"
+          },
+          {
+            "id": "hpc-correctness-e4",
+            "prompt": "What can a passing sanitizer run establish?",
+            "options": [
+              {
+                "id": "a",
+                "text": "All inputs are proven safe"
+              },
+              {
+                "id": "b",
+                "text": "Floating-point answers are mathematically exact"
+              },
+              {
+                "id": "c",
+                "text": "No covered sanitizer violation was detected in the tested executions"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Instrumentation is useful evidence but only for its supported checks and exercised paths.",
+            "lessonId": "correctness-oracles"
+          },
+          {
+            "id": "hpc-correctness-e5",
+            "prompt": "Which tolerance accepts an error of 0.01 at reference 100?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Reject all differences regardless of the numerical contract"
+              },
+              {
+                "id": "b",
+                "text": "atol=0.001 and rtol=0.0001"
+              },
+              {
+                "id": "c",
+                "text": "atol=0 and rtol=0"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The combined limit is 0.001 + 0.0001*100 = 0.011.",
+            "lessonId": "numerical-contract"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Clang: AddressSanitizer",
+          "url": "https://clang.llvm.org/docs/AddressSanitizer.html"
+        },
+        {
+          "title": "Clang: UndefinedBehaviorSanitizer",
+          "url": "https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html"
+        }
+      ]
+    },
+    {
+      "id": "hpc-benchmarking",
+      "version": 1,
+      "order": 2,
+      "title": "2. Benchmarking and performance evidence",
+      "summary": "Measure repeated native runs, separate setup from kernel time, consume results, and interpret distributions instead of selecting one favorable number.",
+      "difficulty": "Fundamental",
+      "minutes": 60,
+      "lab": "benchmark",
+      "outcomes": [
+        "Define a reproducible benchmark protocol.",
+        "Analyze warm-up, median, variability and speedup.",
+        "Distinguish algorithmic work, measured time and performance models."
+      ],
+      "prerequisites": [
+        "hpc-correctness"
+      ],
+      "lessons": [
+        {
+          "id": "measurement-scope",
+          "title": "Define what the clock includes",
+          "paragraphs": [
+            "Write down whether you want kernel latency, complete application latency or throughput over a batch. Allocation, file I/O, initialization, thread creation, compilation and result checking may dominate a short calculation. A kernel benchmark normally initializes buffers before starting the clock and checks outputs after stopping it; an end-to-end benchmark includes the work the user actually waits for. Report both if their distinction changes the decision.",
+            "Use an elapsed monotonic clock. The C examples use clock_gettime(CLOCK_MONOTONIC); C++ uses steady_clock; OpenMP and MPI examples use their runtime wall timers. CPU time accumulated across threads is not elapsed wall time. If a sample is near the clock’s resolution, increase the workload or repeat the kernel inside a sample while preserving its semantics. An apparent zero time is evidence of inadequate measurement, not infinite throughput."
+          ],
+          "pitfall": "Comparing times with different input sizes, precision or included setup does not establish a fair speedup."
+        },
+        {
+          "id": "benchmark-harness",
+          "title": "Make the measured work observable",
+          "paragraphs": [
+            "An optimizing compiler can delete work whose result is never used. The companion program prints a checksum after every sample and checks it against the serial reference. It changes one input outside the timed region so repeated calls cannot simply reuse a prior result, and keeps kernel functions out of line for inspection. These techniques make this example useful, but you should still inspect generated code when measuring very small kernels.",
+            "The candidate uses two independent sums and then combines them, exposing a different dependency structure. For this bounded integer-valued dataset both sums are exactly representable in double. With general floating-point input, reassociation may change results, so the same transformation needs a tolerance-based test. Do not mark every element volatile to stop optimization: that changes the memory operations being benchmarked. Prefer observable outputs and a testable workload."
+          ],
+          "pitfall": "A benchmark that accidentally measures only timer overhead can look stable while saying almost nothing about the kernel."
+        },
+        {
+          "id": "repeat-and-report",
+          "title": "Warm-up, noise and paired comparisons",
+          "paragraphs": [
+            "Run several samples and retain the raw data. A first run may fault in pages, initialize runtime state, or populate caches; decide in advance how many warm-up samples to exclude. Keep the same policy for baseline and candidate. The provided native harness alternates which implementation runs first to reduce a simple order bias. Record whether the data is intentionally cache-hot or cache-cold; those are different experiments.",
+            "Use the median as a robust descriptive center and show a range or quantiles so readers can see variability. A small median difference inside a broad overlapping distribution needs more investigation. Keep problem size, compiler flags, thread placement and machine power conditions fixed. On shared systems, background activity matters. A handful of samples and a speedup ratio do not by themselves establish statistical significance or portability to a different CPU."
+          ],
+          "pitfall": "Discarding only the slow candidate samples after seeing the result is selection bias."
+        },
+        {
+          "id": "profiling-decisions",
+          "title": "Find the expensive phase before rewriting it",
+          "paragraphs": [
+            "Instrument meaningful phases first: preparation, transfer, compute, synchronization and output. Profile a representative input to locate the dominant work, then form a falsifiable hypothesis. For example, changing row traversal may reduce data movement; adding threads may reduce compute time but increase synchronization. Use a profiler or hardware counters on a supported host to test the mechanism, with the same build and input used in the benchmark.",
+            "The browser panel analyzes supplied timing samples. Its initial numbers are illustrative; replacing them with your native baseline_ms and candidate_ms columns turns it into an evidence worksheet. It does not run a compiler. Keep a result ledger with command, environment, correctness outcome, median and spread. If an optimization improves only a tiny phase, calculate its end-to-end impact before making code harder to maintain."
+          ],
+          "pitfall": "Profiler overhead and debug instrumentation can alter timing. Collect correctness diagnostics and release timing as separate runs."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Speedup",
+          "equation": "S = Tbaseline / Tcandidate",
+          "symbols": "Both T values are elapsed times for identical work and scope.",
+          "assumptions": "Use the same summary statistic and warm-up policy for each.",
+          "example": "A 10 ms baseline median and 6 ms candidate median give S = 1.667×, or 40% less elapsed time."
+        },
+        {
+          "title": "Median of an even sample count",
+          "equation": "median = (sorted[n/2 − 1] + sorted[n/2]) / 2",
+          "symbols": "Indices are zero-based; n is the number of retained samples.",
+          "assumptions": "At least two valid samples remain after the declared warm-up.",
+          "example": "For 9,10,10,11 ms, the median is (10+10)/2 = 10 ms."
+        }
+      ],
+      "steps": [
+        "Run the default dataset with one warm-up discarded. Confirm medians 10 ms and 6 ms.",
+        "Include the warm-up by setting its count to zero. Explain why the raw range changes.",
+        "Add an outlier to the candidate dataset and compare the mean with the median.",
+        "Compile the native example. Paste its two timing columns separately, keep at least two samples, and record the full command and output in the lab notebook."
+      ],
+      "native": {
+        "walkthrough": [
+          "serial_sum establishes the reference; two_sums contains a pair loop plus an explicit odd-element tail.",
+          "Initialization and verification sit outside each timed call. Input x[0] changes between samples; both kernels receive the same current input.",
+          "Each CSV row includes the sample number, two measured wall times and a consumed checksum. Sample zero is a candidate warm-up, not automatically a discarded result."
+        ],
+        "tests": [
+          {
+            "command": "./benchmark 19 7",
+            "expect": "Seven CSV samples and PASS; odd tail is checked."
+          },
+          {
+            "command": "./benchmark 100003 9",
+            "expect": "Nine checked samples; compare medians after a declared warm-up."
+          },
+          {
+            "command": "./benchmark -1",
+            "expect": "Input rejected with status 2."
+          }
+        ]
+      },
+      "challenge": {
+        "task": "Create a benchmark report comparing the two kernels on three sizes. Record setup-inclusive timing separately from kernel timing and explain one source of uncertainty.",
+        "acceptance": [
+          "Use the same input and output contract for both kernels.",
+          "Keep all raw samples and the chosen warm-up policy.",
+          "Report medians and variability without promising a universal speedup."
+        ]
+      },
+      "practice": [
+        {
+          "id": "hpc-benchmarking-p1",
+          "prompt": "Which clock quantity compares the user’s waiting time for a threaded kernel?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Source line count"
+            },
+            {
+              "id": "b",
+              "text": "Elapsed monotonic wall time"
+            },
+            {
+              "id": "c",
+              "text": "Sum of CPU time from all threads"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "Wall time measures time between start and finish; CPU time can accumulate across workers.",
+          "lessonId": "measurement-scope"
+        },
+        {
+          "id": "hpc-benchmarking-p2",
+          "prompt": "Why print and check a checksum?",
+          "options": [
+            {
+              "id": "a",
+              "text": "To make results observable and catch covered output errors"
+            },
+            {
+              "id": "b",
+              "text": "To force every load to be volatile"
+            },
+            {
+              "id": "c",
+              "text": "To ensure all machine instructions have identical cost"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Unused work can be optimized away; a checked consumed result is part of a valid harness.",
+          "lessonId": "benchmark-harness"
+        },
+        {
+          "id": "hpc-benchmarking-p3",
+          "prompt": "What is the median of 9,10,10,11 ms?",
+          "options": [
+            {
+              "id": "a",
+              "text": "9 ms"
+            },
+            {
+              "id": "b",
+              "text": "11 ms"
+            },
+            {
+              "id": "c",
+              "text": "10 ms"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "The middle two sorted samples are both 10.",
+          "lessonId": "repeat-and-report"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "hpc-benchmarking-e1",
+            "prompt": "What is the speedup from 10 ms to 6 ms for identical work?",
+            "options": [
+              {
+                "id": "a",
+                "text": "About 1.667×"
+              },
+              {
+                "id": "b",
+                "text": "4×"
+              },
+              {
+                "id": "c",
+                "text": "0.6×"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Speedup is baseline divided by candidate, not their difference.",
+            "lessonId": "profiling-decisions"
+          },
+          {
+            "id": "hpc-benchmarking-e2",
+            "prompt": "Which warm-up policy is defensible?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Remove any candidate value that hurts the claim"
+              },
+              {
+                "id": "b",
+                "text": "Always keep only the fastest sample"
+              },
+              {
+                "id": "c",
+                "text": "Choose the exclusion rule before inspecting the comparison"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "A predetermined policy avoids selecting evidence to fit a desired result.",
+            "lessonId": "repeat-and-report"
+          },
+          {
+            "id": "hpc-benchmarking-e3",
+            "prompt": "A kernel measures nearly zero milliseconds. What next?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Assume the algorithm did no work by design"
+              },
+              {
+                "id": "b",
+                "text": "Increase work per sample and check observability and timer resolution"
+              },
+              {
+                "id": "c",
+                "text": "Report infinite throughput"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Timer resolution and compiler elimination must be investigated before interpreting tiny times.",
+            "lessonId": "measurement-scope"
+          },
+          {
+            "id": "hpc-benchmarking-e4",
+            "prompt": "What do the initial browser timing samples represent?",
+            "options": [
+              {
+                "id": "a",
+                "text": "An illustrative dataset supplied to the analysis"
+              },
+              {
+                "id": "b",
+                "text": "Native C++ measurements taken by this page"
+              },
+              {
+                "id": "c",
+                "text": "Your processor’s guaranteed latency"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The panel computes statistics; native execution occurs on your own host.",
+            "lessonId": "profiling-decisions"
+          },
+          {
+            "id": "hpc-benchmarking-e5",
+            "prompt": "A candidate is 1% faster but runs vary by 20%. What is supported?",
+            "options": [
+              {
+                "id": "a",
+                "text": "A guaranteed 1% gain on every machine"
+              },
+              {
+                "id": "b",
+                "text": "The candidate is mathematically incorrect"
+              },
+              {
+                "id": "c",
+                "text": "More controlled samples are needed before a strong performance claim"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Variability limits the strength of a claim even when medians differ.",
+            "lessonId": "repeat-and-report"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Google Benchmark: user guide",
+          "url": "https://google.github.io/benchmark/user_guide.html"
+        },
+        {
+          "title": "LLNL: introduction to parallel computing",
+          "url": "https://hpc.llnl.gov/documentation/tutorials/introduction-parallel-computing-tutorial"
+        }
+      ]
+    },
+    {
+      "id": "hpc-memory",
+      "version": 1,
+      "order": 3,
+      "title": "3. Memory locality and cache behavior",
+      "summary": "Connect C/C++ array layout to cache lines, working sets and traversal order. Measure real traversals and use a transparent cache model to explain a hypothesis.",
+      "difficulty": "Intermediate",
+      "minutes": 70,
+      "lab": "locality",
+      "outcomes": [
+        "Derive row-major byte addresses.",
+        "Separate spatial locality, temporal reuse and capacity misses.",
+        "Design a cache experiment without treating simulated misses as hardware counters."
+      ],
+      "prerequisites": [
+        "hpc-benchmarking"
+      ],
+      "lessons": [
+        {
+          "id": "row-major",
+          "title": "From indices to addresses",
+          "paragraphs": [
+            "A flat N by N row-major array stores element (row,column) at row*N+column. With eight-byte elements, its byte offset is 8*(row*N+column). Advancing the inner column index by one accesses the next element; advancing the row index by one jumps by 8*N bytes. The C and C++ examples both use this layout. A vector of vectors is a different representation: its rows may be separately allocated, so do not assume one flat buffer.",
+            "In the native walk() function, only the index expression changes between row and column traversal. Both paths visit the same initialized values and compute the same sum. This makes it possible to test locality while preserving useful work. For large matrices, the strided path often fails to use all the data fetched in a line before eviction. Hardware prefetching and real cache organization affect the measured outcome, so predict a mechanism and then measure it."
+          ],
+          "pitfall": "Changing storage layout and traversal simultaneously makes it harder to isolate the source of a speed difference."
+        },
+        {
+          "id": "cache-model",
+          "title": "Spatial locality and a stated cache model",
+          "paragraphs": [
+            "A cache transfers groups of bytes called lines. With the teaching model set to 64-byte lines, eight adjacent doubles share a line. A cold row traversal of 1024 doubles needs 128 distinct lines; seven of each eight accesses can hit if the line stays resident. The explorer records actual addresses and runs them through a fully associative least-recently-used cache. Its capacity is entered in lines, not elements.",
+            "For a 32 by 32 matrix and a 16-line cache, a column pass revisits a row’s line only after touching many other lines. That reuse distance can exceed the capacity, causing repeated misses. A real processor has multiple cache levels, set associativity, prefetchers, replacement policies and other traffic. Its cache-line size is a property to measure or look up, not a portable constant. The explorer deliberately makes each simplifying assumption visible."
+          ],
+          "pitfall": "A modeled miss is not a fixed number of nanoseconds; overlapping requests and memory-level parallelism can change elapsed cost."
+        },
+        {
+          "id": "working-set",
+          "title": "Working set, reuse and data layout",
+          "paragraphs": [
+            "Temporal locality means reusing a value while it is still nearby in the memory hierarchy. Compute the working set of every live array, not just the input you are looking at. Three 512 by 512 double matrices occupy 6,291,456 bytes, which may exceed a small private cache. Reusing a submatrix before moving on is one motivation for tiling. Moving an already resident line between cores introduces another issue: coherence, discussed in the threading courses.",
+            "Array-of-structures groups all fields of each record; structure-of-arrays groups one field across records. If a kernel reads only positions from a large particle record, separate position arrays can reduce unnecessary traffic and make SIMD access simpler. If it consumes every field per particle, a different layout may win. State the access pattern first, then compare layouts under the same memory footprint and numerical output contract."
+          ],
+          "pitfall": "Padding every structure can inflate the working set enough to erase a hoped-for benefit."
+        },
+        {
+          "id": "locality-tests",
+          "title": "Validate a locality hypothesis",
+          "paragraphs": [
+            "Predict the distinct line count for one sequential pass, then change only traversal order. Vary the model capacity until a previously strided reuse fits. Observe that the checksum is invariant while cache counts change. Use a matrix small enough to inspect addresses by hand before moving to a larger native allocation. Test N=17 as well as powers of two so a convenient alignment does not hide a boundary bug.",
+            "The native program reports row_ms and column_ms over repeated samples. Its values are measured wall time, while the browser’s misses are model counts. Do not derive a real bandwidth from simulated bytes and native time without a justified memory-traffic model. A native profiler can collect relevant cache or memory events where available, but event definitions and permissions differ by machine. Preserve compiler flags, input size and traversal order in the notebook."
+          ],
+          "pitfall": "A small cache-hot array can show little difference between traversals. That is a meaningful result for that working set."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Row-major address",
+          "equation": "offset(row,col) = (row × N + col) × 8 bytes",
+          "symbols": "N is width; row and col are zero-based.",
+          "assumptions": "A flat array of eight-byte doubles with no per-row padding.",
+          "example": "At N=32, (2,3) is element 67, offset 536 bytes."
+        },
+        {
+          "title": "Sequential cold-line lower bound",
+          "equation": "lines = ceil(N² × 8 / L)",
+          "symbols": "L is the modeled line length in bytes.",
+          "assumptions": "Aligned base, one full row-major traversal, and enough capacity to retain the current line.",
+          "example": "For N=32 and L=64, 8192/64 = 128 compulsory lines."
+        }
+      ],
+      "steps": [
+        "Run the default row traversal: predict 1024 accesses and 128 misses.",
+        "Switch to column traversal without changing size or capacity. Read the first addresses in the trace.",
+        "Increase cache capacity to 128 lines. Explain why every matrix line can now remain resident.",
+        "Run the native example at widths 17, 128 and 512, keeping repeated samples. Compare correctness first and timing second."
+      ],
+      "native": {
+        "walkthrough": [
+          "walk() maps (outer,inner) to the same flat allocation in two orders.",
+          "Input values are small integers in double storage, so the sums are exactly representable at the supported limits.",
+          "Each sample changes a[0], checks both traversals against the updated reference and prints both times. The example keeps row-first order; reverse it in a follow-up experiment to test order bias."
+        ],
+        "tests": [
+          {
+            "command": "./locality 17 7",
+            "expect": "Matching row/column checksums and PASS."
+          },
+          {
+            "command": "./locality 512 9",
+            "expect": "Nine measured traversal pairs; interpret warm-up explicitly."
+          }
+        ]
+      },
+      "challenge": {
+        "task": "Write a structure-of-arrays versus array-of-structures comparison for a position-only particle update. Calculate the bytes needed by the useful fields and keep all outputs checked.",
+        "acceptance": [
+          "Give the address formula for each layout.",
+          "Test odd sizes and check every updated position.",
+          "Distinguish a model-based explanation from measured native evidence."
+        ]
+      },
+      "practice": [
+        {
+          "id": "hpc-memory-p1",
+          "prompt": "What is the flat index of row 2, column 3 at width 32?",
+          "options": [
+            {
+              "id": "a",
+              "text": "96"
+            },
+            {
+              "id": "b",
+              "text": "35"
+            },
+            {
+              "id": "c",
+              "text": "67"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "2*32+3 = 67 with zero-based indices.",
+          "lessonId": "row-major"
+        },
+        {
+          "id": "hpc-memory-p2",
+          "prompt": "How many eight-byte doubles fit in a modeled 64-byte line?",
+          "options": [
+            {
+              "id": "a",
+              "text": "4"
+            },
+            {
+              "id": "b",
+              "text": "8"
+            },
+            {
+              "id": "c",
+              "text": "64"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "64/8 = 8 adjacent doubles.",
+          "lessonId": "cache-model"
+        },
+        {
+          "id": "hpc-memory-p3",
+          "prompt": "What is temporal locality?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Reusing data before it leaves the relevant memory level"
+            },
+            {
+              "id": "b",
+              "text": "Always reading a different row"
+            },
+            {
+              "id": "c",
+              "text": "Using the wall clock to order array elements"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Temporal locality concerns reuse over time, not merely adjacent addresses.",
+          "lessonId": "working-set"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "hpc-memory-e1",
+            "prompt": "Why can column traversal cause many misses in the default model?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Column values are not initialized"
+              },
+              {
+                "id": "b",
+                "text": "Reuse distance exceeds the small cache’s capacity"
+              },
+              {
+                "id": "c",
+                "text": "It computes more additions than row traversal"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Both traversals do equal useful work; residency differs.",
+            "lessonId": "cache-model"
+          },
+          {
+            "id": "hpc-memory-e2",
+            "prompt": "Which cache property is explicitly assumed by the explorer?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Fully associative LRU replacement"
+              },
+              {
+                "id": "b",
+                "text": "The exact policy of your CPU"
+              },
+              {
+                "id": "c",
+                "text": "An infinite cache with no evictions"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "This stated model makes counts reproducible but cannot stand in for all hardware behavior.",
+            "lessonId": "cache-model"
+          },
+          {
+            "id": "hpc-memory-e3",
+            "prompt": "What should remain equal after changing traversal order here?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The number of cache misses in every configuration"
+              },
+              {
+                "id": "b",
+                "text": "The native elapsed time exactly"
+              },
+              {
+                "id": "c",
+                "text": "The sum of all elements"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Same data and arithmetic contract require equal useful results.",
+            "lessonId": "locality-tests"
+          },
+          {
+            "id": "hpc-memory-e4",
+            "prompt": "A kernel reads only x positions from large particle records. Which layout is worth testing?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Copying all unused fields every iteration"
+              },
+              {
+                "id": "b",
+                "text": "A separate contiguous x array"
+              },
+              {
+                "id": "c",
+                "text": "Padding every particle to a page"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A structure-of-arrays layout can reduce unused data traffic for this access pattern.",
+            "lessonId": "working-set"
+          },
+          {
+            "id": "hpc-memory-e5",
+            "prompt": "Can modeled cache misses be reported as your CPU’s measured cache misses?",
+            "options": [
+              {
+                "id": "a",
+                "text": "No; collect native counters to make that claim"
+              },
+              {
+                "id": "b",
+                "text": "Yes, if the browser uses the same language"
+              },
+              {
+                "id": "c",
+                "text": "Yes, because all processors use LRU"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The model omits actual associativity, prefetching and other traffic.",
+            "lessonId": "locality-tests"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Intel: memory performance overview",
+          "url": "https://www.intel.com/content/www/us/en/developer/articles/technical/memory-performance-in-a-nutshell.html"
+        },
+        {
+          "title": "LLVM: auto-vectorization",
+          "url": "https://llvm.org/docs/Vectorizers.html"
+        }
+      ]
+    },
+    {
+      "id": "hpc-tiling",
+      "version": 1,
+      "order": 4,
+      "title": "4. Algorithms, loop order and cache tiling",
+      "summary": "Optimize dense matrix multiplication while preserving every output, including edge tiles. Understand why reducing data movement can matter more than removing an arithmetic operation.",
+      "difficulty": "Intermediate",
+      "minutes": 75,
+      "lab": "blocking",
+      "outcomes": [
+        "Count useful operations independently of source-line count.",
+        "Implement and test a tiled loop nest in C or C++.",
+        "Choose tile candidates from working-set estimates and measured evidence."
+      ],
+      "prerequisites": [
+        "hpc-memory"
+      ],
+      "lessons": [
+        {
+          "id": "work-complexity",
+          "title": "Count the work and choose the algorithm",
+          "paragraphs": [
+            "For dense square multiplication C=A*B, each output C[i,j] is the sum over k of A[i,k]*B[k,j]. The conventional operation count is about 2*N^3 FLOPs: one multiply and one add for each triple. This convention counts an FMA as two arithmetic operations even when it is one machine instruction. Doubling N increases conventional work by roughly eight times and matrix storage by four times.",
+            "Before tuning loops, ask whether the task needs a dense matrix, whether structure such as sparsity can be used, and whether a tested numerical library already provides a better kernel. This course implements a small dense kernel to make the mechanisms inspectable. It is not a replacement for a vendor-tuned BLAS. An algorithmic reduction in work and a lower constant factor at the same complexity are different kinds of improvement."
+          ],
+          "pitfall": "Comparing an optimized dense kernel with an incorrect or unnecessary computation is not a meaningful baseline."
+        },
+        {
+          "id": "loop-order",
+          "title": "Preserve dependence while changing traversal",
+          "paragraphs": [
+            "The reference uses i-j-k order, computing one output at a time. The tiled candidate uses blocks in ii-kk-jj order and inner i-k-j order. For a fixed i and k, A[i,k] can be reused while j walks contiguous B and C entries. The k contributions for each output still arrive in increasing order in this implementation. Moving loops is legal only when data dependencies and observable behavior allow it.",
+            "Initialize C to zero before accumulating into it. If a benchmark calls an accumulating kernel repeatedly without resetting C, the candidate computes a different problem on later samples. Input A and B must remain unchanged while outputs are built. Overlapping input and output buffers can introduce dependencies absent from the mathematical operation. State a non-overlap requirement or deliberately handle overlap; do not simply assume it because a pointer is const."
+          ],
+          "pitfall": "const prevents writes through that pointer; it does not prove that another pointer cannot alias the same memory."
+        },
+        {
+          "id": "tile-capacity",
+          "title": "Tile size and partial edges",
+          "paragraphs": [
+            "A rough working-set estimate for three B by B double tiles is 3*B*B*8 bytes. It helps choose a starting range, but usable cache capacity is smaller than the headline total and other data or associativity may interfere. Register blocking, packing and vectorization make real library kernels more sophisticated than this teaching implementation. Sweep several tile sizes rather than treating one cache calculation as an optimality proof.",
+            "When N is not divisible by B, the last tile is partial. Each inner loop must stop at min(block_start+B,N). Test a tile larger than the matrix and a one-element tile as well as a non-divisible size. The browser computes both actual matrices and compares every element; its optional cache trace applies a stated LRU model. A lower modeled miss count supports a locality hypothesis but does not guarantee a native speedup."
+          ],
+          "pitfall": "Writing a full B by B edge tile without clipping accesses memory beyond the array."
+        },
+        {
+          "id": "tiling-validation",
+          "title": "A reproducible optimization experiment",
+          "paragraphs": [
+            "Run N=17 with tile 8, N=33 with tile 7, and N=7 with tile 32. The expected maximum error is zero for the small integer inputs used here. Then use non-integer data and a justified tolerance to investigate floating-point sensitivity. Keep an independent reference after optimizing; testing a candidate against an identical copy of itself proves little.",
+            "The native companion prints one baseline and tiled wall time plus the maximum element error. Treat a single time as an observation; repeat the command or extend it to a sample loop with a defined warm-up policy before drawing a performance conclusion. Include C initialization consistently in the reported scope. Compare the same compiler flags and data, then inspect reports or a profiler to explain what changed."
+          ],
+          "pitfall": "A checksum match does not certify edge tiles. The verification must examine the whole matrix."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Dense multiplication work",
+          "equation": "FLOPs ≈ 2N³",
+          "symbols": "N is square matrix width; FLOPs counts multiply and add separately.",
+          "assumptions": "Conventional dense algorithm; ignore lower-order initialization work.",
+          "example": "N=24 gives 2*24^3 = 27,648 FLOPs."
+        },
+        {
+          "title": "Three-tile working set",
+          "equation": "W ≈ 3B² × 8 bytes",
+          "symbols": "B is tile width; each element is an eight-byte double.",
+          "assumptions": "A rough capacity estimate, not a complete register/cache model.",
+          "example": "B=16 needs about 6,144 bytes; B=32 needs about 24,576 bytes."
+        }
+      ],
+      "steps": [
+        "Run both algorithms at the default settings. Inspect every-entry verification and modeled miss counts.",
+        "Change the tile width to 1, 7 and 32. Predict how the working set and edge handling change.",
+        "Set matrix width to 17; verify that a non-divisible tile still produces the reference output.",
+        "Compile both language variants and run the edge cases listed below. Collect repeated native timings for a larger size."
+      ],
+      "native": {
+        "walkthrough": [
+          "naive() uses a local sum for one output; tiled() resets output and accumulates through clipped blocks.",
+          "BUFFER owns four arrays. The input patterns are deterministic signed integers so reference comparisons are exact at the supported sizes.",
+          "The native algorithm can retain values in registers; the browser trace intentionally counts explicit accesses instead of claiming to reconstruct compiler output."
+        ],
+        "tests": [
+          {
+            "command": "./blocking 17 8",
+            "expect": "max_error=0 and PASS."
+          },
+          {
+            "command": "./blocking 33 7",
+            "expect": "Every partial edge tile matches."
+          },
+          {
+            "command": "./blocking 7 32",
+            "expect": "A tile larger than the matrix is clipped safely."
+          }
+        ]
+      },
+      "challenge": {
+        "task": "Add a tile sweep and export a table of size, tile, correctness, median and spread. Explain why the best tile may change across machines.",
+        "acceptance": [
+          "Check every matrix entry before accepting a sample.",
+          "Include non-divisible sizes and tiles larger than N.",
+          "State whether output initialization is timed."
+        ]
+      },
+      "practice": [
+        {
+          "id": "hpc-tiling-p1",
+          "prompt": "What happens to conventional dense FLOPs when N doubles?",
+          "options": [
+            {
+              "id": "a",
+              "text": "They increase by 2×"
+            },
+            {
+              "id": "b",
+              "text": "They stay constant"
+            },
+            {
+              "id": "c",
+              "text": "They increase by about 8×"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "The leading term is proportional to N cubed.",
+          "lessonId": "work-complexity"
+        },
+        {
+          "id": "hpc-tiling-p2",
+          "prompt": "Why must an accumulating kernel reset C before a fresh product?",
+          "options": [
+            {
+              "id": "a",
+              "text": "The compiler requires all arrays to be identical"
+            },
+            {
+              "id": "b",
+              "text": "Old output would otherwise be added into the new result"
+            },
+            {
+              "id": "c",
+              "text": "Resetting C makes A sparse"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "Each run must compute the same mathematical C=A*B.",
+          "lessonId": "loop-order"
+        },
+        {
+          "id": "hpc-tiling-p3",
+          "prompt": "How much storage do three 16 by 16 double tiles need?",
+          "options": [
+            {
+              "id": "a",
+              "text": "6144 bytes"
+            },
+            {
+              "id": "b",
+              "text": "2048 bytes"
+            },
+            {
+              "id": "c",
+              "text": "768 bytes"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Three tiles times 16 rows times 16 columns times 8 bytes per double gives 6144 bytes.",
+          "lessonId": "tile-capacity"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "hpc-tiling-e1",
+            "prompt": "Which loop bound handles the last partial tile?",
+            "options": [
+              {
+                "id": "a",
+                "text": "N rounded up with no allocation change"
+              },
+              {
+                "id": "b",
+                "text": "min(start + tile, N)"
+              },
+              {
+                "id": "c",
+                "text": "start + tile regardless of N"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Clip the upper bound so no iteration leaves the allocated matrix.",
+            "lessonId": "tile-capacity"
+          },
+          {
+            "id": "hpc-tiling-e2",
+            "prompt": "Does a const input pointer prove non-aliasing?",
+            "options": [
+              {
+                "id": "a",
+                "text": "No; another pointer can refer to the same storage"
+              },
+              {
+                "id": "b",
+                "text": "Yes, always"
+              },
+              {
+                "id": "c",
+                "text": "Only when N is even"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Const and aliasing are separate properties.",
+            "lessonId": "loop-order"
+          },
+          {
+            "id": "hpc-tiling-e3",
+            "prompt": "What is the strongest provided output check?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only comparing the first row"
+              },
+              {
+                "id": "b",
+                "text": "Checking that total time decreased"
+              },
+              {
+                "id": "c",
+                "text": "Maximum error over every matrix entry"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Full-output comparison can detect partial-edge and indexing errors.",
+            "lessonId": "tiling-validation"
+          },
+          {
+            "id": "hpc-tiling-e4",
+            "prompt": "A tile lowers modeled cache misses. What does that establish?",
+            "options": [
+              {
+                "id": "a",
+                "text": "A lower asymptotic operation count"
+              },
+              {
+                "id": "b",
+                "text": "A locality improvement in the stated model to investigate natively"
+              },
+              {
+                "id": "c",
+                "text": "Guaranteed speedup on all CPUs"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A model does not include all compiler and hardware effects.",
+            "lessonId": "tiling-validation"
+          },
+          {
+            "id": "hpc-tiling-e5",
+            "prompt": "Why consider an optimized BLAS for production dense multiplication?",
+            "options": [
+              {
+                "id": "a",
+                "text": "It can provide extensively tuned and tested kernels for the target platform"
+              },
+              {
+                "id": "b",
+                "text": "It makes correctness tests unnecessary"
+              },
+              {
+                "id": "c",
+                "text": "It changes matrix multiplication into constant work"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The teaching kernel explains mechanisms; production libraries often add packing and architecture-specific tuning.",
+            "lessonId": "work-complexity"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Netlib: BLAS interface",
+          "url": "https://www.netlib.org/blas/"
+        },
+        {
+          "title": "NERSC: Roofline performance model",
+          "url": "https://docs.nersc.gov/tools/performance/roofline/"
+        }
+      ]
+    },
+    {
+      "id": "hpc-simd",
+      "version": 1,
+      "order": 5,
+      "title": "5. SIMD and compiler vectorization",
+      "summary": "Expose independent iterations, inspect compiler decisions, and handle vector tails correctly. Connect vectorization to data layout and numerical semantics.",
+      "difficulty": "Intermediate",
+      "minutes": 70,
+      "lab": "simd",
+      "outcomes": [
+        "Distinguish SIMD lanes from threads.",
+        "Use compiler reports to investigate vectorized and missed loops.",
+        "Test remainders, overlap assumptions and floating-point contracts."
+      ],
+      "prerequisites": [
+        "hpc-tiling"
+      ],
+      "lessons": [
+        {
+          "id": "simd-independence",
+          "title": "One operation across multiple elements",
+          "paragraphs": [
+            "SIMD applies an instruction to several data lanes. It is distinct from adding operating-system threads: one thread can use a vector unit, and many threads may each vectorize their inner loops. The AXPY-style kernel here computes out[i]=2*x[i]+y[i]. Each output is independent if the input and output arrays satisfy the stated non-overlap conditions. That makes it a good starting loop for compiler vectorization.",
+            "Lane count depends on instruction-set width and element type, and some architectures support scalable vectors. A model with four lanes illustrates grouping without promising a particular instruction sequence. The browser computes groups and a remainder using ordinary bounded operations. For native evidence, compile with optimization and inspect the compiler report or assembly. Source-level grouping alone does not prove that machine SIMD instructions were emitted."
+          ],
+          "pitfall": "Four lanes do not imply exactly four times the end-to-end speed: memory traffic, dependencies, setup and tails still cost time."
+        },
+        {
+          "id": "vectorization-report",
+          "title": "Ask the compiler what happened",
+          "paragraphs": [
+            "With Clang, add -Rpass=loop-vectorize, -Rpass-missed=loop-vectorize and -Rpass-analysis=loop-vectorize to a release compilation. With GCC, use -fopt-info-vec-optimized and -fopt-info-vec-missed. Read the message for the target loop, not just any loop in initialization or verification. A report may explain an alias check, a dependency or a cost-model decision. Preserve the compiler version and target flags alongside the report.",
+            "Start with a simple counted loop over contiguous memory and move unrelated work out of it. Function calls, early exits, unpredictable accesses and loop-carried dependencies can complicate vectorization. Intrinsics can provide control but tie code to an ISA and introduce alignment, dispatch and maintenance concerns. Compiler reports offer a useful first step before hand-writing architecture-specific code. An optimization report is evidence of a transformation, not a timing result."
+          ],
+          "pitfall": "An aggressive target flag can create binaries that fail on older processors. Record the target and keep deployment compatibility explicit."
+        },
+        {
+          "id": "tails-and-alias",
+          "title": "Remainders and promises",
+          "paragraphs": [
+            "If N=19 and the model width is 4, there are four full groups and three remaining elements. A scalar cleanup loop processes the tail; another implementation might use a masked vector. The skip-tail setting deliberately leaves those outputs wrong so you can see why testing only N=16 misses the bug. Include N=1, N=width-1, N=width and N=width+1 in a test suite.",
+            "In C, restrict is a promise about how memory is accessed through pointers; it is not a request to ignore actual overlap. Standard C++17 has no restrict keyword, though compilers offer extensions. Alignment annotations are promises too. The native examples allocate separate buffers and let the compiler decide how to handle alignment, avoiding unsupported guarantees. If you add intrinsics or annotations, validate those preconditions at the API boundary."
+          ],
+          "pitfall": "A false no-alias or alignment promise can make optimized code incorrect even when an unoptimized run appeared to work."
+        },
+        {
+          "id": "simd-numerics",
+          "title": "Dependencies, reductions and arithmetic changes",
+          "paragraphs": [
+            "A sum reduction has a loop-carried dependency, whereas AXPY has independent element outputs. A compiler may need a different strategy or relaxed floating-point rules to transform a reduction. Multiple accumulators change addition order. Fused multiply-add can change rounding because it rounds once instead of rounding a multiplication and then an addition. Decide which differences your numerical contract permits.",
+            "Use compiler optimization independently from correctness instrumentation: first validate, then build a release executable and inspect reports. Compare every AXPY output, including the tail. For a more realistic experiment, use non-integer inputs with a mixed tolerance and explicitly control floating-point options. The course does not require fast-math; measuring a faster result is useful only when it still meets the required semantics."
+          ],
+          "pitfall": "The browser’s skip-tail example demonstrates a logic error. A successful SIMD report cannot repair such an error."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Groups and remainder",
+          "equation": "groups = floor(N / W); tail = N mod W",
+          "symbols": "N is element count; W is modeled lane count.",
+          "assumptions": "A fixed-width grouping with scalar cleanup.",
+          "example": "N=19 and W=4 give 4 full groups and 3 tail elements."
+        },
+        {
+          "title": "Logical AXPY intensity",
+          "equation": "I = 2 FLOPs / 24 bytes = 1/12 FLOP/byte",
+          "symbols": "Two double loads and one double output store per element.",
+          "assumptions": "Logical traffic only; actual cache/DRAM traffic and write allocation may differ.",
+          "example": "At an assumed 60 GB/s, the simple bandwidth bound would be 5 GFLOP/s."
+        }
+      ],
+      "steps": [
+        "Run length 19 with four lanes and scalar-tail enabled. Confirm all outputs match.",
+        "Select skip-tail. Inspect the last three incorrect outputs.",
+        "Try length 16, then 17. Explain why a divisible test alone gave false confidence.",
+        "Compile the native file with a vectorization report; identify the axpy loop and test lengths 1, 15, 16, 17 and 19."
+      ],
+      "native": {
+        "walkthrough": [
+          "axpy() contains independent per-element work and receives separate allocated buffers.",
+          "The ordinary for loop includes every index below n; the compiler owns its vector and cleanup strategy.",
+          "The native verification checks each expected value 2*(i+1)+3, including the last element."
+        ],
+        "tests": [
+          {
+            "command": "./simd 15",
+            "expect": "incorrect=0; tests a common vector-width boundary."
+          },
+          {
+            "command": "./simd 16",
+            "expect": "incorrect=0 and PASS."
+          },
+          {
+            "command": "./simd 17",
+            "expect": "incorrect=0; one-element remainder stays correct."
+          }
+        ]
+      },
+      "challenge": {
+        "task": "Compare a contiguous AXPY loop with a strided variant, keeping the same output contract. Explain the compiler report and measure representative sizes.",
+        "acceptance": [
+          "Include boundary lengths and independent element checks.",
+          "Record compiler version, target and floating-point flags.",
+          "Do not present modeled lane groups as measured SIMD speedup."
+        ]
+      },
+      "practice": [
+        {
+          "id": "hpc-simd-p1",
+          "prompt": "What distinguishes SIMD from multiple threads?",
+          "options": [
+            {
+              "id": "a",
+              "text": "SIMD requires MPI across machines"
+            },
+            {
+              "id": "b",
+              "text": "SIMD groups data lanes within an instruction stream"
+            },
+            {
+              "id": "c",
+              "text": "SIMD always creates four operating-system threads"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "Threads and vector lanes are separate levels of parallelism.",
+          "lessonId": "simd-independence"
+        },
+        {
+          "id": "hpc-simd-p2",
+          "prompt": "For N=19 and W=4, how many tail elements remain?",
+          "options": [
+            {
+              "id": "a",
+              "text": "3"
+            },
+            {
+              "id": "b",
+              "text": "4"
+            },
+            {
+              "id": "c",
+              "text": "0"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "19 = 4*4 + 3: four full groups consume 16 elements, leaving three for cleanup.",
+          "lessonId": "tails-and-alias"
+        },
+        {
+          "id": "hpc-simd-p3",
+          "prompt": "What does a compiler vectorization report show?",
+          "options": [
+            {
+              "id": "a",
+              "text": "The guaranteed application speedup"
+            },
+            {
+              "id": "b",
+              "text": "All future inputs are safe"
+            },
+            {
+              "id": "c",
+              "text": "Whether and why a loop transformation occurred"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "Transformation evidence must be combined with testing and measurement.",
+          "lessonId": "vectorization-report"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "hpc-simd-e1",
+            "prompt": "Which test exposes skip-tail when width is 4?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Length 17"
+              },
+              {
+                "id": "b",
+                "text": "Length 16 only"
+              },
+              {
+                "id": "c",
+                "text": "An empty timing report"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "17 leaves one unprocessed output if the cleanup is omitted.",
+            "lessonId": "tails-and-alias"
+          },
+          {
+            "id": "hpc-simd-e2",
+            "prompt": "When may a no-alias promise be added?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Whenever it improves the benchmark"
+              },
+              {
+                "id": "b",
+                "text": "Whenever the pointer is const"
+              },
+              {
+                "id": "c",
+                "text": "When actual accesses satisfy its preconditions"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "A false alias promise changes the compiler’s legal assumptions and can break correctness.",
+            "lessonId": "tails-and-alias"
+          },
+          {
+            "id": "hpc-simd-e3",
+            "prompt": "Why can FMA change a floating-point result?",
+            "options": [
+              {
+                "id": "a",
+                "text": "It skips all negative inputs"
+              },
+              {
+                "id": "b",
+                "text": "It rounds a combined multiply-add once"
+              },
+              {
+                "id": "c",
+                "text": "It always uses integer arithmetic"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Rounding once can differ from separate rounded multiplication and addition.",
+            "lessonId": "simd-numerics"
+          },
+          {
+            "id": "hpc-simd-e4",
+            "prompt": "Which loop most directly exposes independent outputs here?",
+            "options": [
+              {
+                "id": "a",
+                "text": "out[i] = 2*x[i] + y[i] on separate buffers"
+              },
+              {
+                "id": "b",
+                "text": "sum += x[i] with strict sequential rounding"
+              },
+              {
+                "id": "c",
+                "text": "a[i] = a[i-1] + 1"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The latter two have loop-carried dependencies; AXPY’s outputs are independent under the buffer contract.",
+            "lessonId": "simd-independence"
+          },
+          {
+            "id": "hpc-simd-e5",
+            "prompt": "Does four modeled lanes guarantee 4× speedup?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Yes for every kernel"
+              },
+              {
+                "id": "b",
+                "text": "Yes if the source is C++"
+              },
+              {
+                "id": "c",
+                "text": "No; other costs and bottlenecks remain"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Useful vector throughput is only part of an application’s elapsed time.",
+            "lessonId": "simd-independence"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "LLVM: auto-vectorization and diagnostics",
+          "url": "https://llvm.org/docs/Vectorizers.html"
+        },
+        {
+          "title": "GCC: optimization reports",
+          "url": "https://gcc.gnu.org/onlinedocs/gcc/Developer-Options.html"
+        }
+      ]
+    },
+    {
+      "id": "hpc-openmp",
+      "version": 1,
+      "order": 6,
+      "title": "6. OpenMP threads, races and reductions",
+      "summary": "Parallelize a numerical loop with explicit data sharing. Understand lost updates, atomics, private reductions and why a native data race has no reliable numerical meaning.",
+      "difficulty": "Intermediate",
+      "minutes": 80,
+      "lab": "reduction",
+      "outcomes": [
+        "Identify shared and private data in a parallel loop.",
+        "Choose a reduction or atomic operation for an accumulation.",
+        "Test thread-count independence and recognize false sharing."
+      ],
+      "prerequisites": [
+        "hpc-simd"
+      ],
+      "lessons": [
+        {
+          "id": "thread-memory",
+          "title": "Shared memory and work ownership",
+          "paragraphs": [
+            "OpenMP adds a parallel programming model to C/C++ through directives and runtime calls. A parallel region forms a team; a worksharing for distributes loop iterations among that team. Threads share the process’s address space, but each thread has its own local execution state. Decide who writes each location. Independent output indices are often easy to distribute; a shared scalar update needs coordination.",
+            "The native sample uses parallel for with default(none), shared(n), and a reduction clause for the sum. The loop index has the required private behavior. Explicit sharing clauses make intent reviewable, but they do not automatically prove an algorithm correct. Compile and link with an OpenMP runtime; a build that ignores the pragma can silently remain serial. Run several thread counts and inspect the runtime configuration."
+          ],
+          "pitfall": "An OpenMP-enabled compiler and runtime are needed. Adding a pragma to an arbitrary browser editor does not create native threads."
+        },
+        {
+          "id": "race-interleaving",
+          "title": "Read-modify-write is not one indivisible step",
+          "paragraphs": [
+            "The expression sum += 1 conceptually reads a value, computes a new value, and writes it. Two workers can both read the same old value and overwrite each other’s updates if synchronization is missing. The browser’s unsafe-shared trace makes every worker read before any worker writes in each round. With four workers and ten rounds it ends at ten rather than forty, demonstrating lost updates.",
+            "In an actual C/C++ program, concurrent conflicting non-atomic accesses without the required synchronization create a data race and undefined behavior. The numerical result is not limited to the browser’s chosen interleaving. A run that happens to produce forty does not make that source safe. The native companion therefore contains only synchronized variants; the unsafe case is explored in a bounded trace rather than executed as supposedly meaningful native arithmetic."
+          ],
+          "pitfall": "volatile is not a replacement for atomic operations, a lock, or an OpenMP reduction."
+        },
+        {
+          "id": "reduction-strategy",
+          "title": "Private reductions versus atomics",
+          "paragraphs": [
+            "A reduction gives workers private partial values and combines them using the declared operation. For addition, each private accumulator starts at the additive identity. This avoids contending on a shared sum every iteration. The alternative atomic update serializes access to the shared scalar at the required memory operation. Both are correct for the bounded integer sum in this example, but their synchronization frequency differs.",
+            "For floating-point addition, a reduction may combine partials in a different order from the serial loop. OpenMP does not promise a bitwise-identical addition tree across every execution. If exact reproducibility matters, choose and document an appropriate algorithm rather than assuming parallel sums are numerically interchangeable. For the native integer example, use a wide enough type so no intermediate or final sum overflows."
+          ],
+          "pitfall": "A reduction is not a general fix for arbitrary dependencies between neighboring loop iterations."
+        },
+        {
+          "id": "thread-validation",
+          "title": "Thread counts, false sharing and runtime costs",
+          "paragraphs": [
+            "Test one, two and four threads, odd input sizes, and a size smaller than the thread count. Compare each synchronized result with n*(n+1)/2 computed in a sufficiently wide type. Keep thread creation and runtime initialization inside or outside the timing scope consistently. OMP_NUM_THREADS requests a team size, but runtime settings and resource limits can affect what is used; record the observed configuration when benchmarking.",
+            "False sharing occurs when threads update different logical values that occupy the same coherence line. It can cause expensive ownership movement without being a data race. Keeping partial accumulators local and writing them less often may help. Padding is a hypothesis to measure, not a portable 64-byte rule; line size and layout vary. Also avoid oversubscribing a host simply because more threads are available to request."
+          ],
+          "pitfall": "A correct multithreaded result can be slower than a serial one when work is too small or synchronization dominates."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Expected integer sum",
+          "equation": "sum(1..N) = N(N+1)/2",
+          "symbols": "N is a positive integer; use a wide intermediate type.",
+          "assumptions": "Every input must be included exactly once without overflow.",
+          "example": "For N=17, the reference is 153."
+        },
+        {
+          "title": "Lost-update demonstration",
+          "equation": "expected = workers × updates; forced unsafe result = updates",
+          "symbols": "Counts describe the specific staged browser interleaving.",
+          "assumptions": "This formula is not a prediction for a native data race, whose behavior is undefined.",
+          "example": "Four workers doing ten increments should give 40; the staged unsafe trace gives 10."
+        }
+      ],
+      "steps": [
+        "Run unsafe-shared with four workers and ten increments. Follow the reads and writes in the first round.",
+        "Switch to atomic and then private-reduction; verify the expected forty updates.",
+        "Increase workers and explain why the unsafe trace loses more updates.",
+        "Compile the native synchronized example. Run with OMP_NUM_THREADS=1, 2 and 4 and compare both sums with the oracle."
+      ],
+      "native": {
+        "walkthrough": [
+          "reduction(+:reduced) declares private partial sums and a combination into reduced.",
+          "atomic_sum uses an omp atomic update inside the loop; no unsynchronized shared increment is executed.",
+          "The expected expression widens n before multiplying and checks both synchronized strategies."
+        ],
+        "tests": [
+          {
+            "command": "OMP_NUM_THREADS=1 ./reduction 17",
+            "expect": "reduction=153 atomic=153 reference=153."
+          },
+          {
+            "command": "OMP_NUM_THREADS=4 ./reduction 100003",
+            "expect": "Both sums equal the printed wide-integer reference."
+          },
+          {
+            "command": "OMP_NUM_THREADS=4 ./reduction 1",
+            "expect": "Correct even when there are fewer iterations than workers."
+          }
+        ]
+      },
+      "challenge": {
+        "task": "Add a benchmark that compares serial, atomic and private-reduction versions over several sizes, preserving a checked result and reporting actual thread configuration.",
+        "acceptance": [
+          "Keep the native program free of deliberate data races.",
+          "Verify results at one, two and four requested threads.",
+          "Explain the difference between a race and false sharing."
+        ]
+      },
+      "practice": [
+        {
+          "id": "hpc-openmp-p1",
+          "prompt": "What must be decided for each writable array element?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Which worker owns or synchronizes its updates"
+            },
+            {
+              "id": "b",
+              "text": "Which text color represents it"
+            },
+            {
+              "id": "c",
+              "text": "Whether the source is shorter in C++"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Clear write ownership is central to safe parallel decomposition.",
+          "lessonId": "thread-memory"
+        },
+        {
+          "id": "hpc-openmp-p2",
+          "prompt": "Why do increments disappear in the forced unsafe trace?",
+          "options": [
+            {
+              "id": "a",
+              "text": "The loop count changes"
+            },
+            {
+              "id": "b",
+              "text": "Integer addition is non-associative for these small values"
+            },
+            {
+              "id": "c",
+              "text": "Workers overwrite updates after reading the same old value"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "Read-modify-write needs coordination when the destination is shared.",
+          "lessonId": "race-interleaving"
+        },
+        {
+          "id": "hpc-openmp-p3",
+          "prompt": "What does a reduction usually avoid?",
+          "options": [
+            {
+              "id": "a",
+              "text": "The need to choose an operation"
+            },
+            {
+              "id": "b",
+              "text": "A shared atomic update on every iteration"
+            },
+            {
+              "id": "c",
+              "text": "All possible floating-point rounding"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "Private partial work reduces repeated shared contention.",
+          "lessonId": "reduction-strategy"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "hpc-openmp-e1",
+            "prompt": "What numerical result is guaranteed by native C++ with a data race?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Exactly the browser’s lost-update count"
+              },
+              {
+                "id": "b",
+                "text": "Always the serial result"
+              },
+              {
+                "id": "c",
+                "text": "None; the behavior is undefined"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "The staged trace is pedagogical; native undefined behavior has no such result guarantee.",
+            "lessonId": "race-interleaving"
+          },
+          {
+            "id": "hpc-openmp-e2",
+            "prompt": "Does volatile make sum += 1 an atomic operation?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only when n is even"
+              },
+              {
+                "id": "b",
+                "text": "No"
+              },
+              {
+                "id": "c",
+                "text": "Yes on every multicore CPU"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Volatile does not provide the required interthread synchronization.",
+            "lessonId": "race-interleaving"
+          },
+          {
+            "id": "hpc-openmp-e3",
+            "prompt": "Why might a floating-point parallel sum differ from serial?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Partial sums may be combined in another rounding order"
+              },
+              {
+                "id": "b",
+                "text": "OpenMP always drops the last input"
+              },
+              {
+                "id": "c",
+                "text": "All parallel arithmetic uses 16-bit integers"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The combination order is not a fixed serial addition chain.",
+            "lessonId": "reduction-strategy"
+          },
+          {
+            "id": "hpc-openmp-e4",
+            "prompt": "What is false sharing?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Two pointers intentionally naming the same scalar without synchronization"
+              },
+              {
+                "id": "b",
+                "text": "A failed exam answer"
+              },
+              {
+                "id": "c",
+                "text": "Different locations on one coherence line being written by different workers"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Logical independence does not prevent cache-line ownership traffic.",
+            "lessonId": "thread-validation"
+          },
+          {
+            "id": "hpc-openmp-e5",
+            "prompt": "Which result is expected for sum(1..17)?",
+            "options": [
+              {
+                "id": "a",
+                "text": "17"
+              },
+              {
+                "id": "b",
+                "text": "153"
+              },
+              {
+                "id": "c",
+                "text": "136"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "17*18/2 = 153. Both synchronized methods must include all seventeen values exactly once.",
+            "lessonId": "reduction-strategy"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "OpenMP 5.2: reduction clause",
+          "url": "https://www.openmp.org/spec-html/5.2/openmpsu52.html"
+        },
+        {
+          "title": "OpenMP: specification reference",
+          "url": "https://www.openmp.org/spec-html/5.2/openmp.html"
+        }
+      ]
+    },
+    {
+      "id": "hpc-scheduling",
+      "version": 1,
+      "order": 7,
+      "title": "7. Scheduling, load balance and locality",
+      "summary": "Distribute uneven work with static blocks, cyclic chunks and dynamic scheduling. Balance useful work against dispatch cost, locality and thread placement.",
+      "difficulty": "Intermediate",
+      "minutes": 70,
+      "lab": "scheduling",
+      "outcomes": [
+        "Explain why equal iteration counts need not mean equal work.",
+        "Compare static and dynamic scheduling using a visible task assignment.",
+        "Investigate false sharing, affinity and first-touch placement on a native host."
+      ],
+      "prerequisites": [
+        "hpc-openmp"
+      ],
+      "lessons": [
+        {
+          "id": "uneven-work",
+          "title": "Count work rather than iterations",
+          "paragraphs": [
+            "Iterations may have unequal cost. A particle near a dense region, an image tile with many features, or an adaptive solver cell can take more work than its neighbors. Dividing iterations equally then leaves some workers idle while the busiest worker finishes. The browser’s heavy-tail dataset makes the first three quarters of tasks cost one model unit and the remaining tasks cost sixteen units, so the imbalance is inspectable.",
+            "Completion time is determined by the most heavily loaded worker when there is no overlap with other phases. Total useful work stays constant across schedules. The lab shows both the sum of useful cost and the maximum worker completion time, plus a bar for each worker. It charges a declared dispatch cost to the worker receiving each chunk. This is a simplified scheduler model; it does not reproduce an operating-system scheduler or the OpenMP implementation’s central queue."
+          ],
+          "pitfall": "Equal numbers of tasks per worker can still produce very unequal completion times."
+        },
+        {
+          "id": "schedule-policies",
+          "title": "Static blocks, cyclic chunks and dynamic assignment",
+          "paragraphs": [
+            "Static-block gives each worker a contiguous portion. It has predictable ownership and often good locality when work per element is uniform. Static-cyclic distributes fixed-size chunks round-robin, spreading a clustered expensive region across workers while keeping deterministic ownership. Dynamic scheduling gives the next chunk to a worker that becomes available; it can adapt to irregular costs but adds dispatch and may weaken locality.",
+            "In OpenMP, schedule(runtime) allows the environment variable OMP_SCHEDULE to choose a policy without recompiling this example. Try static, static,1 and dynamic,1. The native runtime determines its actual schedule; the browser defines its own exact block and tie-breaking rules so its assignments can be reproduced. Do not demand that a native dynamic run match the browser’s worker-by-worker mapping. Compare correctness and broad effects on load and timing."
+          ],
+          "pitfall": "Dynamic scheduling is not automatically best; uniform tiny tasks may spend more on dispatch than they save in balance."
+        },
+        {
+          "id": "chunk-and-placement",
+          "title": "Chunk size, cache lines and NUMA placement",
+          "paragraphs": [
+            "Smaller chunks let idle workers acquire work sooner but increase the number of dispatches. Larger chunks amortize that cost and may preserve contiguous memory access, but one large expensive chunk can become a bottleneck. Sweep chunk sizes while holding the useful workload fixed. The model lets you change dispatch cost to see how the preferred choice can reverse. Task assignment should be a measured design decision, not a default copied into every loop.",
+            "On native systems, placement adds another dimension. OMP_PROC_BIND and OMP_PLACES can control affinity where supported. On NUMA machines, memory pages may be physically closer to one socket; initializing pages using the same ownership pattern as computation can improve first-touch placement. Cyclic writes can also put different workers on neighboring values in one coherence line. Verify topology and runtime behavior; these details are not represented by the browser’s cost bars."
+          ],
+          "pitfall": "Changing affinity, chunk size and data layout together makes the resulting benchmark difficult to explain."
+        },
+        {
+          "id": "schedule-evidence",
+          "title": "Correctness before scheduling claims",
+          "paragraphs": [
+            "The native companion assigns every output element independently. It records the worker id for each task and verifies each value against a serial reference after the parallel loop completes. The artificial task performs repeated square roots, with extra iterations near the end, so it has actual uneven computational work. Worker counts show ownership, not the exact time spent per worker.",
+            "Run several samples for each policy at the same requested thread count. Keep runtime initialization and thread creation scope consistent and print or record the OpenMP environment. A schedule that is faster for the synthetic heavy tail may be worse for a real memory-bound kernel. Use the sandbox to develop a hypothesis, then measure a representative workload and retain the numerical oracle when changing its schedule."
+          ],
+          "pitfall": "If two iterations write the same output unsafely, changing the schedule cannot make the program reliably correct."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Useful worker utilization",
+          "equation": "U = useful_work / (P × completion_time)",
+          "symbols": "P is worker count; work and time use the same modeled cost units.",
+          "assumptions": "Costs are additive; each task executes exactly once; dispatch contributes time but not useful work.",
+          "example": "Useful work 96, four workers and a makespan of 32 give U=75%."
+        },
+        {
+          "title": "Chunk dispatch count",
+          "equation": "chunks = ceil(N / C)",
+          "symbols": "N is task count; C is chunk size.",
+          "assumptions": "Applies to cyclic/dynamic fixed chunks; static-block uses at most one block per active worker here.",
+          "example": "For 24 tasks and chunk size 4, there are 6 dispatches."
+        }
+      ],
+      "steps": [
+        "Run static-block on the default heavy-tail workload and identify the slowest worker.",
+        "Switch to static-cyclic and dynamic with chunk size 1. Compare assignment and useful utilization.",
+        "Increase dispatch cost and chunk size independently; find a case where dynamic scheduling loses its advantage.",
+        "Compile the native program and compare OMP_SCHEDULE=static, static,1 and dynamic,1 with four requested threads."
+      ],
+      "native": {
+        "walkthrough": [
+          "task() makes the last quarter much more expensive with additional square-root iterations.",
+          "The runtime loop writes output[i] and owners[i], so each iteration has separate write ownership.",
+          "The serial reference is outside the timed region. The final loop compares every result; the owner summary counts tasks rather than pretending to measure per-worker time."
+        ],
+        "tests": [
+          {
+            "command": "OMP_NUM_THREADS=4 OMP_SCHEDULE=static ./scheduling 257",
+            "expect": "All 257 outputs match; inspect uneven ownership cost."
+          },
+          {
+            "command": "OMP_NUM_THREADS=4 OMP_SCHEDULE=dynamic,1 ./scheduling 257",
+            "expect": "PASS; assignment can vary by run."
+          },
+          {
+            "command": "OMP_NUM_THREADS=4 OMP_SCHEDULE=static,1 ./scheduling 17",
+            "expect": "Correct with a non-divisible iteration count."
+          }
+        ]
+      },
+      "challenge": {
+        "task": "Write a scheduling report for uniform and heavy-tail work. Include chunk size, raw samples, environment and an explanation of where dispatch costs outweigh load balance.",
+        "acceptance": [
+          "Keep the useful dataset identical within each comparison.",
+          "Test one worker as well as multiple workers.",
+          "Use actual native timings for performance claims and model bars for reasoning."
+        ]
+      },
+      "practice": [
+        {
+          "id": "hpc-scheduling-p1",
+          "prompt": "Why can equal task counts still leave workers idle?",
+          "options": [
+            {
+              "id": "a",
+              "text": "The total useful work changes whenever a thread starts"
+            },
+            {
+              "id": "b",
+              "text": "Tasks may have different costs"
+            },
+            {
+              "id": "c",
+              "text": "OpenMP never supports odd iteration counts"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "Balance useful work, not merely counts.",
+          "lessonId": "uneven-work"
+        },
+        {
+          "id": "hpc-scheduling-p2",
+          "prompt": "Which policy distributes chunks round-robin?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Static-cyclic"
+            },
+            {
+              "id": "b",
+              "text": "Static-block with one block"
+            },
+            {
+              "id": "c",
+              "text": "Always the same dynamic assignment"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Cyclic chunk ownership is deterministic in the model.",
+          "lessonId": "schedule-policies"
+        },
+        {
+          "id": "hpc-scheduling-p3",
+          "prompt": "How many fixed chunks cover 24 tasks at chunk size 4?",
+          "options": [
+            {
+              "id": "a",
+              "text": "4"
+            },
+            {
+              "id": "b",
+              "text": "24"
+            },
+            {
+              "id": "c",
+              "text": "6"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "ceil(24/4) = 6 chunks, so this policy incurs six dispatch charges.",
+          "lessonId": "chunk-and-placement"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "hpc-scheduling-e1",
+            "prompt": "When might static-block be a good choice?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Uniform work with useful contiguous ownership"
+              },
+              {
+                "id": "b",
+                "text": "Every possible irregular workload"
+              },
+              {
+                "id": "c",
+                "text": "When outputs have unsynchronized shared writes"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Predictable ownership can reduce dispatch and preserve locality.",
+            "lessonId": "schedule-policies"
+          },
+          {
+            "id": "hpc-scheduling-e2",
+            "prompt": "What can make very small dynamic chunks slower?",
+            "options": [
+              {
+                "id": "a",
+                "text": "A guaranteed increase in useful arithmetic"
+              },
+              {
+                "id": "b",
+                "text": "The loop becomes mathematically undefined solely because it is dynamic"
+              },
+              {
+                "id": "c",
+                "text": "Dispatch overhead and reduced locality"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Scheduling overhead is real even when the numerical work is unchanged.",
+            "lessonId": "chunk-and-placement"
+          },
+          {
+            "id": "hpc-scheduling-e3",
+            "prompt": "Does native dynamic ownership have to match the browser trace?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only when the UI is in English"
+              },
+              {
+                "id": "b",
+                "text": "No; actual availability and runtime behavior vary"
+              },
+              {
+                "id": "c",
+                "text": "Yes, rank ids specify identical wall times"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The browser uses deterministic tie-breaking; native scheduling follows real execution.",
+            "lessonId": "schedule-policies"
+          },
+          {
+            "id": "hpc-scheduling-e4",
+            "prompt": "What does first-touch concern on a NUMA host?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Which memory locality is established when pages are first accessed"
+              },
+              {
+                "id": "b",
+                "text": "The first click in the browser"
+              },
+              {
+                "id": "c",
+                "text": "Which source file is opened first"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Page placement and thread affinity can affect access cost.",
+            "lessonId": "chunk-and-placement"
+          },
+          {
+            "id": "hpc-scheduling-e5",
+            "prompt": "What is required before comparing schedules?",
+            "options": [
+              {
+                "id": "a",
+                "text": "A fixed screenshot of the bars"
+              },
+              {
+                "id": "b",
+                "text": "Always choosing the largest thread count"
+              },
+              {
+                "id": "c",
+                "text": "A checked workload with independent or synchronized writes"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Scheduling cannot fix a data race or change the required numerical answer.",
+            "lessonId": "schedule-evidence"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "OpenMP 5.2: specification",
+          "url": "https://www.openmp.org/spec-html/5.2/openmp.html"
+        },
+        {
+          "title": "LLNL: OpenMP tutorial",
+          "url": "https://hpc-tutorials.llnl.gov/openmp/"
+        }
+      ]
+    },
+    {
+      "id": "hpc-scaling",
+      "version": 1,
+      "order": 8,
+      "title": "8. Scaling, Roofline and accelerator decisions",
+      "summary": "Use Amdahl’s law and a resource ceiling to choose the next experiment. Separate strong scaling, weak scaling, logical traffic and measured bandwidth.",
+      "difficulty": "Advanced",
+      "minutes": 80,
+      "lab": "scaling",
+      "outcomes": [
+        "Calculate speedup and parallel efficiency with stated assumptions.",
+        "Use arithmetic intensity to identify a resource-bound hypothesis.",
+        "Explain transfer costs and when a CPU/GPU comparison is fair."
+      ],
+      "prerequisites": [
+        "hpc-scheduling"
+      ],
+      "lessons": [
+        {
+          "id": "strong-weak",
+          "title": "Strong and weak scaling",
+          "paragraphs": [
+            "Strong scaling holds total problem size fixed and increases workers. It asks how much sooner the same answer is available. Weak scaling grows the problem with the number of workers so useful work per worker stays approximately constant. It asks whether the system handles a larger total problem in similar time. Keep the two protocols separate: a larger workload finishing at the same time is not a strong-scaling speedup.",
+            "Amdahl’s simple fixed-work model divides baseline time into a serial fraction and a perfectly parallel fraction. Even an unlimited number of workers cannot remove the serial part. The explorer optionally adds overhead as a fraction of the one-worker baseline; it holds that entered overhead constant across the displayed rows to make the assumption explicit. Real overhead often changes with worker count and workload, so fit a model to evidence rather than treating the slider as a hardware forecast."
+          ],
+          "pitfall": "More workers can reduce parallel work time while increasing communication, contention or synchronization enough to make the total slower."
+        },
+        {
+          "id": "roofline-bound",
+          "title": "Arithmetic intensity and a resource ceiling",
+          "paragraphs": [
+            "Arithmetic intensity is useful FLOPs divided by bytes transferred at a specified memory level. Combining an attainable compute ceiling and attainable bandwidth gives a Roofline bound: performance cannot exceed either compute capacity or bandwidth times intensity under that model. The ridge point is where those limits meet. Below it, investigate traffic and reuse; above it, investigate compute efficiency and other limits. A bound is not a promise of achieved throughput.",
+            "The browser accepts assumed GB/s, GFLOP/s and FLOP/byte values in compatible decimal units. It reports a ceiling and the ridge, separately from the Amdahl result. It does not multiply them to invent a predicted application rate. A measured dot on a real Roofline plot requires measured time and a defensible operation/traffic count. Cache-level intensity differs from DRAM-level intensity, so label the level and keep both sides of the ratio consistent."
+          ],
+          "pitfall": "Counting source-level loads as DRAM bytes can overcount cache reuse or miss write-allocation traffic."
+        },
+        {
+          "id": "axpy-measurement",
+          "title": "Measure a simple bandwidth-heavy kernel",
+          "paragraphs": [
+            "The native companion computes out=2*x+y with OpenMP, checks all outputs, and reports measured kernel time. It counts two logical FLOPs and 24 logical bytes per double element: two loads and one store. That logical arithmetic intensity is 1/12 FLOP per byte. The reported logical_GB_s is useful algorithmic traffic divided by time; it is deliberately not labeled a hardware-counter measurement of DRAM bandwidth.",
+            "Run the same N with one, two and four threads, retain repeated samples and state the warm-up policy. A small array may fit in cache; a large array may reach a memory-bandwidth plateau before all cores are useful. A timer reading below resolution is reported as unavailable, and you should increase N. Sanitizer runs help check memory behavior but should be separate from release performance data."
+          ],
+          "pitfall": "The biggest FLOP/s number can come from a changed workload or precision. Keep the output contract and operation count visible."
+        },
+        {
+          "id": "accelerator-economics",
+          "title": "NUMA, accelerators and end-to-end cost",
+          "paragraphs": [
+            "A GPU offers many parallel execution resources, but offloading introduces allocation, transfer, launch and synchronization costs. A GPU kernel benchmark may omit transfers when data stays resident across many steps; an application benchmark must include transfers that the application actually performs. For asynchronous execution, synchronize the work before stopping an elapsed timer. Otherwise you may time only a queue submission. This path’s native programs execute on CPUs; the browser does not provide a CUDA or GPU runtime.",
+            "Consider offload when the problem exposes substantial parallel work and enough reuse or arithmetic to amortize movement. Keep large data resident where possible, batch useful work, and compare the complete pipeline with a checked CPU reference. On multi-socket CPUs, first-touch and affinity can change which bandwidth is available. On clusters, communication may dominate. Use these models to decide whether to study vectorization, locality, more CPU workers, communication, or a separate verified accelerator implementation."
+          ],
+          "pitfall": "A GPU kernel speedup alone does not establish an end-to-end application speedup."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Amdahl with explicit overhead",
+          "equation": "S(P) = 1 / (s + (1−s)/P + o); E = S/P",
+          "symbols": "s is serial fraction; o is overhead divided by baseline time; P is workers.",
+          "assumptions": "Fixed useful work; perfect parallel scaling of the nonserial part; entered overhead held constant.",
+          "example": "s=0.1, P=8 and o=0 give S=4.706 and E=58.82%."
+        },
+        {
+          "title": "Roofline ceiling",
+          "equation": "R ≤ min(Rpeak, B × I); Iridge = Rpeak/B",
+          "symbols": "Rpeak is GFLOP/s, B is GB/s, I is FLOP/byte.",
+          "assumptions": "Both bandwidth and byte count refer to the same memory level; this is an upper bound.",
+          "example": "B=50 and I=0.25 give a 12.5 GFLOP/s bandwidth ceiling below a 200 GFLOP/s compute ceiling."
+        }
+      ],
+      "steps": [
+        "Run the default scaling model. Check speedup about 4.706 and Roofline ceiling 12.5 GFLOP/s.",
+        "Increase workers while leaving a 10% serial fraction. Explain why speedup approaches a limit.",
+        "Raise intensity across the ridge while holding bandwidth and peak fixed. Identify which bound becomes active.",
+        "Compile the native AXPY example and collect repeated samples for one, two and four threads at the same N. Paste relevant times into the benchmarking lab."
+      ],
+      "native": {
+        "walkthrough": [
+          "omp_get_wtime brackets the parallel AXPY region. Verification occurs after it.",
+          "Each sample changes x[0] before timing, keeping the result observable and independently checked.",
+          "FLOP/s and logical_GB_s use the measured duration; a zero-resolution measurement prints NA rather than an infinite rate."
+        ],
+        "tests": [
+          {
+            "command": "OMP_NUM_THREADS=1 ./scaling 1000000 9",
+            "expect": "Checked CSV samples with measured kernel_ms."
+          },
+          {
+            "command": "OMP_NUM_THREADS=4 ./scaling 1000000 9",
+            "expect": "The same workload with a different requested thread count."
+          },
+          {
+            "command": "OMP_NUM_THREADS=2 ./scaling 100003 3",
+            "expect": "Odd input size passes every-output verification."
+          }
+        ]
+      },
+      "challenge": {
+        "task": "Produce one strong-scaling table and a Roofline hypothesis for AXPY. State the memory level and explain which additional measurement would support the hypothesis.",
+        "acceptance": [
+          "Hold N and precision fixed for strong scaling.",
+          "Report repeated elapsed times and output checks.",
+          "Label logical traffic, measured timing and assumed resource ceilings separately."
+        ]
+      },
+      "practice": [
+        {
+          "id": "hpc-scaling-p1",
+          "prompt": "What remains fixed during strong scaling?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Work per worker while total work grows"
+            },
+            {
+              "id": "b",
+              "text": "The wall time by definition"
+            },
+            {
+              "id": "c",
+              "text": "Total problem size and useful work"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "Strong scaling compares the same problem with more workers.",
+          "lessonId": "strong-weak"
+        },
+        {
+          "id": "hpc-scaling-p2",
+          "prompt": "What is the ideal speedup limit with a 10% serial fraction?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Unlimited"
+            },
+            {
+              "id": "b",
+              "text": "10×"
+            },
+            {
+              "id": "c",
+              "text": "100×"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "As P grows, the denominator approaches 0.1.",
+          "lessonId": "strong-weak"
+        },
+        {
+          "id": "hpc-scaling-p3",
+          "prompt": "At 50 GB/s and 0.25 FLOP/byte, what is the bandwidth ceiling?",
+          "options": [
+            {
+              "id": "a",
+              "text": "12.5 GFLOP/s"
+            },
+            {
+              "id": "b",
+              "text": "200 GFLOP/s"
+            },
+            {
+              "id": "c",
+              "text": "0.005 GFLOP/s"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Multiply bandwidth by arithmetic intensity using consistent decimal units.",
+          "lessonId": "roofline-bound"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "hpc-scaling-e1",
+            "prompt": "What does the Roofline output represent?",
+            "options": [
+              {
+                "id": "a",
+                "text": "A guaranteed achieved application rate"
+              },
+              {
+                "id": "b",
+                "text": "A resource upper bound under the entered assumptions"
+              },
+              {
+                "id": "c",
+                "text": "An actual CPU benchmark from this page"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Other effects can keep measured performance below the bound.",
+            "lessonId": "roofline-bound"
+          },
+          {
+            "id": "hpc-scaling-e2",
+            "prompt": "How many logical bytes does double out=2*x+y use per element here?",
+            "options": [
+              {
+                "id": "a",
+                "text": "24"
+              },
+              {
+                "id": "b",
+                "text": "8"
+              },
+              {
+                "id": "c",
+                "text": "2"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Two eight-byte loads plus one eight-byte store, before modeling actual cache traffic.",
+            "lessonId": "axpy-measurement"
+          },
+          {
+            "id": "hpc-scaling-e3",
+            "prompt": "Why synchronize before stopping a GPU work timer?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Synchronization makes the result exact by definition"
+              },
+              {
+                "id": "b",
+                "text": "All GPUs execute synchronously by default"
+              },
+              {
+                "id": "c",
+                "text": "Otherwise the timer may measure submission instead of completion"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Asynchronous launch and completed execution are different timing boundaries.",
+            "lessonId": "accelerator-economics"
+          },
+          {
+            "id": "hpc-scaling-e4",
+            "prompt": "What is weak scaling designed to investigate?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only one worker with changing compiler flags"
+              },
+              {
+                "id": "b",
+                "text": "Larger total workloads at approximately fixed work per worker"
+              },
+              {
+                "id": "c",
+                "text": "The same fixed workload finishing faster"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Weak scaling asks how resources handle proportionally growing work.",
+            "lessonId": "strong-weak"
+          },
+          {
+            "id": "hpc-scaling-e5",
+            "prompt": "A kernel uses a faster accelerator but transfers dominate. Which metric matters for the application?",
+            "options": [
+              {
+                "id": "a",
+                "text": "End-to-end elapsed time including required transfers"
+              },
+              {
+                "id": "b",
+                "text": "Only launch latency"
+              },
+              {
+                "id": "c",
+                "text": "The theoretical peak FLOP/s of the device"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The user waits for the entire required pipeline.",
+            "lessonId": "accelerator-economics"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "NERSC: Roofline performance model",
+          "url": "https://docs.nersc.gov/tools/performance/roofline/"
+        },
+        {
+          "title": "LLNL: parallel computing and scaling",
+          "url": "https://hpc.llnl.gov/documentation/tutorials/introduction-parallel-computing-tutorial"
+        }
+      ]
+    },
+    {
+      "id": "hpc-mpi",
+      "version": 1,
+      "order": 9,
+      "title": "9. MPI: distributed memory and collectives",
+      "summary": "Partition uneven data across processes, scatter it with counts and displacements, reduce partial results, and measure the slowest rank’s elapsed work.",
+      "difficulty": "Advanced",
+      "minutes": 90,
+      "lab": "mpi",
+      "outcomes": [
+        "Distinguish MPI process memory from OpenMP shared memory.",
+        "Cover all elements with balanced counts, including zero-count ranks.",
+        "Use collectives with matching signatures and a consistent call order."
+      ],
+      "prerequisites": [
+        "hpc-scaling"
+      ],
+      "lessons": [
+        {
+          "id": "mpi-processes",
+          "title": "Ranks, communicators and separate address spaces",
+          "paragraphs": [
+            "MPI programs consist of processes, each with its own address space. A rank identifies a process within a communicator; it is not a CPU core id or a globally unique machine id. MPI_COMM_WORLD groups the launched processes in these examples. MPI_Init starts the MPI environment, Comm_rank and Comm_size discover the rank and group size, and MPI_Finalize ends MPI use. Every process runs main(), so guard root-only initialization and printing explicitly.",
+            "Compile using mpicc or mpicxx from the installed MPI implementation so the correct headers and libraries are used. The C++ program uses MPI’s C function interface with C++ containers; it does not depend on the removed legacy MPI C++ bindings. A local mpiexec -n 4 run exercises real MPI processes on one machine. It validates communication behavior but is not evidence of multi-node network performance."
+          ],
+          "pitfall": "An ordinary pointer value from rank zero is not a valid way to name rank zero’s buffer from another process."
+        },
+        {
+          "id": "mpi-partition",
+          "title": "Counts, remainders and displacements",
+          "paragraphs": [
+            "For N elements and P ranks, assign floor(N/P) elements to each rank and one extra element to the first N mod P ranks. A rank’s displacement is the number of earlier elements: rank*floor(N/P)+min(rank,N mod P). For N=17 and P=4, counts are 5,4,4,4 and displacements are 0,5,9,13. Each rank’s range starts at its displacement and contains count elements.",
+            "When P>N, some ranks own zero elements. They still participate in the collective sequence with count zero. The native example allocates at least one local slot so it can provide a valid buffer even for a zero count. The browser’s drop-remainder setting intentionally assigns only floor(N/P) per rank and exposes the missing tail. Test uneven sizes and fewer elements than ranks; divisible sizes alone conceal this defect."
+          ],
+          "pitfall": "For Scatterv, displacements use units of the send datatype extent, not arbitrary byte counts."
+        },
+        {
+          "id": "mpi-collectives",
+          "title": "Scatterv, Reduce and consistent participation",
+          "paragraphs": [
+            "Rank zero initializes the global array. MPI_Scatterv distributes different counts using MPI_DOUBLE. Each rank computes a private local sum. MPI_Reduce combines one double from each rank with MPI_SUM and places the result on root. All ranks in the communicator participate in the same ordered collective calls, with compatible counts, datatypes, operations and root. A root-only if around an entire collective can leave other ranks waiting forever.",
+            "A collective is not a substitute for understanding data dependencies or buffer lifetimes. Complete a communication operation before reusing buffers that it still accesses; nonblocking operations require completion through their requests. For this blocking example, the communication has completed on return under the operation’s defined semantics. Reduction trees and algorithms are implementation choices, and floating-point sums may use a different order than a serial accumulation."
+          ],
+          "pitfall": "Calling a reduction with MPI_INT while the buffer holds doubles is a datatype mismatch, not an optimization."
+        },
+        {
+          "id": "mpi-timing",
+          "title": "Measure a distributed phase and propagate failures",
+          "paragraphs": [
+            "The companion uses a barrier before its timed scatter/compute/reduce phase. Each rank measures elapsed time using MPI_Wtime on that rank, then a separate MPI_Reduce with MPI_MAX reports the largest local elapsed duration. The clocks need not share an absolute epoch to compare local durations. This timing convention helps identify the slowest participant, but does not include launch or the entire application. State that scope.",
+            "Only root has the reduced numerical result, so root checks it against N*(N+1)/2 and broadcasts the failure flag before all ranks finalize. The program exits consistently on a numerical mismatch. The browser also shows an illustrative tree-latency term ceil(log2(P))*latency, but actual MPI implementations may select other collective algorithms. Use local runs for behavior and a configured multi-node allocation for network measurements."
+          ],
+          "pitfall": "Timing rank zero alone can miss a bottleneck elsewhere; reporting a synthetic tree cost as measured MPI latency is equally misleading."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Balanced partition",
+          "equation": "count(r)=floor(N/P)+(r < N mod P); start(r)=r*floor(N/P)+min(r,N mod P)",
+          "symbols": "r is zero-based rank, N is elements and P is ranks.",
+          "assumptions": "Contiguous partitions cover every element once; zero counts are permitted.",
+          "example": "N=17,P=4 gives counts [5,4,4,4] and starts [0,5,9,13]."
+        },
+        {
+          "title": "Latency-only tree illustration",
+          "equation": "Tlatency ≈ ceil(log2(P)) × L",
+          "symbols": "L is an entered message latency in model units.",
+          "assumptions": "Illustrative binary tree; excludes bandwidth, compute and real MPI algorithm selection.",
+          "example": "P=4 and L=5 produce 10 model units, not a measured network time."
+        }
+      ],
+      "steps": [
+        "Run balanced partitioning for N=17 and four ranks. Check counts, starts, local sums and total 153.",
+        "Select drop-remainder and locate the uncovered final element.",
+        "Use N=3 and eight ranks with balanced partitioning. Explain zero-count participation.",
+        "Compile the native example with MPI wrappers and run 1, 2 and 4 processes, including N=1 and N=17."
+      ],
+      "native": {
+        "walkthrough": [
+          "Root alone fills global; counts and displacements are constructed consistently on all ranks.",
+          "Scatterv sends each rank its segment. Local sums are reduced to root using matching double types.",
+          "A maximum elapsed time and a broadcast failure flag are separate collectives reached by every process."
+        ],
+        "tests": [
+          {
+            "command": "mpiexec -n 4 ./mpi 17",
+            "expect": "total=153 and PASS."
+          },
+          {
+            "command": "mpiexec -n 4 ./mpi 1",
+            "expect": "Zero-count ranks participate and total=1."
+          },
+          {
+            "command": "mpiexec -n 2 ./mpi 10003",
+            "expect": "An uneven large sum matches the reference."
+          }
+        ]
+      },
+      "challenge": {
+        "task": "Extend the example to compute both a global sum and a maximum, keeping each operation’s datatype and identity clear. Record launch and timed-phase scope.",
+        "acceptance": [
+          "Test uneven and zero-count partitions.",
+          "Make every rank reach the same collective sequence.",
+          "Propagate failure status and distinguish local from multi-node evidence."
+        ]
+      },
+      "practice": [
+        {
+          "id": "hpc-mpi-p1",
+          "prompt": "What does a rank identify?",
+          "options": [
+            {
+              "id": "a",
+              "text": "A fixed physical CPU core number"
+            },
+            {
+              "id": "b",
+              "text": "A pointer shared by all machines"
+            },
+            {
+              "id": "c",
+              "text": "A process within a communicator"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "The communicator defines the rank namespace.",
+          "lessonId": "mpi-processes"
+        },
+        {
+          "id": "hpc-mpi-p2",
+          "prompt": "What are the balanced counts for N=17,P=4?",
+          "options": [
+            {
+              "id": "a",
+              "text": "17,17,17,17"
+            },
+            {
+              "id": "b",
+              "text": "5,4,4,4"
+            },
+            {
+              "id": "c",
+              "text": "4,4,4,4"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "The first rank receives the single remainder element.",
+          "lessonId": "mpi-partition"
+        },
+        {
+          "id": "hpc-mpi-p3",
+          "prompt": "What unit does Scatterv displacement use?",
+          "options": [
+            {
+              "id": "a",
+              "text": "The send datatype’s extent"
+            },
+            {
+              "id": "b",
+              "text": "Always one byte"
+            },
+            {
+              "id": "c",
+              "text": "Milliseconds"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Counts and displacements must agree with the datatype layout.",
+          "lessonId": "mpi-partition"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "hpc-mpi-e1",
+            "prompt": "Should a zero-count rank skip the collective?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only if it has the largest rank id"
+              },
+              {
+                "id": "b",
+                "text": "No; it still participates with count zero"
+              },
+              {
+                "id": "c",
+                "text": "Yes, always"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Collective participation is by communicator membership, not whether a rank owns useful elements.",
+            "lessonId": "mpi-collectives"
+          },
+          {
+            "id": "hpc-mpi-e2",
+            "prompt": "Which reduction reports the slowest local duration?",
+            "options": [
+              {
+                "id": "a",
+                "text": "MPI_MAX on elapsed durations"
+              },
+              {
+                "id": "b",
+                "text": "MPI_SUM on absolute clock readings"
+              },
+              {
+                "id": "c",
+                "text": "MPI_MIN on rank ids"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Maximum local elapsed time captures the slowest measured participant under this timing convention.",
+            "lessonId": "mpi-timing"
+          },
+          {
+            "id": "hpc-mpi-e3",
+            "prompt": "What is wrong with wrapping MPI_Reduce in if(rank==0)?",
+            "options": [
+              {
+                "id": "a",
+                "text": "It makes the arithmetic more accurate"
+              },
+              {
+                "id": "b",
+                "text": "It guarantees nonblocking completion"
+              },
+              {
+                "id": "c",
+                "text": "Other ranks do not participate in the required collective"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "All communicator members must call the matching collective.",
+            "lessonId": "mpi-collectives"
+          },
+          {
+            "id": "hpc-mpi-e4",
+            "prompt": "Does a four-process local run certify cluster network performance?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only if written in C++"
+              },
+              {
+                "id": "b",
+                "text": "No; it validates behavior on one host"
+              },
+              {
+                "id": "c",
+                "text": "Yes, all MPI networks have identical latency"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Multi-node behavior and performance require a configured distributed environment.",
+            "lessonId": "mpi-processes"
+          },
+          {
+            "id": "hpc-mpi-e5",
+            "prompt": "What sum should the global values 1 through 17 produce?",
+            "options": [
+              {
+                "id": "a",
+                "text": "153"
+              },
+              {
+                "id": "b",
+                "text": "136"
+              },
+              {
+                "id": "c",
+                "text": "68"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "17*18/2 = 153, independent of the partition count.",
+            "lessonId": "mpi-partition"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "MPI 4.1: scatter operations",
+          "url": "https://www.mpi-forum.org/docs/mpi-4.1/mpi41-report/node124.htm"
+        },
+        {
+          "title": "Open MPI: MPI_Reduce",
+          "url": "https://docs.open-mpi.org/en/v5.0.x/man-openmpi/man3/MPI_Reduce.3.html"
+        }
+      ]
+    },
+    {
+      "id": "hpc-capstone",
+      "version": 1,
+      "order": 10,
+      "title": "10. Capstone: a verified distributed stencil",
+      "summary": "Build a complete HPC experiment around a time-stepped stencil: boundaries, double buffering, halo exchange, full-output testing and an honest performance report.",
+      "difficulty": "Advanced",
+      "minutes": 120,
+      "lab": "stencil",
+      "outcomes": [
+        "Implement a Jacobi-style update with explicit boundary conditions.",
+        "Exchange current halos without deadlocking or overwriting dependencies.",
+        "Deliver source, test evidence and reproducible scaling results."
+      ],
+      "prerequisites": [
+        "hpc-mpi"
+      ],
+      "lessons": [
+        {
+          "id": "stencil-contract",
+          "title": "Specify the stencil before parallelizing",
+          "paragraphs": [
+            "The problem is a one-dimensional array with N interior cells and two fixed boundary cells. The left boundary is 100 and the right boundary is 0; all interior cells start at zero. At each step, an interior cell becomes the average of its old left neighbor, its old value and its old right neighbor. This is a three-point Jacobi-style smoothing recurrence. It illustrates a dependency pattern; it is not a calibrated physical heat solver.",
+            "All updates for step t+1 must read step t. Use two buffers or otherwise preserve the old values until every dependent update is finished. Updating in place from left to right changes the recurrence because later cells see already-updated neighbors. The native program keeps separate old/new buffers, copies completed interior values, and leaves global boundaries fixed. The browser computes an independent serial array alongside its partitioned result."
+          ],
+          "pitfall": "A plausible-looking smooth curve can come from the wrong recurrence. Check exact problem definition and every output cell."
+        },
+        {
+          "id": "halo-exchange",
+          "title": "Partition ownership and fresh halos",
+          "paragraphs": [
+            "Each rank owns a contiguous set of interior cells and two halo slots holding neighbor values just outside its local range. At the beginning of every step, exchange the edge interior values needed by neighboring ranks. For a partition count greater than one, an internal interface needs one value in each direction. The outermost boundary values remain fixed and are not overwritten by a nonexistent neighbor.",
+            "The browser’s stale-halo option captures neighbor values once and then reuses them, demonstrating why the one-step answer may pass while later steps drift. With N=17, four partitions and ten steps, information should move through interfaces over time. Reusing initial halos blocks that propagation. The browser permits empty partitions by skipping them; the native stencil instead documents and enforces P<=N so every communicating rank owns at least one interior cell."
+          ],
+          "pitfall": "Different empty-partition policies are valid only when explicit. Never let a rank send a nonexistent interior element."
+        },
+        {
+          "id": "mpi-exchange",
+          "title": "Matching communication without buffering assumptions",
+          "paragraphs": [
+            "The native implementation uses two MPI_Sendrecv calls per step. One sends the leftmost interior value left and receives the right halo from the right; the other sends the rightmost interior value right and receives the left halo. Distinct tags separate directions, with matching peers and MPI_DOUBLE datatypes. MPI_PROC_NULL represents a missing neighbor and leaves the boundary buffer unchanged on a null receive.",
+            "Sendrecv avoids relying on eager buffering to make a sequence of blocking sends finish. A later extension could post nonblocking receives and sends, compute strictly interior cells, wait for requests, then compute boundary-adjacent cells. That extension must retain buffers until communication completes and prove that computation does not consume stale halos. Merely replacing function names with nonblocking calls does not guarantee overlap or a speedup."
+          ],
+          "pitfall": "A program that works for small messages may deadlock for larger ones if it relies on undocumented buffering of blocking sends."
+        },
+        {
+          "id": "capstone-evidence",
+          "title": "Deliver a testable performance report",
+          "paragraphs": [
+            "Gather the final interior values to root and compare all cells against a serial reference after the same number of steps. Test one rank, an uneven decomposition, one step and many steps. Use a maximum absolute error tolerance of 1e-12 for this bounded recurrence, and reject non-finite results. The native program reports the maximum local elapsed time for the step loop, including halo exchange and interior copying, while gathering and reference verification occur afterward.",
+            "The final deliverable is a source file, exact build/run commands, environment description, test matrix, raw timings and a short explanation of the result. Compare strong scaling at fixed N and step count; optionally study weak scaling with stated growth. Explain when communication dominates and why a more complex optimization is justified. Keep practice and the exam separate from this evidence: a quiz score is a learning aid, not proof of native correctness or a cluster performance certification."
+          ],
+          "pitfall": "A passed exam does not replace executing the edited program’s tests. Preserve both the numerical evidence and the measurement protocol."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Three-point recurrence",
+          "equation": "u[i,t+1] = (u[i−1,t] + u[i,t] + u[i+1,t]) / 3",
+          "symbols": "i is an interior index; t is the step. Boundary values are fixed at 100 and 0.",
+          "assumptions": "Every right-hand value comes from the previous step.",
+          "example": "At step one, cell 1 is 100/3 and other interior cells remain zero."
+        },
+        {
+          "title": "Internal halo volume",
+          "equation": "values per step = 2(Pactive−1); bytes = 16(Pactive−1)",
+          "symbols": "One double crosses each internal interface in each direction.",
+          "assumptions": "One-dimensional nearest-neighbor partitioning; excludes protocol overhead and other collectives.",
+          "example": "Four active partitions exchange 6 values, or 48 payload bytes, per step."
+        }
+      ],
+      "steps": [
+        "Run N=17, four partitions and ten steps with each-step exchange. Confirm every cell matches.",
+        "Switch to stale-halo and inspect the error. Then use one step to see why that weak test can miss the bug.",
+        "Try one partition and multiple uneven partitions; predict which interfaces need messages.",
+        "Compile the MPI source and execute the test matrix. Extend it into a repeated benchmark only after the numerical cases pass."
+      ],
+      "native": {
+        "walkthrough": [
+          "Each local array has count+2 cells: owned interior data plus two halo slots. The leftmost rank initializes its fixed boundary to 100.",
+          "Sendrecv calls exchange old edge values before any new interior value is calculated. Copying b into a happens only after that step’s local calculation.",
+          "Gatherv reassembles the global interior. Root computes the serial recurrence independently, compares every cell, broadcasts failure and finalizes consistently."
+        ],
+        "tests": [
+          {
+            "command": "mpiexec -n 1 ./stencil 17 10",
+            "expect": "max_error=0 and PASS; no internal messages needed."
+          },
+          {
+            "command": "mpiexec -n 4 ./stencil 17 10",
+            "expect": "Uneven partitions match the serial recurrence."
+          },
+          {
+            "command": "mpiexec -n 4 ./stencil 19 25",
+            "expect": "Every final cell remains within 1e-12."
+          },
+          {
+            "command": "mpiexec -n 4 ./stencil 2 10",
+            "expect": "Explicitly rejects ranks greater than interior cells with status 2."
+          }
+        ]
+      },
+      "challenge": {
+        "task": "Submit a reproducible stencil study: implement one justified improvement, verify it against the serial recurrence, and explain its measured benefit or lack of benefit.",
+        "acceptance": [
+          "Check boundaries, one rank, uneven partitions, one step and many steps.",
+          "Include source, compiler/runtime versions, flags, N, steps, ranks and placement.",
+          "Retain raw samples, warm-up policy, maximum error and timing scope.",
+          "Discuss communication and memory costs; do not promise a speedup when measurements do not support it."
+        ]
+      },
+      "practice": [
+        {
+          "id": "hpc-capstone-p1",
+          "prompt": "Which values must a Jacobi update read?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Only values from rank zero"
+            },
+            {
+              "id": "b",
+              "text": "All values from the previous step"
+            },
+            {
+              "id": "c",
+              "text": "Any already updated neighbor available"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "Mixing time levels changes the numerical recurrence.",
+          "lessonId": "stencil-contract"
+        },
+        {
+          "id": "hpc-capstone-p2",
+          "prompt": "Why might a one-step test miss stale halos?",
+          "options": [
+            {
+              "id": "a",
+              "text": "The initially captured halos are still current for the first step"
+            },
+            {
+              "id": "b",
+              "text": "MPI disables testing during step one"
+            },
+            {
+              "id": "c",
+              "text": "Every stencil converges in one step"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Later steps require newly computed neighbor values.",
+          "lessonId": "halo-exchange"
+        },
+        {
+          "id": "hpc-capstone-p3",
+          "prompt": "How many internal double values are exchanged per step with four active partitions?",
+          "options": [
+            {
+              "id": "a",
+              "text": "4"
+            },
+            {
+              "id": "b",
+              "text": "16"
+            },
+            {
+              "id": "c",
+              "text": "6"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "Three interfaces times two directions gives six.",
+          "lessonId": "halo-exchange"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "hpc-capstone-e1",
+            "prompt": "What is MPI_PROC_NULL used for here?",
+            "options": [
+              {
+                "id": "a",
+                "text": "A missing neighbor at a global boundary"
+              },
+              {
+                "id": "b",
+                "text": "A rank that skipped all collectives by accident"
+              },
+              {
+                "id": "c",
+                "text": "The root process in every communicator"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Null-peer communication lets the boundary remain fixed without a real neighbor.",
+            "lessonId": "mpi-exchange"
+          },
+          {
+            "id": "hpc-capstone-e2",
+            "prompt": "Why use Sendrecv instead of assuming consecutive sends will buffer?",
+            "options": [
+              {
+                "id": "a",
+                "text": "To remove all communication cost"
+              },
+              {
+                "id": "b",
+                "text": "To make double arithmetic exact"
+              },
+              {
+                "id": "c",
+                "text": "To avoid depending on eager buffering for this exchange pattern"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Buffering behavior is not a safe basis for deadlock avoidance.",
+            "lessonId": "mpi-exchange"
+          },
+          {
+            "id": "hpc-capstone-e3",
+            "prompt": "What must happen before reusing a nonblocking send buffer?",
+            "options": [
+              {
+                "id": "a",
+                "text": "A browser checkbox is marked"
+              },
+              {
+                "id": "b",
+                "text": "The request must complete according to MPI semantics"
+              },
+              {
+                "id": "c",
+                "text": "The next source line merely executes"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Outstanding communication may still access the buffer.",
+            "lessonId": "mpi-exchange"
+          },
+          {
+            "id": "hpc-capstone-e4",
+            "prompt": "What is the native stencil’s empty-partition policy?",
+            "options": [
+              {
+                "id": "a",
+                "text": "It rejects ranks greater than N"
+              },
+              {
+                "id": "b",
+                "text": "It sends an arbitrary nonexistent cell"
+              },
+              {
+                "id": "c",
+                "text": "It silently drops extra ranks from MPI_COMM_WORLD"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The explicit P<=N condition keeps every local interior nonempty.",
+            "lessonId": "halo-exchange"
+          },
+          {
+            "id": "hpc-capstone-e5",
+            "prompt": "What completes a convincing optimization report?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only a passed multiple-choice exam"
+              },
+              {
+                "id": "b",
+                "text": "Only the fastest observed sample"
+              },
+              {
+                "id": "c",
+                "text": "Checked source, commands, test cases, raw timings, scope and limitations"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Correctness and reproducible performance evidence are both required.",
+            "lessonId": "capstone-evidence"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Open MPI: MPI_Sendrecv",
+          "url": "https://docs.open-mpi.org/en/v5.0.x/man-openmpi/man3/MPI_Sendrecv.3.html"
+        },
+        {
+          "title": "Open MPI: MPI_Gatherv",
+          "url": "https://docs.open-mpi.org/en/v5.0.x/man-openmpi/man3/MPI_Gatherv.3.html"
+        }
+      ]
+    }
+  ]
+}

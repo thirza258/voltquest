@@ -37,13 +37,14 @@ export default function CoursesPage() {
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-8">
       <Link to="/tutorials" className={courseLinkClass}>{t('Back to tutorials')}</Link>
       <div className="my-7 max-w-3xl">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-brand-700">{t('Learn the principles. Choose the parts.')}</p>
-        <h1 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">{t('Electrical engineering & IoT courses')}</h1>
-        <p className="mt-4 text-base leading-relaxed text-ink-secondary">{t('Study electrical engineering, IoT parts, Arduino and drone foundations. Learn the theory and formulas, work through examples, then practise and take a course exam.')}</p>
+        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-brand-700">{t('Learn the principles. Write the program. Build the device.')}</p>
+        <h1 className="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">{t('Programming, electronics & IoT courses')}</h1>
+        <p className="mt-4 text-base leading-relaxed text-ink-secondary">{t('Learn C and Arduino C++ for Uno, Nano and ESP32 alongside electronics, IoT and drone foundations. Study examples, experiment in guided labs, answer practice questions and take a course exam.')}</p>
         <div className="mt-5 flex flex-wrap gap-2"><Badge tone="brand"><BookOpen size={12} />{t('{count} courses', { count: COURSES.length })}</Badge><Badge>{t('Fundamental → Intermediate')}</Badge><Badge tone="success">{t('{count} exams passed', { count: passed })}</Badge></div>
         <p className="mt-4 text-sm text-slate-600">{t('Progress is saved in this browser, shared by people using it. These self-study exams do not award campaign XP or certification.')}</p>
       </div>
-      <nav className="mb-6 flex flex-wrap gap-4" aria-label={t('Continue your learning path')}><Link to="/robotics" className={courseLinkClass}>{t('Robotics & ROS 2 learning path')}</Link><Link to="/vision" className={courseLinkClass}>{t('Computer vision: OpenCV, transformers & integration')}</Link></nav>
+      <nav className="mb-6 flex flex-wrap gap-4" aria-label={t('Continue your learning path')}><Link to="/courses?track=programming" className={courseLinkClass}>{t('C, C++ & Arduino / ESP32 programming')}</Link><Link to="/robotics" className={courseLinkClass}>{t('Robotics & ROS 2 learning path')}</Link><Link to="/vision" className={courseLinkClass}>{t('Computer vision: OpenCV, transformers & integration')}</Link></nav>
+      <section className="mb-6 rounded-lg border border-teal-200 bg-teal-50 p-5" aria-labelledby="hpc-courses-title"><h2 id="hpc-courses-title" className="text-xl font-semibold">{t('High-performance computing in C & C++')}</h2><p className="mt-2 text-sm leading-6 text-ink-secondary">{t('Ten detailed courses with interactive experiments, editable native C/C++ examples, testing guides, practice questions and exams. Learn benchmarking, caches, SIMD, OpenMP, MPI and a distributed stencil capstone.')}</p><div className="mt-4 flex flex-wrap gap-4"><Link to="/hpc" className={courseLinkClass}>{t('Explore HPC courses')}</Link><Link to="/sandbox?bench=hpc" className={courseLinkClass}>{t('Open HPC sandbox')}</Link></div></section>
       <FundamentalsExplorer />
       <div className="mb-7 grid gap-4 rounded-lg border border-line bg-white p-4 md:grid-cols-3">
         <label className="space-y-1 text-sm text-ink-secondary"><span>{t('Search courses')}</span><input type="search" value={query} onChange={event => filter('q', event.target.value)} className={fieldClass} /></label>

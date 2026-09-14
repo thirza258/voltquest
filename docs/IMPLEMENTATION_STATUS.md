@@ -1,5 +1,20 @@
 # PRD implementation verification
 
+### HPC learning extension (2026-09-14)
+
+`/hpc` and `/sandbox?bench=hpc` add ten C17/C++17 courses, forty detailed sections, twenty formula
+cards, ten experiments, thirty practice questions and ten exams. Editable native programs and
+testing guides accompany every course. Local experiment files and existing self-study progress
+remain separate from circuit/account APIs. See [HPC.md](HPC.md) for formats and explicit model limits.
+
+Full shared-tree `make check`: **1,181 frontend tests / 104 backend tests**, production build and
+**521.1 KiB** initial gzip payload pass. The native gate passes **20 builds / 126 executions**,
+including OpenMP and MPI at 1/2/4 workers; **10 core builds / 36 executions** pass with ASan/UBSan.
+Production Chromium verifies all ten actual Worker experiments, stale-halo detection, invalidation,
+exact downloads, save/reload/import, 80% grading/persistence, translated controls with state retained,
+and desktop/390 px fit. No browser application errors. Native execution was on a local Apple Silicon
+host; multi-node performance, other browsers and real touch devices are not certified.
+
 Verified 2026-09-12 against the original PRD, ESP32 addendum and Custom Drone Builder addendum, CONTRACTS.md, ARCHITECTURE.md,
 QUEST_SCHEMA.md, API.md, DESIGN.md, TUTORIALS.md and RASPBERRY_PI.md. Current contracts supersede
 the original avr8js/cloud-compiler/TypeScript/canvas-library choices. The application is plain
@@ -69,3 +84,18 @@ uses actual virtual HTTP and serial firmware plus the shared differential-drive 
 locally; transformer attention and ROS 2 are explicitly teaching concepts. Read COURSES.md, ROBOTICS.md
 and VISION.md for full scope and verification boundaries. No backend hardware execution or Pi camera
 emulation was introduced. Production Chromium checks include the device response chain and 390 px fit.
+
+### Programming courses (2026-09-14)
+
+The fifth course track adds twelve C/Arduino C++/ESP32 courses with 36 sections, 12 complete code
+examples, 24 practice and 60 exam questions. `/courses?track=programming` connects to the existing
+prepared tutorials, uses English/Indonesian content and browser-local assessments, and is included
+in public API filters and the generated sitemap. There are now 34 standard courses, or 45 study
+units including robotics/vision, with 80 formula cards, 315 questions and 45 exams across those units.
+
+All 44 new example/board pairs run against the real inline simulator with output and damage checks;
+additional tests cover timing, framing, HTTP and MQTT behavior. Full `make check` passes 1,127 frontend
+and 104 backend tests and a 516.7 KiB initial gzip payload. Production Chromium verifies 80% grading
+and reload, localization/state preservation, exact download, separate-tab Nano Worker execution,
+ESP32-S3 HTTP LED control and an ESP32 MQTT command lease with matching live telemetry, at desktop
+and 390 px widths without application errors. See COURSES.md for native-language and model limits.

@@ -46,6 +46,7 @@ export function collectRoutes(contentDir) {
     .filter(Boolean)
   const robotics = (readJson(path.join(contentDir, 'robotics.json')).tutorials ?? []).map(item => `/robotics/${item.id}`)
   const vision = (readJson(path.join(contentDir, 'vision.json')).tutorials ?? []).map(item => `/vision/${item.id}`)
+  const hpc = (readJson(path.join(contentDir, 'hpc.json')).courses ?? []).map(item => `/hpc/${item.id}`)
   return [
     '/',
     ...levelRoutes(contentDir),
@@ -57,6 +58,8 @@ export function collectRoutes(contentDir) {
     ...vision,
     '/robotics',
     ...robotics,
+    '/hpc',
+    ...hpc,
     '/sandbox',
     '/showcase',
     '/leaderboard',

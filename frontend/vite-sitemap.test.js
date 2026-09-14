@@ -16,6 +16,7 @@ describe('collectRoutes', () => {
     expect(routes).toContain('/')
     expect(routes).toContain('/tutorials')
     expect(routes).toContain('/courses')
+    expect(routes).toContain('/hpc')
     expect(routes).toContain('/sandbox')
     expect(routes).toContain('/showcase')
     expect(routes).toContain('/leaderboard')
@@ -37,7 +38,7 @@ describe('collectRoutes', () => {
 
   it('covers all course routes', () => {
     const expected = readJson(path.join(contentDir, 'courses.json')).courses.map(course => `/courses/${course.id}`)
-    expect(expected).toHaveLength(22)
+    expect(expected).toHaveLength(34)
     expect(routes.filter(route => route.startsWith('/courses/'))).toEqual(expected)
   })
 
@@ -45,6 +46,12 @@ describe('collectRoutes', () => {
     expect(routes).not.toContain('/profile')
     expect(routes.some((route) => route.startsWith('/sandbox/'))).toBe(false)
     expect(routes.some((route) => route.startsWith('/showcase/'))).toBe(false)
+  })
+
+  it('includes all ten HPC courses', () => {
+    const expected = readJson(path.join(contentDir, 'hpc.json')).courses.map(course => `/hpc/${course.id}`)
+    expect(expected).toHaveLength(10)
+    expect(routes.filter(route => route.startsWith('/hpc/'))).toEqual(expected)
   })
 
   it('skips level ids that no quest file backs', () => {
@@ -61,8 +68,9 @@ describe('collectRoutes', () => {
       fs.writeFileSync(path.join(dir, 'courses.json'), JSON.stringify({ courses: [{ id: 'ee-circuits' }] }))
       fs.writeFileSync(path.join(dir, 'robotics.json'), JSON.stringify({ tutorials: [{ id: 'robot-motion' }] }))
       fs.writeFileSync(path.join(dir, 'vision.json'), JSON.stringify({ tutorials: [{ id: 'opencv-foundations' }] }))
+      fs.writeFileSync(path.join(dir, 'hpc.json'), JSON.stringify({ courses: [{ id: 'hpc-correctness' }] }))
       expect(collectRoutes(dir)).toEqual([
-        '/', '/play/w1-l1', '/play/w2-l1', '/tutorials', '/tutorials/cpp-start', '/courses', '/courses/ee-circuits', '/vision', '/vision/opencv-foundations', '/robotics', '/robotics/robot-motion', '/sandbox', '/showcase', '/leaderboard',
+        '/', '/play/w1-l1', '/play/w2-l1', '/tutorials', '/tutorials/cpp-start', '/courses', '/courses/ee-circuits', '/vision', '/vision/opencv-foundations', '/robotics', '/robotics/robot-motion', '/hpc', '/hpc/hpc-correctness', '/sandbox', '/showcase', '/leaderboard',
       ])
     } finally {
       fs.rmSync(dir, { recursive: true, force: true })

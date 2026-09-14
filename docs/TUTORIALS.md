@@ -1,5 +1,9 @@
 # Interactive tutorials
 
+The hub also links to **High-performance computing in C & C++** at `/hpc`: ten detailed courses
+with numerical/model experiments, native source and tests, practice questions and exams.
+`/sandbox?bench=hpc` is independent of firmware circuits and their 106 board variants. See [HPC.md](HPC.md).
+
 `/tutorials` is the searchable tutorial hub; `/tutorials/:tutorialId?board=<boardId>` opens a
 guided simulation. The campaign remains at `/` and links prominently to the tutorial hub.
 The shared header includes Tutorials. These routes are lazy-loaded.

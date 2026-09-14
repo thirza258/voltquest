@@ -162,6 +162,7 @@ function SandboxEditor({ initial, working }) {
         { label: 'New custom drone', onSelect: () => setModal('newDrone') },
         { label: 'Open computer vision sandbox', onSelect: () => { useWorkspaceStore.getState().saveDraft(); navigate('/sandbox?bench=vision') } },
         { label: 'Open robotics sandbox', onSelect: () => { useWorkspaceStore.getState().saveDraft(); navigate('/sandbox?bench=robotics') } },
+        { label: 'Open HPC sandbox', onSelect: () => { useWorkspaceStore.getState().saveDraft(); navigate('/sandbox?bench=hpc') } },
         { label: 'Import JSON', onSelect: () => fileInput.current?.click() },
         { label: 'Export JSON', onSelect: () => exportAs('json') },
         { label: 'Export code', onSelect: () => exportAs('code') },

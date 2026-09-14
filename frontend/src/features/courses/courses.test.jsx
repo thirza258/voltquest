@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 // @vitest-environment-options { "url": "http://localhost:5173" }
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { LocaleProvider, translate } from '../../i18n/index.jsx'
 import { installMemoryStorage } from '../../test-utils/localStorage.js'
@@ -13,7 +13,7 @@ import { getTutorialFundamentals } from './fundamentals.js'
 import { getFundamentalReading, LEARNING_TUTORIALS } from './learningCatalog.js'
 
 beforeEach(() => installMemoryStorage())
-afterEach(() => { cleanup(); vi.restoreAllMocks() })
+afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals() })
 function page(path = '/courses') {
   return render(<LocaleProvider><MemoryRouter initialEntries={[path]}><Routes><Route path="/courses" element={<CoursesPage />} /><Route path="/courses/:courseId" element={<CoursePage />} /></Routes></MemoryRouter></LocaleProvider>)
 }
@@ -209,7 +209,63 @@ it('finds related courses by a tutorial name and handles an invalid tutorial fil
   page('/courses?tutorial=not-a-tutorial&q=arrays')
   expect(screen.getByLabelText('Choose a tutorial').value).toBe('')
   expect(screen.queryByRole('navigation', { name: 'Read the course sections' })).toBeNull()
-  expect(screen.getByRole('status').textContent).toBe('2 courses found')
+  expect(screen.getByRole('status').textContent).toBe('3 courses found')
   expect(screen.getByRole('heading', { name: 'Signal conditioning and a reliable IoT node' })).toBeTruthy()
   expect(screen.getByRole('heading', { name: 'IoT fundamentals: from Arduino input to a connected device' })).toBeTruthy()
+})
+
+it('discovers the ordered programming path and filters its intermediate courses', () => {
+  page('/courses?track=programming')
+  expect(screen.getByRole('status').textContent).toBe('12 courses found')
+  expect(screen.getAllByRole('heading', { level: 3 })[0].textContent).toBe(getCourse('programming-start').title)
+  fireEvent.change(screen.getByLabelText('Course level'), { target: { value: 'Intermediate' } })
+  expect(screen.getByRole('status').textContent).toBe('7 courses found')
+  fireEvent.change(screen.getByLabelText('Search courses'), { target: { value: 'mqtt' } })
+  expect(screen.getByRole('heading', { level: 3 }).textContent).toBe(getCourse('programming-mqtt').title)
+})
+
+it('copies the exact sketch and keeps the experiment board, code and assessment choices across translation', async () => {
+  const writeText = vi.fn().mockResolvedValue(undefined)
+  vi.stubGlobal('navigator', { clipboard: { writeText } })
+  page('/courses/programming-numbers#code-example')
+  const course = getCourse('programming-numbers')
+  answerForm(course, 1)
+  fireEvent.click(screen.getByLabelText('Mark lesson 1 as read'))
+  fireEvent.change(screen.getByLabelText('Example board'), { target: { value: 'esp32s3' } })
+  const link = screen.getByRole('link', { name: 'Open experiment lab' })
+  expect(link.getAttribute('href')).toBe('/tutorials/cpp-arithmetic?board=esp32s3')
+  expect(link.getAttribute('target')).toBe('_blank')
+  expect(link.getAttribute('rel')).toContain('noopener')
+  fireEvent.click(screen.getByRole('button', { name: 'Copy sketch' }))
+  await waitFor(() => expect(screen.getByText(/Sketch copied/)).toBeTruthy())
+  expect(writeText).toHaveBeenCalledWith(course.codeExample.code)
+  fireEvent.change(screen.getByLabelText('Language / Bahasa'), { target: { value: 'id' } })
+  expect(screen.getByLabelText('Board contoh').value).toBe('esp32s3')
+  expect(screen.getByLabelText('Kode contoh kursus').textContent).toBe(course.codeExample.code)
+  expect(screen.getByLabelText('Tandai pelajaran 1 sudah dibaca').checked).toBe(true)
+  expect(within(screen.getByRole('form', { name: 'Ujian kursus' })).getAllByRole('radio').filter(input => input.checked)).toHaveLength(1)
+})
+
+it('offers a manual copy fallback and limits connected examples to ESP32 boards', async () => {
+  vi.stubGlobal('navigator', { clipboard: { writeText: vi.fn().mockRejectedValue(new Error('unavailable')) } })
+  page('/courses/programming-esp32')
+  expect(within(screen.getByLabelText('Example board')).getAllByRole('option').map(option => option.value)).toEqual(['esp32', 'esp32s3'])
+  fireEvent.click(screen.getByRole('button', { name: 'Copy sketch' }))
+  await waitFor(() => expect(screen.getByText(/Copy is unavailable/)).toBeTruthy())
+  expect(screen.getByLabelText('Course example code').textContent).toBe(getCourse('programming-esp32').codeExample.code)
+})
+
+it('records a programming exam pass and restores it independently of an existing course', () => {
+  const course = getCourse('programming-start')
+  let view = page('/courses/ee-circuits')
+  fireEvent.submit(answerForm(getCourse('ee-circuits')))
+  view.unmount()
+  view = page('/courses/programming-start')
+  fireEvent.submit(answerForm(course, 5, 4))
+  expect(readCourseProgress(course)).toMatchObject({ bestPercent: 80, attempts: 1 })
+  expect(readCourseProgress(getCourse('ee-circuits'))).toMatchObject({ bestPercent: 100, attempts: 1 })
+  view.unmount()
+  page('/courses?track=programming')
+  expect(screen.getByText('1 of 12 exams passed')).toBeTruthy()
+  expect(screen.getByText('Passed · 80%')).toBeTruthy()
 })

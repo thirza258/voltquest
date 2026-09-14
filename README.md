@@ -2,12 +2,27 @@
 
 ## Current build
 
-Start with **`/tutorials`**: 35 runnable tutorials progress from Easy through Intermediate to Hard,
+Start with **`/tutorials`**: 41 runnable tutorials progress from Easy through Intermediate to Hard,
 including ten Arduino/ESP32 C++ programming lessons and Raspberry Pi 4/5 Python GPIO lessons.
 Each lesson includes editable code, a live simulation, program and hardware explanations, and exact
 breadboard/cable instructions where components are needed. Supported boards: Uno, Nano, ESP32,
 ESP32-S3, Raspberry Pi 4 and Raspberry Pi 5. Pi support is a restricted GPIO learning model, **not a
 Linux emulator**; see [`docs/RASPBERRY_PI.md`](docs/RASPBERRY_PI.md) and [`docs/TUTORIALS.md`](docs/TUTORIALS.md).
+
+**Programming courses:** open `/courses?track=programming` for a 12-course C and Arduino C++ path
+for Uno, Nano, ESP32 and ESP32-S3. It includes 36 lessons, complete downloadable sketches, guided lab
+experiments, 24 practice questions and 12 five-question exams with saved scores and retries, in
+English and Indonesian. Topics progress through types, functions, arrays and memory concepts to
+timing, serial parsing, state machines, HTTP and an MQTT controller capstone. `/courses` now has
+34 courses across programming, electronics, IoT and drone foundations. See [the course guide](docs/COURSES.md).
+
+**High-performance computing:** open `/hpc` from Tutorials or Courses for ten detailed C17/C++17
+courses covering correctness, benchmarking, caches, tiling, SIMD, OpenMP, scheduling, scaling and
+MPI, ending in a distributed stencil capstone. Includes forty sections, twenty formula cards,
+thirty practice questions, ten exams, twenty editable/downloadable native programs and testing
+guides. `/sandbox?bench=hpc` runs bounded numerical experiments and clearly labeled performance
+models, with independent save/load, JSON import/export and notes. Native source compiles locally;
+the browser does not emulate a CPU/GPU cluster or execute arbitrary C/C++. See [the HPC guide](docs/HPC.md).
 
 The **32-quest campaign**, freeform **sandbox**, local **Monaco/Blockly editors**, **virtual phone**,
 **showcase with interactive previews and forking**, and **profile/leaderboard** are implemented.

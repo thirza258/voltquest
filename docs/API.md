@@ -85,6 +85,11 @@ Both endpoints are public. Missing content returns an empty catalog. Answer keys
 are public study material. Assessment progress is browser-local; there is no server grading or XP.
 `api.courses.list(params)` and `api.courses.get(id)` expose the endpoints in the frontend API client.
 
+The catalogue now includes `track=programming` (12 C/Arduino C++/ESP32 courses), for 34 courses
+across five tracks. Programming details include optional
+`codeExample:{title,code,output,explanation,exercise,tutorialId,boards}`; output is an authored
+expectation and the API never runs the code. Existing course ids, versions and grading shapes remain.
+
 ## AI assistant (2026-09-12 extension)
 
 - `GET /api/assistant/status` (public) → `{ enabled: boolean }`; exposes no provider credentials.

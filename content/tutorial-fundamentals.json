@@ -9,6 +9,14 @@
         {
           "courseId": "iot-foundations",
           "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "programming-start",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "programming-start",
+          "lessonId": "lesson-2"
         }
       ]
     },
@@ -45,6 +53,14 @@
         {
           "courseId": "iot-foundations",
           "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "programming-numbers",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "programming-numbers",
+          "lessonId": "lesson-3"
         }
       ]
     },
@@ -77,6 +93,14 @@
         {
           "courseId": "ee-signals",
           "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "programming-numbers",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "programming-numbers",
+          "lessonId": "lesson-3"
         }
       ]
     },
@@ -93,6 +117,14 @@
         {
           "courseId": "iot-inputs",
           "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "programming-decisions",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "programming-time",
+          "lessonId": "lesson-3"
         }
       ]
     },
@@ -108,6 +140,14 @@
         },
         {
           "courseId": "ee-reliable-node",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "programming-decisions",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "programming-decisions",
           "lessonId": "lesson-2"
         }
       ]
@@ -197,6 +237,10 @@
         {
           "courseId": "iot-inputs",
           "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "programming-state",
+          "lessonId": "lesson-3"
         }
       ]
     },
@@ -217,6 +261,10 @@
         {
           "courseId": "iot-environment",
           "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "programming-analog",
+          "lessonId": "lesson-1"
         }
       ]
     },
@@ -232,6 +280,14 @@
         },
         {
           "courseId": "iot-connectivity",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "programming-esp32",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "programming-esp32",
           "lessonId": "lesson-3"
         }
       ]
@@ -321,6 +377,14 @@
         {
           "courseId": "iot-foundations",
           "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "programming-functions",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "programming-functions",
+          "lessonId": "lesson-3"
         }
       ]
     },
@@ -341,6 +405,10 @@
         {
           "courseId": "ee-power",
           "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "programming-analog",
+          "lessonId": "lesson-2"
         }
       ]
     },
@@ -352,6 +420,10 @@
       "readings": [
         {
           "courseId": "iot-foundations",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "programming-functions",
           "lessonId": "lesson-1"
         }
       ]
@@ -373,6 +445,10 @@
         {
           "courseId": "ee-power",
           "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "programming-cpp",
+          "lessonId": "lesson-1"
         }
       ]
     },
@@ -389,6 +465,14 @@
         {
           "courseId": "iot-foundations",
           "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "programming-arrays",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "programming-arrays",
+          "lessonId": "lesson-2"
         }
       ]
     },
@@ -425,6 +509,14 @@
         {
           "courseId": "iot-leds",
           "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "programming-analog",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "programming-analog",
+          "lessonId": "lesson-3"
         }
       ]
     },
@@ -569,6 +661,18 @@
         {
           "courseId": "ee-signals",
           "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "programming-time",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "programming-time",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "programming-mqtt",
+          "lessonId": "lesson-2"
         }
       ]
     },
@@ -585,6 +689,18 @@
         {
           "courseId": "iot-connectivity",
           "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "programming-serial",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "programming-serial",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "programming-cpp",
+          "lessonId": "lesson-2"
         }
       ]
     },
@@ -600,6 +716,14 @@
         },
         {
           "courseId": "ee-reliable-node",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "programming-state",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "programming-state",
           "lessonId": "lesson-2"
         }
       ]
@@ -640,6 +764,14 @@
         },
         {
           "courseId": "iot-foundations",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "programming-mqtt",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "programming-mqtt",
           "lessonId": "lesson-3"
         }
       ]

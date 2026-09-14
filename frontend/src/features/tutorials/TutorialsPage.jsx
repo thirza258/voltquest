@@ -37,10 +37,17 @@ export default function TutorialsPage() {
           </div>
           <div className="hidden sm:block"><ChipMascot size={100} mood="thinking" /></div>
         </div>
+        <section className="mb-7 rounded-lg border border-teal-200 bg-teal-50 p-5" aria-labelledby="hpc-path-title">
+          <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">{t('C / C++ learning path')}</p>
+          <h2 id="hpc-path-title" className="mt-2 text-xl font-semibold text-ink">{t('High-performance computing in C & C++')}</h2>
+          <p className="mt-2 text-sm leading-relaxed text-ink-secondary">{t('Ten detailed courses with interactive experiments, editable native C/C++ examples, testing guides, practice questions and exams. Learn benchmarking, caches, SIMD, OpenMP, MPI and a distributed stencil capstone.')}</p>
+          <div className="mt-4 flex flex-wrap gap-3"><Link to="/hpc" className="rounded-md border border-brand-600 bg-white px-3 py-2 text-sm font-semibold text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500">{t('Explore HPC courses')}</Link><Link to="/sandbox?bench=hpc" className="rounded-md border border-brand-600 bg-white px-3 py-2 text-sm font-semibold text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500">{t('Open HPC sandbox')}</Link></div>
+        </section>
         <section className="mb-7 rounded-lg border border-teal-200 bg-teal-50 p-5" aria-labelledby="courses-title">
-          <h2 id="courses-title" className="text-xl font-semibold text-ink">{t('Electrical engineering & IoT courses')}</h2>
-          <p className="mt-2 text-sm leading-relaxed text-ink-secondary">{t('Build your foundations with 10 electrical engineering courses and 10 IoT parts courses, each with lessons, practice questions and an exam.')}</p>
+          <h2 id="courses-title" className="text-xl font-semibold text-ink">{t('Programming, electronics & IoT courses')}</h2>
+          <p className="mt-2 text-sm leading-relaxed text-ink-secondary">{t('Follow 12 C and Arduino / ESP32 programming courses, or study electronics, IoT parts and drone foundations. Every course includes lessons, practice questions and an exam.')}</p>
           <div className="mt-4 flex flex-wrap gap-3">
+            <Link to="/courses?track=programming" className="rounded-md border border-brand-600 bg-white px-3 py-2 text-sm font-semibold text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500">{t('C, C++ & Arduino / ESP32 programming')}</Link>
             <Link to="/courses#tutorial-fundamentals" className="rounded-md border border-brand-600 bg-white px-3 py-2 text-sm font-semibold text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500">{t('Fundamentals for every tutorial')}</Link>
             <Link to="/courses?track=electrical" className="rounded-md border border-brand-600 bg-white px-3 py-2 text-sm font-semibold text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500">{t('Electrical engineering foundations')}</Link>
             <Link to="/courses?track=iot-parts" className="rounded-md border border-brand-600 bg-white px-3 py-2 text-sm font-semibold text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500">{t('IoT parts and device building')}</Link>

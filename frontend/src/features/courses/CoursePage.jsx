@@ -10,6 +10,7 @@ import { courseLinkClass } from './CoursesPage.jsx'
 import Assessment from './Assessment.jsx'
 import CourseTutorialFundamentals from './CourseTutorialFundamentals.jsx'
 import { fundamentalsForCourse } from './fundamentals.js'
+import CourseCodeExample from './CourseCodeExample.jsx'
 
 const panelClass = 'min-w-0 rounded-lg border border-line bg-white p-5 sm:p-6'
 
@@ -71,6 +72,7 @@ function CourseSession({ course }) {
             {course.lessons.map((lesson, i) => <a key={lesson.id} href={`#${lesson.id}`} className={courseLinkClass}>{progress.read.includes(lesson.id) && <CheckCircle2 size={14} className="shrink-0" />}{i + 1}. {t(lesson.title)}</a>)}
             {fundamentalsForCourse(course.id).length > 0 && <a href="#tutorial-fundamentals" className={courseLinkClass}>{t('Tutorial fundamentals')}</a>}
             <a href="#worked-example" className={courseLinkClass}>{t('Worked example')}</a>
+            {course.codeExample && <a href="#code-example" className={courseLinkClass}>{t('Code walkthrough and experiment')}</a>}
             <a href="#formulas" className={courseLinkClass}>{t('Theory and formulas')}</a>
             <a href="#application" className={courseLinkClass}>{t('Apply it to a device')}</a>
             <a href="#practice" className={courseLinkClass}>{t('Practice questions')}</a>
@@ -94,6 +96,7 @@ function CourseSession({ course }) {
           </section>)}
           <CourseTutorialFundamentals courseId={course.id} />
           <section id="worked-example" className={`${panelClass} scroll-mt-6`} aria-labelledby="example-title"><h2 id="example-title" className="text-xl font-semibold text-ink">{t('Worked example')}</h2><p className="mt-4 text-base leading-7 text-ink-secondary">{t(course.workedExample)}</p></section>
+          {course.codeExample && <CourseCodeExample course={course} />}
           <section id="formulas" className={`${panelClass} scroll-mt-6`} aria-labelledby="formulas-title">
             <h2 id="formulas-title" className="text-xl font-semibold text-ink">{t('Theory and formulas')}</h2>
             <div className="mt-5 space-y-5">{course.formulas.map(formula => <article key={formula.title} className="min-w-0 rounded-lg border border-line p-4">

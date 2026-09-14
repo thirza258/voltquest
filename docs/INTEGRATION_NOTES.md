@@ -1,5 +1,44 @@
 # Integration notes
 
+## C / C++ HPC path (2026-09-14)
+
+- `/hpc` and `?bench=hpc` keep content, model chunks, storage and Worker instances separate from
+  circuit/robotics/vision documents. Preserve source/notes and exam state through locale changes.
+- Model results belong to their captured parameters. Any parameter change clears old results and
+  cancels the current Worker; generation checks ignore late delivery. Native source edits affect
+  downloads only, as stated beside both workflows.
+- Native timing on very small inputs can hit timer resolution. Print unavailable rates, never
+  infinity or a fabricated minimum duration. Release measurements and sanitizer runs are separate.
+- MPI Scatterv allows zero-count ranks; the native stencil explicitly requires ranks≤cells, while
+  the browser stencil skips empty partitions. Do not silently equate these documented policies.
+- Keep the native verification script importing the same source generator used by the editor so
+  downloadable examples cannot drift from compiled/tested examples. Read [HPC.md](HPC.md).
+
+## Programming courses (2026-09-14)
+
+Twelve `programming-*` entries in the shared courses JSON add a fifth track and optional
+`codeExample` fields. The backend course filter must allow `programming`; adding content alone
+would otherwise leave the public filtered endpoint rejecting the new track. The existing sitemap
+derives all 34 course paths automatically (126 public URLs overall).
+
+The code panel links to an existing prepared tutorial and supported board in a separate tab;
+learners explicitly paste the copied sketch. Do not label the expected output as a live result or
+automatically replace a tutorial's edited code. Curriculum data remains confined to lazy course
+routes; tutorial guides contain only canonical course/section references. Existing course records
+and tutorial identities retain their versions and state across localization.
+
+All 44 example/board pairs execute in the same inline solver/VM used by labs. The two connected
+examples match the prepared GPIO18 LED on ESP32/S3. The serial example accepts semicolon in addition
+to newline because the lab's serial input is a single-line HTML input. MQTT local test characters
+1/0 use the same application function as the MQTT callback, enabling lease/LED experiments in the
+tutorial; the Sandbox IoT inspector can exercise inbound MQTT. Runtime regressions assert real
+incoming MQTT behavior separately, including malformed commands that must not renew the lease.
+
+Preserve the native language distinction: signed overflow is undefined in real C/C++, even though
+the teaching VM wraps it. General pointer access, reference parameters, user classes/templates and
+native ESP-IDF/FreeRTOS remain beyond this runtime. Current pin-based and legacy channel-based LEDC
+APIs must be identified in explanations before exporting examples to hardware.
+
 ## Sandbox 3D and expanded parts (2026-09-14)
 
 The optional `canvas/three` viewer consumes the same CircuitDoc/SimState as the SVG. Convert world

@@ -1,5 +1,11 @@
 # Self-study courses
 
+The **High-performance computing in C & C++** card links to `/hpc`, a separate ten-course path
+with forty sections, twenty formula cards, ten browser experiments, thirty practice questions and
+ten five-question exams. It shares browser-local assessment behavior and adds editable/downloadable
+C17/C++17 programs with native testing guides. Its advanced CPU/MPI models and independent sandbox
+format are documented in [HPC.md](HPC.md); it does not change the standard public course API.
+
 `/courses` lists the curriculum and `/courses/:courseId` opens a course. The tutorial hub links to
 the tracks. Courses complement the runnable tutorials; they do not award campaign XP or certification.
 
@@ -28,10 +34,11 @@ Related labs open separately to preserve choices. Each lab task explains its sco
 battery charging, BLE/LoRa and real RF propagation are not added simulation models. Pi remains the
 restricted GPIO/Python model. Hardware exercises use low-voltage circuits and verified part requirements.
 
-The delivered catalogue contains 10 electrical courses, 10 IoT parts courses, an IoT/Arduino foundation
-course and a drone foundation course: 22 total, 66 theory sections, 154 questions and 22 exams.
+The catalogue contains 10 electrical courses, 10 IoT parts courses, an IoT/Arduino foundation
+course, a drone foundation course and 12 programming courses: 34 total, 102 theory sections,
+238 questions and 34 exams.
 `formulas` is an array of `{title,equation,symbols,assumptions,example}` cards with explicit units,
-assumptions and worked calculations; there are 46 cards. A course may contain `extraLabs` alongside
+assumptions and worked calculations; there are 58 cards. A course may contain `extraLabs` alongside
 its primary lab. IoT and drone foundations each link to three new runnable experiments.
 Robotics and computer vision use dedicated catalogues and `StudyLesson`, reusing the same grading
 and local progress behavior. Their ids are unique across catalogues. See ROBOTICS.md and VISION.md.
@@ -53,7 +60,53 @@ associated tutorial titles and fundamental topics. The selector preserves other 
 Firmware tutorials and `StudyLesson` show the same explanation before the experiment and link to
 the selected guide in Courses. All 52 new explanations and observations support English/Indonesian.
 
-This supplement does not change the 22-course public API, exams, course versions or stored progress.
+The guide supplement does not change assessment keys, course versions or stored progress.
 It introduces no new route, runtime capability or tutorial completion state. Guide content loads with
 the learning routes; tutorial pages do not import the combined course catalog to render it. Coverage
 tests require exactly one guide per tutorial, real section targets and complete guide translations.
+
+## C, C++ and Arduino / ESP32 programming (2026-09-14)
+
+`/courses?track=programming` opens twelve ordered courses, starting at
+`/courses/programming-start`. The first five are Fundamental and the next seven Intermediate.
+They cover language/framework distinctions, sketch lifecycle, C numeric types and arithmetic,
+conditions and digital input, loops/functions/scope, arrays/C strings/pointers/bit flags, C++ objects
+and libraries, ADC/PWM portability, millis/debounce/rollover, serial framing/debugging, state machines,
+ESP32 HTTP and an MQTT controller capstone. Preparation links recommend the preceding course without
+locking access. Each has three substantive lessons, a worked example, an application exercise,
+a formula/reasoning card, two practice questions and a five-question exam (80% pass).
+
+Each new course has optional `codeExample: {title,code,output,explanation,exercise,tutorialId,boards}`.
+`code` is a complete Arduino sketch and `output` is expected output, never a simulated/live result.
+Narratives are translated at render time; source and output remain literal. The code walkthrough
+supports copy (with a manual fallback), `.ino` download and a board-specific separate-tab lab link.
+Opening a lab retains its authored example; the learner explicitly pastes the course sketch into its
+editor. No course import, automatic code replacement, new language runtime or tutorial remount is added.
+The first ten examples support all four C++ boards; the connected examples support ESP32/S3 only.
+
+The existing tutorial guides gain canonical programming-section readings without dropping their
+electrical/IoT readings. The tutorial count stays 41 and all 106 existing board variants remain valid.
+API list/detail reads the same JSON; `track=programming` is an accepted filter. Older course ids,
+versions and local assessment records are unchanged. All new prose, questions and feedback support
+English and Indonesian. Official Arduino, Espressif, C++ draft, GCC and PubSubClient references are
+linked from the relevant courses.
+
+Boundaries are explicit: Arduino is a C++ framework, ESP32 is a chip family, and native ESP-IDF has
+its own entry/build/runtime. Pointer lifetime, references, classes, templates and RAII are explained
+without claiming arbitrary native-memory or complete C++ execution. Signed overflow is undefined in
+native C/C++; the simulator's signed wrapping is a teaching approximation. ADC hardware calibration
+and current versus legacy LEDC APIs are distinguished. Networking is virtual; the MQTT lease example
+has bounded startup waiting but does not implement production reconnect or authentication.
+
+`features/courses/programming.test.js` runs all 44 course-example/board pairs through the actual
+inline simulation and prepared circuit, checking explained output and electrical damage. Additional
+regressions cover fragmented/oversized serial frames, state durations, unsigned rollover, repeatable
+HTTP commands and real LED state, exact MQTT topic/payload matching, renewal and expiry. Course/UI,
+translation, API and sitemap tests cover discovery, supported lab boards and preserved progress.
+
+Full verification: 1,127 frontend / 104 backend tests, production build and 516.7 KiB initial gzip
+payload pass. Isolated production Chromium verifies incomplete-exam rejection, an 80% pass restored
+on reload, retained answers/read checks/board across Indonesian switching, exact `.ino` download,
+and the copied Nano sketch running in a real Worker. ESP32-S3 HTTP and ESP32 MQTT examples drive
+the prepared LED with matching reported state and command expiry. Desktop/390 px views fit with
+no browser application errors. Cross-browser and real-device verification remains a release check.

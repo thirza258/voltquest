@@ -54,6 +54,13 @@ learning model. Do not imply a full Linux computer or arbitrary Python packages 
 
 ## Self-study courses
 
+The HPC path uses an ordered four-stage overview, searchable course cards, a readable section
+column with an outline, worked formulas, native testing guides and the shared assessment form.
+The lab gives each parameter a labeled control and reports numerical checks in text as well as
+color. Scheduler/stencil bars have numerical tables. Tables and source text scroll within their
+panels at mobile widths. Browser Run and editable native source are explicitly separate workflows;
+models never present fabricated hardware timings. See [HPC.md](HPC.md).
+
 Courses begins with a grouped **Find the fundamentals for your tutorial** select covering firmware,
 robotics and vision. A selected guide explains why the example works, puts **What to observe** in a
 subtle inset, and links to named theory sections. Tutorial pages show the same guide before the lab.
@@ -66,6 +73,12 @@ on mobile. Radio groups use fieldsets, legends and full clickable labels. Submis
 or the first missing answer. Feedback uses text and colour, and links back to lessons. Separate
 practice from exams, explain the 80% pass threshold and offer retries. Show best/last scores and
 the browser-local progress scope. Language changes preserve choices and checked lessons.
+
+Programming courses add a **Code walkthrough and experiment** section: literal, horizontally
+scrollable sketch and expected-output blocks, Copy/Download actions, an editing challenge and a
+labelled supported-board selector. The separate-tab lab link explicitly leaves the original lab
+example in place until the learner pastes the copied sketch. Expected output is labelled as such;
+only the tutorial's Run action produces live output. Controls wrap at mobile widths.
 
 ## Modals
 Briefing (Chip + bubbles, Start). Dual breadboard prompt: title "This board covers all available pin rows.", body "Snap a second breadboard alongside it?", primary "Add second breadboard", secondary "Keep one board". Success: Stars animate one by one, XP counts up, star reasons for missed stars, "Level up! Unlocked: Neon wires" when applicable, buttons "Next level" (or "Back to map" on the last level) / "Replay" / "Open in Sandbox"; "Best ★★ · +0 XP (already earned)" when nothing new. Shortcuts modal (`?`) lists all keys with `Kbd`.
