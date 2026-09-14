@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, CheckCircle2, FlaskConical } from 'lucide-react'
 import { useI18n } from '../../i18n/index.jsx'
 import { AppHeader } from '../workspace/AppHeader.jsx'
@@ -8,6 +8,8 @@ import { COURSES, getCourse, getTrack } from './content.js'
 import { readCourseProgress, saveCourseProgress } from './progress.js'
 import { courseLinkClass } from './CoursesPage.jsx'
 import Assessment from './Assessment.jsx'
+import CourseTutorialFundamentals from './CourseTutorialFundamentals.jsx'
+import { fundamentalsForCourse } from './fundamentals.js'
 
 const panelClass = 'min-w-0 rounded-lg border border-line bg-white p-5 sm:p-6'
 
@@ -22,6 +24,7 @@ export default function CoursePage() {
 
 function CourseSession({ course }) {
   const { t } = useI18n()
+  const { hash } = useLocation()
   const [progress, setProgress] = useState(() => readCourseProgress(course))
   const [storageFailed, setStorageFailed] = useState(false)
   const headingRef = useRef(null)
@@ -30,7 +33,13 @@ function CourseSession({ course }) {
   const index = siblings.findIndex(item => item.id === course.id)
   const previous = siblings[index - 1]
   const next = siblings[index + 1]
-  useEffect(() => { headingRef.current?.focus() }, [])
+  useEffect(() => {
+    const section = hash ? document.getElementById(hash.slice(1)) : null
+    if (section) {
+      if (section.tagName === 'DETAILS') section.open = true
+      section.scrollIntoView?.({ block: 'start' })
+    } else headingRef.current?.focus()
+  }, [hash])
 
   function save(nextProgress) {
     setProgress(nextProgress)
@@ -60,6 +69,7 @@ function CourseSession({ course }) {
           <h2 className="font-semibold text-ink">{t('In this course')}</h2>
           <nav className="mt-4 flex flex-col gap-3 text-sm" aria-label={t('Course sections')}>
             {course.lessons.map((lesson, i) => <a key={lesson.id} href={`#${lesson.id}`} className={courseLinkClass}>{progress.read.includes(lesson.id) && <CheckCircle2 size={14} className="shrink-0" />}{i + 1}. {t(lesson.title)}</a>)}
+            {fundamentalsForCourse(course.id).length > 0 && <a href="#tutorial-fundamentals" className={courseLinkClass}>{t('Tutorial fundamentals')}</a>}
             <a href="#worked-example" className={courseLinkClass}>{t('Worked example')}</a>
             <a href="#formulas" className={courseLinkClass}>{t('Theory and formulas')}</a>
             <a href="#application" className={courseLinkClass}>{t('Apply it to a device')}</a>
@@ -82,6 +92,7 @@ function CourseSession({ course }) {
             <p className="mt-4 text-base leading-7 text-ink-secondary">{t(lesson.text)}</p>
             <label className="mt-5 inline-flex min-h-8 cursor-pointer items-center gap-2 text-sm font-medium text-brand-700"><input type="checkbox" checked={progress.read.includes(lesson.id)} onChange={() => markRead(lesson.id)} className="h-4 w-4 accent-teal-700 focus:ring-2 focus:ring-brand-500" />{t('Mark lesson {number} as read', { number: i + 1 })}</label>
           </section>)}
+          <CourseTutorialFundamentals courseId={course.id} />
           <section id="worked-example" className={`${panelClass} scroll-mt-6`} aria-labelledby="example-title"><h2 id="example-title" className="text-xl font-semibold text-ink">{t('Worked example')}</h2><p className="mt-4 text-base leading-7 text-ink-secondary">{t(course.workedExample)}</p></section>
           <section id="formulas" className={`${panelClass} scroll-mt-6`} aria-labelledby="formulas-title">
             <h2 id="formulas-title" className="text-xl font-semibold text-ink">{t('Theory and formulas')}</h2>

@@ -51,6 +51,12 @@ learning model. Do not imply a full Linux computer or arbitrary Python packages 
 
 ## Self-study courses
 
+Courses begins with a grouped **Find the fundamentals for your tutorial** select covering firmware,
+robotics and vision. A selected guide explains why the example works, puts **What to observe** in a
+subtle inset, and links to named theory sections. Tutorial pages show the same guide before the lab.
+Course details group related guides in native expandable details, with a link in the course outline.
+Course/tutorial links open separately to preserve edited experiments and assessment choices.
+
 The tutorial hub links to course tracks. Use light cards, teal links and labelled native search,
 track and difficulty filters. Details have an outline beside readable lessons on desktop and stack
 on mobile. Radio groups use fieldsets, legends and full clickable labels. Submission focuses results

@@ -41,6 +41,7 @@ export default function TutorialsPage() {
           <h2 id="courses-title" className="text-xl font-semibold text-ink">{t('Electrical engineering & IoT courses')}</h2>
           <p className="mt-2 text-sm leading-relaxed text-ink-secondary">{t('Build your foundations with 10 electrical engineering courses and 10 IoT parts courses, each with lessons, practice questions and an exam.')}</p>
           <div className="mt-4 flex flex-wrap gap-3">
+            <Link to="/courses#tutorial-fundamentals" className="rounded-md border border-brand-600 bg-white px-3 py-2 text-sm font-semibold text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500">{t('Fundamentals for every tutorial')}</Link>
             <Link to="/courses?track=electrical" className="rounded-md border border-brand-600 bg-white px-3 py-2 text-sm font-semibold text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500">{t('Electrical engineering foundations')}</Link>
             <Link to="/courses?track=iot-parts" className="rounded-md border border-brand-600 bg-white px-3 py-2 text-sm font-semibold text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500">{t('IoT parts and device building')}</Link>
             <Link to="/courses/iot-foundations" className="rounded-md border border-brand-600 bg-white px-3 py-2 text-sm font-semibold text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500">{t('Study IoT / Arduino foundations')}</Link>

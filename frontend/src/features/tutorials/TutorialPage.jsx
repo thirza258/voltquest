@@ -12,6 +12,7 @@ import { tutorialCircuit, tutorialCode } from './circuits.js'
 import { WiringGuide } from './WiringGuide.jsx'
 import AssistantPanel from '../assistant/AssistantPanel.jsx'
 import Inspector from '../workspace/Inspector.jsx'
+import FundamentalsGuide from '../courses/FundamentalsGuide.jsx'
 const DroneLessonBench = lazy(() => import('./DroneLessonBench.jsx'))
 
 function TutorialLab({ tutorial, boardId }) {
@@ -53,6 +54,7 @@ function TutorialLab({ tutorial, boardId }) {
   }
   return (
     <>
+      <FundamentalsGuide tutorialId={tutorial.id} />
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-line bg-white p-4">
         <div className="flex flex-wrap items-center gap-2"><Badge tone="brand">{t(tutorial.difficulty)}</Badge><Badge tone={running ? 'success' : state?.status === 'error' ? 'danger' : 'neutral'}>{t(state?.status ?? "idle")}</Badge><span className="text-sm text-slate-500">{((state?.millis ?? 0) / 1000).toFixed(1)}{t(" s · ")}{getBoard(boardId).vcc}{t(" V logic")}</span></div>
         <div className="flex gap-2"><Button variant="secondary" icon={<RotateCcw size={14} />} onClick={() => { simulation.current?.reset(); setResponse('') }}>{t("Reset sim")}</Button><Button variant={running ? 'danger' : 'primary'} icon={running ? <Square size={14} /> : <Play size={14} />} onClick={run}>{running ? t("Stop") : t("Run example")}</Button></div>

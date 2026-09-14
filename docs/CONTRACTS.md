@@ -374,6 +374,9 @@ The header adds a Tutorials navigation item. The content, filters, difficulty pr
 examples and derived wiring-guide contract live in `TUTORIALS.md`. Tutorials do not grant campaign XP.
 Courses use `/courses` and `/courses/:courseId` under Tutorials navigation. The shared curriculum,
 assessment and browser-local progress contracts are in `COURSES.md`. They also grant no campaign XP.
+`content/tutorial-fundamentals.json` supplies one explanatory guide per firmware/robotics/vision
+tutorial, plus canonical course-section references. Its shape and browser-only scope are in
+`COURSES.md`. Courses and tutorial pages render the same guide; locale changes retain lab state.
 
 ### 11.2 Stores
 ```js

@@ -35,3 +35,25 @@ assumptions and worked calculations; there are 46 cards. A course may contain `e
 its primary lab. IoT and drone foundations each link to three new runnable experiments.
 Robotics and computer vision use dedicated catalogues and `StudyLesson`, reusing the same grading
 and local progress behavior. Their ids are unique across catalogues. See ROBOTICS.md and VISION.md.
+
+## Tutorial fundamentals (2026-09-14)
+
+`content/tutorial-fundamentals.json` adds a frontend learning supplement with one guide for each of
+the 41 firmware tutorials, five robotics tutorials and six vision labs. Its shape is
+`{tutorials:[{tutorialId,topic,explanation,observation,readings:[{courseId,lessonId}]}]}`. Each explanation
+connects a fundamental principle to the actual program, circuit or model, followed by a prediction or
+observation to try. Reading references use canonical course/lesson ids from `courses.json`,
+`robotics.json` or `vision.json`; titles and route paths are resolved from those catalogues.
+
+Courses includes a grouped tutorial selector at `/courses?tutorial=<id>#tutorial-fundamentals`.
+The selected guide links to exact theory sections and its runnable tutorial in separate tabs.
+Course detail pages include expandable guides for all tutorials that reference that course;
+`#fundamentals-<tutorialId>` opens and scrolls to an individual guide. Course search also matches the
+associated tutorial titles and fundamental topics. The selector preserves other course URL filters.
+Firmware tutorials and `StudyLesson` show the same explanation before the experiment and link to
+the selected guide in Courses. All 52 new explanations and observations support English/Indonesian.
+
+This supplement does not change the 22-course public API, exams, course versions or stored progress.
+It introduces no new route, runtime capability or tutorial completion state. Guide content loads with
+the learning routes; tutorial pages do not import the combined course catalog to render it. Coverage
+tests require exactly one guide per tutorial, real section targets and complete guide translations.

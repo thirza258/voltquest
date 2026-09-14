@@ -1,6 +1,6 @@
 # VoltQuest — agent handoff log
 
-**Last verified: 2026-09-13.** This is the state document: what exists, what remains unfinished,
+**Last verified: 2026-09-14.** This is the state document: what exists, what remains unfinished,
 and what to do next. The specifications in `docs/` remain binding.
 
 | Read | When |
@@ -49,9 +49,9 @@ repository or commit without the user's explicit request.
 ## 2. Verification
 
 Latest full `make check`:
-- **923 frontend tests in 62 files pass.**
+- **934 frontend tests in 63 files pass.**
 - **101 backend tests pass.**
-- Production build succeeds; initial JS payload is **423.1 KiB gzipped**, below the 1500 KiB budget.
+- Production build succeeds; initial JS payload is **444.2 KiB gzipped**, below the 1500 KiB budget.
 - ESLint has no errors. Two existing exhaustive-deps warnings remain in
   `features/campaign/CampaignMap.jsx:84`; these are unrelated to the assistant/localization work.
 - Node prints the existing jsdom/localStorage warning; persistence tests use the memory-storage helper.
@@ -79,6 +79,32 @@ their explanation or timing is correct. `features/tutorials/programming.test.js`
 numeric output, command dispatch and LED state transitions on all four C++ boards.
 
 ## 3. Completed in this continuation
+
+### Fundamentals connecting every tutorial to courses (2026-09-14)
+
+Courses now has **Find the fundamentals for your tutorial**, covering all 41 firmware tutorials,
+five robotics tutorials and six vision labs. `/courses?tutorial=<id>#tutorial-fundamentals` opens
+the selected explanation, an observation to try, exact course-section links and a separate-tab lab
+link. Course search also matches connected tutorial titles/topics; cards show tutorial counts.
+Related course details include expandable **Tutorial fundamentals** guides, with
+`#fundamentals-<tutorialId>` opening a specific explanation. All tutorial pages show the same guide
+before their experiment, including the shared robotics/vision study shell.
+
+`content/tutorial-fundamentals.json` contains 52 authored guides with canonical course/section ids;
+`features/courses/learningCatalog.js` resolves their titles/routes from the actual catalogues.
+All new guide prose and observations have Indonesian translations. These are browser learning
+supplements: the 22-course public API, exams, progress versions and simulation models are unchanged.
+Keep the guide module independent of the combined catalog in tutorial routes. Course and advanced
+study pages scroll to section fragments after lazy content mounts. See COURSES.md and integration notes.
+
+Full `make check`: **934 frontend / 101 backend**, production build and **444.2 KiB** initial gzip
+budget pass; only the two existing CampaignMap hook warnings remain. New coverage checks every
+tutorial/board guide, translated narrative and canonical reading target, plus filtering, separate-tab
+links, expanded guide fragments and preserved assessment choices. Production Chromium with an
+isolated SQLite backend verified course/robotics/vision section anchors, desktop and 390 px layouts,
+Indonesian guides, preserved course answers/read checks, and a real Nano Worker run retaining edited
+code, board and step checks across the course link. No browser application errors were reported.
+Cross-browser and real-device checks remain release verification work.
 
 ### Courses, IoT/drone foundations, robotics and computer vision (2026-09-13)
 

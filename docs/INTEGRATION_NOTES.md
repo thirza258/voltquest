@@ -1,5 +1,18 @@
 # Integration notes
 
+## Tutorial-to-course fundamentals (2026-09-14)
+
+The 52 guides in `content/tutorial-fundamentals.json` are independent of assessment data and runtime
+documents. `features/courses/fundamentals.js` is safe for tutorial routes; `learningCatalog.js` resolves
+course/robotics/vision names and section links only in Courses. Match references by canonical ids and
+test against every authored tutorial, rather than inferring fundamentals from titles or board presets.
+
+Course and advanced-study pages must scroll to a requested fragment after lazy content mounts;
+native browser fragment scrolling alone may happen before a section exists. A course fragment naming
+a tutorial guide also opens its native details element. Guide links use a separate tab; translating
+at render time preserves edited code, simulation, lesson checks, open guides and assessment choices.
+The public course API and exam versions remain unchanged by these supplementary explanations.
+
 ## Course assessments (2026-09-13)
 
 Courses share authored JSON between lazy frontend routes and the public API. Progress is a separate

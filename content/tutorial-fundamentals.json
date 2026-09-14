@@ -1,0 +1,940 @@
+{
+  "tutorials": [
+    {
+      "tutorialId": "cpp-start",
+      "topic": "Initialization and repeated execution",
+      "explanation": "A program follows instructions in order. setup runs once when Run starts or restarts firmware; loop repeats while firmware runs. The global count variable keeps its value between calls, so each pass adds to the previous count. Serial output makes this otherwise invisible state observable. delay pauses the sketch for a duration measured in virtual milliseconds.",
+      "observation": "Run twice: the starting message appears once per run, while the loop count grows about twice per virtual second.",
+      "readings": [
+        {
+          "courseId": "iot-foundations",
+          "lessonId": "lesson-1"
+        }
+      ]
+    },
+    {
+      "tutorialId": "uno-first-light",
+      "topic": "A complete current path and a limiting resistor",
+      "explanation": "A lit LED needs a voltage difference and a complete return path: GPIO → resistor → LED → ground. The LED conducts mainly from anode to cathode and takes a forward-voltage drop. The resistor limits current according to I ≈ (Vdrive − Vf) / R; the simulated GPIO and LED also have resistance, so the measured current is lower than this simple estimate.",
+      "observation": "Run the example and inspect LED current. Predict what HIGH and LOW do to the voltage across the branch.",
+      "readings": [
+        {
+          "courseId": "ee-circuits",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "ee-ohms-law",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "ee-measurement",
+          "lessonId": "lesson-2"
+        }
+      ]
+    },
+    {
+      "tutorialId": "cpp-variables",
+      "topic": "Types determine representation and range",
+      "explanation": "A variable names a stored value, and its type determines how that value is represented. int stores whole numbers; float represents fractional values with limited precision. In this learning model, int is 16 bits on Uno/Nano and 32 bits on ESP32/S3. The operand types determine an arithmetic result before it is assigned to another variable.",
+      "observation": "Compare sizeof(int) on Uno and ESP32, then try the multiplication challenge and explain why the model gives different results.",
+      "readings": [
+        {
+          "courseId": "iot-controllers",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "iot-foundations",
+          "lessonId": "lesson-1"
+        }
+      ]
+    },
+    {
+      "tutorialId": "uno-blink",
+      "topic": "Period, frequency and output memory",
+      "explanation": "A digital output keeps its last state until another write or reset. delay therefore leaves the LED on or off while virtual time advances. Period is the sum of the on and off intervals, and frequency is 1 / period. Two 500 ms waits give an approximately one-second period and 50% on-time; the full period is not just one wait.",
+      "observation": "Change only the on-time to 250 ms. Predict a 750 ms cycle with the LED on for one-third of it.",
+      "readings": [
+        {
+          "courseId": "ee-signals",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "iot-foundations",
+          "lessonId": "lesson-1"
+        }
+      ]
+    },
+    {
+      "tutorialId": "cpp-arithmetic",
+      "topic": "Integer division and fractional calculations",
+      "explanation": "The types of both operands matter: 17 / 5 uses integer division and gives 3, while 17 % 5 gives the remainder 2. Writing 17.0 / 5.0 requests a fractional calculation and gives 3.4. Assigning an already truncated integer result to a float does not recover the lost fraction. This matters when converting sensor counts to percentages or volts.",
+      "observation": "Predict 23 / 4, 23 % 4 and 23.0 / 4.0, then compare your predictions with the output.",
+      "readings": [
+        {
+          "courseId": "iot-foundations",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "ee-signals",
+          "lessonId": "lesson-2"
+        }
+      ]
+    },
+    {
+      "tutorialId": "uno-button",
+      "topic": "Pull-ups make an active-low input predictable",
+      "explanation": "An unconnected high-impedance input has no reliable voltage. INPUT_PULLUP connects it weakly to the logic supply, so a released button reads HIGH. Pressing the button gives a lower-resistance path to ground and reads LOW. The comparison translates that electrical polarity into the intended user action; the separate output branch supplies the LED current.",
+      "observation": "Hold and release the button, then invert the comparison and predict the new LED behavior before running again.",
+      "readings": [
+        {
+          "courseId": "ee-logic",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "iot-inputs",
+          "lessonId": "lesson-1"
+        }
+      ]
+    },
+    {
+      "tutorialId": "cpp-conditions",
+      "topic": "Boolean logic and branch order",
+      "explanation": "A comparison produces true or false. && requires both conditions, || accepts either, and ! reverses a boolean. An if/else-if chain executes only the first matching branch. A broad temperature condition placed before a narrower one can make the narrower branch unreachable. Check values exactly on each threshold as well as values between thresholds.",
+      "observation": "Try temperatures 17, 18, 29 and 30, then set enabled to false and predict which branch wins.",
+      "readings": [
+        {
+          "courseId": "iot-foundations",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "ee-reliable-node",
+          "lessonId": "lesson-2"
+        }
+      ]
+    },
+    {
+      "tutorialId": "uno-serial",
+      "topic": "Characters become electrical commands",
+      "explanation": "The serial stream carries data, not direct pin changes. The sketch reads one character and explicitly maps it to an output action. The character '1' differs from the numeric value 1. Unrecognized characters are echoed but leave the LED unchanged. The GPIO retains its last state between commands, so no repeated command is needed to keep the LED on.",
+      "observation": "Send 1, then x, then 0. Predict the echoed text and LED state after each character.",
+      "readings": [
+        {
+          "courseId": "iot-foundations",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "ee-logic",
+          "lessonId": "lesson-1"
+        }
+      ]
+    },
+    {
+      "tutorialId": "esp32-first-light",
+      "topic": "Logic voltage and LED voltage headroom",
+      "explanation": "A GPIO HIGH is referenced to the board's logic supply. ESP32 uses 3.3 V, so the voltage left across the series resistor after the LED's forward drop is smaller than on a 5 V board. That changes current even when the resistor value is identical. The GPIO number identifies a board pin, not an Arduino Uno wiring position, and the input voltage limits still apply.",
+      "observation": "Inspect the red LED current, then use the resistor equation to predict why a higher-forward-voltage LED would draw less.",
+      "readings": [
+        {
+          "courseId": "ee-logic",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "ee-ohms-law",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "iot-controllers",
+          "lessonId": "lesson-2"
+        }
+      ]
+    },
+    {
+      "tutorialId": "pi-blink",
+      "topic": "GPIO objects, BCM numbering and seconds",
+      "explanation": "LED(17) binds an output object to BCM GPIO17, physical header pin 11. Method calls change that output, while sleep uses seconds rather than Arduino delay's milliseconds. The indented while body repeats the sequence. The LED still needs its resistor and ground return. VoltQuest runs the documented Python GPIO subset on Pi 4/5 teaching boards, without a Linux process or arbitrary Python packages.",
+      "observation": "Two sleep(0.5) calls make an approximately one-second blink cycle. Find GPIO17 and physical pin 11 in the wiring guide.",
+      "readings": [
+        {
+          "courseId": "iot-controllers",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "ee-circuits",
+          "lessonId": "lesson-1"
+        }
+      ]
+    },
+    {
+      "tutorialId": "pi-pin-numbering",
+      "topic": "A pin has a physical location and a signal name",
+      "explanation": "BOARD numbers count positions on the 40-pin header; BCM numbers identify GPIO signals. Physical pin 11 and BCM GPIO17 refer to the same output, but using 11 in BCM mode would select a different signal. Choose the numbering mode before configuring pins. The RPi.GPIO-style calls here are a simulator compatibility surface, not a claim that the legacy package runs unchanged on a physical Pi 5.",
+      "observation": "Switch the example to BCM mode and replace each output pin number 11 with 17. The same LED should blink.",
+      "readings": [
+        {
+          "courseId": "iot-controllers",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "ee-measurement",
+          "lessonId": "lesson-1"
+        }
+      ]
+    },
+    {
+      "tutorialId": "iot-sense-act",
+      "topic": "Hysteresis remembers the decision inside a band",
+      "explanation": "A local IoT loop senses, decides and acts without needing a network. Separate upper and lower thresholds create hysteresis: the LED turns on above the upper threshold, off below the lower threshold, and keeps its previous state between them. The stored boolean is essential because the same midpoint reading can legitimately correspond to either output state depending on the earlier input.",
+      "observation": "Approach the midpoint once from above the upper threshold and once from below the lower threshold. Compare the LED states.",
+      "readings": [
+        {
+          "courseId": "iot-foundations",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "ee-reliable-node",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "iot-inputs",
+          "lessonId": "lesson-2"
+        }
+      ]
+    },
+    {
+      "tutorialId": "iot-telemetry",
+      "topic": "A number becomes telemetry through context",
+      "explanation": "Telemetry communicates a measurement together with its meaning. adc, unit=count and max identify the value and its scale, so 512 is not mistaken for volts or compared blindly across boards. A normalized percentage is approximately 100 × count / maximum. Reporting every 500 ms gives about two records per virtual second; this lesson prints locally and does not publish to a network.",
+      "observation": "Compare the max field on Uno and ESP32. Add a percentage and check that a midpoint reading is near 50% on both.",
+      "readings": [
+        {
+          "courseId": "iot-foundations",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "ee-circuits",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "iot-environment",
+          "lessonId": "lesson-3"
+        }
+      ]
+    },
+    {
+      "tutorialId": "iot-web-control",
+      "topic": "Separate commands from state queries",
+      "explanation": "A command asks a device to change something; a status query asks what its software state currently is. The /on and /off handlers update both lightOn and the GPIO, while /status only reports lightOn. The HTTP reply and visible LED let you compare the reported state with the simulated output. These teaching GET command routes are local examples; a status variable alone is not a physical feedback sensor.",
+      "observation": "Request /on, /status, /off and /status in order. Repeating /status should leave the LED unchanged.",
+      "readings": [
+        {
+          "courseId": "iot-foundations",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "iot-connectivity",
+          "lessonId": "lesson-3"
+        }
+      ]
+    },
+    {
+      "tutorialId": "drone-imu-basics",
+      "topic": "Orientation is a measurement, not a motor command",
+      "explanation": "Roll and pitch describe the airframe's orientation about different axes. The connected IMU provides attitude information through the teaching library; printing it does not command the motors. Tilting the props-off bench makes the relationship between physical orientation and signed sensor output visible. The model uses gravity projection and helper attitude values, so this exercise does not implement a complete real-world sensor-fusion algorithm.",
+      "observation": "Tilt roll and pitch separately in both directions, then return to level. Compare the signs and near-zero readings.",
+      "readings": [
+        {
+          "courseId": "drone-foundations",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "ee-reliable-node",
+          "lessonId": "lesson-1"
+        }
+      ]
+    },
+    {
+      "tutorialId": "drone-esc-basics",
+      "topic": "Signal width requests output; the pack supplies energy",
+      "explanation": "The flight controller sends an ESC pulse-width command, and the ESC uses battery power to drive a motor. A command of 1250 µs is neither 1250 RPM nor a voltage measurement. Motor response depends on the connected power and drivetrain model and takes time to change. The prepared experiment uses one motor with props off and a low 1000 µs command for stop/initialization.",
+      "observation": "After the low-signal initialization, send 1 and then 0. Compare the commanded pulse with measured RPM during each transition.",
+      "readings": [
+        {
+          "courseId": "drone-foundations",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "drone-foundations",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "iot-actuators",
+          "lessonId": "lesson-2"
+        }
+      ]
+    },
+    {
+      "tutorialId": "drone-hover-basics",
+      "topic": "Hover balances weight through feedback",
+      "explanation": "For a level hover, total upward thrust must approximately balance weight, m × g. Too much or too little thrust changes vertical velocity. Feedback compares requested motion with measured state and adjusts the motors repeatedly; Flight.update supplies that assisted control in this lesson. Keeping the loop running is part of the controller. The exercise demonstrates the teaching flight model, not a verified hardware autopilot.",
+      "observation": "Follow the guided takeoff and landing. Compare height and vertical speed: a steady height requires vertical speed near zero.",
+      "readings": [
+        {
+          "courseId": "drone-foundations",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "ee-power",
+          "lessonId": "lesson-3"
+        }
+      ]
+    },
+    {
+      "tutorialId": "uno-potentiometer",
+      "topic": "Voltage division, quantisation and range mapping",
+      "explanation": "A potentiometer divides the supply voltage between two resistive sections. Its wiper supplies an analog voltage to the ADC, which represents that voltage as one of 1024 counts on Uno/Nano. map converts the 0–1023 input scale to a 0–255 PWM command. The LED follows the measured wiper voltage; the direction of knob movement depends on which end is connected to the supply.",
+      "observation": "Move the knob to both ends and the midpoint. Compare the printed count with the LED brightness.",
+      "readings": [
+        {
+          "courseId": "ee-networks",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "ee-signals",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "iot-inputs",
+          "lessonId": "lesson-2"
+        }
+      ]
+    },
+    {
+      "tutorialId": "cpp-functions",
+      "topic": "Parameters, return values and reusable conversions",
+      "explanation": "A function packages a calculation behind named inputs and a return value. toVolts uses reading, maximum and supply to express V ≈ reading × supply / maximum. Its floating-point supply keeps the result fractional. Giving the conversion explicit inputs makes its assumptions visible and lets the same calculation serve different boards; it does not calibrate a real ADC.",
+      "observation": "Compare toVolts(512, 1023, 5.0) with toVolts(2048, 4095, 3.3); both are approximately half of their supply.",
+      "readings": [
+        {
+          "courseId": "ee-signals",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "iot-foundations",
+          "lessonId": "lesson-1"
+        }
+      ]
+    },
+    {
+      "tutorialId": "uno-pwm",
+      "topic": "Duty cycle controls average LED current",
+      "explanation": "PWM repeatedly switches a digital output between its LOW and HIGH levels. Duty cycle is the fraction of each carrier period spent HIGH; analogWrite uses a command from 0 to 255 here. Increasing that fraction raises the average LED current without changing the HIGH pulse into a smaller analog voltage. The 20 ms loop delay controls the fade steps, not the PWM carrier frequency.",
+      "observation": "Try fixed commands 64, 128 and 191 for approximately 25%, 50% and 75% duty; compare displayed current.",
+      "readings": [
+        {
+          "courseId": "ee-signals",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "iot-leds",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "ee-power",
+          "lessonId": "lesson-1"
+        }
+      ]
+    },
+    {
+      "tutorialId": "cpp-loops",
+      "topic": "Repetition needs a stopping condition",
+      "explanation": "A for loop groups initialization, a condition and an update. A while loop checks its condition before each pass, so the body must eventually make that condition false when a finite result is intended. These loops run inside setup and finish before Arduino calls loop. Distinguish this bounded repetition from the automatically repeated loop function.",
+      "observation": "Predict the squares 1, 4, 9, 16 and countdown 3, 2, 1; Finished should appear only once.",
+      "readings": [
+        {
+          "courseId": "iot-foundations",
+          "lessonId": "lesson-1"
+        }
+      ]
+    },
+    {
+      "tutorialId": "uno-servo",
+      "topic": "A position command is separate from motor power",
+      "explanation": "A hobby servo receives a position request through a timed signal and uses its supply to move the motor. attach binds the library to the signal pin; write requests an angle. The signal wire is not the motor power source, and a common ground gives the signal a reference. The teaching model displays the requested position without modeling a real servo's torque or full mechanical response.",
+      "observation": "Observe the 0°, 90° and 180° requests. Change the waiting interval and explain why it changes the sequence timing.",
+      "readings": [
+        {
+          "courseId": "iot-actuators",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "ee-drivers",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "ee-power",
+          "lessonId": "lesson-3"
+        }
+      ]
+    },
+    {
+      "tutorialId": "cpp-arrays",
+      "topic": "Indexed data and an average",
+      "explanation": "An array keeps several values under one name. A three-element array has indices 0, 1 and 2, so index < 3 stays within its bounds. Accumulating the readings gives a total; dividing by 3.0 preserves the fractional average. Adding a sample requires updating the array, loop bound and divisor together. Averaging can reduce variation but does not remove systematic sensor error.",
+      "observation": "The three readings average to 200. Add a fourth reading of 400 and verify the new average is 250.",
+      "readings": [
+        {
+          "courseId": "ee-reliable-node",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "iot-foundations",
+          "lessonId": "lesson-3"
+        }
+      ]
+    },
+    {
+      "tutorialId": "uno-lcd",
+      "topic": "Addressed bus messages and display coordinates",
+      "explanation": "I2C shares a data line and a clock line between addressed devices. The display address chooses a device; setCursor chooses a character position within that device. These are different kinds of coordinates. Supply, ground and the correct board I2C pins must agree with the prepared module. Updating the second row changes stored display content without reinitializing the whole display.",
+      "observation": "Watch the second-row seconds counter, then change the first-row message while keeping it within 16 character positions.",
+      "readings": [
+        {
+          "courseId": "iot-displays",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "iot-displays",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "ee-logic",
+          "lessonId": "lesson-3"
+        }
+      ]
+    },
+    {
+      "tutorialId": "esp32-pwm",
+      "topic": "PWM frequency and resolution are independent choices",
+      "explanation": "Frequency sets how many PWM cycles occur each second. Resolution sets the available duty commands: 10 bits gives 2^10 − 1 = 1023 as full scale. The example configures a 1000 Hz carrier and alternates commands 256 and 768, approximately 25% and 75% duty. Channel configuration and pin attachment connect that timed output to the actual LED branch.",
+      "observation": "Compare 256/1023 and 768/1023 with the two brightness states. Explain why 255 is not full brightness at 10 bits.",
+      "readings": [
+        {
+          "courseId": "ee-signals",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "iot-leds",
+          "lessonId": "lesson-1"
+        }
+      ]
+    },
+    {
+      "tutorialId": "esp32-adc",
+      "topic": "More ADC codes do not guarantee more accuracy",
+      "explanation": "A 12-bit conversion has 4096 possible codes, from 0 to 4095. The ideal learning conversion is V ≈ count × 3.3 / 4095, followed here by mapping the count to an 8-bit LED duty command. Resolution describes code spacing; real accuracy also depends on the reference, calibration and noise. The selected input must support ADC on the selected ESP32 variant.",
+      "observation": "Move the potentiometer and print both the raw count and approximate volts. Around half scale, expect about 1.65 V.",
+      "readings": [
+        {
+          "courseId": "ee-signals",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "ee-networks",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "iot-controllers",
+          "lessonId": "lesson-2"
+        }
+      ]
+    },
+    {
+      "tutorialId": "esp32-touch",
+      "topic": "Capacitance becomes a threshold decision",
+      "explanation": "A capacitive touch electrode changes an electrical measurement when touched; it is not a switch that directly powers the LED. The sketch compares the measurement with a threshold and drives a separate output. The comparison direction and threshold must match the selected board's example. Real touch readings need calibration; the simulator uses representative values, and hysteresis can make decisions near a threshold steadier.",
+      "observation": "Compare touched and released readings with the code's threshold. Predict which comparison result lights the LED on each board.",
+      "readings": [
+        {
+          "courseId": "iot-inputs",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "ee-reliable-node",
+          "lessonId": "lesson-2"
+        }
+      ]
+    },
+    {
+      "tutorialId": "esp32-weather",
+      "topic": "Digital measurements still need units and validity",
+      "explanation": "The DHT22 performs sensing internally and sends measurements through its digital data connection. The library handles that interface and exposes temperature and humidity as numbers. Correct supply, ground and data-pin binding are still required. A label, unit and sensible reporting interval give those numbers meaning; repeatedly reading a sensor does not necessarily create new independent measurements on physical hardware.",
+      "observation": "Change temperature and humidity separately and follow the labeled output. Add °C and % labels without changing the values.",
+      "readings": [
+        {
+          "courseId": "iot-environment",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "iot-environment",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "ee-reliable-node",
+          "lessonId": "lesson-1"
+        }
+      ]
+    },
+    {
+      "tutorialId": "esp32-wifi",
+      "topic": "Connection is a process with observable state",
+      "explanation": "Starting a connection and having a usable connection are separate events. WiFi.begin initiates association; the sketch polls status until it can print an assigned IP address. A delay yields between checks, while a timeout would keep a failed attempt from waiting forever. An IP address identifies a network endpoint; it does not prove that an HTTP server or MQTT broker is ready. VoltNet is virtual.",
+      "observation": "Observe the connection status and printed IP. Add the timeout challenge so the waiting loop has a defined failure outcome.",
+      "readings": [
+        {
+          "courseId": "iot-connectivity",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "iot-connectivity",
+          "lessonId": "lesson-3"
+        }
+      ]
+    },
+    {
+      "tutorialId": "pi-button",
+      "topic": "An input abstraction expresses a physical action",
+      "explanation": "The pull-up makes a released button electrically HIGH and a pressed button LOW. gpiozero exposes is_pressed so the program can reason about the action instead of repeating that polarity conversion. The mutually exclusive if/else branches choose the LED state at each sample. sleep(0.01) gives a nominal 10 ms polling interval; this loop samples the current level rather than counting presses.",
+      "observation": "Hold the button and release it. Explain why the LED follows the held state instead of toggling on each press.",
+      "readings": [
+        {
+          "courseId": "ee-logic",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "iot-inputs",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "iot-controllers",
+          "lessonId": "lesson-2"
+        }
+      ]
+    },
+    {
+      "tutorialId": "pi-pwm",
+      "topic": "The same duty cycle can use a different numeric scale",
+      "explanation": "PWMLED.value uses a fraction from 0 to 1: 0.25 means HIGH for one-quarter of each PWM cycle. This expresses the same duty concept as an Arduino integer command, with a different interface scale. The resistor still limits current during each HIGH pulse. The one-second sleeps choose when brightness changes; they do not set the PWM carrier period.",
+      "observation": "Compare 0.25 and 0.75, then use 0.5 for half duty. Keep every assigned value within 0–1.",
+      "readings": [
+        {
+          "courseId": "ee-signals",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "iot-leds",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "iot-controllers",
+          "lessonId": "lesson-2"
+        }
+      ]
+    },
+    {
+      "tutorialId": "pi-loops",
+      "topic": "An exclusive range bound makes repetition countable",
+      "explanation": "range(1, 6) visits 1 through 5 because its stop value is excluded. Each iteration has an on and off interval, then the script prints Finished and halts. GPIO outputs keep their last configuration after a finite script ends; the final explicit off call leaves this LED dark. This is the restricted Python GPIO model, so the lesson uses supported loops rather than arbitrary Python features.",
+      "observation": "Count five flashes and one Finished message. Try range(5, 0, -1) and predict the printed order.",
+      "readings": [
+        {
+          "courseId": "iot-controllers",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "iot-foundations",
+          "lessonId": "lesson-1"
+        }
+      ]
+    },
+    {
+      "tutorialId": "cpp-nonblocking",
+      "topic": "Elapsed time plus remembered state",
+      "explanation": "A non-blocking timer checks whether enough time has passed and otherwise lets loop continue. previous remembers the last transition and ledOn remembers the output. Each 500 ms interval toggles the LED, so a full on/off cycle takes about 1000 ms. Unsigned timestamp subtraction supports a wrapping counter when checked regularly with a suitable interval.",
+      "observation": "Add an independent two-second print timer. The LED should keep blinking while messages appear on their own schedule.",
+      "readings": [
+        {
+          "courseId": "iot-foundations",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "ee-signals",
+          "lessonId": "lesson-3"
+        }
+      ]
+    },
+    {
+      "tutorialId": "cpp-commands",
+      "topic": "Input validation and command dispatch",
+      "explanation": "Serial input arrives as characters. available checks for waiting data and read consumes one character. switch dispatches that character to a recognized command; break prevents execution from continuing into the next case. The default branch reports unsupported input, while newline cases ignore line endings. This parser handles single characters, so sending a word creates several separate inputs.",
+      "observation": "Send h, s and x separately. Explain why they produce help, Ready and Unknown command respectively.",
+      "readings": [
+        {
+          "courseId": "iot-foundations",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "iot-connectivity",
+          "lessonId": "lesson-3"
+        }
+      ]
+    },
+    {
+      "tutorialId": "cpp-state-machine",
+      "topic": "States, transitions and a repeating pattern",
+      "explanation": "A state machine stores the current phase, its duration and the rule for moving to the next phase. Here even phases light the LED and odd phases turn it off. The durations 100, 100, 100 and 700 ms sum to a one-second pattern. Modulo wraps the phase into the array bounds while elapsed-time checks leave the rest of loop available.",
+      "observation": "Predict the two short flashes and long dark gap. Change the final duration and check which part of the pattern changes.",
+      "readings": [
+        {
+          "courseId": "iot-foundations",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "ee-reliable-node",
+          "lessonId": "lesson-2"
+        }
+      ]
+    },
+    {
+      "tutorialId": "esp32-web",
+      "topic": "HTTP routes connect requests to actions and replies",
+      "explanation": "HTTP follows a request/response pattern. server.on registers the code for a path; it does not execute that code immediately. handleClient services a request and invokes the matching callback, which writes the pin and sends a response. A response describes what the handler did, while the circuit shows the electrical effect. These requests stay inside the virtual network.",
+      "observation": "Send /on and /off, checking both the HTTP response and LED. Try an unknown path and compare the result.",
+      "readings": [
+        {
+          "courseId": "iot-foundations",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "iot-connectivity",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "iot-power-integration",
+          "lessonId": "lesson-3"
+        }
+      ]
+    },
+    {
+      "tutorialId": "esp32-mqtt",
+      "topic": "Publish/subscribe separates producers from consumers",
+      "explanation": "An MQTT publisher sends a topic and payload to a broker, which can distribute messages to matching subscribers. The topic names the stream; the payload carries a reading and needs an agreed meaning and unit. Sensor setup, WiFi connection and broker connection are separate prerequisites. client.loop services client activity, and the reporting interval controls traffic. This lab uses a local virtual broker.",
+      "observation": "Change the temperature and watch lab/temperature. Add a humidity topic and verify each stream follows the intended sensor value.",
+      "readings": [
+        {
+          "courseId": "iot-connectivity",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "iot-environment",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "iot-foundations",
+          "lessonId": "lesson-3"
+        }
+      ]
+    },
+    {
+      "tutorialId": "pi-traffic",
+      "topic": "Independent outputs need deliberate transitions",
+      "explanation": "Each LED object controls a separate GPIO branch with its own current-limiting resistor. Turning one light on does not turn another off automatically. The sequence must explicitly establish the intended combination before each sleep, and all branches share a ground reference. The example spends 2 s on red, 2 s on green and 0.5 s on amber, for approximately 4.5 s per cycle.",
+      "observation": "Inspect each transition, then add the red-and-amber phase and predict the new total cycle time.",
+      "readings": [
+        {
+          "courseId": "ee-networks",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "iot-leds",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "iot-controllers",
+          "lessonId": "lesson-2"
+        }
+      ]
+    },
+    {
+      "tutorialId": "uno-debounce",
+      "topic": "Stable input, edge detection and stored output",
+      "explanation": "Contact bounce can create several raw transitions from one physical press. Debouncing accepts a new input only after it stays unchanged for 30 ms. Edge detection then toggles the LED only when the accepted state becomes LOW, rather than on every loop while held. previous, stable and ledOn therefore represent three different things. The prepared button is ideal, but short manual presses can test the acceptance window.",
+      "observation": "Hold the button: the LED should toggle once. Release and press again to produce the next accepted transition.",
+      "readings": [
+        {
+          "courseId": "iot-inputs",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "ee-reliable-node",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "ee-capacitors",
+          "lessonId": "lesson-2"
+        }
+      ]
+    },
+    {
+      "tutorialId": "uno-morse",
+      "topic": "Functions compose a timed signal",
+      "explanation": "A reusable flash function gives each pulse an on-time followed by a 150 ms off-time. Loops group three pulses, and the outer delays add to the gap already inside the function. A dot is 150 ms and a dash is 450 ms here; the 300 ms extra delay makes a 450 ms letter gap. Understanding the total timing requires counting both the helper and caller delays.",
+      "observation": "Count three short, three long and three short flashes. Predict how changing only flash's off-time alters every gap.",
+      "readings": [
+        {
+          "courseId": "iot-foundations",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "ee-signals",
+          "lessonId": "lesson-3"
+        }
+      ]
+    },
+    {
+      "tutorialId": "pi-button-dimmer",
+      "topic": "An edge chooses a target; bounded steps approach it",
+      "explanation": "pressed and not was_pressed detects a new press instead of a held level. That event changes target, while brightness moves toward it by 0.05 each 20 ms loop. min and max clamp the final step to prevent overshoot. A full 0-to-1 transition takes about 20 steps, or 0.4 s. This separates the user's requested state from the output's gradual response.",
+      "observation": "Hold the button through a fade: the target should change once. Halve the step size and compare fade duration.",
+      "readings": [
+        {
+          "courseId": "iot-inputs",
+          "lessonId": "lesson-1"
+        },
+        {
+          "courseId": "ee-signals",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "ee-reliable-node",
+          "lessonId": "lesson-2"
+        }
+      ]
+    },
+    {
+      "tutorialId": "robot-motion",
+      "topic": "Wheel speeds determine translation and turning",
+      "explanation": "A differential-drive robot moves using two independently driven wheels. Equal wheel speeds produce straight motion; a difference produces rotation. In the ideal model, v = r(ωR + ωL)/2 and yaw rate = r(ωR − ωL)/b, where r is wheel radius and b is wheel separation. Distance accumulates over time, and the model assumes no wheel slip.",
+      "observation": "Stream a straight command, step the model and compare distance with speed × time. Add angular velocity and observe the turn.",
+      "readings": [
+        {
+          "courseId": "robot-motion",
+          "lessonId": "motion"
+        },
+        {
+          "courseId": "robot-motion",
+          "lessonId": "turns"
+        }
+      ]
+    },
+    {
+      "tutorialId": "ros2-topics",
+      "topic": "Message contracts connect cooperating nodes",
+      "explanation": "A node performs a job, a topic names a data stream and a message type defines its fields. A publisher and subscriber need a matching topic and compatible type before commands can be delivered. Twist expresses linear and angular velocity. In this browser model a command timeout stops stale motion unless commands are renewed; it teaches ROS 2 concepts without running ROS middleware.",
+      "observation": "Make the publisher and subscriber topic names differ, then match them again. Compare delivery and the effect of stopping command streaming.",
+      "readings": [
+        {
+          "courseId": "ros2-topics",
+          "lessonId": "topics"
+        },
+        {
+          "courseId": "ros2-topics",
+          "lessonId": "timing"
+        }
+      ]
+    },
+    {
+      "tutorialId": "robot-sensors",
+      "topic": "Measurements need a frame and a model",
+      "explanation": "A coordinate only has meaning relative to a frame. The robot's forward range ray rotates with its heading, while its pose is expressed in world coordinates. Odometry accumulates a motion estimate over time. This teaching model has ideal pose and a single forward ray, so a clear range reading does not describe every obstacle around the robot or guarantee clearance for its whole body.",
+      "observation": "Turn in place near an obstacle. Compare the changing forward range with the robot's world position and heading.",
+      "readings": [
+        {
+          "courseId": "robot-sensors",
+          "lessonId": "range"
+        },
+        {
+          "courseId": "robot-sensors",
+          "lessonId": "frames"
+        },
+        {
+          "courseId": "robot-sensors",
+          "lessonId": "odometry"
+        }
+      ]
+    },
+    {
+      "tutorialId": "ros2-services",
+      "topic": "Requests change state; parameters configure behavior",
+      "explanation": "A service completes a request with a response, unlike a continuously published topic. A parameter stores a configuration value such as a speed limit or gain. A proportional controller turns an error into a correction, u = Kp × error, then applies limits. Changing the gain changes the correction for the same error; it does not itself define a new destination.",
+      "observation": "Use the reset-pose service and inspect its response. Change the speed limit and compare the next motion command.",
+      "readings": [
+        {
+          "courseId": "ros2-services",
+          "lessonId": "services"
+        },
+        {
+          "courseId": "ros2-services",
+          "lessonId": "parameters"
+        },
+        {
+          "courseId": "ros2-services",
+          "lessonId": "control"
+        }
+      ]
+    },
+    {
+      "tutorialId": "robot-waypoints",
+      "topic": "A goal needs feedback, limits and a result",
+      "explanation": "An action represents work that takes time: accept a goal, report feedback, and finish with a result or cancellation. The controller repeatedly computes distance and heading error, turns toward the target and reduces speed near arrival. This closes the loop through pose feedback. The model can report a blocked goal but cannot plan a detour around an obstacle.",
+      "observation": "Send a reachable goal and follow the distance feedback to success. Try cancellation and a blocked path, comparing the outcomes.",
+      "readings": [
+        {
+          "courseId": "robot-waypoints",
+          "lessonId": "actions"
+        },
+        {
+          "courseId": "robot-waypoints",
+          "lessonId": "controller"
+        },
+        {
+          "courseId": "ros2-services",
+          "lessonId": "control"
+        }
+      ]
+    },
+    {
+      "tutorialId": "opencv-foundations",
+      "topic": "Pixels become a mask and then a measurement",
+      "explanation": "An image is a grid of numeric channel values. Grayscale conversion reduces color to intensity, and thresholding selects pixels on one side of a chosen boundary. Counting selected pixels gives an area fraction; their coordinates give a centroid. These are measurements of a generated image, not automatic object recognition. Changing the threshold changes what the algorithm measures.",
+      "observation": "Change brightness and threshold separately. Compare the source, binary mask and selected-pixel fraction.",
+      "readings": [
+        {
+          "courseId": "opencv-foundations",
+          "lessonId": "pixels"
+        },
+        {
+          "courseId": "opencv-foundations",
+          "lessonId": "threshold"
+        },
+        {
+          "courseId": "opencv-foundations",
+          "lessonId": "measurement"
+        }
+      ]
+    },
+    {
+      "tutorialId": "opencv-drone",
+      "topic": "Color segmentation produces an alignment error",
+      "explanation": "HSV separates hue from saturation and brightness, letting a range select a colored marker. The centroid of the selected pixels gives a horizontal image position that can be normalized around the image center. A positive or negative error describes alignment in image coordinates. It is not a distance, altitude or flight command, and a missing mask needs an explicit no-target result.",
+      "observation": "Move the marker left, center and right. Compare the centroid and error sign, then hide it and check detection.",
+      "readings": [
+        {
+          "courseId": "opencv-drone",
+          "lessonId": "hsv"
+        },
+        {
+          "courseId": "opencv-drone",
+          "lessonId": "centroid"
+        },
+        {
+          "courseId": "drone-foundations",
+          "lessonId": "lesson-3"
+        }
+      ]
+    },
+    {
+      "tutorialId": "opencv-robotics",
+      "topic": "Edges and steering use different coordinate meanings",
+      "explanation": "Canny selects boundaries where intensity changes, rather than the filled area of a line. A measured horizontal offset can become a steering request after choosing a sign convention and gain. Image coordinates increase rightward; the robot's positive yaw turns counterclockwise, so the adapter must account for that difference. A no-target result should request a stop instead of reusing a previous offset.",
+      "observation": "Shift the generated line to each side and compare the proposed angular velocity. Remove the target and check the stop request.",
+      "readings": [
+        {
+          "courseId": "opencv-robotics",
+          "lessonId": "edges"
+        },
+        {
+          "courseId": "opencv-robotics",
+          "lessonId": "steering"
+        },
+        {
+          "courseId": "robot-motion",
+          "lessonId": "turns"
+        }
+      ]
+    },
+    {
+      "tutorialId": "vision-transformers",
+      "topic": "Tokens compare features and mix values",
+      "explanation": "Patches divide an image into tokens. A query compares with keys to produce scores; softmax converts those scores into weights that sum to one, and the weighted values form a context. Smaller patches create more tokens and more pairwise comparisons. This lab computes one fixed attention head with hand-chosen features; its weights are not detection confidence or evidence of a trained classifier.",
+      "observation": "Change patch size and query position. Check the token count, weight sum and context, then compare the effect of temperature.",
+      "readings": [
+        {
+          "courseId": "vision-transformers",
+          "lessonId": "patches"
+        },
+        {
+          "courseId": "vision-transformers",
+          "lessonId": "attention"
+        },
+        {
+          "courseId": "vision-transformers",
+          "lessonId": "training"
+        }
+      ]
+    },
+    {
+      "tutorialId": "vision-deployment",
+      "topic": "A perception interface needs validity and evaluation",
+      "explanation": "A device integration needs a stable observation contract: detection status, position and area with defined units and a known source. Measurements become stale when their input changes, so they must be recomputed before use. Evaluate the pipeline across brightness, noise and occlusion, not just one favorable image. Agreement with a generated reference mask measures that experiment, not general real-world recognition accuracy.",
+      "observation": "Vary noise and occlusion, then compare detection and mask agreement. Check that an edited scene receives a fresh observation.",
+      "readings": [
+        {
+          "courseId": "vision-deployment",
+          "lessonId": "pipeline"
+        },
+        {
+          "courseId": "vision-deployment",
+          "lessonId": "evaluation"
+        },
+        {
+          "courseId": "vision-deployment",
+          "lessonId": "deployment"
+        }
+      ]
+    },
+    {
+      "tutorialId": "vision-integration",
+      "topic": "Trace an observation through each device response",
+      "explanation": "A shared observation has different meanings for different devices. The IoT adapter selects an HTTP LED command, the props-off drone adapter selects a bounded ESC signal through serial, and the robot adapter requests velocity. These paths must be checked using the returned HTTP response, actual pulse and resulting robot pose. Sending a constructed payload alone does not establish that a device acted on it.",
+      "observation": "Send centered, off-center and no-target observations. Compare all three measured responses and verify the no-target stop/disarm behavior.",
+      "readings": [
+        {
+          "courseId": "vision-integration",
+          "lessonId": "connected-devices"
+        },
+        {
+          "courseId": "iot-foundations",
+          "lessonId": "lesson-3"
+        },
+        {
+          "courseId": "drone-foundations",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "ros2-topics",
+          "lessonId": "topics"
+        }
+      ]
+    }
+  ]
+}
