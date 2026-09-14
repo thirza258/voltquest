@@ -48,6 +48,7 @@ export function collectRoutes(contentDir) {
   const vision = (readJson(path.join(contentDir, 'vision.json')).tutorials ?? []).map(item => `/vision/${item.id}`)
   return [
     '/',
+    '/campaign',
     ...levelRoutes(contentDir),
     '/tutorials',
     ...tutorials.map((id) => `/tutorials/${id}`),
@@ -80,7 +81,16 @@ export function renderSitemap(routes, origin = SITE_ORIGIN) {
 export function sitemapPlugin({ contentDir, origin = SITE_ORIGIN }) {
   return {
     name: 'voltquest-sitemap',
-    apply: 'build',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        if (req.url === '/sitemap.xml') {
+          res.setHeader('Content-Type', 'application/xml')
+          res.end(renderSitemap(collectRoutes(contentDir), origin))
+          return
+        }
+        next()
+      })
+    },
     generateBundle() {
       this.emitFile({
         type: 'asset',

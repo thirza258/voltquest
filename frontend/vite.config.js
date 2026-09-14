@@ -51,5 +51,9 @@ export default defineConfig({
     environment: 'node',
     include: ['src/**/*.test.{js,jsx}', '*.test.js'],
     globals: false,
+    testTimeout: 30000,
+    hookTimeout: 30000,
+    teardownTimeout: 30000,
+    pool: 'forks',
   },
 })

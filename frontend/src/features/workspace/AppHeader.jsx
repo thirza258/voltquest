@@ -36,14 +36,15 @@ const NAV_OPTIONS = [
   { value: 'showcase', label: 'Showcase' },
 ]
 
-const NAV_PATH = { campaign: '/', tutorials: '/tutorials', sandbox: '/sandbox', showcase: '/showcase' }
+const NAV_PATH = { campaign: '/campaign', tutorials: '/tutorials', sandbox: '/sandbox', showcase: '/showcase' }
 
 /** Which nav segment a pathname belongs to. */
 export function navSectionFor(pathname = '/') {
   if (pathname.startsWith('/tutorials') || pathname.startsWith('/courses') || pathname.startsWith('/robotics') || pathname.startsWith('/vision')) return 'tutorials'
   if (pathname.startsWith('/sandbox')) return 'sandbox'
   if (pathname.startsWith('/showcase')) return 'showcase'
-  return 'campaign'
+  if (pathname.startsWith('/campaign') || pathname.startsWith('/play')) return 'campaign'
+  return ''
 }
 
 /** Bolt in a rounded teal square — the VoltQuest mark. */
@@ -169,8 +170,9 @@ export function AppHeader({
           aria-label={t("Section navigation")}
           value={section}
           onChange={(event) => navigate(NAV_PATH[event.target.value] ?? '/')}
-          className="h-8 rounded-md border border-line-strong bg-white px-2 text-xs text-ink focus:outline-none focus:ring-2 focus:ring-brand-500 sm:hidden"
+          className="h-8 max-w-[110px] rounded-md border border-line-strong bg-white px-2 text-xs text-ink focus:outline-none focus:ring-2 focus:ring-brand-500 sm:hidden"
         >
+          <option value="">{t("Home")}</option>
           {NAV_OPTIONS.map((option) => <option key={option.value} value={option.value}>{t(option.label)}</option>)}
         </select>
       </div>

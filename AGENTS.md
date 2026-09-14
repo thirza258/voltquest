@@ -224,18 +224,19 @@ operator's credentials/configuration. See `docs/ASSISTANT.md` for the complete s
 
 ### Crawler files — sitemap and robots (2026-09-12)
 `frontend/vite-sitemap.js` emits `dist/sitemap.xml` during `vite build` for the deployed origin
-`https://pcb.nevatal.id`; `frontend/public/robots.txt` is static. The URL list is derived from
-`content/` at build time, not committed, so newly authored quests and tutorials appear without a
-second edit: 60 URLs today — `/`, the 20 campaign levels in worlds.json order, `/tutorials` plus its
-35 lessons, `/sandbox`, `/showcase` and `/leaderboard`.
+`https://pcb.nevatal.id`, serves `/sitemap.xml` dynamically during development, and keeps
+`frontend/public/sitemap.xml` synchronized; `frontend/public/robots.txt` is static. The URL list is
+derived from `content/` and public routes: 61 URLs today — `/` (Landing Page), `/campaign`,
+the 20 campaign levels in worlds.json order, `/tutorials` plus its 35 lessons, `/sandbox`,
+`/showcase` and `/leaderboard`.
 
-`/profile`, `/sandbox/:projectId` and `/showcase/:slug` are excluded and disallowed in robots.txt —
+`/profile`, `/sandbox/:projectId` and `/showcase/:slug` are excluded and disallowed in robots.txt (`Disallow: /showcase/`) —
 per-player or user-generated, with nothing enumerable from content. `/assets/` stays crawlable: this
 is a client-rendered app, so blocking the bundle would render every route empty for a crawler.
 Locked levels are listed on purpose — `campaign/gating.js` drives presentation only, so every
 `/play/` URL is publicly reachable.
 
-Still missing for search: `index.html` carries one hardcoded `<title>` and no description, so all 60
+Still missing for search: `index.html` carries one hardcoded `<title>` and no description, so all 61
 URLs share identical SERP text. Per-route titles/meta need either a prerender step or an SSR host;
 do not paste a static `<link rel="canonical">` into `index.html`, which would declare every route
 canonical to one URL.

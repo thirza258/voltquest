@@ -1,6 +1,7 @@
 import { useI18n } from './i18n/index.jsx'
 import { Component, lazy, Suspense, useEffect } from 'react'
 import { Routes, Route, Link, useSearchParams } from 'react-router-dom'
+import { LandingPage } from './features/landing/LandingPage.jsx'
 import { CampaignPage } from './features/campaign/CampaignPage.jsx'
 import { AppHeader } from './features/workspace/AppHeader.jsx'
 import { usePlayerStore } from './store/playerStore.js'
@@ -40,7 +41,8 @@ export default function App() {
   const expired = usePlayerStore(s => s.authExpired)
   return (
     <AppErrorBoundary>{expired && <div role="alert" className="bg-amber-50 p-2 text-center text-sm">{t("Your session expired. ")}<Link className="underline" to="/profile#account">{t("Log in to sync your progress.")}</Link></div>}<Suspense fallback={<p role="status" className="p-8 text-slate-600">{t("Loading the lab…")}</p>}><Routes>
-      <Route path="/" element={<CampaignPage />} />
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/campaign" element={<CampaignPage />} />
       <Route path="/tutorials" element={<TutorialsPage />} />
       <Route path="/tutorials/:tutorialId" element={<TutorialPage />} />
       <Route path="/courses" element={<CoursesPage />} />

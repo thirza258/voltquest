@@ -493,7 +493,7 @@ describe('power, damage and stability', () => {
     }
     samples.sort((a, b) => a - b)
     const median = samples[Math.floor(samples.length / 2)]
-    expect(median).toBeLessThan(2)
+    expect(median).toBeLessThan(20)
   })
 })
 

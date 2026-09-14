@@ -36,6 +36,7 @@ describe('tutorial learning paths and reference circuits', () => {
       expect(result.errors).toEqual([])
       expect(result.ok).toBe(true)
       for (let step = 0; step < 25; step++) sim.advance(50)
+      await new Promise((resolve) => setTimeout(resolve, 0))
       const state = sim.getState()
       expect(state.runtimeError).toBeNull()
       expect(state.events.filter((event) => ['blow', 'burnt_pin', 'short'].includes(event.type))).toEqual([])

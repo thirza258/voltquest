@@ -4,7 +4,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { JSDOM } from 'jsdom'
-import { SITE_ORIGIN, collectRoutes, renderSitemap } from './vite-sitemap.js'
+import { SITE_ORIGIN, collectRoutes, renderSitemap, sitemapPlugin } from './vite-sitemap.js'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const contentDir = path.resolve(here, '../content')
@@ -14,6 +14,7 @@ const routes = collectRoutes(contentDir)
 describe('collectRoutes', () => {
   it('lists the public entry points', () => {
     expect(routes).toContain('/')
+    expect(routes).toContain('/campaign')
     expect(routes).toContain('/tutorials')
     expect(routes).toContain('/courses')
     expect(routes).toContain('/sandbox')
@@ -62,7 +63,7 @@ describe('collectRoutes', () => {
       fs.writeFileSync(path.join(dir, 'robotics.json'), JSON.stringify({ tutorials: [{ id: 'robot-motion' }] }))
       fs.writeFileSync(path.join(dir, 'vision.json'), JSON.stringify({ tutorials: [{ id: 'opencv-foundations' }] }))
       expect(collectRoutes(dir)).toEqual([
-        '/', '/play/w1-l1', '/play/w2-l1', '/tutorials', '/tutorials/cpp-start', '/courses', '/courses/ee-circuits', '/vision', '/vision/opencv-foundations', '/robotics', '/robotics/robot-motion', '/sandbox', '/showcase', '/leaderboard',
+        '/', '/campaign', '/play/w1-l1', '/play/w2-l1', '/tutorials', '/tutorials/cpp-start', '/courses', '/courses/ee-circuits', '/vision', '/vision/opencv-foundations', '/robotics', '/robotics/robot-motion', '/sandbox', '/showcase', '/leaderboard',
       ])
     } finally {
       fs.rmSync(dir, { recursive: true, force: true })
@@ -103,8 +104,55 @@ describe('robots.txt', () => {
   it('hides private routes but keeps /sandbox and the app bundle crawlable', () => {
     expect(robots).toMatch(/^Disallow: \/profile$/m)
     expect(robots).toMatch(/^Disallow: \/sandbox\/$/m)
+    expect(robots).toMatch(/^Disallow: \/showcase\/$/m)
     expect(robots).toMatch(/^Disallow: \/api\/$/m)
     // A client-rendered app whose bundle is blocked renders empty for a crawler.
     expect(robots).not.toMatch(/Disallow:\s*\/assets/)
+  })
+})
+
+describe('sitemapPlugin and public/sitemap.xml', () => {
+  it('serves dynamic sitemap.xml in dev mode via configureServer', () => {
+    const plugin = sitemapPlugin({ contentDir })
+    let handler
+    const server = {
+      middlewares: {
+        use: (fn) => { handler = fn },
+      },
+    }
+    plugin.configureServer(server)
+    let header, body
+    const res = {
+      setHeader: (name, val) => { header = [name, val] },
+      end: (val) => { body = val },
+    }
+    let nextCalled = false
+    handler({ url: '/sitemap.xml' }, res, () => { nextCalled = true })
+    expect(header).toEqual(['Content-Type', 'application/xml'])
+    expect(body).toBe(renderSitemap(routes))
+    expect(nextCalled).toBe(false)
+
+    // Passes through non-matching routes
+    nextCalled = false
+    handler({ url: '/something-else' }, res, () => { nextCalled = true })
+    expect(nextCalled).toBe(true)
+  })
+
+  it('emits sitemap.xml asset on build', () => {
+    const plugin = sitemapPlugin({ contentDir })
+    let emitted
+    plugin.generateBundle.call({
+      emitFile: (asset) => { emitted = asset },
+    })
+    expect(emitted).toEqual({
+      type: 'asset',
+      fileName: 'sitemap.xml',
+      source: renderSitemap(routes),
+    })
+  })
+
+  it('keeps public/sitemap.xml matching the rendered routes', () => {
+    const publicXml = fs.readFileSync(path.join(here, 'public/sitemap.xml'), 'utf8')
+    expect(publicXml).toBe(renderSitemap(routes))
   })
 })
