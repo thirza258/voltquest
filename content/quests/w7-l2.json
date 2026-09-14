@@ -1,0 +1,378 @@
+{
+  "id": "w7-l2",
+  "worldId": "w7",
+  "order": 2,
+  "title": "Fresh Command Only",
+  "codeName": "Level 7-2",
+  "difficulty": "hard",
+  "board": "esp32",
+  "startBoard": "esp32",
+  "boardSwitcher": "locked",
+  "boardMode": "dual",
+  "xp": 420,
+  "estimatedMinutes": 28,
+  "summary": "Give a virtual web command a lease and return the output to off when it expires.",
+  "concepts": [
+    "HTTP",
+    "watchdog",
+    "millis",
+    "command expiry"
+  ],
+  "briefing": [
+    {
+      "mood": "thinking",
+      "text": "Give a virtual web command a lease and return the output to off when it expires."
+    },
+    {
+      "mood": "happy",
+      "text": "The parts are placed but unwired. Complete the wiring and sketch, then follow the experiments in Learn to earn each objective."
+    }
+  ],
+  "learn": {
+    "title": "Fresh Command Only",
+    "body": "Wire GPIO18 → 220 Ω → LED → GND. Start a virtual WiFi access point with WiFi.softAP(\"VoltQuest-Control\") and WebServer on port 80. This network stays inside the simulator.\n\nServe GET /on, /off and /status. /on drives the LED high, records millis() and replies ON; every fresh /on renews a 750 ms lease. /off immediately drives low and replies OFF. /status reports the current ON or OFF state without renewing anything. Once 750 ms elapses since the last /on, turn off and print EXPIRED once. Keep handleClient() and expiry checks running without delay().\n\nIn Phone, request /on and /status promptly. Then wait more than one second and request /status again: it must say OFF. Finally request /off to verify the explicit stop endpoint. A stale command must not hold the output on indefinitely. This LED exercise demonstrates timeout behavior, not a hardware safety certification.",
+    "links": []
+  },
+  "starterCircuit": {
+    "version": 1,
+    "boardMode": "dual",
+    "breadboards": [
+      {
+        "id": "bb1",
+        "type": "half",
+        "x": 0,
+        "y": 0
+      },
+      {
+        "id": "bb2",
+        "type": "half",
+        "x": 0,
+        "y": 504
+      }
+    ],
+    "mcu": "esp32",
+    "components": [
+      {
+        "id": "c_esp32",
+        "type": "esp32",
+        "props": {},
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "j1"
+        }
+      },
+      {
+        "id": "c_r0",
+        "type": "resistor",
+        "props": {
+          "ohms": 220
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb2",
+          "hole": "f1"
+        }
+      },
+      {
+        "id": "c_led0",
+        "type": "led",
+        "props": {
+          "color": "red"
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb2",
+          "hole": "f7"
+        }
+      }
+    ],
+    "wires": [],
+    "meta": {}
+  },
+  "starterCode": "void setup() {\n  Serial.begin(115200);\n  // Configure the parts described in Learn.\n}\n\nvoid loop() {\n  // Implement the challenge and test each input.\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": [
+    "esp32",
+    "resistor",
+    "led"
+  ],
+  "objectives": [
+    {
+      "id": "wiring",
+      "text": "Connect the placed parts using the pin map in Learn",
+      "rules": [
+        {
+          "type": "mcu_is",
+          "board": "esp32"
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "GPIO18"
+          },
+          "contains": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 220
+            },
+            "index": 0,
+            "pin": "p1"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 220
+            },
+            "index": 0,
+            "pin": "p2"
+          },
+          "contains": {
+            "componentType": "led",
+            "props": {
+              "color": "red"
+            },
+            "index": 0,
+            "pin": "anode"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "led",
+            "props": {
+              "color": "red"
+            },
+            "index": 0,
+            "pin": "cathode"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        }
+      ],
+      "hints": {
+        "tier1": "Use Learn for the exact power, ground and signal pins. Insert cables into free holes on the same breadboard strip as each leg. The third hint shows the complete wiring.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [
+            "esp32",
+            "resistor",
+            "led"
+          ],
+          "text": "Use Learn for the exact power, ground and signal pins. Insert cables into free holes on the same breadboard strip as each leg. The third hint shows the complete wiring."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "on",
+      "text": "Serve /on and confirm ON through /status",
+      "rules": [
+        {
+          "type": "wifi_connected"
+        },
+        {
+          "type": "http_response_matches",
+          "path": "/on",
+          "pattern": "^ON$"
+        },
+        {
+          "type": "http_response_matches",
+          "path": "/status",
+          "pattern": "^ON$"
+        },
+        {
+          "type": "pin_state",
+          "pin": "GPIO18",
+          "level": 1,
+          "forMs": 0
+        }
+      ],
+      "hints": {
+        "tier1": "The status route reports stored state and must not renew the lease.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "The status route reports stored state and must not renew the lease."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "expire",
+      "text": "After the lease expires, report OFF and keep the LED off",
+      "rules": [
+        {
+          "type": "serial_matches",
+          "pattern": "EXPIRED\\r?\\n"
+        },
+        {
+          "type": "http_response_matches",
+          "path": "/status",
+          "pattern": "^OFF$"
+        },
+        {
+          "type": "pin_state",
+          "pin": "GPIO18",
+          "level": 0,
+          "forMs": 200
+        }
+      ],
+      "hints": {
+        "tier1": "Compare unsigned elapsed time with 750 on every loop.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Compare unsigned elapsed time with 750 on every loop."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "stop",
+      "text": "Support an explicit /off response",
+      "rules": [
+        {
+          "type": "http_response_matches",
+          "path": "/off",
+          "pattern": "^OFF$"
+        }
+      ],
+      "hints": {
+        "tier1": "The explicit stop must clear the same state used by /status.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "The explicit stop must clear the same state used by /status."
+        },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [
+      {
+        "type": "code_not_matches",
+        "pattern": "\\bdelay\\s*\\("
+      }
+    ],
+    "threeText": "Use millis() scheduling without delay()"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "dual",
+      "breadboards": [
+        {
+          "id": "bb1",
+          "type": "half",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "id": "bb2",
+          "type": "half",
+          "x": 0,
+          "y": 504
+        }
+      ],
+      "mcu": "esp32",
+      "components": [
+        {
+          "id": "c_esp32",
+          "type": "esp32",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "j1"
+          }
+        },
+        {
+          "id": "c_r0",
+          "type": "resistor",
+          "props": {
+            "ohms": 220
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb2",
+            "hole": "f1"
+          }
+        },
+        {
+          "id": "c_led0",
+          "type": "led",
+          "props": {
+            "color": "red"
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb2",
+            "hole": "f7"
+          }
+        }
+      ],
+      "wires": [
+        {
+          "id": "w_q1",
+          "from": "bb1:f9",
+          "to": "bb2:g1",
+          "color": "green"
+        },
+        {
+          "id": "w_q2",
+          "from": "bb2:g5",
+          "to": "bb2:g7",
+          "color": "green"
+        },
+        {
+          "id": "w_q3",
+          "from": "bb2:g8",
+          "to": "bb1:f2",
+          "color": "black"
+        }
+      ],
+      "meta": {}
+    },
+    "code": "#include <WiFi.h>\n#include <WebServer.h>\nWebServer server(80);\nbool on = false;\nunsigned long renewedAt = 0;\nvoid setup() {\n  Serial.begin(115200); pinMode(18, OUTPUT);\n  WiFi.softAP(\"VoltQuest-Control\");\n  server.on(\"/on\", []() { on = true; renewedAt = millis(); digitalWrite(18, HIGH); server.send(200, \"text/plain\", \"ON\"); });\n  server.on(\"/off\", []() { on = false; digitalWrite(18, LOW); server.send(200, \"text/plain\", \"OFF\"); });\n  server.on(\"/status\", []() { server.send(200, \"text/plain\", on ? \"ON\" : \"OFF\"); });\n  server.begin();\n}\nvoid loop() {\n  if (on && millis() - renewedAt >= 750) { on = false; digitalWrite(18, LOW); Serial.println(\"EXPIRED\"); }\n  server.handleClient();\n}\n",
+    "blocklyXml": null,
+    "actions": [
+      {
+        "atMs": 300,
+        "http": {
+          "method": "GET",
+          "path": "/on"
+        }
+      },
+      {
+        "atMs": 400,
+        "http": {
+          "method": "GET",
+          "path": "/status"
+        }
+      },
+      {
+        "atMs": 1600,
+        "http": {
+          "method": "GET",
+          "path": "/status"
+        }
+      },
+      {
+        "atMs": 1900,
+        "http": {
+          "method": "GET",
+          "path": "/off"
+        }
+      }
+    ]
+  },
+  "solutionRunMs": 7000,
+  "successText": "Your circuit now responds to changing inputs. Try a different input sequence and explain why each output changes."
+}

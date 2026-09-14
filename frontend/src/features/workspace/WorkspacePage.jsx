@@ -1,9 +1,9 @@
 import { useI18n } from '../../i18n/index.jsx'
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { BreadboardCanvas } from '../../canvas/BreadboardCanvas.jsx'
+import CircuitViewport from './CircuitViewport.jsx'
 import { BOARD_IDS, getBoard } from '../../engine/boards/index.js'
-import { createComponent, getDef, resolvePins, WIRE_COLORS } from '../../engine/components/registry.js'
+import { createComponent, getDef, resolvePins } from '../../engine/components/registry.js'
 import { useLevelSession } from '../../hooks/useLevelSession.js'
 import { useKeyboard, KEYBOARD_SHORTCUTS } from '../../hooks/useKeyboard.js'
 import { useToneAudio } from '../../hooks/useToneAudio.js'
@@ -193,12 +193,7 @@ export default function WorkspacePage({ mode = 'campaign', seed = null, sessionI
       <ResizeHandle side="left" value={workspace.panels.left} onChange={px => workspace.setPanelSize('left', px)} />
       <section className="vq-bench relative min-w-0 flex-1" aria-label={t("Circuit workbench")}>
         {drone ? <Suspense fallback={<p className="p-4">{t('Loading drone bench…')}</p>}><DroneBench doc={doc} state={state} selectedIds={selectedIds} ghost={workspace.showGhost ? level?.solution?.circuit : null} readOnly={readOnly} sandbox={!campaign} /></Suspense> : <>
-        <div className="absolute right-3 top-3 z-10 flex max-w-[calc(100%-24px)] flex-wrap justify-end gap-2 rounded-lg border border-line bg-white p-1.5">
-          <SegmentedControl size="sm" value={workspace.tool} onChange={workspace.setTool} options={[{ value: 'select', label: 'Select' }, { value: 'wire', label: 'Wire' }]} aria-label={t("Canvas tool")} />
-          <Button size="sm" variant="secondary" onClick={() => workspace.setLeftTab('assistant')}>{t("Ask AI")}</Button>
-          {!readOnly && <div className="flex flex-wrap gap-1" aria-label={t("Wire palette")}>{WIRE_COLORS.map(color => <button key={color} aria-label={t('{color} wire', { color: t(color) })} aria-pressed={workspace.wireColor === color} title={t('{color} wire', { color: t(color) })} className={`h-7 w-7 rounded border-2 ${workspace.wireColor === color ? 'border-brand-600' : 'border-line'}`} style={{ backgroundColor: color }} onClick={() => workspace.setWireColor(color)} />)}</div>}
-        </div>
-        <BreadboardCanvas doc={doc} simState={state} readOnly={readOnly} selectedIds={selectedIds} tool={workspace.tool} wireColor={workspace.wireColor} cosmetics={settings} ghost={workspace.showGhost ? level?.solution?.circuit : null} highlights={workspace.hintTargets} onSelect={useDocumentStore.getState().select} onAddComponent={dropPart} onMoveComponent={useDocumentStore.getState().moveComponent} onRotateComponent={rotate} onRemove={remove} onAddWire={useDocumentStore.getState().addWire} onRemoveWire={id => useDocumentStore.getState().removeWires([id])} onControl={useSimStore.getState().setControl} onToolChange={workspace.setTool} onWireColorChange={workspace.setWireColor} onDropRejected={reject} onEspNeedsDualBoard={() => setDualPrompt(true)} toolbarExtra={!readOnly && (!campaign || level?.boardSwitcher === 'enabled') ? <SegmentedControl size="sm" options={['half', 'full', 'dual'].map(value => ({ value, label: value[0].toUpperCase() + value.slice(1) }))} value={doc.boardMode} onChange={layout} aria-label={t("Breadboard layout")} /> : null} />
+        <CircuitViewport allow3D={mode === 'sandbox'} onAskAI={() => workspace.setLeftTab('assistant')} doc={doc} simState={state} readOnly={readOnly} selectedIds={selectedIds} tool={workspace.tool} wireColor={workspace.wireColor} cosmetics={settings} ghost={workspace.showGhost ? level?.solution?.circuit : null} highlights={workspace.hintTargets} onSelect={useDocumentStore.getState().select} onAddComponent={dropPart} onMoveComponent={useDocumentStore.getState().moveComponent} onRotateComponent={rotate} onRemove={remove} onAddWire={useDocumentStore.getState().addWire} onRemoveWire={id => useDocumentStore.getState().removeWires([id])} onControl={useSimStore.getState().setControl} onToolChange={workspace.setTool} onWireColorChange={workspace.setWireColor} onDropRejected={reject} onEspNeedsDualBoard={() => setDualPrompt(true)} toolbarExtra={!readOnly && (!campaign || level?.boardSwitcher === 'enabled') ? <SegmentedControl size="sm" options={['half', 'full', 'dual'].map(value => ({ value, label: value[0].toUpperCase() + value.slice(1) }))} value={doc.boardMode} onChange={layout} aria-label={t("Breadboard layout")} /> : null} />
         </>}
       </section>
       <ResizeHandle side="right" value={workspace.panels.right} onChange={px => workspace.setPanelSize('right', px)} />

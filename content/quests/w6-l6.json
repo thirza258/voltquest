@@ -1,0 +1,647 @@
+{
+  "id": "w6-l6",
+  "worldId": "w6",
+  "order": 6,
+  "title": "Crosswalk Controller",
+  "codeName": "Level 6-6",
+  "difficulty": "intermediate",
+  "board": "uno",
+  "startBoard": "uno",
+  "boardSwitcher": "locked",
+  "boardMode": "half",
+  "xp": 360,
+  "estimatedMinutes": 25,
+  "summary": "Build a timed crossing state machine that never grants conflicting signals.",
+  "concepts": [
+    "state machines",
+    "interlocks",
+    "edge detection",
+    "millis"
+  ],
+  "briefing": [
+    {
+      "mood": "thinking",
+      "text": "Build a timed crossing state machine that never grants conflicting signals."
+    },
+    {
+      "mood": "happy",
+      "text": "The parts are placed but unwired. Complete the wiring and sketch, then follow the experiments in Learn to earn each objective."
+    }
+  ],
+  "learn": {
+    "title": "Crosswalk Controller",
+    "body": "Wire green traffic LED on D9, red traffic LED on D10 and blue walk LED on D11, each through its own 220 Ω resistor to the anode and with cathode to GND. Wire a request button from D2 to GND using INPUT_PULLUP.\n\nBegin READY with only green on. A new press prints WAIT, then after 500 ms turns green off and red on. Wait another 250 ms before enabling blue and printing CROSS. After 1000 ms turn blue off and print CLEAR. Hold red for 250 ms more, then restore green and print READY. Track phase and entry time with millis(); never show green and blue together.\n\nRun, press and hold throughout the crossing. The ordered Serial messages are READY, WAIT, CROSS, CLEAR, READY, and a held button must not start another crossing. Release before requesting again. This is a timing exercise, not a certified road-signal controller.",
+    "links": []
+  },
+  "starterCircuit": {
+    "version": 1,
+    "boardMode": "half",
+    "breadboards": [
+      {
+        "id": "bb1",
+        "type": "half",
+        "x": 0,
+        "y": 0
+      }
+    ],
+    "mcu": "uno",
+    "components": [
+      {
+        "id": "c_uno",
+        "type": "uno",
+        "props": {},
+        "rotation": 0,
+        "position": {
+          "x": 0,
+          "y": -552
+        }
+      },
+      {
+        "id": "c_button",
+        "type": "pushbutton",
+        "props": {},
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "a1"
+        }
+      },
+      {
+        "id": "c_r0",
+        "type": "resistor",
+        "props": {
+          "ohms": 220
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "f1"
+        }
+      },
+      {
+        "id": "c_led0",
+        "type": "led",
+        "props": {
+          "color": "green"
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "f7"
+        }
+      },
+      {
+        "id": "c_r1",
+        "type": "resistor",
+        "props": {
+          "ohms": 220
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "f11"
+        }
+      },
+      {
+        "id": "c_led1",
+        "type": "led",
+        "props": {
+          "color": "red"
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "f17"
+        }
+      },
+      {
+        "id": "c_r2",
+        "type": "resistor",
+        "props": {
+          "ohms": 220
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "f21"
+        }
+      },
+      {
+        "id": "c_led2",
+        "type": "led",
+        "props": {
+          "color": "blue"
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "f27"
+        }
+      }
+    ],
+    "wires": [],
+    "meta": {}
+  },
+  "starterCode": "void setup() {\n  Serial.begin(115200);\n  // Configure the parts described in Learn.\n}\n\nvoid loop() {\n  // Implement the challenge and test each input.\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": [
+    "uno",
+    "pushbutton",
+    "resistor",
+    "led"
+  ],
+  "objectives": [
+    {
+      "id": "wiring",
+      "text": "Connect the placed parts using the pin map in Learn",
+      "rules": [
+        {
+          "type": "mcu_is",
+          "board": "uno"
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "pushbutton",
+            "props": {},
+            "index": 0,
+            "pin": "a1"
+          },
+          "contains": {
+            "mcuPin": "D2"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "pushbutton",
+            "props": {},
+            "index": 0,
+            "pin": "b1"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "D9"
+          },
+          "contains": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 220
+            },
+            "index": 0,
+            "pin": "p1"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 220
+            },
+            "index": 0,
+            "pin": "p2"
+          },
+          "contains": {
+            "componentType": "led",
+            "props": {
+              "color": "green"
+            },
+            "index": 0,
+            "pin": "anode"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "led",
+            "props": {
+              "color": "green"
+            },
+            "index": 0,
+            "pin": "cathode"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "D10"
+          },
+          "contains": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 220
+            },
+            "index": 1,
+            "pin": "p1"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 220
+            },
+            "index": 1,
+            "pin": "p2"
+          },
+          "contains": {
+            "componentType": "led",
+            "props": {
+              "color": "red"
+            },
+            "index": 0,
+            "pin": "anode"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "led",
+            "props": {
+              "color": "red"
+            },
+            "index": 0,
+            "pin": "cathode"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "D11"
+          },
+          "contains": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 220
+            },
+            "index": 2,
+            "pin": "p1"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 220
+            },
+            "index": 2,
+            "pin": "p2"
+          },
+          "contains": {
+            "componentType": "led",
+            "props": {
+              "color": "blue"
+            },
+            "index": 0,
+            "pin": "anode"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "led",
+            "props": {
+              "color": "blue"
+            },
+            "index": 0,
+            "pin": "cathode"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        }
+      ],
+      "hints": {
+        "tier1": "Use Learn for the exact power, ground and signal pins. Insert cables into free holes on the same breadboard strip as each leg. The third hint shows the complete wiring.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [
+            "uno",
+            "pushbutton",
+            "resistor",
+            "led"
+          ],
+          "text": "Use Learn for the exact power, ground and signal pins. Insert cables into free holes on the same breadboard strip as each leg. The third hint shows the complete wiring."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "cross",
+      "text": "Grant a 1000 ms walk interval with red on and green off",
+      "rules": [
+        {
+          "type": "pin_state",
+          "pin": "D9",
+          "level": 0,
+          "forMs": 0
+        },
+        {
+          "type": "pin_state",
+          "pin": "D10",
+          "level": 1,
+          "forMs": 0
+        },
+        {
+          "type": "pin_state",
+          "pin": "D11",
+          "level": 1,
+          "forMs": 900
+        }
+      ],
+      "hints": {
+        "tier1": "Enter the walk phase only after the all-stop interval has elapsed.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Enter the walk phase only after the all-stop interval has elapsed."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "clear",
+      "text": "Keep red on for 1500 ms across the crossing and clearance",
+      "rules": [
+        {
+          "type": "pin_pattern",
+          "pin": "D10",
+          "pattern": [
+            {
+              "level": 1,
+              "ms": 1500
+            },
+            {
+              "level": 0,
+              "ms": 200
+            }
+          ],
+          "toleranceRatio": 0.08
+        }
+      ],
+      "hints": {
+        "tier1": "Red covers 250 ms before walking, 1000 ms walking, and 250 ms after.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Red covers 250 ms before walking, 1000 ms walking, and 250 ms after."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "ready",
+      "text": "Return to READY once while the request remains held",
+      "rules": [
+        {
+          "type": "control_state",
+          "componentType": "pushbutton",
+          "field": "pressed",
+          "equals": true
+        },
+        {
+          "type": "pin_state",
+          "pin": "D9",
+          "level": 1,
+          "forMs": 400
+        },
+        {
+          "type": "pin_state",
+          "pin": "D11",
+          "level": 0,
+          "forMs": 0
+        },
+        {
+          "type": "serial_matches",
+          "pattern": "^READY\\r?\\nWAIT\\r?\\nCROSS\\r?\\nCLEAR\\r?\\nREADY\\r?\\n$"
+        }
+      ],
+      "hints": {
+        "tier1": "Remember the previous button reading even during the crossing.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Remember the previous button reading even during the crossing."
+        },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [
+      {
+        "type": "code_not_matches",
+        "pattern": "\\bdelay\\s*\\("
+      }
+    ],
+    "threeText": "Use millis() scheduling without delay()"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "half",
+      "breadboards": [
+        {
+          "id": "bb1",
+          "type": "half",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "mcu": "uno",
+      "components": [
+        {
+          "id": "c_uno",
+          "type": "uno",
+          "props": {},
+          "rotation": 0,
+          "position": {
+            "x": 0,
+            "y": -552
+          }
+        },
+        {
+          "id": "c_button",
+          "type": "pushbutton",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a1"
+          }
+        },
+        {
+          "id": "c_r0",
+          "type": "resistor",
+          "props": {
+            "ohms": 220
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "f1"
+          }
+        },
+        {
+          "id": "c_led0",
+          "type": "led",
+          "props": {
+            "color": "green"
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "f7"
+          }
+        },
+        {
+          "id": "c_r1",
+          "type": "resistor",
+          "props": {
+            "ohms": 220
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "f11"
+          }
+        },
+        {
+          "id": "c_led1",
+          "type": "led",
+          "props": {
+            "color": "red"
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "f17"
+          }
+        },
+        {
+          "id": "c_r2",
+          "type": "resistor",
+          "props": {
+            "ohms": 220
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "f21"
+          }
+        },
+        {
+          "id": "c_led2",
+          "type": "led",
+          "props": {
+            "color": "blue"
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "f27"
+          }
+        }
+      ],
+      "wires": [
+        {
+          "id": "w_q1",
+          "from": "bb1:c1",
+          "to": "c_uno:D2",
+          "color": "green"
+        },
+        {
+          "id": "w_q2",
+          "from": "bb1:c3",
+          "to": "c_uno:GND",
+          "color": "black"
+        },
+        {
+          "id": "w_q3",
+          "from": "c_uno:D9",
+          "to": "bb1:g1",
+          "color": "green"
+        },
+        {
+          "id": "w_q4",
+          "from": "bb1:g5",
+          "to": "bb1:g7",
+          "color": "green"
+        },
+        {
+          "id": "w_q5",
+          "from": "bb1:g8",
+          "to": "c_uno:GND",
+          "color": "black"
+        },
+        {
+          "id": "w_q6",
+          "from": "c_uno:D10",
+          "to": "bb1:g11",
+          "color": "green"
+        },
+        {
+          "id": "w_q7",
+          "from": "bb1:g15",
+          "to": "bb1:g17",
+          "color": "green"
+        },
+        {
+          "id": "w_q8",
+          "from": "bb1:g18",
+          "to": "c_uno:GND",
+          "color": "black"
+        },
+        {
+          "id": "w_q9",
+          "from": "c_uno:D11",
+          "to": "bb1:g21",
+          "color": "green"
+        },
+        {
+          "id": "w_q10",
+          "from": "bb1:g25",
+          "to": "bb1:g27",
+          "color": "green"
+        },
+        {
+          "id": "w_q11",
+          "from": "bb1:g28",
+          "to": "c_uno:GND",
+          "color": "black"
+        }
+      ],
+      "meta": {}
+    },
+    "code": "int phase = 0;\nint previous = HIGH;\nunsigned long enteredAt = 0;\nvoid setup() {\n  Serial.begin(115200); pinMode(2, INPUT_PULLUP);\n  pinMode(9, OUTPUT); pinMode(10, OUTPUT); pinMode(11, OUTPUT);\n  digitalWrite(9, HIGH); Serial.println(\"READY\");\n}\nvoid loop() {\n  unsigned long now = millis();\n  int reading = digitalRead(2);\n  if (phase == 0 && reading == LOW && previous == HIGH) { phase = 1; enteredAt = now; Serial.println(\"WAIT\"); }\n  previous = reading;\n  if (phase == 1 && now - enteredAt >= 500) {\n    digitalWrite(9, LOW); digitalWrite(10, HIGH); phase = 2; enteredAt = now;\n  } else if (phase == 2 && now - enteredAt >= 250) {\n    digitalWrite(11, HIGH); Serial.println(\"CROSS\"); phase = 3; enteredAt = now;\n  } else if (phase == 3 && now - enteredAt >= 1000) {\n    digitalWrite(11, LOW); Serial.println(\"CLEAR\"); phase = 4; enteredAt = now;\n  } else if (phase == 4 && now - enteredAt >= 250) {\n    digitalWrite(10, LOW); digitalWrite(9, HIGH); Serial.println(\"READY\"); phase = 0;\n  }\n}\n",
+    "blocklyXml": null,
+    "actions": [
+      {
+        "atMs": 300,
+        "select": {
+          "componentType": "pushbutton"
+        },
+        "patch": {
+          "pressed": true
+        }
+      }
+    ]
+  },
+  "solutionRunMs": 7000,
+  "successText": "Your circuit now responds to changing inputs. Try a different input sequence and explain why each output changes."
+}

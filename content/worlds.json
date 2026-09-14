@@ -74,6 +74,40 @@
         "w5-l5",
         "w5-l6"
       ]
+    },
+    {
+      "id": "w6",
+      "order": 6,
+      "title": "Responsive Machines",
+      "subtitle": "Intermediate · timing, memory and coordinated controls",
+      "theme": "teal",
+      "board": "uno",
+      "intro": "Make several things happen at once. These intermediate quests combine input handling, stored state and timed outputs on the Uno.",
+      "levelIds": [
+        "w6-l1",
+        "w6-l2",
+        "w6-l3",
+        "w6-l4",
+        "w6-l5",
+        "w6-l6"
+      ]
+    },
+    {
+      "id": "w7",
+      "order": 7,
+      "title": "Reliable Connections",
+      "subtitle": "Hard · robust commands, sensor decisions and IoT integration",
+      "theme": "indigo",
+      "board": "esp32",
+      "intro": "A connected device must handle more than the happy path. Validate commands, expire stale state, filter observations and coordinate a complete greenhouse controller.",
+      "levelIds": [
+        "w7-l1",
+        "w7-l2",
+        "w7-l3",
+        "w7-l4",
+        "w7-l5",
+        "w7-l6"
+      ]
     }
   ]
 }

@@ -8,9 +8,11 @@ const CATEGORIES = { mcu: 'Controllers', output: 'Outputs', input: 'Inputs and s
 export default function PartsDrawer({ allowed, onAdd, readOnly = false, bench = 'breadboard' }) {
   const { t } = useI18n()
   const [query, setQuery] = useState('')
-  const defs = useMemo(() => listDefs({ bench }).filter(d => (!allowed || allowed.includes(d.type)) && `${d.name} ${t(d.name)} ${d.type} ${d.category}`.toLowerCase().includes(query.toLowerCase())), [allowed, query, t, bench])
+  const [categoryFilter, setCategoryFilter] = useState('all')
+  const defs = useMemo(() => listDefs({ bench }).filter(d => (!allowed || allowed.includes(d.type)) && (categoryFilter === 'all' || categoryFilter === d.category) && `${d.name} ${t(d.name)} ${d.type} ${d.category}`.toLowerCase().includes(query.toLowerCase())), [allowed, query, t, bench, categoryFilter])
   return <section className="space-y-4 overflow-auto p-3" aria-label={t("Component drawer")}>
     <input type="search" aria-label={t("Search components")} placeholder={t("Find a component…")} value={query} onChange={e => setQuery(e.target.value)} className="w-full rounded-md border border-line-strong p-2 text-sm" />
+    <div className="flex items-center gap-2"><select aria-label={t('Part category')} value={categoryFilter} onChange={event => setCategoryFilter(event.target.value)} className="min-w-0 flex-1 rounded border border-line bg-white p-1.5 text-xs"><option value="all">{t('All parts')}</option>{Object.entries(CATEGORIES).map(([value, label]) => <option key={value} value={value}>{t(label)}</option>)}</select><span className="shrink-0 text-xs text-slate-600" role="status">{t('{count} parts', { count: defs.length })}</span></div>
     <p className="text-xs text-slate-600">{t(bench === 'drone' ? 'Add a part to a free compatible mount. Select it to change its mount.' : 'Drag a part onto the breadboard or click Add for a free position.')}</p>
     {Object.entries(CATEGORIES).map(([category, title]) => {
       const items = defs.filter(d => d.category === category)

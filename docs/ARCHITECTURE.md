@@ -10,7 +10,7 @@ FastAPI backend; `docs/DESIGN.md` defines the visual language.
 | Layer | Choice |
 | --- | --- |
 | Frontend | React 18 (JavaScript + JSX, **no TypeScript**), Vite 6, Tailwind CSS 3, Zustand 5, react-router-dom 7 |
-| Canvas | Plain SVG rendered by React (no Pixi/Konva). Pan/zoom via a `<g transform>` viewport. |
+| Canvas | Plain SVG rendered by React (no Pixi/Konva). Pan/zoom via a `<g transform>` viewport. The sandbox additionally lazy-loads a Three.js WebGL2 viewing mode; the SVG remains the circuit editor. See SANDBOX_3D.md. |
 | Code editor | `@monaco-editor/react` with the `monaco-editor` npm package bundled locally (no CDN); loaded lazily (`React.lazy`) when the Code tab first opens |
 | Blocks | `blockly` npm package (lazy chunk), custom Arduino generator (Blockly → C++ one-way). Block set: setup/loop, pinMode, digitalWrite/Read, analogRead/Write, delay, millis, tone/noTone, Serial.begin/print/println, map, variables, math/compare/logic, if/else, repeat/while/for, functions; ESP32: touchRead, ledcWrite, WiFi.begin, server.on/send, mqtt publish |
 | Firmware engine | **Custom Arduino-C++ subset interpreter** (`frontend/src/engine/interpreter`) running in a Web Worker with a virtual clock. Same engine emulates AVR (Uno/Nano: 5 V, 10-bit ADC, 16-bit int) and ESP32 (3.3 V, 12-bit ADC, 32-bit int, WiFi/WebServer/MQTT/touch/ledc libraries). No avr8js, no cloud compiler. |

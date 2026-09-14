@@ -38,7 +38,7 @@ step "frontend: initial JS payload budget (${BUDGET_KB} kB gzipped)"
   while IFS= read -r asset; do
     [ -n "$asset" ] || continue
     case "$asset" in
-      assets/monaco-*|assets/blockly-*|assets/VirtualPhone-*)
+      assets/monaco-*|assets/blockly-*|assets/VirtualPhone-*|assets/three-*|assets/Circuit3DView-*)
         echo "FAIL: $asset must load lazily, but index.html requests it eagerly."
         exit 1
         ;;

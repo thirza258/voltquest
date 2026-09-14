@@ -292,6 +292,8 @@ export function describeValue(type, props = {}) {
       return `${capitalize(p.color)} LED`
     case 'potentiometer':
       return `${formatOhms(p.ohms)} pot`
+    case 'trimpot':
+      return `${formatOhms(p.ohms)} trimpot`
     case 'capacitor':
       return `${p.uF} µF capacitor`
     case 'neopixel_ring':

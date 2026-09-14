@@ -30,6 +30,7 @@ SUMMARY_FIELDS = (
     "estimatedMinutes",
     "summary",
     "concepts",
+    "difficulty",
 )
 
 _worlds: list[dict] = []

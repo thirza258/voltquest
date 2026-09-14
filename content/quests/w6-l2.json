@@ -1,0 +1,497 @@
+{
+  "id": "w6-l2",
+  "worldId": "w6",
+  "order": 2,
+  "title": "Steady Threshold",
+  "codeName": "Level 6-2",
+  "difficulty": "intermediate",
+  "board": "uno",
+  "startBoard": "uno",
+  "boardSwitcher": "locked",
+  "boardMode": "half",
+  "xp": 280,
+  "estimatedMinutes": 18,
+  "summary": "Use two thresholds and memory to stop an analog alarm from chattering.",
+  "concepts": [
+    "hysteresis",
+    "analogRead",
+    "state"
+  ],
+  "briefing": [
+    {
+      "mood": "thinking",
+      "text": "Use two thresholds and memory to stop an analog alarm from chattering."
+    },
+    {
+      "mood": "happy",
+      "text": "The parts are placed but unwired. Complete the wiring and sketch, then follow the experiments in Learn to earn each objective."
+    }
+  ],
+  "learn": {
+    "title": "Steady Threshold",
+    "body": "Wire pot end1 to 5V, end2 to GND and wiper to A0. Wire D9 → 220 Ω → LED → GND. The knob runs from 0 to 1023 ADC counts.\n\nStart with the alarm off. Turn it on at a reading of 700 or above and off at 300 or below. Between those thresholds, keep the previous state. A single comparison with 500 cannot do this: the same midpoint must sometimes be on and sometimes off.\n\nRun and set the knob to 90%, then 50%, then 10%, then 50%. Pause at each setting for half a second. The LED must show on, on, off, off. Print ON or OFF only when the state changes. Keep reading A0 without a blocking delay.",
+    "links": []
+  },
+  "starterCircuit": {
+    "version": 1,
+    "boardMode": "half",
+    "breadboards": [
+      {
+        "id": "bb1",
+        "type": "half",
+        "x": 0,
+        "y": 0
+      }
+    ],
+    "mcu": "uno",
+    "components": [
+      {
+        "id": "c_uno",
+        "type": "uno",
+        "props": {},
+        "rotation": 0,
+        "position": {
+          "x": 0,
+          "y": -552
+        }
+      },
+      {
+        "id": "c_pot",
+        "type": "potentiometer",
+        "props": {
+          "ohms": 10000
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "a8"
+        }
+      },
+      {
+        "id": "c_r0",
+        "type": "resistor",
+        "props": {
+          "ohms": 220
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "f1"
+        }
+      },
+      {
+        "id": "c_led0",
+        "type": "led",
+        "props": {
+          "color": "red"
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "f7"
+        }
+      }
+    ],
+    "wires": [],
+    "meta": {}
+  },
+  "starterCode": "void setup() {\n  Serial.begin(115200);\n  // Configure the parts described in Learn.\n}\n\nvoid loop() {\n  // Implement the challenge and test each input.\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": [
+    "uno",
+    "potentiometer",
+    "resistor",
+    "led"
+  ],
+  "objectives": [
+    {
+      "id": "wiring",
+      "text": "Connect the placed parts using the pin map in Learn",
+      "rules": [
+        {
+          "type": "mcu_is",
+          "board": "uno"
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "potentiometer",
+            "props": {
+              "ohms": 10000
+            },
+            "index": 0,
+            "pin": "end1"
+          },
+          "contains": {
+            "mcuPin": "5V"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "potentiometer",
+            "props": {
+              "ohms": 10000
+            },
+            "index": 0,
+            "pin": "end2"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "potentiometer",
+            "props": {
+              "ohms": 10000
+            },
+            "index": 0,
+            "pin": "wiper"
+          },
+          "contains": {
+            "mcuPin": "A0"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "D9"
+          },
+          "contains": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 220
+            },
+            "index": 0,
+            "pin": "p1"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 220
+            },
+            "index": 0,
+            "pin": "p2"
+          },
+          "contains": {
+            "componentType": "led",
+            "props": {
+              "color": "red"
+            },
+            "index": 0,
+            "pin": "anode"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "led",
+            "props": {
+              "color": "red"
+            },
+            "index": 0,
+            "pin": "cathode"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        }
+      ],
+      "hints": {
+        "tier1": "Use Learn for the exact power, ground and signal pins. Insert cables into free holes on the same breadboard strip as each leg. The third hint shows the complete wiring.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [
+            "uno",
+            "potentiometer",
+            "resistor",
+            "led"
+          ],
+          "text": "Use Learn for the exact power, ground and signal pins. Insert cables into free holes on the same breadboard strip as each leg. The third hint shows the complete wiring."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "high",
+      "text": "Raise the knob to 90% and turn the alarm on",
+      "rules": [
+        {
+          "type": "control_state",
+          "componentType": "potentiometer",
+          "field": "value",
+          "equals": 0.9
+        },
+        {
+          "type": "analog_read_seen",
+          "pin": "A0",
+          "min": 900
+        },
+        {
+          "type": "pin_state",
+          "pin": "D9",
+          "level": 1,
+          "forMs": 0
+        }
+      ],
+      "hints": {
+        "tier1": "Store the alarm state in a variable that survives each loop iteration.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Store the alarm state in a variable that survives each loop iteration."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "middle_on",
+      "text": "Return to 50% and retain the on state",
+      "rules": [
+        {
+          "type": "control_state",
+          "componentType": "potentiometer",
+          "field": "value",
+          "equals": 0.5
+        },
+        {
+          "type": "pin_state",
+          "pin": "D9",
+          "level": 1,
+          "forMs": 300
+        }
+      ],
+      "hints": {
+        "tier1": "Inside the 300–700 band, do not assign a new state.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Inside the 300–700 band, do not assign a new state."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "low",
+      "text": "Lower the knob to 10% and turn the alarm off",
+      "rules": [
+        {
+          "type": "control_state",
+          "componentType": "potentiometer",
+          "field": "value",
+          "equals": 0.1
+        },
+        {
+          "type": "analog_read_seen",
+          "pin": "A0",
+          "max": 150
+        },
+        {
+          "type": "pin_state",
+          "pin": "D9",
+          "level": 0,
+          "forMs": 0
+        }
+      ],
+      "hints": {
+        "tier1": "The lower threshold resets the same stored state.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "The lower threshold resets the same stored state."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "middle_off",
+      "text": "At 50% retain off after the full ON → OFF cycle",
+      "rules": [
+        {
+          "type": "control_state",
+          "componentType": "potentiometer",
+          "field": "value",
+          "equals": 0.5
+        },
+        {
+          "type": "pin_state",
+          "pin": "D9",
+          "level": 0,
+          "forMs": 300
+        },
+        {
+          "type": "serial_matches",
+          "pattern": "ON\\r?\\nOFF\\r?\\n"
+        }
+      ],
+      "hints": {
+        "tier1": "The final midpoint has the same voltage but a different history.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "The final midpoint has the same voltage but a different history."
+        },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [
+      {
+        "type": "code_not_matches",
+        "pattern": "\\bdelay\\s*\\("
+      }
+    ],
+    "threeText": "Use millis() scheduling without delay()"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "half",
+      "breadboards": [
+        {
+          "id": "bb1",
+          "type": "half",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "mcu": "uno",
+      "components": [
+        {
+          "id": "c_uno",
+          "type": "uno",
+          "props": {},
+          "rotation": 0,
+          "position": {
+            "x": 0,
+            "y": -552
+          }
+        },
+        {
+          "id": "c_pot",
+          "type": "potentiometer",
+          "props": {
+            "ohms": 10000
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a8"
+          }
+        },
+        {
+          "id": "c_r0",
+          "type": "resistor",
+          "props": {
+            "ohms": 220
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "f1"
+          }
+        },
+        {
+          "id": "c_led0",
+          "type": "led",
+          "props": {
+            "color": "red"
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "f7"
+          }
+        }
+      ],
+      "wires": [
+        {
+          "id": "w_q1",
+          "from": "bb1:b8",
+          "to": "c_uno:5V",
+          "color": "red"
+        },
+        {
+          "id": "w_q2",
+          "from": "bb1:b10",
+          "to": "c_uno:GND",
+          "color": "black"
+        },
+        {
+          "id": "w_q3",
+          "from": "bb1:b9",
+          "to": "c_uno:A0",
+          "color": "green"
+        },
+        {
+          "id": "w_q4",
+          "from": "c_uno:D9",
+          "to": "bb1:g1",
+          "color": "green"
+        },
+        {
+          "id": "w_q5",
+          "from": "bb1:g5",
+          "to": "bb1:g7",
+          "color": "green"
+        },
+        {
+          "id": "w_q6",
+          "from": "bb1:g8",
+          "to": "c_uno:GND",
+          "color": "black"
+        }
+      ],
+      "meta": {}
+    },
+    "code": "bool alarm = false;\nvoid setup() { Serial.begin(115200); pinMode(9, OUTPUT); }\nvoid loop() {\n  int reading = analogRead(A0);\n  bool next = alarm;\n  if (reading >= 700) next = true;\n  if (reading <= 300) next = false;\n  if (next != alarm) {\n    alarm = next;\n    digitalWrite(9, alarm);\n    Serial.println(alarm ? \"ON\" : \"OFF\");\n  }\n}\n",
+    "blocklyXml": null,
+    "actions": [
+      {
+        "atMs": 300,
+        "select": {
+          "componentType": "potentiometer"
+        },
+        "patch": {
+          "value": 0.9
+        }
+      },
+      {
+        "atMs": 1000,
+        "select": {
+          "componentType": "potentiometer"
+        },
+        "patch": {
+          "value": 0.5
+        }
+      },
+      {
+        "atMs": 1800,
+        "select": {
+          "componentType": "potentiometer"
+        },
+        "patch": {
+          "value": 0.1
+        }
+      },
+      {
+        "atMs": 2500,
+        "select": {
+          "componentType": "potentiometer"
+        },
+        "patch": {
+          "value": 0.5
+        }
+      }
+    ]
+  },
+  "solutionRunMs": 7000,
+  "successText": "Your circuit now responds to changing inputs. Try a different input sequence and explain why each output changes."
+}

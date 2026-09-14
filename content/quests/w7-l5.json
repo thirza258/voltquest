@@ -1,0 +1,591 @@
+{
+  "id": "w7-l5",
+  "worldId": "w7",
+  "order": 5,
+  "title": "Range Sentry",
+  "codeName": "Level 7-5",
+  "difficulty": "hard",
+  "board": "esp32",
+  "startBoard": "esp32",
+  "boardSwitcher": "locked",
+  "boardMode": "dual",
+  "xp": 480,
+  "estimatedMinutes": 35,
+  "summary": "Protect a 3.3 V echo input and reject isolated range spikes with a median filter.",
+  "concepts": [
+    "voltage divider",
+    "median filter",
+    "arrays",
+    "ultrasonic"
+  ],
+  "briefing": [
+    {
+      "mood": "thinking",
+      "text": "Protect a 3.3 V echo input and reject isolated range spikes with a median filter."
+    },
+    {
+      "mood": "happy",
+      "text": "The parts are placed but unwired. Complete the wiring and sketch, then follow the experiments in Learn to earn each objective."
+    }
+  ],
+  "learn": {
+    "title": "Range Sentry",
+    "body": "Power HC-SR04 from VIN (5 V) and GND. TRIG goes to GPIO18. ECHO goes through 1 kΩ to a junction shared by GPIO19 and a 2.2 kΩ resistor to GND; never connect 5 V ECHO directly to GPIO19. Wire GPIO23 → 220 Ω → LED → GND.\n\nEvery 60 ms, send a 10 µs trigger pulse, use pulseIn(19, HIGH, 25000), and convert duration / 58.3 to centimeters. Keep the last five samples in a circular array. Copy and sort them, then use the middle value once five valid readings exist. A zero-duration timeout must clear the history and turn the LED off. Turn on when the median is below 50 cm; print MEDIAN=30;NEAR or MEDIAN=120;CLEAR using a whole number.\n\nSet distance to 120 cm before Run; wait one second, set 30 cm, wait one second, then set 200 cm. Expect clear, near, clear. One brief outlier among four far samples must not trigger. Also toggle the built-in GPIO2 LED every 100 ms (200 ms period) to show the loop still runs. pulseIn waits briefly for echo; use millis() for the other tasks.",
+    "links": []
+  },
+  "starterCircuit": {
+    "version": 1,
+    "boardMode": "dual",
+    "breadboards": [
+      {
+        "id": "bb1",
+        "type": "half",
+        "x": 0,
+        "y": 0
+      },
+      {
+        "id": "bb2",
+        "type": "half",
+        "x": 0,
+        "y": 504
+      }
+    ],
+    "mcu": "esp32",
+    "components": [
+      {
+        "id": "c_esp32",
+        "type": "esp32",
+        "props": {},
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "j1"
+        }
+      },
+      {
+        "id": "c_r0",
+        "type": "resistor",
+        "props": {
+          "ohms": 220
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb2",
+          "hole": "f1"
+        }
+      },
+      {
+        "id": "c_led0",
+        "type": "led",
+        "props": {
+          "color": "red"
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb2",
+          "hole": "f7"
+        }
+      },
+      {
+        "id": "c_range",
+        "type": "ultrasonic_hcsr04",
+        "props": {},
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "a20"
+        }
+      },
+      {
+        "id": "c_top",
+        "type": "resistor",
+        "props": {
+          "ohms": 1000
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "a1"
+        }
+      },
+      {
+        "id": "c_bottom",
+        "type": "resistor",
+        "props": {
+          "ohms": 2200
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "a10"
+        }
+      }
+    ],
+    "wires": [],
+    "meta": {}
+  },
+  "starterCode": "void setup() {\n  Serial.begin(115200);\n  // Configure the parts described in Learn.\n}\n\nvoid loop() {\n  // Implement the challenge and test each input.\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": [
+    "esp32",
+    "resistor",
+    "led",
+    "ultrasonic_hcsr04"
+  ],
+  "objectives": [
+    {
+      "id": "wiring",
+      "text": "Connect the placed parts using the pin map in Learn",
+      "rules": [
+        {
+          "type": "mcu_is",
+          "board": "esp32"
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "GPIO23"
+          },
+          "contains": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 220
+            },
+            "index": 0,
+            "pin": "p1"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 220
+            },
+            "index": 0,
+            "pin": "p2"
+          },
+          "contains": {
+            "componentType": "led",
+            "props": {
+              "color": "red"
+            },
+            "index": 0,
+            "pin": "anode"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "led",
+            "props": {
+              "color": "red"
+            },
+            "index": 0,
+            "pin": "cathode"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "ultrasonic_hcsr04",
+            "props": {},
+            "index": 0,
+            "pin": "vcc"
+          },
+          "contains": {
+            "mcuPin": "VIN"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "ultrasonic_hcsr04",
+            "props": {},
+            "index": 0,
+            "pin": "gnd"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "ultrasonic_hcsr04",
+            "props": {},
+            "index": 0,
+            "pin": "trig"
+          },
+          "contains": {
+            "mcuPin": "GPIO18"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "ultrasonic_hcsr04",
+            "props": {},
+            "index": 0,
+            "pin": "echo"
+          },
+          "contains": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 1000
+            },
+            "index": 0,
+            "pin": "p1"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 1000
+            },
+            "index": 0,
+            "pin": "p2"
+          },
+          "contains": {
+            "mcuPin": "GPIO19"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 1000
+            },
+            "index": 0,
+            "pin": "p2"
+          },
+          "contains": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 2200
+            },
+            "index": 0,
+            "pin": "p1"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 2200
+            },
+            "index": 0,
+            "pin": "p2"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        }
+      ],
+      "hints": {
+        "tier1": "Use Learn for the exact power, ground and signal pins. Insert cables into free holes on the same breadboard strip as each leg. The third hint shows the complete wiring.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [
+            "esp32",
+            "resistor",
+            "led",
+            "ultrasonic_hcsr04"
+          ],
+          "text": "Use Learn for the exact power, ground and signal pins. Insert cables into free holes on the same breadboard strip as each leg. The third hint shows the complete wiring."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "far",
+      "text": "Filter a stable 120 cm distance and keep the alarm off",
+      "rules": [
+        {
+          "type": "serial_matches",
+          "pattern": "MEDIAN=120;CLEAR"
+        },
+        {
+          "type": "pin_state",
+          "pin": "GPIO23",
+          "level": 0,
+          "forMs": 200
+        }
+      ],
+      "hints": {
+        "tier1": "Wait for five real samples; do not seed the history with zeros.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Wait for five real samples; do not seed the history with zeros."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "near",
+      "text": "Detect a sustained 30 cm target",
+      "rules": [
+        {
+          "type": "serial_matches",
+          "pattern": "MEDIAN=30;NEAR"
+        },
+        {
+          "type": "pin_state",
+          "pin": "GPIO23",
+          "level": 1,
+          "forMs": 0
+        }
+      ],
+      "hints": {
+        "tier1": "Sort a copy so the circular buffer retains its sampling order.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Sort a copy so the circular buffer retains its sampling order."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "clear",
+      "text": "Clear again at 200 cm while the heartbeat continues",
+      "rules": [
+        {
+          "type": "serial_matches",
+          "pattern": "MEDIAN=200;CLEAR"
+        },
+        {
+          "type": "pin_state",
+          "pin": "GPIO23",
+          "level": 0,
+          "forMs": 200
+        },
+        {
+          "type": "pin_period",
+          "pin": "GPIO2",
+          "periodMs": 200,
+          "toleranceMs": 35,
+          "minCycles": 3
+        },
+        {
+          "type": "no_warning",
+          "code": "overvoltage_gpio"
+        }
+      ],
+      "hints": {
+        "tier1": "Use the median for the alarm and a separate timestamp for the heartbeat.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Use the median for the alarm and a separate timestamp for the heartbeat."
+        },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [
+      {
+        "type": "code_not_matches",
+        "pattern": "\\bdelay\\s*\\("
+      }
+    ],
+    "threeText": "Use millis() scheduling without delay()"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "dual",
+      "breadboards": [
+        {
+          "id": "bb1",
+          "type": "half",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "id": "bb2",
+          "type": "half",
+          "x": 0,
+          "y": 504
+        }
+      ],
+      "mcu": "esp32",
+      "components": [
+        {
+          "id": "c_esp32",
+          "type": "esp32",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "j1"
+          }
+        },
+        {
+          "id": "c_r0",
+          "type": "resistor",
+          "props": {
+            "ohms": 220
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb2",
+            "hole": "f1"
+          }
+        },
+        {
+          "id": "c_led0",
+          "type": "led",
+          "props": {
+            "color": "red"
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb2",
+            "hole": "f7"
+          }
+        },
+        {
+          "id": "c_range",
+          "type": "ultrasonic_hcsr04",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a20"
+          }
+        },
+        {
+          "id": "c_top",
+          "type": "resistor",
+          "props": {
+            "ohms": 1000
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a1"
+          }
+        },
+        {
+          "id": "c_bottom",
+          "type": "resistor",
+          "props": {
+            "ohms": 2200
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a10"
+          }
+        }
+      ],
+      "wires": [
+        {
+          "id": "w_q1",
+          "from": "bb1:f15",
+          "to": "bb2:g1",
+          "color": "green"
+        },
+        {
+          "id": "w_q2",
+          "from": "bb2:g5",
+          "to": "bb2:g7",
+          "color": "green"
+        },
+        {
+          "id": "w_q3",
+          "from": "bb2:g8",
+          "to": "bb1:f2",
+          "color": "black"
+        },
+        {
+          "id": "w_q4",
+          "from": "bb1:b20",
+          "to": "bb2:b1",
+          "color": "red"
+        },
+        {
+          "id": "w_q5",
+          "from": "bb1:b23",
+          "to": "bb1:g2",
+          "color": "black"
+        },
+        {
+          "id": "w_q6",
+          "from": "bb1:b21",
+          "to": "bb1:f9",
+          "color": "green"
+        },
+        {
+          "id": "w_q7",
+          "from": "bb1:b22",
+          "to": "bb1:b1",
+          "color": "green"
+        },
+        {
+          "id": "w_q8",
+          "from": "bb1:b5",
+          "to": "bb1:f10",
+          "color": "green"
+        },
+        {
+          "id": "w_q9",
+          "from": "bb1:c5",
+          "to": "bb1:b10",
+          "color": "green"
+        },
+        {
+          "id": "w_q10",
+          "from": "bb1:b14",
+          "to": "bb1:h2",
+          "color": "black"
+        }
+      ],
+      "meta": {}
+    },
+    "code": "int samples[5];\nint cursor = 0;\nint filled = 0;\nunsigned long sampledAt = 0;\nunsigned long beatAt = 0;\nbool beat = false;\nvoid setup() {\n  Serial.begin(115200); pinMode(18, OUTPUT); pinMode(19, INPUT);\n  pinMode(23, OUTPUT); pinMode(2, OUTPUT);\n}\nvoid loop() {\n  unsigned long now = millis();\n  if (now - beatAt >= 100) { beatAt = now; beat = !beat; digitalWrite(2, beat); }\n  if (now - sampledAt < 60) return;\n  sampledAt = now;\n  digitalWrite(18, LOW); delayMicroseconds(2);\n  digitalWrite(18, HIGH); delayMicroseconds(10); digitalWrite(18, LOW);\n  unsigned long duration = pulseIn(19, HIGH, 25000);\n  if (duration == 0) { filled = 0; cursor = 0; digitalWrite(23, LOW); return; }\n  samples[cursor] = round(duration / 58.3); cursor = (cursor + 1) % 5;\n  if (filled < 5) filled++;\n  if (filled < 5) return;\n  int sorted[5];\n  for (int i = 0; i < 5; i++) sorted[i] = samples[i];\n  for (int i = 1; i < 5; i++) {\n    int value = sorted[i]; int j = i - 1;\n    while (j >= 0 && sorted[j] > value) { sorted[j + 1] = sorted[j]; j--; }\n    sorted[j + 1] = value;\n  }\n  int median = sorted[2]; bool near = median < 50;\n  digitalWrite(23, near);\n  Serial.print(\"MEDIAN=\"); Serial.print(median); Serial.println(near ? \";NEAR\" : \";CLEAR\");\n}\n",
+    "blocklyXml": null,
+    "actions": [
+      {
+        "atMs": 0,
+        "select": {
+          "componentType": "ultrasonic_hcsr04"
+        },
+        "patch": {
+          "distanceCm": 120
+        }
+      },
+      {
+        "atMs": 1200,
+        "select": {
+          "componentType": "ultrasonic_hcsr04"
+        },
+        "patch": {
+          "distanceCm": 30
+        }
+      },
+      {
+        "atMs": 2400,
+        "select": {
+          "componentType": "ultrasonic_hcsr04"
+        },
+        "patch": {
+          "distanceCm": 200
+        }
+      }
+    ]
+  },
+  "solutionRunMs": 7000,
+  "successText": "Your circuit now responds to changing inputs. Try a different input sequence and explain why each output changes."
+}

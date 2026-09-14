@@ -74,7 +74,7 @@ def value_for(component: dict) -> str:
     """Human-readable value column (resistance, colour, pixel count, address)."""
     ctype = str(component.get("type") or "")
     props = component.get("props") if isinstance(component.get("props"), dict) else {}
-    if ctype == "resistor" and props.get("ohms") is not None:
+    if ctype in ("resistor", "trimpot") and props.get("ohms") is not None:
         try:
             return _format_ohms(props["ohms"])
         except (TypeError, ValueError):

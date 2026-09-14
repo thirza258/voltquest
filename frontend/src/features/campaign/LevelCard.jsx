@@ -45,6 +45,10 @@ export function LevelCard({ level, stars = 0, locked = false, blocker = null, on
 
       <p className="line-clamp-3 text-xxs leading-relaxed text-slate-500">{t(level.summary)}</p>
 
+      {['intermediate', 'hard'].includes(level.difficulty) && (
+        <div><Badge tone={level.difficulty === 'hard' ? 'warning' : 'info'}>{t(level.difficulty === 'hard' ? 'Hard' : 'Intermediate')}</Badge></div>
+      )}
+
       <div className="flex items-center justify-between gap-2">
         <Stars value={stars} max={3} size="sm" />
         <span className="inline-flex items-center gap-1 text-xxs text-slate-500">

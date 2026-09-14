@@ -9,7 +9,7 @@ breadboard/cable instructions where components are needed. Supported boards: Uno
 ESP32-S3, Raspberry Pi 4 and Raspberry Pi 5. Pi support is a restricted GPIO learning model, **not a
 Linux emulator**; see [`docs/RASPBERRY_PI.md`](docs/RASPBERRY_PI.md) and [`docs/TUTORIALS.md`](docs/TUTORIALS.md).
 
-The **20-quest campaign**, freeform **sandbox**, local **Monaco/Blockly editors**, **virtual phone**,
+The **32-quest campaign**, freeform **sandbox**, local **Monaco/Blockly editors**, **virtual phone**,
 **showcase with interactive previews and forking**, and **profile/leaderboard** are implemented.
 Sandbox projects support account saves, independent local drafts, JSON import, JSON/PNG/code/BOM
 exports, and public sharing. Campaign progress and settings recover after connectivity returns.
@@ -73,13 +73,19 @@ Stop either stack with `make down`.
 
 ## Feature tour
 
-**A 20-level campaign across five worlds.** *The Spark of Life* teaches power, LEDs, resistors and
+**A 32-level campaign across seven worlds.** *The Spark of Life* teaches power, LEDs, resistors and
 buttons (starting with the deliberate magic-smoke failure and its fix). *Signals and Rhythms* covers
 Morse-code timing, an LDR voltage divider, PWM dimming, transistor motor driving, and a Simon Says
 boss level. *The Power Swap* is the transition boss: move a working 5 V circuit onto an ESP32,
 protect its 3.3 V GPIO from a 5 V ultrasonic sensor with a divider, and re-scale your code from a
 10-bit to a 12-bit ADC. *The Connected World* is the ESP32 IoT academy — capacitive touch, a NeoPixel
 ring, a Wi-Fi controlled switch, and a weather station streaming over MQTT. *Rotor Rising* adds six custom-drone quests: props-off ESC tests, propulsion estimates, motor mapping, IMU readings, rate PID and a gate-course flight.
+
+*Responsive Machines* adds six **intermediate** Uno challenges: button debounce, hysteresis,
+independent timers, a guarded servo, a live climate display and a crossing state machine.
+*Reliable Connections* adds six **hard** ESP32 challenges: framed serial parsing, expiring HTTP
+commands, MQTT acknowledgements, combined sensor thresholds, median range filtering and a connected
+greenhouse capstone. Every quest has an editable starter, wiring guidance, hints and a tested solution.
 
 **A breadboard that behaves like a breadboard.** Full-size (830 tie-point) and half-size (400)
 boards on a true 0.1 in pitch, with snap-to-hole placement, continuity highlighting when you hover a
@@ -151,7 +157,7 @@ Browser (SPA)                                     Server
 │ Simulation core (Web Worker)      │              │ PostgreSQL or SQLite     │
 │  Arduino C++ interpreter + VM     │              └──────────────────────────┘
 │  MNA circuit solver               │
-│  quest rule validator             │              content/ (worlds, 14 quests,
+│  quest rule validator             │              content/ (worlds, 32 quests,
 └───────────────────────────────────┘               catalog, cosmetics) is read
                                                     by both client and server
 ```

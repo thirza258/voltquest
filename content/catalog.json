@@ -1109,5 +1109,53 @@
       }
     ],
     "notes": "Illustrative category price, not a quote or an exact match for custom specifications. Verify specifications and availability."
+  },
+  "slide_switch": {
+    "name": "Slide switch (SPST)",
+    "unitPriceUsd": 0.35,
+    "vendors": [],
+    "notes": "Illustrative teaching estimate, not a current vendor quote. Verify the physical footprint and ratings before buying."
+  },
+  "reed_switch": {
+    "name": "Magnetic reed switch",
+    "unitPriceUsd": 0.6,
+    "vendors": [],
+    "notes": "Illustrative teaching estimate, not a current vendor quote. Verify the physical footprint and ratings before buying."
+  },
+  "tilt_switch": {
+    "name": "Tilt switch",
+    "unitPriceUsd": 0.5,
+    "vendors": [],
+    "notes": "Illustrative teaching estimate, not a current vendor quote. Verify the physical footprint and ratings before buying."
+  },
+  "trimpot": {
+    "name": "Trimpot",
+    "unitPriceUsd": 0.45,
+    "vendors": [],
+    "notes": "Illustrative teaching estimate, not a current vendor quote. Verify the physical footprint and ratings before buying."
+  },
+  "variable_resistor": {
+    "name": "Adjustable resistor",
+    "unitPriceUsd": 1.0,
+    "vendors": [],
+    "notes": "Illustrative teaching estimate, not a current vendor quote. Verify the physical footprint and ratings before buying."
+  },
+  "thermistor_ntc": {
+    "name": "NTC thermistor 10 kΩ, beta 3950",
+    "unitPriceUsd": 0.3,
+    "vendors": [],
+    "notes": "Illustrative teaching estimate, not a current vendor quote. Verify the physical footprint and ratings before buying."
+  },
+  "force_sensor": {
+    "name": "Force-sensitive resistor",
+    "unitPriceUsd": 5.0,
+    "vendors": [],
+    "notes": "Illustrative teaching estimate, not a current vendor quote. Verify the physical footprint and ratings before buying."
+  },
+  "flex_sensor": {
+    "name": "Flex sensor",
+    "unitPriceUsd": 8.0,
+    "vendors": [],
+    "notes": "Illustrative teaching estimate, not a current vendor quote. Verify the physical footprint and ratings before buying."
   }
 }

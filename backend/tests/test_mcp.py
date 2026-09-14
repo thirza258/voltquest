@@ -92,6 +92,31 @@ def test_mcp_checks_hosts_and_origins(client, mcp):
     assert client.post('/api/mcp/', headers=headers | {"Host": "localhost", "Origin": "http://localhost:5173"}, json=body).status_code == 200
 
 
+def test_extra_sandbox_parts_round_trip_through_mcp_save_fork_and_bom(client, guest, mcp, monkeypatch):
+    _, _, call = mcp
+    project = structured(call("create_project", {"name": "Expanded parts"}))["project"]
+    circuit = project["circuit"]
+    types = ["slide_switch", "reed_switch", "tilt_switch", "trimpot", "thermistor_ntc", "force_sensor", "flex_sensor", "variable_resistor"]
+    for index, kind in enumerate(types):
+        definition = structured(call("get_component", {"component_type": kind}))
+        assert kind in json.dumps(definition)
+        circuit["components"].append({"id": f"c_extra_{index}", "type": kind, "rotation": 0, "anchor": {"board": "bb1", "hole": f"{'a' if index < 4 else 'f'}{1 + (index % 4) * 7}"}, "props": {"ohms": 10000} if kind == "trimpot" else {}})
+    current = structured(call("get_project", {"project_id": project["id"]}))
+    changed = structured(call("update_project", {"project_id": project["id"], "expected_updated_at": current["updated_at"], "changes": {"circuit": circuit}}))["project"]
+    assert client.get(f"/api/projects/{project['id']}", headers=guest[0]).json()["circuit"] == circuit
+    published = client.post(f"/api/projects/{project['id']}/publish", headers=guest[0], json={"publish": True}).json()
+    fork = client.post(f"/api/showcase/{published['share_slug']}/fork", headers=guest[0]).json()
+    assert fork["circuit"] == changed["circuit"]
+    from app.services import content
+    catalog = json.loads((Path(__file__).resolve().parents[2] / "content/catalog.json").read_text())
+    monkeypatch.setattr(content, "get_catalog", lambda: catalog)
+    rows = client.post("/api/export/bom.json", json={"circuit": circuit}).json()["rows"]
+    by_id = {row["catalog_id"]: row for row in rows}
+    for kind in types:
+        assert by_id[kind]["unit_price_usd"] > 0
+    assert by_id["trimpot"]["value"] == "10 kOhm"
+
+
 def test_expired_snapshot_and_token(client, guest, mcp):
     from datetime import timedelta
     from app.db.models import AgentAccess, utcnow

@@ -1,0 +1,687 @@
+{
+  "id": "w7-l6",
+  "worldId": "w7",
+  "order": 6,
+  "title": "Connected Greenhouse",
+  "codeName": "Level 7-6",
+  "difficulty": "hard",
+  "board": "esp32",
+  "startBoard": "esp32",
+  "boardSwitcher": "locked",
+  "boardMode": "dual",
+  "xp": 500,
+  "estimatedMinutes": 40,
+  "summary": "Coordinate local hysteresis, remote override, MQTT reports and HTTP status in one controller.",
+  "concepts": [
+    "capstone",
+    "I2C",
+    "Servo",
+    "MQTT",
+    "HTTP",
+    "state machines"
+  ],
+  "briefing": [
+    {
+      "mood": "thinking",
+      "text": "Coordinate local hysteresis, remote override, MQTT reports and HTTP status in one controller."
+    },
+    {
+      "mood": "happy",
+      "text": "The parts are placed but unwired. Complete the wiring and sketch, then follow the experiments in Learn to earn each objective."
+    }
+  ],
+  "learn": {
+    "title": "Connected Greenhouse",
+    "body": "Wire BME280 VIN to 3V3, GND to GND, SDA to GPIO21 and SCL to GPIO22. Wire servo signal to GPIO18, power to VIN (5 V), and GND to GND. Wire GPIO23 → 220 Ω → LED → GND; it indicates an open vent. Join virtual VoltNet with password pass and broker.voltquest.local:1883.\n\nStart in AUTO with the vent closed at 30°. Sample every 100 ms. In AUTO open to 150° at 30°C or above, close at 27°C or below, and retain the previous state in between. Subscribe to greenhouse/mode: OPEN and CLOSE override temperature; AUTO restores hysteresis. Reject other payloads with INVALID on greenhouse/error while retaining the mode. Acknowledge valid modes on greenhouse/mode/state. Publish greenhouse/status every 500 ms and serve GET /status with the same live text: mode=AUTO;temp=33.0;vent=OPEN. Apply the servo and LED together.\n\nRun at the default temperature. Set 33°C and observe AUTO opening. Publish CLOSE and keep it closed despite the heat. Publish BAD and verify INVALID without a mode change. Publish AUTO to reopen, then lower the sensor to 26°C and request /status: mode=AUTO;temp=26.0;vent=CLOSED. This virtual vent models commanded angle, not greenhouse airflow or servo load.",
+    "links": []
+  },
+  "starterCircuit": {
+    "version": 1,
+    "boardMode": "dual",
+    "breadboards": [
+      {
+        "id": "bb1",
+        "type": "half",
+        "x": 0,
+        "y": 0
+      },
+      {
+        "id": "bb2",
+        "type": "half",
+        "x": 0,
+        "y": 504
+      }
+    ],
+    "mcu": "esp32",
+    "components": [
+      {
+        "id": "c_esp32",
+        "type": "esp32",
+        "props": {},
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "j1"
+        }
+      },
+      {
+        "id": "c_bme",
+        "type": "bme280",
+        "props": {
+          "addr": 118
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "a25"
+        }
+      },
+      {
+        "id": "c_servo",
+        "type": "servo",
+        "props": {},
+        "rotation": 0,
+        "anchor": {
+          "board": "bb1",
+          "hole": "a20"
+        }
+      },
+      {
+        "id": "c_r0",
+        "type": "resistor",
+        "props": {
+          "ohms": 220
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb2",
+          "hole": "f1"
+        }
+      },
+      {
+        "id": "c_led0",
+        "type": "led",
+        "props": {
+          "color": "red"
+        },
+        "rotation": 0,
+        "anchor": {
+          "board": "bb2",
+          "hole": "f7"
+        }
+      }
+    ],
+    "wires": [],
+    "meta": {}
+  },
+  "starterCode": "void setup() {\n  Serial.begin(115200);\n  // Configure the parts described in Learn.\n}\n\nvoid loop() {\n  // Implement the challenge and test each input.\n}\n",
+  "starterBlocklyXml": null,
+  "allowedComponents": [
+    "esp32",
+    "bme280",
+    "servo",
+    "resistor",
+    "led"
+  ],
+  "objectives": [
+    {
+      "id": "wiring",
+      "text": "Connect the placed parts using the pin map in Learn",
+      "rules": [
+        {
+          "type": "mcu_is",
+          "board": "esp32"
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "bme280",
+            "props": {
+              "addr": 118
+            },
+            "index": 0,
+            "pin": "vin"
+          },
+          "contains": {
+            "mcuPin": "3V3"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "bme280",
+            "props": {
+              "addr": 118
+            },
+            "index": 0,
+            "pin": "gnd"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "bme280",
+            "props": {
+              "addr": 118
+            },
+            "index": 0,
+            "pin": "sda"
+          },
+          "contains": {
+            "mcuPin": "GPIO21"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "bme280",
+            "props": {
+              "addr": 118
+            },
+            "index": 0,
+            "pin": "scl"
+          },
+          "contains": {
+            "mcuPin": "GPIO22"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "servo",
+            "props": {},
+            "index": 0,
+            "pin": "signal"
+          },
+          "contains": {
+            "mcuPin": "GPIO18"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "servo",
+            "props": {},
+            "index": 0,
+            "pin": "vcc"
+          },
+          "contains": {
+            "mcuPin": "VIN"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "servo",
+            "props": {},
+            "index": 0,
+            "pin": "gnd"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "mcuPin": "GPIO23"
+          },
+          "contains": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 220
+            },
+            "index": 0,
+            "pin": "p1"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "resistor",
+            "props": {
+              "ohms": 220
+            },
+            "index": 0,
+            "pin": "p2"
+          },
+          "contains": {
+            "componentType": "led",
+            "props": {
+              "color": "red"
+            },
+            "index": 0,
+            "pin": "anode"
+          }
+        },
+        {
+          "type": "net_has",
+          "net": {
+            "componentType": "led",
+            "props": {
+              "color": "red"
+            },
+            "index": 0,
+            "pin": "cathode"
+          },
+          "contains": {
+            "mcuPin": "GND"
+          }
+        }
+      ],
+      "hints": {
+        "tier1": "Use Learn for the exact power, ground and signal pins. Insert cables into free holes on the same breadboard strip as each leg. The third hint shows the complete wiring.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [
+            "esp32",
+            "bme280",
+            "servo",
+            "resistor",
+            "led"
+          ],
+          "text": "Use Learn for the exact power, ground and signal pins. Insert cables into free holes on the same breadboard strip as each leg. The third hint shows the complete wiring."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "auto_open",
+      "text": "In AUTO at 33°C, open the vent and publish its actual state",
+      "rules": [
+        {
+          "type": "wifi_connected"
+        },
+        {
+          "type": "peripheral_state",
+          "componentType": "servo",
+          "path": "data.angle",
+          "equals": 150
+        },
+        {
+          "type": "pin_state",
+          "pin": "GPIO23",
+          "level": 1,
+          "forMs": 0
+        },
+        {
+          "type": "mqtt_published",
+          "topic": "greenhouse/status",
+          "pattern": "^mode=AUTO;temp=33\\.0;vent=OPEN$",
+          "minCount": 1
+        }
+      ],
+      "hints": {
+        "tier1": "Keep sensing, control and publishing on independent schedules.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Keep sensing, control and publishing on independent schedules."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "override",
+      "text": "Acknowledge CLOSE and override the hot sensor",
+      "rules": [
+        {
+          "type": "control_state",
+          "componentType": "bme280",
+          "field": "temperatureC",
+          "equals": 33
+        },
+        {
+          "type": "peripheral_state",
+          "componentType": "servo",
+          "path": "data.angle",
+          "equals": 30
+        },
+        {
+          "type": "pin_state",
+          "pin": "GPIO23",
+          "level": 0,
+          "forMs": 0
+        },
+        {
+          "type": "mqtt_published",
+          "topic": "greenhouse/mode/state",
+          "pattern": "^CLOSE$",
+          "minCount": 1
+        },
+        {
+          "type": "mqtt_published",
+          "topic": "greenhouse/status",
+          "pattern": "^mode=CLOSE;temp=33\\.0;vent=CLOSED$",
+          "minCount": 1
+        }
+      ],
+      "hints": {
+        "tier1": "Manual modes take priority over the automatic temperature thresholds.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Manual modes take priority over the automatic temperature thresholds."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "invalid",
+      "text": "Reject BAD and preserve the closed override",
+      "rules": [
+        {
+          "type": "mqtt_published",
+          "topic": "greenhouse/error",
+          "pattern": "^INVALID$",
+          "minCount": 1
+        },
+        {
+          "type": "peripheral_state",
+          "componentType": "servo",
+          "path": "data.angle",
+          "equals": 30
+        },
+        {
+          "type": "pin_state",
+          "pin": "GPIO23",
+          "level": 0,
+          "forMs": 0
+        }
+      ],
+      "hints": {
+        "tier1": "Validate first; an invalid command must not overwrite mode.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Validate first; an invalid command must not overwrite mode."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "resume",
+      "text": "Acknowledge AUTO and reopen while the sensor is still hot",
+      "rules": [
+        {
+          "type": "mqtt_published",
+          "topic": "greenhouse/mode/state",
+          "pattern": "^AUTO$",
+          "minCount": 1
+        },
+        {
+          "type": "control_state",
+          "componentType": "bme280",
+          "field": "temperatureC",
+          "equals": 33
+        },
+        {
+          "type": "peripheral_state",
+          "componentType": "servo",
+          "path": "data.angle",
+          "equals": 150
+        },
+        {
+          "type": "pin_state",
+          "pin": "GPIO23",
+          "level": 1,
+          "forMs": 0
+        }
+      ],
+      "hints": {
+        "tier1": "Returning to AUTO should immediately evaluate the current temperature.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Returning to AUTO should immediately evaluate the current temperature."
+        },
+        "tier3": true
+      }
+    },
+    {
+      "id": "cool",
+      "text": "Cool to 26°C and agree on CLOSED in the servo, MQTT and HTTP",
+      "rules": [
+        {
+          "type": "peripheral_state",
+          "componentType": "servo",
+          "path": "data.angle",
+          "equals": 30
+        },
+        {
+          "type": "pin_state",
+          "pin": "GPIO23",
+          "level": 0,
+          "forMs": 0
+        },
+        {
+          "type": "mqtt_published",
+          "topic": "greenhouse/status",
+          "pattern": "^mode=AUTO;temp=26\\.0;vent=CLOSED$",
+          "minCount": 1
+        },
+        {
+          "type": "http_response_matches",
+          "path": "/status",
+          "pattern": "^mode=AUTO;temp=26\\.0;vent=CLOSED$"
+        }
+      ],
+      "hints": {
+        "tier1": "Construct both reports from the same mode, measurement and applied vent state.",
+        "tier2": {
+          "mcuPins": [],
+          "componentTypes": [],
+          "text": "Construct both reports from the same mode, measurement and applied vent state."
+        },
+        "tier3": true
+      }
+    }
+  ],
+  "starCriteria": {
+    "damageExpected": false,
+    "three": [
+      {
+        "type": "max_components",
+        "max": 4
+      }
+    ],
+    "threeText": "Use at most 4 parts besides the controller"
+  },
+  "solution": {
+    "circuit": {
+      "version": 1,
+      "boardMode": "dual",
+      "breadboards": [
+        {
+          "id": "bb1",
+          "type": "half",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "id": "bb2",
+          "type": "half",
+          "x": 0,
+          "y": 504
+        }
+      ],
+      "mcu": "esp32",
+      "components": [
+        {
+          "id": "c_esp32",
+          "type": "esp32",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "j1"
+          }
+        },
+        {
+          "id": "c_bme",
+          "type": "bme280",
+          "props": {
+            "addr": 118
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a25"
+          }
+        },
+        {
+          "id": "c_servo",
+          "type": "servo",
+          "props": {},
+          "rotation": 0,
+          "anchor": {
+            "board": "bb1",
+            "hole": "a20"
+          }
+        },
+        {
+          "id": "c_r0",
+          "type": "resistor",
+          "props": {
+            "ohms": 220
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb2",
+            "hole": "f1"
+          }
+        },
+        {
+          "id": "c_led0",
+          "type": "led",
+          "props": {
+            "color": "red"
+          },
+          "rotation": 0,
+          "anchor": {
+            "board": "bb2",
+            "hole": "f7"
+          }
+        }
+      ],
+      "wires": [
+        {
+          "id": "w_q1",
+          "from": "bb1:b25",
+          "to": "bb1:f1",
+          "color": "red"
+        },
+        {
+          "id": "w_q2",
+          "from": "bb1:b26",
+          "to": "bb1:f2",
+          "color": "black"
+        },
+        {
+          "id": "w_q3",
+          "from": "bb1:b28",
+          "to": "bb1:f11",
+          "color": "green"
+        },
+        {
+          "id": "w_q4",
+          "from": "bb1:b27",
+          "to": "bb1:f14",
+          "color": "yellow"
+        },
+        {
+          "id": "w_q5",
+          "from": "bb1:b20",
+          "to": "bb1:f9",
+          "color": "green"
+        },
+        {
+          "id": "w_q6",
+          "from": "bb1:b21",
+          "to": "bb2:b1",
+          "color": "red"
+        },
+        {
+          "id": "w_q7",
+          "from": "bb1:b22",
+          "to": "bb1:g2",
+          "color": "black"
+        },
+        {
+          "id": "w_q8",
+          "from": "bb1:f15",
+          "to": "bb2:g1",
+          "color": "green"
+        },
+        {
+          "id": "w_q9",
+          "from": "bb2:g5",
+          "to": "bb2:g7",
+          "color": "green"
+        },
+        {
+          "id": "w_q10",
+          "from": "bb2:g8",
+          "to": "bb1:h2",
+          "color": "black"
+        }
+      ],
+      "meta": {}
+    },
+    "code": "#include <WiFi.h>\n#include <WebServer.h>\n#include <PubSubClient.h>\n#include <Adafruit_BME280.h>\n#include <ESP32Servo.h>\nWiFiClient network;\nPubSubClient mqtt(network);\nWebServer server(80);\nAdafruit_BME280 sensor;\nServo vent;\nString mode = \"AUTO\";\nfloat temperature = 24.5;\nbool opened = false;\nunsigned long sampledAt = 0;\nunsigned long publishedAt = 0;\nvoid applyControl() {\n  if (mode == \"OPEN\") opened = true;\n  else if (mode == \"CLOSE\") opened = false;\n  else {\n    if (temperature >= 30) opened = true;\n    if (temperature <= 27) opened = false;\n  }\n  vent.write(opened ? 150 : 30); digitalWrite(23, opened);\n}\nString statusText() {\n  return \"mode=\" + mode + \";temp=\" + String(temperature, 1) + \";vent=\" + (opened ? \"OPEN\" : \"CLOSED\");\n}\nvoid command(char* topic, byte* payload, unsigned int length) {\n  String text = \"\";\n  for (unsigned int i = 0; i < length; i++) text += char(payload[i]);\n  if (text == \"AUTO\" || text == \"OPEN\" || text == \"CLOSE\") {\n    mode = text; applyControl(); mqtt.publish(\"greenhouse/mode/state\", mode.c_str());\n  } else mqtt.publish(\"greenhouse/error\", \"INVALID\");\n}\nvoid setup() {\n  Serial.begin(115200); pinMode(23, OUTPUT); vent.attach(18); vent.write(30);\n  sensor.begin(0x76);\n  WiFi.begin(\"VoltNet\", \"pass\");\n  while (WiFi.status() != WL_CONNECTED) delay(20);\n  mqtt.setServer(\"broker.voltquest.local\", 1883); mqtt.setCallback(command);\n  mqtt.connect(\"greenhouse\"); mqtt.subscribe(\"greenhouse/mode\");\n  server.on(\"/status\", []() { server.send(200, \"text/plain\", statusText()); }); server.begin();\n}\nvoid loop() {\n  if (millis() - sampledAt >= 100) { sampledAt = millis(); temperature = sensor.readTemperature(); applyControl(); }\n  mqtt.loop(); server.handleClient();\n  if (millis() - publishedAt >= 500) { publishedAt = millis(); String report = statusText(); mqtt.publish(\"greenhouse/status\", report.c_str()); }\n}\n",
+    "blocklyXml": null,
+    "actions": [
+      {
+        "atMs": 1400,
+        "select": {
+          "componentType": "bme280"
+        },
+        "patch": {
+          "temperatureC": 33
+        }
+      },
+      {
+        "atMs": 2200,
+        "mqtt": {
+          "topic": "greenhouse/mode",
+          "payload": "CLOSE"
+        }
+      },
+      {
+        "atMs": 2800,
+        "mqtt": {
+          "topic": "greenhouse/mode",
+          "payload": "BAD"
+        }
+      },
+      {
+        "atMs": 3400,
+        "mqtt": {
+          "topic": "greenhouse/mode",
+          "payload": "AUTO"
+        }
+      },
+      {
+        "atMs": 4200,
+        "select": {
+          "componentType": "bme280"
+        },
+        "patch": {
+          "temperatureC": 26
+        }
+      },
+      {
+        "atMs": 4900,
+        "http": {
+          "method": "GET",
+          "path": "/status"
+        }
+      }
+    ]
+  },
+  "solutionRunMs": 8000,
+  "successText": "Your circuit now responds to changing inputs. Try a different input sequence and explain why each output changes."
+}

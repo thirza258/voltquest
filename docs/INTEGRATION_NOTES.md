@@ -1,5 +1,42 @@
 # Integration notes
 
+## Sandbox 3D and expanded parts (2026-09-14)
+
+The optional `canvas/three` viewer consumes the same CircuitDoc/SimState as the SVG. Convert world
+coordinates to X/Z with one pitch per scene unit; use the negative Y-axis rotation to reproduce
+the SVG's positive screen rotation. Never infer an ESP32/S3 pin from its anchor board alone: its
+footprint can span bb1 and bb2. Camera fit uses all bounds corners in camera space.
+
+Keep the measured SVG mounted with visibility hidden and an inert wrapper so switching preserves
+the viewport and the existing PNG export. Global canvas hotkeys must ignore that inert ancestor.
+The lazy Three.js module is absent from the eager payload. Geometry/texture creation only follows
+document changes; live updates change existing objects. GPU resources, observers, pointer listeners
+and queued frames are released on disposal; hidden/inactive views do not render.
+
+Eight added parts reuse the switch/pot/resistor engine elements. NTC/force/flex resistance curves
+live in `engine/components/sensorCurves.js`, not the UI. Update the generated MCP catalog together
+with registry definitions and keep catalog ids equal to the new type ids. Trimpot BOM values include
+resistance, so two resistance variants are not silently merged. See SANDBOX_3D.md for model limits.
+
+## Campaign expansion (2026-09-14)
+
+Worlds 6–7 append twelve intermediate/hard quests after the existing twenty. Keep old level ids and
+their relative order so progress, drafts, XP and Continue remain valid. Campaign cards and public
+quest summaries expose the optional authored `difficulty`; previous levels remain untiered.
+The sitemap derives all 32 quest paths directly from the shared world/quest files.
+
+New starter circuits contain placed parts without cables. Reference jumpers occupy free holes on
+the actual strips resolved by the registry, including ESP32 pins spanning two breadboards. Wiring
+rules use component type/property selectors instead of generated component ids, so replacing a
+part does not make a quest impossible. Behavioral tests drive input sequences independently of the
+reference actions, including debounce, hysteresis history, malformed serial/MQTT input, lease
+renewal, median outliers, sensor loss, override priority and matching live telemetry.
+
+The ESP32 greenhouse reference runs enough virtual time to exercise all three control/report paths.
+Its headless host test allows 20 seconds; this does not change firmware timing or the authored run
+deadline. Timed objectives retain the existing sticky semantics, while dedicated regressions check
+the response and invariants across each full input sequence.
+
 ## Tutorial-to-course fundamentals (2026-09-14)
 
 The 52 guides in `content/tutorial-fundamentals.json` are independent of assessment data and runtime

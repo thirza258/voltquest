@@ -5,7 +5,7 @@ Errors: FastAPI default `{ "detail": "..." }`. All timestamps ISO-8601 UTC. IDs 
 CORS: origins from `CORS_ORIGINS` (default `http://localhost:5173,http://localhost:8080`).
 
 ## Health
-`GET /api/health` → `{ "status": "ok", "version": "1.0.0", "db": "ok", "levels": 14 }`
+`GET /api/health` → `{ "status": "ok", "version": "1.0.0", "db": "ok", "levels": 32 }`
 
 ## Players & auth
 - `POST /api/players/guest` → 201 `{ token, player }` — creates an anonymous player with `display_name` like `Cadet-4f3a`.
@@ -19,7 +19,7 @@ Player { id, display_name, username: string|null, xp, level, xp_into_level, xp_f
 XP → level: cumulative `xp_for_level(n) = 100*(n-1)*n/2` (level 1 at 0, level 2 at 100, level 3 at 300). Unlocks from `content/cosmetics.json` (`unlockLevel <= level`). Completion XP: `xp_for_completion(level_xp, stars, prev_stars) = round(level_xp*(1+0.25*(stars-1))) - round(level_xp*(1+0.25*(prev_stars-1)))` (prev_stars 0 → full amount). Mirrors `frontend/src/lib/xp.js`.
 
 ## Quests (public)
-- `GET /api/quests` → `{ worlds: [ { ...world, levels: [ LevelSummary ] } ] }`; `LevelSummary { id, worldId, order, title, codeName, board, xp, estimatedMinutes, summary, concepts }`
+- `GET /api/quests` → `{ worlds: [ { ...world, levels: [ LevelSummary ] } ] }`; `LevelSummary { id, worldId, order, title, codeName, board, xp, estimatedMinutes, summary, concepts, difficulty }`. Difficulty is `intermediate|hard` for worlds 6–7 and null for older levels without an authored tier.
 - `GET /api/quests/{level_id}` → full level JSON (404 if unknown)
 
 ## Progress (auth)
