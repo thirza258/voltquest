@@ -40,7 +40,7 @@ const NAV_PATH = { campaign: '/campaign', tutorials: '/tutorials', sandbox: '/sa
 
 /** Which nav segment a pathname belongs to. */
 export function navSectionFor(pathname = '/') {
-  if (pathname.startsWith('/tutorials') || pathname.startsWith('/courses') || pathname.startsWith('/robotics') || pathname.startsWith('/vision')) return 'tutorials'
+  if (pathname.startsWith('/tutorials') || pathname.startsWith('/courses') || pathname.startsWith('/robotics') || pathname.startsWith('/vision') || pathname.startsWith('/hpc') || pathname.startsWith('/cybersecurity')) return 'tutorials'
   if (pathname.startsWith('/sandbox')) return 'sandbox'
   if (pathname.startsWith('/showcase')) return 'showcase'
   if (pathname.startsWith('/campaign') || pathname.startsWith('/play')) return 'campaign'

@@ -379,6 +379,9 @@ The header adds a Tutorials navigation item. The content, filters, difficulty pr
 examples and derived wiring-guide contract live in `TUTORIALS.md`. Tutorials do not grant campaign XP.
 Courses use `/courses` and `/courses/:courseId` under Tutorials navigation. The shared curriculum,
 assessment and browser-local progress contracts are in `COURSES.md`. They also grant no campaign XP.
+The programming track adds optional complete code examples with supported board/lab references,
+literal expected output, copy/download and explicit learner-controlled pasting into existing labs.
+It does not extend the firmware language subset or course progress schema.
 `content/tutorial-fundamentals.json` supplies one explanatory guide per firmware/robotics/vision
 tutorial, plus canonical course-section references. Its shape and browser-only scope are in
 `COURSES.md`. Courses and tutorial pages render the same guide; locale changes retain lab state.
@@ -510,3 +513,24 @@ Both content catalogues use three lesson sections, formula cards, guided steps, 
 questions, sources and versioned presets. Assessments use the COURSES.md local progress contract.
 Robotics/vision imports validate their distinct schemas and confirm replacement. They cannot be loaded
 through the saved-circuit project API. No project autosave overwrites another sandbox's work.
+
+## 17. High-performance computing learning path
+
+`/hpc`, `/hpc/:lessonId` and `/sandbox?bench=hpc&lesson=<courseId>` use the independent
+[HPC.md](HPC.md) contract. Ten C17/C++17 courses share existing self-study assessment/progress
+behavior. `content/hpc.json` remains frontend-only lazy learning content. `engine/hpc/model.js`
+performs bounded numerical experiments and explicitly labeled performance models; a feature Worker
+owns scheduling, cancellation and disposal. Native source is edited/downloaded and tested locally,
+never compiled or executed by the app. Project format `voltquest-hpc` has separate browser storage
+and validated import/export; it does not extend CircuitDoc, board ids, account APIs, MCP or showcase.
+
+## 18. Cybersecurity learning path
+
+`/cybersecurity`, `/cybersecurity/:lessonId` and `/sandbox?bench=cybersecurity&lesson=<courseId>`
+follow [CYBERSECURITY.md](CYBERSECURITY.md). Ten frontend-only courses reuse course assessments
+and progress. `engine/cybersecurity/{model,scenarios}.js` implements bounded local request handlers,
+fictional account state, defenses and isolated regression cases. No request causes network access,
+host filesystem operations, backend execution or HTML/script execution. The independent notebook
+format saves drafts/controls/notes, while separate evidence reports capture executed exchanges.
+Confirmed replacements start fresh fixtures. No CircuitDoc, board id, account project, public
+course API, MCP or showcase contract changes. Model and curriculum chunks load lazily.

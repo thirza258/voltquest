@@ -1,6 +1,6 @@
 # VoltQuest developer shortcuts. `make help` lists the targets.
 .DEFAULT_GOAL := help
-.PHONY: help install dev dev-backend dev-frontend test test-frontend test-backend lint build check up up-lite down logs clean
+.PHONY: help install dev dev-backend dev-frontend test test-frontend test-backend test-hpc-native lint build check up up-lite down logs clean
 
 help: ## Show this help
 	@grep -hE '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}'
@@ -26,6 +26,9 @@ test-frontend: ## Run vitest
 
 test-backend: ## Run pytest
 	cd backend && .venv/bin/python -m pytest -q
+
+test-hpc-native: ## Compile and run HPC C17/C++17 examples (OpenMP and MPI required)
+	node scripts/check-hpc-native.mjs --parallel
 
 lint: ## Lint the frontend
 	cd frontend && npx eslint src

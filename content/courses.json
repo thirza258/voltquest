@@ -19,6 +19,11 @@
       "id": "drone-foundations",
       "title": "Drone fundamentals",
       "summary": "Learn the quad-X parts and practise sensor checks, a props-off motor test and assisted hover."
+    },
+    {
+      "id": "programming",
+      "title": "C, C++ & Arduino / ESP32 programming",
+      "summary": "Twelve courses from your first sketch to a connected controller: C foundations, Arduino C++, code experiments, guided labs and an exam in every course."
     }
   ],
   "courses": [
@@ -4660,6 +4665,2752 @@
           "example": "Given 500 mAh and 10 mA at the battery: ideal runtime = 500 / 10 = 50 h. A 0.5 W load for 4 h uses 2 Wh."
         }
       ]
+    },
+    {
+      "id": "programming-start",
+      "version": 1,
+      "track": "programming",
+      "order": 1,
+      "title": "C, C++ and your first Arduino sketch",
+      "summary": "Understand the languages and tools, trace setup and loop, and run a complete program on Arduino or ESP32.",
+      "difficulty": "Fundamental",
+      "minutes": 35,
+      "prerequisites": [],
+      "lessons": [
+        {
+          "title": "Choose a language and a framework",
+          "text": "C provides variables, expressions, functions and explicit memory operations. C++ shares much of that syntax and adds facilities such as classes and references; the languages are related but are not identical. Arduino sketches are C++ programs using the Arduino framework. ESP32 is a chip family, not a language: it can use Arduino C++ or Espressif’s ESP-IDF with C and C++. This path teaches their common foundations and the Arduino APIs available in VoltQuest.",
+          "id": "lesson-1"
+        },
+        {
+          "title": "Read the sketch lifecycle",
+          "text": "A declaration introduces a name and type. A statement performs work and usually ends with a semicolon; braces group a function body or block. Comments explain intent and do not execute. The Arduino framework calls setup once after startup or reset, then calls loop repeatedly. Put one-time configuration in setup and recurring work in loop. A hosted C program commonly starts in main; an ESP-IDF application uses app_main. Those entry points do not replace setup and loop in this simulator.",
+          "id": "lesson-2"
+        },
+        {
+          "title": "Build, run, observe and change one thing",
+          "text": "For hardware, select the exact board and core, compile the sketch, upload it, then match the serial monitor baud rate to Serial.begin. Arduino’s build process prepares .ino files as C++, finds libraries and links board-specific code. VoltQuest instead interprets a teaching subset locally when you press Run. A successful run here does not validate every compiler feature or hardware library. First predict the output, run it, change one value and compare the observation with your prediction.",
+          "id": "lesson-3"
+        }
+      ],
+      "workedExample": "With a global counter initially zero, setup prints Boot once. The first loop increments the counter to one and prints Tick: 1; after the 500 ms delay the next loop prints Tick: 2. Resetting and running again restarts both the counter and setup. Moving Boot into loop would make it repeat, while moving the counter declaration into loop would reset that counter on every call.",
+      "application": "Make a startup message identify your device, then report a bounded repeating counter. Write down which lines configure the device and which lines execute repeatedly before adding any circuit wiring.",
+      "lab": {
+        "tutorialId": "cpp-start",
+        "task": "Run the prepared sketch on Uno and ESP32. Count startup messages, change the loop delay, then Reset and Run to explain what restarts. No cables are needed."
+      },
+      "extraLabs": [],
+      "practice": [
+        {
+          "prompt": "Which description of an Arduino sketch is accurate?",
+          "options": [
+            {
+              "id": "a",
+              "text": "A separate language unrelated to C++"
+            },
+            {
+              "id": "b",
+              "text": "C++ using the Arduino framework"
+            },
+            {
+              "id": "c",
+              "text": "ESP32 machine code written by hand"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "Arduino preprocesses sketches into C++ and supplies board APIs such as digitalWrite.",
+          "lessonId": "lesson-1",
+          "id": "practice-1"
+        },
+        {
+          "prompt": "Where should Serial.begin normally run once?",
+          "options": [
+            {
+              "id": "a",
+              "text": "In setup"
+            },
+            {
+              "id": "b",
+              "text": "Inside every print statement"
+            },
+            {
+              "id": "c",
+              "text": "Only in a comment"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "setup is the one-time initialization function for an Arduino sketch.",
+          "lessonId": "lesson-2",
+          "id": "practice-2"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "What is ESP32 in the language/framework/board distinction?",
+            "options": [
+              {
+                "id": "a",
+                "text": "A replacement for C syntax"
+              },
+              {
+                "id": "b",
+                "text": "A serial monitor format"
+              },
+              {
+                "id": "c",
+                "text": "A family of microcontroller chips"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "The chip family can be programmed using different frameworks and languages.",
+            "lessonId": "lesson-1",
+            "id": "exam-1"
+          },
+          {
+            "prompt": "After setup returns, what does the Arduino framework do?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Calls loop repeatedly"
+              },
+              {
+                "id": "b",
+                "text": "Deletes all global variables"
+              },
+              {
+                "id": "c",
+                "text": "Runs comments as instructions"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Recurring application work belongs in loop because the framework calls it repeatedly.",
+            "lessonId": "lesson-2",
+            "id": "exam-2"
+          },
+          {
+            "prompt": "A line ends with // explain this. What does that comment do at runtime?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Pauses for one second"
+              },
+              {
+                "id": "b",
+                "text": "Nothing; it documents the source"
+              },
+              {
+                "id": "c",
+                "text": "Prints itself to Serial"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Comments are for readers and do not become executable statements.",
+            "lessonId": "lesson-2",
+            "id": "exam-3"
+          },
+          {
+            "prompt": "A sketch runs in VoltQuest. What has this demonstrated?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Every C++ library works on all boards"
+              },
+              {
+                "id": "b",
+                "text": "The real device has been flashed"
+              },
+              {
+                "id": "c",
+                "text": "This example runs in the supported teaching model"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "The local interpreter is useful for learning but is not a complete native compiler or hardware qualification.",
+            "lessonId": "lesson-3",
+            "id": "exam-4"
+          },
+          {
+            "prompt": "Which hardware workflow has the right order?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Select board, compile, upload, observe"
+              },
+              {
+                "id": "b",
+                "text": "Upload a comment, choose a language later"
+              },
+              {
+                "id": "c",
+                "text": "Run the serial monitor instead of compiling"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Board selection determines the core and target; compilation precedes uploading and observation.",
+            "lessonId": "lesson-3",
+            "id": "exam-5"
+          }
+        ]
+      },
+      "formulas": [
+        {
+          "title": "Loop period and repetition",
+          "equation": "period ≈ work time + delay; frequency = 1000 / period_ms",
+          "symbols": "Period in milliseconds; frequency in repetitions per second.",
+          "assumptions": "An estimate when each loop has one delay and other work is short.",
+          "example": "A 500 ms delay with negligible work gives approximately two loop calls per second."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Arduino sketch build process",
+          "url": "https://docs.arduino.cc/arduino-cli/sketch-build-process/"
+        },
+        {
+          "title": "Arduino language reference",
+          "url": "https://docs.arduino.cc/language-reference/"
+        },
+        {
+          "title": "Espressif: C++ support in ESP-IDF",
+          "url": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/cplusplus.html"
+        }
+      ],
+      "codeExample": {
+        "title": "Trace startup and repetition",
+        "code": "unsigned long count = 0;\nvoid setup() {\n  Serial.begin(9600);\n  Serial.println(\"Boot\");\n}\nvoid loop() {\n  count++;\n  Serial.print(\"Tick: \");\n  Serial.println(count);\n  if (count == 10) count = 0;\n  delay(500);\n}\n",
+        "output": "Boot\nTick: 1\nTick: 2",
+        "explanation": "Boot appears once; Tick repeats approximately every half second. The counter cycles through 1 to 10.",
+        "exercise": "Copy this sketch into the linked code-only lab. Change 500 to 250 and predict the number of Tick lines in two seconds. Restore the lab example when finished.",
+        "tutorialId": "cpp-start",
+        "boards": [
+          "uno",
+          "nano",
+          "esp32",
+          "esp32s3"
+        ]
+      }
+    },
+    {
+      "id": "programming-numbers",
+      "version": 1,
+      "track": "programming",
+      "order": 2,
+      "title": "C variables, types and arithmetic",
+      "summary": "Choose numeric types, understand division and conversions, and avoid overflow when moving between AVR and ESP32.",
+      "difficulty": "Fundamental",
+      "minutes": 35,
+      "prerequisites": [
+        "programming-start"
+      ],
+      "lessons": [
+        {
+          "title": "Name values and give them a type",
+          "text": "Initialize every variable before reading it. Use const for a setting that should not change, bool for a true/false decision, an integer for counts, and float for fractional measurements. Names are case-sensitive and should carry meaning or units, such as temperatureC. In these Uno/Nano profiles int is 16 bits; on ESP32/S3 it is 32 bits. uint8_t stores 0 through 255, and unsigned long is 32 bits on these boards. These sizes are board facts, not a universal promise about C.",
+          "id": "lesson-1"
+        },
+        {
+          "title": "Evaluate expressions before storing them",
+          "text": "Operators combine values before assignment. Multiplication and division bind more tightly than addition; parentheses make intent clear. For positive integers, 17 / 5 produces 3 and 17 % 5 produces remainder 2. Using 5.0 makes the division floating-point, giving 3.4. Storing 17 / 5 in a float still stores 3.0 because integer division already happened. Cast or widen an operand before the calculation, and never use a zero divisor.",
+          "id": "lesson-2"
+        },
+        {
+          "title": "Prevent overflow and separate model behavior",
+          "text": "A wider destination cannot repair an overflow that occurred in a narrower expression. On AVR, use 1000L * 1000 for a million: the L makes an operand long before multiplication. Unsigned arithmetic wraps modulo its range, which is useful for clocks. Signed overflow is undefined in native C/C++; do not rely on it. VoltQuest deliberately wraps signed arithmetic as a teaching approximation. Check bounds before arithmetic and narrowing conversions, and use compiler warnings when testing on actual hardware.",
+          "id": "lesson-3"
+        }
+      ],
+      "workedExample": "Suppose 17 samples share five time slots. Integer division assigns three samples per slot and the remainder is two. A fractional average requires 17 / 5.0, which Serial.println prints as 3.40 by default. For a million-microsecond calculation on Uno, 1000L * 1000 evaluates as long. Merely assigning 1000 * 1000 to a long is not a portable fix for signed int overflow.",
+      "application": "Choose types for a 0–100 percentage, a signed temperature and a millisecond timestamp. State each range and unit, then test the same arithmetic on Uno and ESP32 without relying on signed overflow.",
+      "lab": {
+        "tutorialId": "cpp-variables",
+        "task": "Compare sizeof(int) on Uno and ESP32, then identify which variables should be constant and which can change."
+      },
+      "extraLabs": [
+        {
+          "tutorialId": "cpp-arithmetic",
+          "task": "Predict integer division, remainder and fractional division before Run. Change one operand to a decimal literal and explain the result."
+        }
+      ],
+      "practice": [
+        {
+          "prompt": "What does 17 / 5 produce when both operands are int?",
+          "options": [
+            {
+              "id": "a",
+              "text": "3"
+            },
+            {
+              "id": "b",
+              "text": "3.4"
+            },
+            {
+              "id": "c",
+              "text": "2"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Integer division discards the fractional part, so the quotient is 3.",
+          "lessonId": "lesson-2",
+          "id": "practice-1"
+        },
+        {
+          "prompt": "Which expression safely computes one million on these AVR boards?",
+          "options": [
+            {
+              "id": "a",
+              "text": "1000 * 1000 using int operands"
+            },
+            {
+              "id": "b",
+              "text": "1000L * 1000"
+            },
+            {
+              "id": "c",
+              "text": "A larger variable name"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "The long operand widens the multiplication before its result is stored.",
+          "lessonId": "lesson-3",
+          "id": "practice-2"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "What is the range of uint8_t?",
+            "options": [
+              {
+                "id": "a",
+                "text": "-128 to 127"
+              },
+              {
+                "id": "b",
+                "text": "0 to 1023"
+              },
+              {
+                "id": "c",
+                "text": "0 to 255"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "An unsigned 8-bit type has 256 values starting at zero.",
+            "lessonId": "lesson-1",
+            "id": "exam-1"
+          },
+          {
+            "prompt": "What value does float ratio = 17 / 5 store?",
+            "options": [
+              {
+                "id": "a",
+                "text": "3.0"
+              },
+              {
+                "id": "b",
+                "text": "3.4"
+              },
+              {
+                "id": "c",
+                "text": "0.2"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The operands are integers; conversion to float happens after the division.",
+            "lessonId": "lesson-2",
+            "id": "exam-2"
+          },
+          {
+            "prompt": "What does 17 % 5 evaluate to?",
+            "options": [
+              {
+                "id": "a",
+                "text": "3"
+              },
+              {
+                "id": "b",
+                "text": "2"
+              },
+              {
+                "id": "c",
+                "text": "5"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "17 equals 3 times 5 plus remainder 2.",
+            "lessonId": "lesson-2",
+            "id": "exam-3"
+          },
+          {
+            "prompt": "Which statement about native signed overflow is correct?",
+            "options": [
+              {
+                "id": "a",
+                "text": "It always wraps exactly like VoltQuest"
+              },
+              {
+                "id": "b",
+                "text": "The destination type always repairs it"
+              },
+              {
+                "id": "c",
+                "text": "It is undefined behavior; prevent it"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "The simulator’s wrapping approximation is not a guarantee of C or C++.",
+            "lessonId": "lesson-3",
+            "id": "exam-4"
+          },
+          {
+            "prompt": "Which declaration communicates an unchanging interval?",
+            "options": [
+              {
+                "id": "a",
+                "text": "const unsigned long intervalMs = 500;"
+              },
+              {
+                "id": "b",
+                "text": "float intervalMs;"
+              },
+              {
+                "id": "c",
+                "text": "bool intervalMs = false;"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "const prevents reassignment and the unsigned long type suits these boards’ millisecond clocks.",
+            "lessonId": "lesson-1",
+            "id": "exam-5"
+          }
+        ]
+      },
+      "formulas": [
+        {
+          "title": "Unsigned integer capacity",
+          "equation": "maximum = 2^bits - 1",
+          "symbols": "bits is the stored width; maximum is a dimensionless integer.",
+          "assumptions": "Applies to unsigned integers; signed ranges and expression promotions need separate care.",
+          "example": "8 bits give 255 as the maximum; 16 bits give 65535."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Arduino language reference",
+          "url": "https://docs.arduino.cc/language-reference/"
+        },
+        {
+          "title": "C++ working draft: fundamental types",
+          "url": "https://eel.is/c++draft/basic.fundamental"
+        },
+        {
+          "title": "GCC warning options",
+          "url": "https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html"
+        }
+      ],
+      "codeExample": {
+        "title": "Calculate before you print",
+        "code": "void setup() {\n  Serial.begin(9600);\n  Serial.println(17 / 5);\n  Serial.println(17 % 5);\n  Serial.println(17 / 5.0);\n  long durationUs = 1000L * 1000;\n  Serial.println(durationUs);\n}\nvoid loop() { delay(100); }\n",
+        "output": "3\n2\n3.40\n1000000",
+        "explanation": "These four results are the same on Uno, Nano, ESP32 and ESP32-S3 because the multiplication is widened explicitly.",
+        "exercise": "Paste into the arithmetic lab. Replace 17 with 22 and predict all three division results before running; the long calculation should stay unchanged.",
+        "tutorialId": "cpp-arithmetic",
+        "boards": [
+          "uno",
+          "nano",
+          "esp32",
+          "esp32s3"
+        ]
+      }
+    },
+    {
+      "id": "programming-decisions",
+      "version": 1,
+      "track": "programming",
+      "order": 3,
+      "title": "Conditions, logic and digital input",
+      "summary": "Turn sensor values into explicit decisions and understand active-low buttons, comparisons and branch boundaries.",
+      "difficulty": "Fundamental",
+      "minutes": 35,
+      "prerequisites": [
+        "programming-numbers"
+      ],
+      "lessons": [
+        {
+          "title": "Write mutually exclusive decisions",
+          "text": "An if statement runs its block when a condition is true. An else if chain tests later conditions only when earlier ones were false; else covers the remaining case. Use == for comparison and = for assignment. Decide whether a threshold includes its boundary: temperatureC >= 30 includes exactly 30, while > 30 does not. Always test below, at and above each threshold, and initialize the output so that every path has a defined result.",
+          "id": "lesson-1"
+        },
+        {
+          "title": "Combine conditions with Boolean logic",
+          "text": "Logical AND (&&) requires both conditions; OR (||) needs at least one; ! negates a condition. C and C++ short-circuit these operators: in valid && reading > limit, the right side is not evaluated when valid is false. Parentheses help show the intended grouping. Bitwise & and | operate on integer bits and are different operators. A sensor validity flag should be checked before using its measurement to command an output.",
+          "id": "lesson-2"
+        },
+        {
+          "title": "Interpret inputs before controlling outputs",
+          "text": "pinMode configures a pin; digitalRead returns its logical level and digitalWrite commands an output level. With INPUT_PULLUP and a button to ground, released reads HIGH and pressed reads LOW. Convert this electrical convention into a clear Boolean such as pressed = digitalRead(buttonPin) == LOW. Reading HIGH does not mean a button is universally pressed. Floating inputs have no reliable default, and ESP32 GPIO must not receive a 5 V signal.",
+          "id": "lesson-3"
+        }
+      ],
+      "workedExample": "For valid = true, enabled = true and temperatureC = 30, the expression valid && enabled && temperatureC >= 30 is true. At 29 it is false. Setting valid to false disables cooling even at 40. A separate button exercise uses INPUT_PULLUP: pressing connects the input to ground, so the software turns LOW into pressed = true before deciding the LED state.",
+      "application": "Write a truth table for an enabled alarm with a valid sensor and an inclusive high threshold. Add the invalid-sensor case explicitly, then compare the logical decision with the button lab’s electrical level.",
+      "lab": {
+        "tutorialId": "cpp-conditions",
+        "task": "Try values immediately below, equal to and above a branch threshold. Predict which single message will print for each value."
+      },
+      "extraLabs": [
+        {
+          "tutorialId": "uno-button",
+          "task": "On Uno or Nano, press and release the prepared pull-up button. Relate LOW to the pressed state and inspect the LED response."
+        }
+      ],
+      "practice": [
+        {
+          "prompt": "Which operator compares two values for equality?",
+          "options": [
+            {
+              "id": "a",
+              "text": "="
+            },
+            {
+              "id": "b",
+              "text": "=="
+            },
+            {
+              "id": "c",
+              "text": "+="
+            }
+          ],
+          "answerId": "b",
+          "explanation": "== compares; = assigns a value.",
+          "lessonId": "lesson-1",
+          "id": "practice-1"
+        },
+        {
+          "prompt": "A pull-up button is connected to ground when pressed. What is pressed?",
+          "options": [
+            {
+              "id": "a",
+              "text": "digitalRead(pin) == LOW"
+            },
+            {
+              "id": "b",
+              "text": "digitalRead(pin) == HIGH"
+            },
+            {
+              "id": "c",
+              "text": "The pin must be an output"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "The pull-up holds released HIGH; pressing provides a ground path and reads LOW.",
+          "lessonId": "lesson-3",
+          "id": "practice-2"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "For temperatureC = 30, what is temperatureC >= 30?",
+            "options": [
+              {
+                "id": "a",
+                "text": "false"
+              },
+              {
+                "id": "b",
+                "text": "Undefined for integers"
+              },
+              {
+                "id": "c",
+                "text": "true"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "The >= comparison includes equality at the boundary.",
+            "lessonId": "lesson-1",
+            "id": "exam-1"
+          },
+          {
+            "prompt": "Which expression requires enabled and valid together?",
+            "options": [
+              {
+                "id": "a",
+                "text": "enabled && valid"
+              },
+              {
+                "id": "b",
+                "text": "enabled || valid"
+              },
+              {
+                "id": "c",
+                "text": "!enabled"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Logical AND requires both operands to be true.",
+            "lessonId": "lesson-2",
+            "id": "exam-2"
+          },
+          {
+            "prompt": "What happens to the second condition in false && condition?",
+            "options": [
+              {
+                "id": "a",
+                "text": "It always executes twice"
+              },
+              {
+                "id": "b",
+                "text": "It is not evaluated"
+              },
+              {
+                "id": "c",
+                "text": "It becomes an assignment"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Short-circuit AND stops after a false left operand.",
+            "lessonId": "lesson-2",
+            "id": "exam-3"
+          },
+          {
+            "prompt": "Why test 29, 30 and 31 for a threshold of 30?",
+            "options": [
+              {
+                "id": "a",
+                "text": "To change the board voltage"
+              },
+              {
+                "id": "b",
+                "text": "To bypass the comparison"
+              },
+              {
+                "id": "c",
+                "text": "To check below, at and above the boundary"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Boundary tests expose accidental use of > instead of >= or overlapping branches.",
+            "lessonId": "lesson-1",
+            "id": "exam-4"
+          },
+          {
+            "prompt": "What gives a released input a defined HIGH in this button circuit?",
+            "options": [
+              {
+                "id": "a",
+                "text": "INPUT_PULLUP"
+              },
+              {
+                "id": "b",
+                "text": "A comment naming it HIGH"
+              },
+              {
+                "id": "c",
+                "text": "Leaving the pin floating"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The pull-up resistor provides a reference level when the button is open.",
+            "lessonId": "lesson-3",
+            "id": "exam-5"
+          }
+        ]
+      },
+      "formulas": [
+        {
+          "title": "A guarded threshold",
+          "equation": "cooling = valid && enabled && (temperatureC >= 30)",
+          "symbols": "valid, enabled and cooling are Boolean; temperatureC is in degrees Celsius.",
+          "assumptions": "A single threshold has no hysteresis or debounce; those require stored history.",
+          "example": "true && true && (29 >= 30) is false; changing 29 to 30 makes it true."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Arduino language reference",
+          "url": "https://docs.arduino.cc/language-reference/"
+        }
+      ],
+      "codeExample": {
+        "title": "Test a guarded decision",
+        "code": "void setup() {\n  Serial.begin(9600);\n  bool valid = true;\n  bool enabled = true;\n  int temperatureC = 30;\n  if (valid && enabled && temperatureC >= 30) {\n    Serial.println(\"Cooling\");\n  } else {\n    Serial.println(\"Idle\");\n  }\n}\nvoid loop() { delay(100); }\n",
+        "output": "Cooling",
+        "explanation": "The inclusive boundary passes at 30, and both guard flags are true. This prints a decision without driving hardware.",
+        "exercise": "Paste into the conditions lab. Test 29, 30 and 31, then make valid false at 31. Write the four expected messages before Run.",
+        "tutorialId": "cpp-conditions",
+        "boards": [
+          "uno",
+          "nano",
+          "esp32",
+          "esp32s3"
+        ]
+      }
+    },
+    {
+      "id": "programming-functions",
+      "version": 1,
+      "track": "programming",
+      "order": 4,
+      "title": "Loops, functions and variable scope",
+      "summary": "Break a program into bounded loops and reusable functions with clear inputs, results and lifetimes.",
+      "difficulty": "Fundamental",
+      "minutes": 35,
+      "prerequisites": [
+        "programming-decisions"
+      ],
+      "lessons": [
+        {
+          "title": "Make iteration finite and intentional",
+          "text": "A for loop puts initialization, continuation condition and update together. for (int i = 0; i < 3; i++) visits 0, 1 and 2. A while loop checks before each iteration; do/while checks after the body and runs at least once. break exits the nearest loop, while continue skips to its next iteration. Check that some action can make the continuation condition false. Long loops delay other work in a cooperative firmware program.",
+          "id": "lesson-1"
+        },
+        {
+          "title": "Give a function one clear job",
+          "text": "A function has a return type, name, parameters and body. Parameters describe its inputs; return sends a result to the caller. void means there is no returned value. Passing an ordinary int parameter copies its value, so changing that parameter does not change the caller’s variable. Prefer functions whose result depends on explicit inputs, such as clamping a requested percentage. A declaration or prototype states the signature; native C/C++ needs a declaration before a call.",
+          "id": "lesson-2"
+        },
+        {
+          "title": "Separate scope from lifetime",
+          "text": "Scope determines where a name can be used; lifetime determines how long its object exists. An ordinary local is created for a call or block. A global remains across loop calls. A static local also retains its value across calls while its name stays local. Avoid shadowing a global with an identically named local, because updates may affect the wrong variable. Recursion needs a terminating case and consumes stack on hardware; bounded iteration is often easier to budget on small boards.",
+          "id": "lesson-3"
+        }
+      ],
+      "workedExample": "clampPercent(-20) returns 0, clampPercent(50) returns 50, and clampPercent(120) returns 100. The function returns a decision without printing or changing global state, making these three cases easy to test. A loop can call it for several requests. If a local parameter named value changes inside clampPercent, the original integer in the caller remains unchanged unless the caller assigns the returned result.",
+      "application": "Extract a sensor conversion into a function with explicit arguments. Test its lowest, middle and highest accepted input, then call it from a bounded loop and document where a persistent counter should live.",
+      "lab": {
+        "tutorialId": "cpp-functions",
+        "task": "Change the conversion function input and compare its returned voltage. Keep printing in the caller so the calculation remains independently testable."
+      },
+      "extraLabs": [
+        {
+          "tutorialId": "cpp-loops",
+          "task": "Trace each loop index by hand, then change its upper bound and predict the number of output lines."
+        }
+      ],
+      "practice": [
+        {
+          "prompt": "Which indices does i = 0; i < 3; i++ visit?",
+          "options": [
+            {
+              "id": "a",
+              "text": "1, 2, 3"
+            },
+            {
+              "id": "b",
+              "text": "0, 1, 2, 3"
+            },
+            {
+              "id": "c",
+              "text": "0, 1, 2"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "The loop starts at zero and stops before three.",
+          "lessonId": "lesson-1",
+          "id": "practice-1"
+        },
+        {
+          "prompt": "An int parameter is assigned 100 inside a function. What happens to the caller’s original int?",
+          "options": [
+            {
+              "id": "a",
+              "text": "It remains unchanged"
+            },
+            {
+              "id": "b",
+              "text": "It is always set to 100"
+            },
+            {
+              "id": "c",
+              "text": "It becomes global"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "An ordinary int parameter is passed by value, so the function changes its local copy.",
+          "lessonId": "lesson-2",
+          "id": "practice-2"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "Which statement exits the nearest loop?",
+            "options": [
+              {
+                "id": "a",
+                "text": "continue"
+              },
+              {
+                "id": "b",
+                "text": "break"
+              },
+              {
+                "id": "c",
+                "text": "const"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "break exits; continue moves to the next iteration.",
+            "lessonId": "lesson-1",
+            "id": "exam-1"
+          },
+          {
+            "prompt": "Which loop always executes its body at least once?",
+            "options": [
+              {
+                "id": "a",
+                "text": "while"
+              },
+              {
+                "id": "b",
+                "text": "for with a false initial condition"
+              },
+              {
+                "id": "c",
+                "text": "do/while"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "do/while tests its condition after executing the body.",
+            "lessonId": "lesson-1",
+            "id": "exam-2"
+          },
+          {
+            "prompt": "A function returns a clamped percentage. How does the caller use it?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Assign or use the returned value"
+              },
+              {
+                "id": "b",
+                "text": "Assume every caller variable changes"
+              },
+              {
+                "id": "c",
+                "text": "Put the result in a comment"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "return transfers the result; the caller chooses whether and where to store it.",
+            "lessonId": "lesson-2",
+            "id": "exam-3"
+          },
+          {
+            "prompt": "Which local declaration retains a value between calls?",
+            "options": [
+              {
+                "id": "a",
+                "text": "int count = 0;"
+              },
+              {
+                "id": "b",
+                "text": "static int count = 0;"
+              },
+              {
+                "id": "c",
+                "text": "const int count = 0; is a mutable counter"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A static local has persistent storage while its name remains scoped locally.",
+            "lessonId": "lesson-3",
+            "id": "exam-4"
+          },
+          {
+            "prompt": "Why can a long while loop make a firmware button unresponsive?",
+            "options": [
+              {
+                "id": "a",
+                "text": "while changes the button voltage"
+              },
+              {
+                "id": "b",
+                "text": "Functions cannot read buttons"
+              },
+              {
+                "id": "c",
+                "text": "The program cannot reach its other polling work yet"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Cooperative work must return frequently so other input and timing checks can run.",
+            "lessonId": "lesson-1",
+            "id": "exam-5"
+          }
+        ]
+      },
+      "formulas": [
+        {
+          "title": "Count bounded loop iterations",
+          "equation": "for i = 0; i < N; i++ → N iterations",
+          "symbols": "N is a nonnegative integer count.",
+          "assumptions": "The body does not alter i or exit early; each iteration increments by one.",
+          "example": "N = 4 visits indices 0, 1, 2 and 3, so four calls occur."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Arduino language reference",
+          "url": "https://docs.arduino.cc/language-reference/"
+        },
+        {
+          "title": "Arduino sketch build process",
+          "url": "https://docs.arduino.cc/arduino-cli/sketch-build-process/"
+        }
+      ],
+      "codeExample": {
+        "title": "Test a small pure function",
+        "code": "int clampPercent(int value) {\n  if (value < 0) return 0;\n  if (value > 100) return 100;\n  return value;\n}\nvoid setup() {\n  Serial.begin(9600);\n  for (int request = -20; request <= 120; request += 70) {\n    Serial.println(clampPercent(request));\n  }\n}\nvoid loop() { delay(100); }\n",
+        "output": "0\n50\n100",
+        "explanation": "The loop requests -20, 50 and 120. Each function call returns one bounded result.",
+        "exercise": "Paste into the functions lab and add explicit tests for 0 and 100. Explain why both boundaries return unchanged.",
+        "tutorialId": "cpp-functions",
+        "boards": [
+          "uno",
+          "nano",
+          "esp32",
+          "esp32s3"
+        ]
+      }
+    },
+    {
+      "id": "programming-arrays",
+      "version": 1,
+      "track": "programming",
+      "order": 5,
+      "title": "Arrays, C strings, memory and bit flags",
+      "summary": "Store samples and text with explicit bounds, reason about pointers, and encode small sets of Boolean flags.",
+      "difficulty": "Fundamental",
+      "minutes": 35,
+      "prerequisites": [
+        "programming-functions"
+      ],
+      "lessons": [
+        {
+          "title": "Store and traverse fixed-size arrays",
+          "text": "An array groups elements of one type in consecutive storage. int samples[3] has valid indices 0, 1 and 2; index 3 is outside the array. Initialize elements and carry the element count alongside data. In a scope where the object is an actual array, sizeof(samples) / sizeof(samples[0]) gives its length. It does not recover an array length from a pointer parameter. Use a sufficiently wide accumulator before summing many sensor readings.",
+          "id": "lesson-1"
+        },
+        {
+          "title": "Bound C strings and understand pointer lifetime",
+          "text": "A C string is a char array terminated by a zero byte, written as backslash-zero in source. A buffer of eight bytes holds at most seven text characters plus that terminator. An array commonly converts to a pointer to its first element when passed to a function. A pointer refers to storage; it does not own a length or extend that storage’s lifetime. Never return a pointer to an ordinary local array. General pointer arithmetic and native memory access are outside VoltQuest’s teaching subset.",
+          "id": "lesson-2"
+        },
+        {
+          "title": "Represent independent flags with bits",
+          "text": "Bitwise operations work on integer bit patterns. A mask 1U << 2 selects bit two, whose numeric value is four. flags | mask sets that bit, flags & mask tests it, and flags & ~mask clears it when stored back into the flag type. Use unsigned operands, valid shift counts and parentheses. Logical && combines truth values instead. A fixed buffer and a byte of flags have predictable storage, unlike repeatedly growing dynamic text on a small microcontroller.",
+          "id": "lesson-3"
+        }
+      ],
+      "workedExample": "For samples 100, 200 and 300, a long accumulator totals 600; dividing by 3.0 produces 200.00. The array length is three, although its byte size differs between Uno and ESP32 because int differs. Starting flags at zero, setting bit two yields 4 and testing that mask yields true. Clearing the same mask returns flags to zero. None of these operations require reading outside the sample array.",
+      "application": "Design a four-sample average and an eight-byte command buffer. State the last valid sample index, maximum text length and accumulator range, then define separate valid and alarm bits without overlapping masks.",
+      "lab": {
+        "tutorialId": "cpp-arrays",
+        "task": "Run the sample average, append one element and update the element count. Compare the array byte size on Uno and ESP32 while keeping the same valid indices."
+      },
+      "extraLabs": [],
+      "practice": [
+        {
+          "prompt": "What is the last valid index in int samples[4]?",
+          "options": [
+            {
+              "id": "a",
+              "text": "4"
+            },
+            {
+              "id": "b",
+              "text": "3"
+            },
+            {
+              "id": "c",
+              "text": "5"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "Four elements are indexed 0 through 3.",
+          "lessonId": "lesson-1",
+          "id": "practice-1"
+        },
+        {
+          "prompt": "How many text characters fit in char command[8] as a terminated C string?",
+          "options": [
+            {
+              "id": "a",
+              "text": "8"
+            },
+            {
+              "id": "b",
+              "text": "9"
+            },
+            {
+              "id": "c",
+              "text": "7"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "Reserve one byte for the terminating zero.",
+          "lessonId": "lesson-2",
+          "id": "practice-2"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "Where does sizeof(a) / sizeof(a[0]) give an array element count?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Where a is the actual array object"
+              },
+              {
+                "id": "b",
+                "text": "For every pointer parameter"
+              },
+              {
+                "id": "c",
+                "text": "Only inside a comment"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "A pointer parameter has a pointer size, not the original array’s byte size.",
+            "lessonId": "lesson-1",
+            "id": "exam-1"
+          },
+          {
+            "prompt": "Why is returning a pointer to an ordinary local array invalid?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Pointers automatically copy arrays"
+              },
+              {
+                "id": "b",
+                "text": "The array’s lifetime ends when the function returns"
+              },
+              {
+                "id": "c",
+                "text": "The pointer knows every array length"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A dangling pointer does not keep local storage alive.",
+            "lessonId": "lesson-2",
+            "id": "exam-2"
+          },
+          {
+            "prompt": "What is the numeric value of 1U << 2?",
+            "options": [
+              {
+                "id": "a",
+                "text": "2"
+              },
+              {
+                "id": "b",
+                "text": "8"
+              },
+              {
+                "id": "c",
+                "text": "4"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Shifting the low bit left twice selects bit two, value four.",
+            "lessonId": "lesson-3",
+            "id": "exam-3"
+          },
+          {
+            "prompt": "Which operation sets selected bits while preserving other flags?",
+            "options": [
+              {
+                "id": "a",
+                "text": "flags |= mask;"
+              },
+              {
+                "id": "b",
+                "text": "flags = 0;"
+              },
+              {
+                "id": "c",
+                "text": "flags && mask;"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Bitwise OR sets each bit present in the mask and leaves other bits unchanged.",
+            "lessonId": "lesson-3",
+            "id": "exam-4"
+          },
+          {
+            "prompt": "What average should 100, 200 and 300 produce with fractional division?",
+            "options": [
+              {
+                "id": "a",
+                "text": "600.00"
+              },
+              {
+                "id": "b",
+                "text": "200.00"
+              },
+              {
+                "id": "c",
+                "text": "100.00"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The sum is 600; dividing by three yields 200.",
+            "lessonId": "lesson-1",
+            "id": "exam-5"
+          }
+        ]
+      },
+      "formulas": [
+        {
+          "title": "Average and storage budget",
+          "equation": "average = sum / count; array_bytes = count × element_bytes",
+          "symbols": "count is the element count; byte counts measure storage, not text length.",
+          "assumptions": "The count must be positive, the sum must fit its type and division must preserve the needed fraction.",
+          "example": "Three AVR int samples take 6 bytes; the same three ESP32 int samples take 12 bytes. Both average to 200 for 100, 200, 300."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Arduino language reference",
+          "url": "https://docs.arduino.cc/language-reference/"
+        },
+        {
+          "title": "C++ working draft: fundamental types",
+          "url": "https://eel.is/c++draft/basic.fundamental"
+        }
+      ],
+      "codeExample": {
+        "title": "Average samples and set a flag",
+        "code": "void setup() {\n  Serial.begin(9600);\n  int samples[3] = {100, 200, 300};\n  long total = 0;\n  for (int i = 0; i < 3; i++) total += samples[i];\n  Serial.println(total / 3.0);\n  unsigned int flags = 0;\n  unsigned int validMask = 1U << 2;\n  flags |= validMask;\n  Serial.println(flags);\n  Serial.println((flags & validMask) != 0);\n}\nvoid loop() { delay(100); }\n",
+        "output": "200.00\n4\n1",
+        "explanation": "The average uses fractional division; setting bit two produces four and the Boolean test prints one.",
+        "exercise": "Paste into the arrays lab. Change one sample to 600 and predict the new mean. Then clear validMask with flags &= ~validMask and print the result.",
+        "tutorialId": "cpp-arrays",
+        "boards": [
+          "uno",
+          "nano",
+          "esp32",
+          "esp32s3"
+        ]
+      }
+    },
+    {
+      "id": "programming-cpp",
+      "version": 1,
+      "track": "programming",
+      "order": 6,
+      "title": "C++ objects, libraries and program structure",
+      "summary": "Read constructors and method calls, distinguish String from C strings, and understand the limits of the browser subset.",
+      "difficulty": "Intermediate",
+      "minutes": 45,
+      "prerequisites": [
+        "programming-arrays"
+      ],
+      "lessons": [
+        {
+          "title": "Read object and library APIs",
+          "text": "A C++ class describes a type; an object is an instance with its own state. A constructor initializes it, and a method operates through that object, as in servo.write(90). Include the library header before declaring its types, and call begin or attach when the API requires initialization. Different objects can hold different state. VoltQuest provides selected native library classes such as Servo and WebServer; arbitrary user-defined classes, inheritance and the complete C++ standard library are not implemented.",
+          "id": "lesson-1"
+        },
+        {
+          "title": "Distinguish values, references and managed text",
+          "text": "Arduino String is a C++ text object, different from a zero-terminated char buffer. String methods such as trim and toUpperCase modify that object; length returns its current character count. On hardware, growth can allocate memory, so keep incoming messages bounded. A C++ reference is an alias to an existing object rather than an ordinary value copy. General reference parameters and object ownership features require a native toolchain here. Use the documented subset instead of assuming every C++ example can run in the browser.",
+          "id": "lesson-2"
+        },
+        {
+          "title": "Organize an embedded program for growth",
+          "text": "Use named constants for configuration, small functions for calculations, and enums for a fixed set of states. A struct groups related fields such as a value and its validity flag. In a native project, headers declare interfaces and .cpp files implement them; Arduino preprocesses .ino files but does not automatically include every header. Advanced C++ adds templates and resource lifetime techniques such as RAII. Study those with a compiler and tests after this path; the simulator is not a full C++ or ESP-IDF environment.",
+          "id": "lesson-3"
+        }
+      ],
+      "workedExample": "Start with String command = \" on \". Its length is four because both spaces count. trim removes the surrounding spaces, toUpperCase changes on to ON, and equals(\"ON\") returns true. The program prints 4, ON, then 1. This illustrates an object’s changing state and method calls; it does not imply a char array automatically has those methods or that unbounded String growth is safe on a small board.",
+      "application": "Sketch an interface for a device with initialize, read and update responsibilities. Identify which values are configuration, persistent state and temporary data, then read one supported library’s initialization sequence.",
+      "lab": {
+        "tutorialId": "cpp-commands",
+        "task": "Compare a character command dispatcher with the String normalization example. Decide explicitly whether a protocol should accept lowercase or require exact spelling."
+      },
+      "extraLabs": [
+        {
+          "tutorialId": "uno-servo",
+          "task": "On Uno or Nano, find the header, Servo object, attach call and write method. Explain why object construction alone does not connect a servo signal."
+        }
+      ],
+      "practice": [
+        {
+          "prompt": "In servo.write(90), what is write?",
+          "options": [
+            {
+              "id": "a",
+              "text": "A board name"
+            },
+            {
+              "id": "b",
+              "text": "A method called on the servo object"
+            },
+            {
+              "id": "c",
+              "text": "A C preprocessor directive"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "The dot accesses the object’s method, which operates through that instance.",
+          "lessonId": "lesson-1",
+          "id": "practice-1"
+        },
+        {
+          "prompt": "How many characters are in String(\" on \") before trim?",
+          "options": [
+            {
+              "id": "a",
+              "text": "2"
+            },
+            {
+              "id": "b",
+              "text": "3"
+            },
+            {
+              "id": "c",
+              "text": "4"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "The leading and trailing spaces are both characters.",
+          "lessonId": "lesson-2",
+          "id": "practice-2"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "What should precede a declaration of a library type such as Servo?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Including its supported header"
+              },
+              {
+                "id": "b",
+                "text": "Removing setup"
+              },
+              {
+                "id": "c",
+                "text": "Changing every variable to a pointer"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The header makes the library interface available to the program.",
+            "lessonId": "lesson-1",
+            "id": "exam-1"
+          },
+          {
+            "prompt": "Which distinction between String and char[] is correct?",
+            "options": [
+              {
+                "id": "a",
+                "text": "They always have the same methods"
+              },
+              {
+                "id": "b",
+                "text": "String offers object methods; a C string uses a terminated buffer"
+              },
+              {
+                "id": "c",
+                "text": "Neither stores text"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Managed text and a C buffer have different interfaces and storage responsibilities.",
+            "lessonId": "lesson-2",
+            "id": "exam-2"
+          },
+          {
+            "prompt": "What is a C++ reference conceptually?",
+            "options": [
+              {
+                "id": "a",
+                "text": "An always-independent value copy"
+              },
+              {
+                "id": "b",
+                "text": "A new board pin"
+              },
+              {
+                "id": "c",
+                "text": "An alias to an existing object"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "References alias objects; full reference and ownership semantics need native C++ study beyond this subset.",
+            "lessonId": "lesson-2",
+            "id": "exam-3"
+          },
+          {
+            "prompt": "Which construct names a fixed set of states?",
+            "options": [
+              {
+                "id": "a",
+                "text": "enum"
+              },
+              {
+                "id": "b",
+                "text": "delay"
+              },
+              {
+                "id": "c",
+                "text": "Serial.begin"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "An enum replaces unexplained numeric state codes with meaningful names.",
+            "lessonId": "lesson-3",
+            "id": "exam-4"
+          },
+          {
+            "prompt": "Where should you test arbitrary classes, templates and RAII examples?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Assume they all work in VoltQuest"
+              },
+              {
+                "id": "b",
+                "text": "In a suitable native C++ toolchain"
+              },
+              {
+                "id": "c",
+                "text": "Only in the wiring table"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "These facilities extend beyond the browser interpreter’s supported teaching subset.",
+            "lessonId": "lesson-3",
+            "id": "exam-5"
+          }
+        ]
+      },
+      "formulas": [
+        {
+          "title": "Track a text transformation",
+          "equation": "\" on \" → trim → \"on\" → uppercase → \"ON\"",
+          "symbols": "The arrows represent method calls that modify the String value.",
+          "assumptions": "Normalization is a protocol decision; do not silently broaden a protocol that requires exact commands.",
+          "example": "The original length is 4; the normalized length is 2 and equals(\"ON\") is true."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Arduino language reference",
+          "url": "https://docs.arduino.cc/language-reference/"
+        },
+        {
+          "title": "Arduino sketch build process",
+          "url": "https://docs.arduino.cc/arduino-cli/sketch-build-process/"
+        },
+        {
+          "title": "Espressif: C++ support in ESP-IDF",
+          "url": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/cplusplus.html"
+        }
+      ],
+      "codeExample": {
+        "title": "Observe String object methods",
+        "code": "void setup() {\n  Serial.begin(9600);\n  String command = \" on \";\n  Serial.println(command.length());\n  command.trim();\n  command.toUpperCase();\n  Serial.println(command);\n  Serial.println(command.equals(\"ON\"));\n}\nvoid loop() { delay(100); }\n",
+        "output": "4\nON\n1",
+        "explanation": "trim and toUpperCase change the same object; equals returns a Boolean printed as 1.",
+        "exercise": "Paste into the code-only lab. Use \" off \" and predict the length, normalized command and equality result. Explain which operations mutate the object.",
+        "tutorialId": "cpp-start",
+        "boards": [
+          "uno",
+          "nano",
+          "esp32",
+          "esp32s3"
+        ]
+      }
+    },
+    {
+      "id": "programming-analog",
+      "version": 1,
+      "track": "programming",
+      "order": 7,
+      "title": "Arduino and ESP32: ADC, PWM and portability",
+      "summary": "Connect numeric code to real inputs and outputs while accounting for pin maps, resolution and voltage differences.",
+      "difficulty": "Intermediate",
+      "minutes": 45,
+      "prerequisites": [
+        "programming-cpp"
+      ],
+      "lessons": [
+        {
+          "title": "Convert an ADC count deliberately",
+          "text": "analogRead returns a count, not a voltage. The Uno/Nano learning profiles use 10-bit counts from 0 to 1023; ESP32/S3 default to 12 bits from 0 to 4095. Normalize by the chosen full-scale count before comparing percentages or converting units. Use floating-point division or widened integer arithmetic. VoltQuest models an ideal linear ADC; real ESP32 attenuation, calibration and usable voltage range depend on the chip. More bits do not automatically mean more measurement accuracy.",
+          "id": "lesson-1"
+        },
+        {
+          "title": "Distinguish PWM from an analog voltage source",
+          "text": "PWM switches a digital output between LOW and HIGH. Duty cycle describes the fraction of each period spent HIGH; frequency describes periods per second. analogWrite commonly accepts 0–255 on Uno PWM pins. ESP32 LEDC provides configurable resolution and frequency. Current Arduino-ESP32 APIs use pin-based ledcAttach and ledcWrite; the existing VoltQuest PWM tutorial uses the older channel-based teaching adapter. Check the installed core’s API before transferring code. PWM does not make a GPIO a calibrated DAC.",
+          "id": "lesson-2"
+        },
+        {
+          "title": "Port the circuit as well as the code",
+          "text": "A board change can alter supply voltage, ADC pin, PWM capability and integer width. The prepared potentiometer labs use A0 on AVR, GPIO34 on classic ESP32 and GPIO4 on S3. Classic ESP32 GPIO34 is input-only and belongs to ADC1, useful while Wi-Fi operates; do not generalize its pin map to S3. Use the prepared board variant and common ground, protect 3.3 V inputs, and keep conversion constants next to the board-specific pin configuration.",
+          "id": "lesson-3"
+        }
+      ],
+      "workedExample": "An illustrative ADC count of 512 on a 10-bit scale represents 512 / 1023.0, about 0.5005 of full scale. Multiplying by 100 gives 50.05%. Integer mapping 512L * 255 / 1023 produces duty 127 because it truncates. This is an intentional rounding policy, not a faulty sensor. On ESP32, use a 4095 maximum and its actual ADC pin; do not reuse the AVR denominator blindly.",
+      "application": "Make a pin-and-range table for Uno, ESP32 and ESP32-S3. For each, identify an ADC input and an output, state its full-scale count, and test minimum, midpoint and maximum readings in the corresponding lab.",
+      "lab": {
+        "tutorialId": "iot-telemetry",
+        "task": "Select Uno, ESP32 and S3 in turn. Move the pot and inspect the reported maximum count and actual input pin; the knob direction in this lab increases the reading."
+      },
+      "extraLabs": [
+        {
+          "tutorialId": "uno-pwm",
+          "task": "On Uno/Nano, compare the endpoints and middle duty of the prepared fading LED. Its series resistor still limits instantaneous current."
+        },
+        {
+          "tutorialId": "esp32-pwm",
+          "task": "On ESP32/S3, compare 256 and 768 on the tutorial’s 10-bit LEDC scale. This lab demonstrates the legacy channel API supported by the teaching model."
+        }
+      ],
+      "practice": [
+        {
+          "prompt": "What is the largest count of a 12-bit unsigned ADC?",
+          "options": [
+            {
+              "id": "a",
+              "text": "4095"
+            },
+            {
+              "id": "b",
+              "text": "4096"
+            },
+            {
+              "id": "c",
+              "text": "1023"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "There are 4096 levels starting at zero, so the maximum is 4095.",
+          "lessonId": "lesson-1",
+          "id": "practice-1"
+        },
+        {
+          "prompt": "What does PWM duty cycle measure?",
+          "options": [
+            {
+              "id": "a",
+              "text": "The number of source-code lines"
+            },
+            {
+              "id": "b",
+              "text": "The fraction of a period spent HIGH"
+            },
+            {
+              "id": "c",
+              "text": "The ADC pin number"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "Duty is an on-time fraction; frequency is a different quantity.",
+          "lessonId": "lesson-2",
+          "id": "practice-2"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "Which expression preserves a fractional 10-bit ADC ratio?",
+            "options": [
+              {
+                "id": "a",
+                "text": "raw / 1023 using two ints"
+              },
+              {
+                "id": "b",
+                "text": "raw % 1023"
+              },
+              {
+                "id": "c",
+                "text": "raw / 1023.0"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "A floating-point operand prevents integer division from discarding the fraction.",
+            "lessonId": "lesson-1",
+            "id": "exam-1"
+          },
+          {
+            "prompt": "Can classic ESP32 GPIO34 drive an LED output?",
+            "options": [
+              {
+                "id": "a",
+                "text": "No, it is input-only"
+              },
+              {
+                "id": "b",
+                "text": "Yes, every ADC pin supports output"
+              },
+              {
+                "id": "c",
+                "text": "Only after changing int to long"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Pin capability is a hardware constraint independent of the variable type.",
+            "lessonId": "lesson-3",
+            "id": "exam-2"
+          },
+          {
+            "prompt": "What does 512L * 255 / 1023 produce using integer arithmetic?",
+            "options": [
+              {
+                "id": "a",
+                "text": "128"
+              },
+              {
+                "id": "b",
+                "text": "127"
+              },
+              {
+                "id": "c",
+                "text": "512"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The exact quotient is about 127.625; integer division truncates it to 127.",
+            "lessonId": "lesson-1",
+            "id": "exam-3"
+          },
+          {
+            "prompt": "A sketch uses ledcSetup and ledcAttachPin. What should you check before hardware use?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only its filename colour"
+              },
+              {
+                "id": "b",
+                "text": "Whether all pins can accept 5 V"
+              },
+              {
+                "id": "c",
+                "text": "The installed Arduino-ESP32 core’s LEDC API"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "The lab’s legacy channel API differs from newer pin-based core APIs.",
+            "lessonId": "lesson-2",
+            "id": "exam-4"
+          },
+          {
+            "prompt": "Does a higher ADC bit count guarantee better real measurement accuracy?",
+            "options": [
+              {
+                "id": "a",
+                "text": "No; calibration, noise and range also matter"
+              },
+              {
+                "id": "b",
+                "text": "Yes, independently of the circuit"
+              },
+              {
+                "id": "c",
+                "text": "Yes, even with no ground reference"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Resolution describes code spacing; accuracy depends on the complete measurement path.",
+            "lessonId": "lesson-1",
+            "id": "exam-5"
+          }
+        ]
+      },
+      "formulas": [
+        {
+          "title": "Normalize and map a reading",
+          "equation": "ratio = raw / (2^bits - 1); duty = floor(raw × 255 / adcMax)",
+          "symbols": "raw and duty are integer counts; ratio is dimensionless.",
+          "assumptions": "Use a positive adcMax and a widened product. The linear ADC relationship is an ideal teaching approximation.",
+          "example": "512/1023 ≈ 0.5005; floor(512×255/1023) = 127 on an 8-bit duty scale."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Espressif: Arduino-ESP32 ADC API",
+          "url": "https://docs.espressif.com/projects/arduino-esp32/en/latest/api/adc.html"
+        },
+        {
+          "title": "Espressif: Arduino-ESP32 LEDC API",
+          "url": "https://docs.espressif.com/projects/arduino-esp32/en/latest/api/ledc.html"
+        },
+        {
+          "title": "Arduino language reference",
+          "url": "https://docs.arduino.cc/language-reference/"
+        }
+      ],
+      "codeExample": {
+        "title": "Predict counts before wiring",
+        "code": "void setup() {\n  Serial.begin(9600);\n  long raw = 512;\n  const long adcMax = 1023;\n  float percent = raw * 100.0 / adcMax;\n  int duty = raw * 255L / adcMax;\n  Serial.println(percent);\n  Serial.println(duty);\n}\nvoid loop() { delay(100); }\n",
+        "output": "50.05\n127",
+        "explanation": "This is a numeric 10-bit example on every board, not an analogRead call. The long product avoids AVR int overflow.",
+        "exercise": "Run in the arithmetic lab, then use raw = 2048 and adcMax = 4095 to model an ESP32 midpoint. Compare with the separate live telemetry lab.",
+        "tutorialId": "cpp-arithmetic",
+        "boards": [
+          "uno",
+          "nano",
+          "esp32",
+          "esp32s3"
+        ]
+      }
+    },
+    {
+      "id": "programming-time",
+      "version": 1,
+      "track": "programming",
+      "order": 8,
+      "title": "Responsive timing, debounce and rollover",
+      "summary": "Schedule work with millis, reason about unsigned clocks, and distinguish a button edge from contact bounce.",
+      "difficulty": "Intermediate",
+      "minutes": 45,
+      "prerequisites": [
+        "programming-analog"
+      ],
+      "lessons": [
+        {
+          "title": "Poll deadlines without blocking the whole loop",
+          "text": "delay pauses the current sketch path, so that path cannot poll a button or service a server while waiting. Store a previous timestamp and compare elapsed time against an interval in each loop call. Keep separate timestamps for independent jobs such as blinking and telemetry. Assigning previous = now skips missed periods; adding interval to previous preserves the nominal schedule but needs a bounded catch-up policy. Return to loop quickly enough for every job’s required responsiveness.",
+          "id": "lesson-1"
+        },
+        {
+          "title": "Use unsigned elapsed-time subtraction",
+          "text": "On these boards millis uses a 32-bit unsigned long millisecond clock. Compute unsigned long elapsed = now - previous, then compare elapsed >= interval. Modular subtraction works through one wrap when the actual elapsed duration is less than the clock’s full range and checks are frequent enough. Comparing now >= previous + interval can fail when the addition wraps. Use UL constants for time arithmetic, keep intervals small and avoid mixing signed values with the unsigned clock.",
+          "id": "lesson-2"
+        },
+        {
+          "title": "Separate raw input, stable input and edges",
+          "text": "A mechanical button can bounce between levels during one press. Remember the latest raw reading and when it changed. Accept it as stable only after it remains unchanged for a chosen debounce interval, such as 30 ms in an experiment. Compare the new stable state with the previous stable state to detect one press edge. Counting every loop while held counts many events; edge detection without debounce can still count bounce. The browser button is idealized unless a test injects rapid changes.",
+          "id": "lesson-3"
+        }
+      ],
+      "workedExample": "Imagine a clock previously at 4294967290 ms and now at 5 ms. Unsigned 32-bit subtraction gives 11 ms, so a 10 ms interval has elapsed even though the new timestamp is numerically smaller. Separately, a raw button that changes at 100 ms and remains unchanged becomes stable at 130 ms under a 30 ms policy. A second raw change at 110 ms would restart that waiting interval until 140 ms.",
+      "application": "Plan a 500 ms heartbeat and a 200 ms status report with two timestamps. Add raw/stable button state and a debounce timer, then test a held press, release and several rapid changes as distinct cases.",
+      "lab": {
+        "tutorialId": "cpp-nonblocking",
+        "task": "Keep the LED’s 500 ms timer and add a separate serial report timer. Verify both continue when you change only one interval."
+      },
+      "extraLabs": [
+        {
+          "tutorialId": "uno-button",
+          "task": "Hold the idealized button and explain why polling its pressed level is not a one-press event counter. Design a separate sequence of rapid input changes to test debounce."
+        }
+      ],
+      "practice": [
+        {
+          "prompt": "What should independent blink and telemetry jobs keep?",
+          "options": [
+            {
+              "id": "a",
+              "text": "One shared timestamp reset by both"
+            },
+            {
+              "id": "b",
+              "text": "Only a long delay"
+            },
+            {
+              "id": "c",
+              "text": "Separate timestamps"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "Separate timestamps prevent one job from postponing another job’s deadline.",
+          "lessonId": "lesson-1",
+          "id": "practice-1"
+        },
+        {
+          "prompt": "With a 30 ms debounce interval, a raw change at 100 ms becomes stable when, if it stays unchanged?",
+          "options": [
+            {
+              "id": "a",
+              "text": "130 ms"
+            },
+            {
+              "id": "b",
+              "text": "100 ms"
+            },
+            {
+              "id": "c",
+              "text": "30 ms"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "The raw level must remain unchanged for 30 ms: 100 + 30 = 130.",
+          "lessonId": "lesson-3",
+          "id": "practice-2"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "Which comparison is suitable for these unsigned millis clocks?",
+            "options": [
+              {
+                "id": "a",
+                "text": "now >= previous + interval in every case"
+              },
+              {
+                "id": "b",
+                "text": "unsigned elapsed = now - previous, then elapsed >= interval"
+              },
+              {
+                "id": "c",
+                "text": "now == interval only"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Elapsed subtraction handles wrap under the stated time-range and polling assumptions.",
+            "lessonId": "lesson-2",
+            "id": "exam-1"
+          },
+          {
+            "prompt": "For 32-bit unsigned now = 5 and previous = 4294967290, what is elapsed?",
+            "options": [
+              {
+                "id": "a",
+                "text": "5 ms"
+              },
+              {
+                "id": "b",
+                "text": "Negative 5 ms"
+              },
+              {
+                "id": "c",
+                "text": "11 ms"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Modulo 2^32 subtraction counts six steps to zero and five more to five.",
+            "lessonId": "lesson-2",
+            "id": "exam-2"
+          },
+          {
+            "prompt": "Why does counting every loop while a button is held overcount presses?",
+            "options": [
+              {
+                "id": "a",
+                "text": "One held level is observed in many loop calls"
+              },
+              {
+                "id": "b",
+                "text": "INPUT_PULLUP adds presses to memory"
+              },
+              {
+                "id": "c",
+                "text": "The button always bounces for one second"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "An event counter needs a stable transition, not every observation of the same level.",
+            "lessonId": "lesson-3",
+            "id": "exam-3"
+          },
+          {
+            "prompt": "What does previous = now do after a delayed periodic check?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Replays every missed period"
+              },
+              {
+                "id": "b",
+                "text": "Schedules from now and skips missed periods"
+              },
+              {
+                "id": "c",
+                "text": "Makes the clock signed"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Resetting the baseline to now chooses a skip policy rather than catch-up.",
+            "lessonId": "lesson-1",
+            "id": "exam-4"
+          },
+          {
+            "prompt": "A raw button changes again before the debounce interval expires. What should happen?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Count both raw changes as confirmed presses"
+              },
+              {
+                "id": "b",
+                "text": "Disable the clock permanently"
+              },
+              {
+                "id": "c",
+                "text": "Restart the stability interval"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "The acceptance interval is measured from the most recent raw change.",
+            "lessonId": "lesson-3",
+            "id": "exam-5"
+          }
+        ]
+      },
+      "formulas": [
+        {
+          "title": "A wrapping millisecond clock",
+          "equation": "elapsed = (now - previous) mod 2^32; 2^32 ms ≈ 49.71 days",
+          "symbols": "now, previous and elapsed use unsigned 32-bit milliseconds.",
+          "assumptions": "Actual elapsed time must be less than a complete wrap and deadlines must be polled frequently.",
+          "example": "Across rollover, 5 - 4294967290 modulo 4294967296 is 11 ms."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Arduino: Blink Without Delay",
+          "url": "https://docs.arduino.cc/built-in-examples/digital/BlinkWithoutDelay/"
+        },
+        {
+          "title": "C++ working draft: fundamental types",
+          "url": "https://eel.is/c++draft/basic.fundamental"
+        }
+      ],
+      "codeExample": {
+        "title": "Check rollover and a live timer",
+        "code": "unsigned long lastBeat = 0;\nvoid setup() {\n  Serial.begin(9600);\n  unsigned long previous = 4294967290UL;\n  unsigned long now = 5UL;\n  unsigned long elapsed = now - previous;\n  Serial.println(elapsed);\n}\nvoid loop() {\n  unsigned long now = millis();\n  if (now - lastBeat >= 500UL) {\n    lastBeat = now;\n    Serial.println(\"Beat\");\n  }\n  delay(1);\n}\n",
+        "output": "11\nBeat\nBeat",
+        "explanation": "The first line is a constructed rollover calculation. Beat then prints approximately every 500 ms from the real virtual clock.",
+        "exercise": "Paste into the code-only lab. Add a second timer that prints Report every 200 ms. Check that changing Report to 300 ms does not reset the Beat schedule.",
+        "tutorialId": "cpp-start",
+        "boards": [
+          "uno",
+          "nano",
+          "esp32",
+          "esp32s3"
+        ]
+      }
+    },
+    {
+      "id": "programming-serial",
+      "version": 1,
+      "track": "programming",
+      "order": 9,
+      "title": "Serial protocols and systematic debugging",
+      "summary": "Parse complete bounded commands, recover from malformed input, and diagnose syntax, runtime and logic failures.",
+      "difficulty": "Intermediate",
+      "minutes": 45,
+      "prerequisites": [
+        "programming-time"
+      ],
+      "lessons": [
+        {
+          "title": "Treat serial input as a stream of bytes",
+          "text": "Serial.available reports how many received bytes can be read; Serial.read consumes one byte and can return -1 when none is available. A message can arrive in several fragments or several messages can arrive together. Define a delimiter, such as newline, before interpreting commands. Carriage return and newline are separate characters. This example ignores carriage return and finishes a command at newline. Waiting for one byte is not evidence that the whole message has arrived.",
+          "id": "lesson-1"
+        },
+        {
+          "title": "Bound the frame and reject invalid commands",
+          "text": "Choose a maximum command length and reject oversized input until the next delimiter. Do not interpret the valid-looking tail of a rejected frame as a new command. Compare complete commands exactly, such as ON and OFF, and keep output unchanged for unknown commands. Numeric parsers also need syntax and range checks; accepting a numeric prefix does not validate the rest of a message. Keep parsing separate from applying a command so malformed input cannot partially update device state.",
+          "id": "lesson-2"
+        },
+        {
+          "title": "Debug with predictions and small observations",
+          "text": "A syntax error prevents compilation, a runtime error occurs during execution, and a logic error produces the wrong behavior despite running. Start with the first diagnostic and its source line, then reduce the program to the smallest failing case. Log inputs, state transitions and outcomes with units or labels. Match serial baud on hardware and avoid flooding the output: printing consumes time and buffer space. Test partial frames, back-to-back commands, empty input and recovery after overflow, not only the happy path.",
+          "id": "lesson-3"
+        }
+      ],
+      "workedExample": "Receive O first: no command is ready. Receive N followed by newline: accept ON once. Receive ONX followed by newline: reject it without treating its ON prefix as a command. With a maximum of eight characters, nine characters followed by ON and newline must reject the entire frame. A fresh OFF followed by newline should then succeed, proving the parser recovered at the delimiter.",
+      "application": "Write a command protocol before implementing it: accepted words, case rules, line ending, maximum length and rejection behavior. Build a test table containing fragmented, invalid and oversized input with the expected unchanged or updated state.",
+      "lab": {
+        "tutorialId": "cpp-commands",
+        "task": "Run the single-character dispatcher first. Then paste the framed example and send ON; and OFF; using the serial input. The example accepts semicolon as well as newline, so a single-line input can send complete frames."
+      },
+      "extraLabs": [],
+      "practice": [
+        {
+          "prompt": "Serial.available is positive. What is guaranteed?",
+          "options": [
+            {
+              "id": "a",
+              "text": "An entire command has arrived"
+            },
+            {
+              "id": "b",
+              "text": "At least one byte can be read"
+            },
+            {
+              "id": "c",
+              "text": "The byte is a valid command"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "Availability describes buffered bytes, not application message boundaries.",
+          "lessonId": "lesson-1",
+          "id": "practice-1"
+        },
+        {
+          "prompt": "An oversized frame ends with ON before newline. Should ON execute?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Yes, use the last two bytes"
+            },
+            {
+              "id": "b",
+              "text": "Only if the LED is off"
+            },
+            {
+              "id": "c",
+              "text": "No, discard the whole frame to its delimiter"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "Discarding only a prefix could turn rejected data into an accepted command.",
+          "lessonId": "lesson-2",
+          "id": "practice-2"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "Why wait for a delimiter before applying a framed command?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The message may still be incomplete"
+              },
+              {
+                "id": "b",
+                "text": "Newline changes the board voltage"
+              },
+              {
+                "id": "c",
+                "text": "Every Serial.read returns a full line"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Serial is a byte stream; the protocol must define when a message is complete.",
+            "lessonId": "lesson-1",
+            "id": "exam-1"
+          },
+          {
+            "prompt": "The only accepted commands are ON and OFF. What should ONX do?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Execute ON"
+              },
+              {
+                "id": "b",
+                "text": "Reject without changing the output"
+              },
+              {
+                "id": "c",
+                "text": "Execute both commands"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Exact matching rejects malformed extensions rather than accepting a prefix.",
+            "lessonId": "lesson-2",
+            "id": "exam-2"
+          },
+          {
+            "prompt": "A program compiles and runs but prints the wrong average. Which failure is this?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Always a syntax error"
+              },
+              {
+                "id": "b",
+                "text": "Proof the wire is disconnected"
+              },
+              {
+                "id": "c",
+                "text": "A logic error to investigate"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Successful execution does not prove the calculation or behavior is correct.",
+            "lessonId": "lesson-3",
+            "id": "exam-3"
+          },
+          {
+            "prompt": "What is the best first response to several compiler diagnostics?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Inspect the first relevant diagnostic and source line"
+              },
+              {
+                "id": "b",
+                "text": "Delete all error messages"
+              },
+              {
+                "id": "c",
+                "text": "Increase the serial baud until they disappear"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "One early syntax mistake can cause many later diagnostic messages.",
+            "lessonId": "lesson-3",
+            "id": "exam-4"
+          },
+          {
+            "prompt": "Why can excessive Serial printing change timing?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Comments execute faster"
+              },
+              {
+                "id": "b",
+                "text": "Transmission uses time and finite buffering"
+              },
+              {
+                "id": "c",
+                "text": "Serial disables all integer arithmetic"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "When output buffers fill, printing may wait for transmission capacity.",
+            "lessonId": "lesson-3",
+            "id": "exam-5"
+          }
+        ]
+      },
+      "formulas": [
+        {
+          "title": "Estimate serial transmission time",
+          "equation": "time_ms ≈ characters × 10 × 1000 / baud",
+          "symbols": "baud is bits per second; 8N1 uses approximately ten transmitted bits per character.",
+          "assumptions": "An 8N1 serial link without additional protocol overhead; buffering can defer when waiting becomes visible.",
+          "example": "96 characters at 9600 baud occupy about 100 ms of wire time."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Arduino language reference",
+          "url": "https://docs.arduino.cc/language-reference/"
+        },
+        {
+          "title": "GCC warning options",
+          "url": "https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html"
+        }
+      ],
+      "codeExample": {
+        "title": "A bounded command receiver",
+        "code": "String frame = \"\";\nbool discarding = false;\nvoid setup() { Serial.begin(9600); Serial.println(\"Ready\"); }\nvoid loop() {\n  while (Serial.available() > 0) {\n    char ch = Serial.read();\n    if (ch == '\\r') continue;\n    if (ch == '\\n' || ch == ';') {\n      if (discarding) Serial.println(\"Too long\");\n      else if (frame == \"ON\") Serial.println(\"Accepted ON\");\n      else if (frame == \"OFF\") Serial.println(\"Accepted OFF\");\n      else if (frame.length() > 0) Serial.println(\"Unknown\");\n      frame = \"\";\n      discarding = false;\n    } else if (!discarding) {\n      if (frame.length() < 8) frame += ch;\n      else { frame = \"\"; discarding = true; }\n    }\n  }\n  delay(1);\n}\n",
+        "output": "Ready\nAccepted ON\nUnknown\nAccepted OFF",
+        "explanation": "After Ready, send ON;ONX;OFF; to produce the next three lines. This example accepts either newline or semicolon as a frame delimiter so the single-line serial input can send complete frames.",
+        "exercise": "Send O, then N; in a second submission: only the second submission should accept ON. Send 123456789ON;OFF; and expect Too long followed by Accepted OFF.",
+        "tutorialId": "cpp-commands",
+        "boards": [
+          "uno",
+          "nano",
+          "esp32",
+          "esp32s3"
+        ]
+      }
+    },
+    {
+      "id": "programming-state",
+      "version": 1,
+      "track": "programming",
+      "order": 10,
+      "title": "State machines and a local controller capstone",
+      "summary": "Combine functions, timing and explicit state into a controller whose transitions can be tested and explained.",
+      "difficulty": "Intermediate",
+      "minutes": 45,
+      "prerequisites": [
+        "programming-serial"
+      ],
+      "lessons": [
+        {
+          "title": "Describe states, events and transitions first",
+          "text": "A state machine stores which behavior is active. Define a small set of named states, the events or conditions that leave each state, and the next state. A transition table makes omissions visible before coding. Entry actions happen once when entering a state; ongoing actions happen while it remains active. Store the entry timestamp when a transition occurs rather than resetting it on every loop call, which would prevent a timeout from ever completing.",
+          "id": "lesson-1"
+        },
+        {
+          "title": "Use switch and preserve output invariants",
+          "text": "switch selects a case from the current state. End a case with break unless fall-through is explicitly intended; default should restore a defined safe state when an unexpected value occurs. Derive outputs from one authoritative state instead of unrelated flags that can contradict each other. For a traffic signal, an invariant could be that conflicting green outputs are never on together. A working sequence is not enough: also test that forbidden combinations never occur between transitions.",
+          "id": "lesson-2"
+        },
+        {
+          "title": "Turn requirements into observable tests",
+          "text": "Write a timeline of inputs and expected state before pressing Run. Cover startup, each transition, time boundaries, repeated input and return to the initial state. Combine the earlier bounded functions, input validation and separate timers into a local controller. Hysteresis uses different on and off thresholds and remembers its previous output inside the gap. Document which event wins if a sensor fault and a user request occur together, then verify that priority with alternate input sequences.",
+          "id": "lesson-3"
+        }
+      ],
+      "workedExample": "The demonstration cycles STOP for 300 ms, GO for 200 ms and WAIT for 100 ms. A transition helper updates both state and enteredAt, then reports the new name once. At roughly 300, 500 and 600 ms the output reports GO, WAIT and STOP. These are serial state labels, not a safety-rated traffic controller. The linked LED state-machine lab lets you relate an actual output pattern to the same state-and-time reasoning.",
+      "application": "Build a local alarm design with idle, warning and fault states. Specify entry conditions, output behavior and recovery for each, then add an event table and test a sensor fault during an active warning before taking the exam.",
+      "lab": {
+        "tutorialId": "cpp-state-machine",
+        "task": "Trace the prepared four-state LED beacon. Change one duration and check the complete cycle as well as every transition."
+      },
+      "extraLabs": [
+        {
+          "tutorialId": "iot-sense-act",
+          "task": "Move the pot up and down through both thresholds. Explain why the same middle reading can legitimately preserve either previous output state."
+        }
+      ],
+      "practice": [
+        {
+          "prompt": "When should a state entry timestamp be updated?",
+          "options": [
+            {
+              "id": "a",
+              "text": "On every loop call"
+            },
+            {
+              "id": "b",
+              "text": "When the transition enters that state"
+            },
+            {
+              "id": "c",
+              "text": "Only after stopping the simulator"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "The elapsed time must measure duration in the state, not duration since the last loop.",
+          "lessonId": "lesson-1",
+          "id": "practice-1"
+        },
+        {
+          "prompt": "What does an unintended missing break in switch risk?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Automatic sensor calibration"
+            },
+            {
+              "id": "b",
+              "text": "A compile error in every case"
+            },
+            {
+              "id": "c",
+              "text": "Executing the following case too"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "C/C++ switch permits fall-through, so break expresses the intended exit.",
+          "lessonId": "lesson-2",
+          "id": "practice-2"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "Which item belongs in a transition table?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Current state, event and next state"
+              },
+              {
+                "id": "b",
+                "text": "Only the file size"
+              },
+              {
+                "id": "c",
+                "text": "Only an LED colour palette"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "A transition describes how an event changes a specific current state.",
+            "lessonId": "lesson-1",
+            "id": "exam-1"
+          },
+          {
+            "prompt": "What is a useful invariant for conflicting green signals?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Both must always be on"
+              },
+              {
+                "id": "b",
+                "text": "They must never be on together"
+              },
+              {
+                "id": "c",
+                "text": "Their names must have equal length"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The invariant forbids an unsafe output combination throughout the sequence.",
+            "lessonId": "lesson-2",
+            "id": "exam-2"
+          },
+          {
+            "prompt": "A hysteresis controller is between its on and off thresholds. What determines its output?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only the current numeric reading"
+              },
+              {
+                "id": "b",
+                "text": "A random choice"
+              },
+              {
+                "id": "c",
+                "text": "Its previous output state"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Hysteresis intentionally remembers state inside the threshold gap.",
+            "lessonId": "lesson-3",
+            "id": "exam-3"
+          },
+          {
+            "prompt": "What should a state machine do with an unexpected state value?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Use a defined recovery or safe default"
+              },
+              {
+                "id": "b",
+                "text": "Preserve arbitrary conflicting outputs"
+              },
+              {
+                "id": "c",
+                "text": "Ignore all future input forever"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "A default case makes recovery explicit and keeps outputs defined.",
+            "lessonId": "lesson-2",
+            "id": "exam-4"
+          },
+          {
+            "prompt": "Why test a fault and user request arriving together?",
+            "options": [
+              {
+                "id": "a",
+                "text": "To avoid defining priorities"
+              },
+              {
+                "id": "b",
+                "text": "To verify the specified event priority"
+              },
+              {
+                "id": "c",
+                "text": "To make the timer run backwards"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Conflicting events expose whether the implementation follows the intended priority.",
+            "lessonId": "lesson-3",
+            "id": "exam-5"
+          }
+        ]
+      },
+      "formulas": [
+        {
+          "title": "State duration and cycle length",
+          "equation": "cycle_ms = stop_ms + go_ms + wait_ms",
+          "symbols": "Each term is a state duration in milliseconds.",
+          "assumptions": "The sequence has three timed states; small loop and reporting overhead adds timing tolerance.",
+          "example": "300 + 200 + 100 = 600 ms nominally, so the state sequence repeats about every 0.6 s."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Arduino language reference",
+          "url": "https://docs.arduino.cc/language-reference/"
+        },
+        {
+          "title": "Arduino: Blink Without Delay",
+          "url": "https://docs.arduino.cc/built-in-examples/digital/BlinkWithoutDelay/"
+        }
+      ],
+      "codeExample": {
+        "title": "Report each state transition once",
+        "code": "enum Phase { STOP, GO, WAIT };\nint phase = STOP;\nunsigned long enteredAt = 0;\nvoid enterPhase(int next) {\n  phase = next;\n  enteredAt = millis();\n  if (phase == STOP) Serial.println(\"STOP\");\n  else if (phase == GO) Serial.println(\"GO\");\n  else Serial.println(\"WAIT\");\n}\nvoid setup() { Serial.begin(9600); enterPhase(STOP); }\nvoid loop() {\n  unsigned long elapsed = millis() - enteredAt;\n  switch (phase) {\n    case STOP: if (elapsed >= 300UL) enterPhase(GO); break;\n    case GO: if (elapsed >= 200UL) enterPhase(WAIT); break;\n    case WAIT: if (elapsed >= 100UL) enterPhase(STOP); break;\n    default: enterPhase(STOP); break;\n  }\n  delay(1);\n}\n",
+        "output": "STOP\nGO\nWAIT\nSTOP",
+        "explanation": "The serial labels report transitions. The nominal cycle is 600 ms; this code-only example does not drive traffic lights.",
+        "exercise": "Paste into the code-only lab. Change the GO duration to 400 ms and predict the first four transition times. Verify that each name prints only once per entry.",
+        "tutorialId": "cpp-start",
+        "boards": [
+          "uno",
+          "nano",
+          "esp32",
+          "esp32s3"
+        ]
+      }
+    },
+    {
+      "id": "programming-esp32",
+      "version": 1,
+      "track": "programming",
+      "order": 11,
+      "title": "ESP32 C++: Wi-Fi and HTTP device control",
+      "summary": "Use library objects and callbacks to expose explicit commands and observable status on a virtual ESP32.",
+      "difficulty": "Intermediate",
+      "minutes": 45,
+      "prerequisites": [
+        "programming-state"
+      ],
+      "lessons": [
+        {
+          "title": "Choose Arduino-ESP32 or native ESP-IDF deliberately",
+          "text": "Arduino-ESP32 provides setup, loop and familiar Arduino APIs on supported ESP chips. ESP-IDF is Espressif’s native development framework with its own build system, app_main entry point and C/C++ APIs. Native projects can use tasks and synchronization, but VoltQuest does not simulate FreeRTOS or arbitrary ESP-IDF programs. GPIO maps differ across ESP32 and S3, while both use 3.3 V logic here. Keep long-term library instances alive and configure pins before handling commands.",
+          "id": "lesson-1"
+        },
+        {
+          "title": "Separate connection state from application readiness",
+          "text": "Station mode connects to an access point; softAP makes the device an access point. An IP address or connected flag does not prove that a server route is registered or being serviced. In VoltQuest, softAP and the named VoltNet network are virtual and never contact your router. A native deployment needs its own network configuration and failure policy. Avoid unbounded connection waits in a responsive device; periodic retry and a defined disconnected state belong in a complete hardware design.",
+          "id": "lesson-2"
+        },
+        {
+          "title": "Register handlers and report actual state",
+          "text": "A callback is a function passed for later invocation. server.on registers a route handler, begin starts the server, and handleClient services pending requests from loop. Give commands explicit meanings: ON sets on, OFF sets off, and status reports the current state. Repeating ON should leave the device on instead of toggling it. Check HTTP status and observed output together. These virtual GET commands are learning conveniences; a deployed device needs an appropriate authenticated command interface and network design.",
+          "id": "lesson-3"
+        }
+      ],
+      "workedExample": "The sample registers /on, /off and /status for GPIO18. Requesting /on sets the stored state and pin HIGH and returns ON. Repeating /on has the same result. /status returns the stored state without changing it; /off sets both state and pin LOW. An unknown route returns 404 through the teaching server. If handleClient is omitted, being an access point still does not process those requests.",
+      "application": "Use the prepared ESP32 LED circuit to implement explicit ON, OFF and status routes. Test startup OFF, repeated ON, status without mutation, OFF and an unknown path. Record the HTTP response beside the observed LED state.",
+      "lab": {
+        "tutorialId": "iot-web-control",
+        "task": "Run the command/status lab on ESP32 and S3. Request /on and /status, inspect the LED, then repeat /on to check that setting a state is different from toggling."
+      },
+      "extraLabs": [],
+      "practice": [
+        {
+          "prompt": "Which framework uses app_main rather than the Arduino sketch entry points?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Arduino sketches in VoltQuest"
+            },
+            {
+              "id": "b",
+              "text": "A C string buffer"
+            },
+            {
+              "id": "c",
+              "text": "Native ESP-IDF"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "ESP-IDF has its own application entry and build environment.",
+          "lessonId": "lesson-1",
+          "id": "practice-1"
+        },
+        {
+          "prompt": "Which call services pending requests in this WebServer loop?",
+          "options": [
+            {
+              "id": "a",
+              "text": "server.handleClient()"
+            },
+            {
+              "id": "b",
+              "text": "Serial.begin(9600)"
+            },
+            {
+              "id": "c",
+              "text": "pinMode(18, OUTPUT)"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Registration and begin are initialization; handleClient performs ongoing request service.",
+          "lessonId": "lesson-3",
+          "id": "practice-2"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "What does WiFi.softAP do conceptually?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Turns the chip into a compiler"
+              },
+              {
+                "id": "b",
+                "text": "Starts an access point"
+              },
+              {
+                "id": "c",
+                "text": "Measures ADC accuracy"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Soft access point mode lets the device act as an access point; this simulator models it virtually.",
+            "lessonId": "lesson-2",
+            "id": "exam-1"
+          },
+          {
+            "prompt": "Why is an IP address alone insufficient evidence that /on works?",
+            "options": [
+              {
+                "id": "a",
+                "text": "HTTP does not use routes"
+              },
+              {
+                "id": "b",
+                "text": "Pins automatically register handlers"
+              },
+              {
+                "id": "c",
+                "text": "The route must be registered and requests serviced"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Connection state and application readiness are separate conditions.",
+            "lessonId": "lesson-2",
+            "id": "exam-2"
+          },
+          {
+            "prompt": "What should two identical explicit ON commands do?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Leave the output on"
+              },
+              {
+                "id": "b",
+                "text": "Toggle on then off"
+              },
+              {
+                "id": "c",
+                "text": "Create two new pins"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "An explicit state-setting command is repeatable without reversing the result.",
+            "lessonId": "lesson-3",
+            "id": "exam-3"
+          },
+          {
+            "prompt": "What is a callback?",
+            "options": [
+              {
+                "id": "a",
+                "text": "A wire that returns current"
+              },
+              {
+                "id": "b",
+                "text": "A function supplied for later invocation"
+              },
+              {
+                "id": "c",
+                "text": "A variable that always starts at 80"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A server invokes the registered function when the matching request is serviced.",
+            "lessonId": "lesson-3",
+            "id": "exam-4"
+          },
+          {
+            "prompt": "Does this browser lab run arbitrary FreeRTOS tasks and ESP-IDF applications?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Yes, all native APIs are implemented"
+              },
+              {
+                "id": "b",
+                "text": "Only by changing the file extension"
+              },
+              {
+                "id": "c",
+                "text": "No, it uses the supported Arduino teaching subset"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Native ESP-IDF and task synchronization require their own toolchain and runtime.",
+            "lessonId": "lesson-1",
+            "id": "exam-5"
+          }
+        ]
+      },
+      "formulas": [
+        {
+          "title": "Bound request-service latency",
+          "equation": "service gap ≈ longest interval between handleClient calls",
+          "symbols": "The service gap is measured in milliseconds of sketch execution.",
+          "assumptions": "This estimates application polling delay only, not real network transport latency.",
+          "example": "A 1000 ms delay between calls can postpone processing by about one second; short cooperative loops reduce that gap."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Espressif: C++ support in ESP-IDF",
+          "url": "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/cplusplus.html"
+        },
+        {
+          "title": "Espressif: Arduino-ESP32 Wi-Fi API",
+          "url": "https://docs.espressif.com/projects/arduino-esp32/en/latest/api/wifi.html"
+        },
+        {
+          "title": "Arduino sketch build process",
+          "url": "https://docs.arduino.cc/arduino-cli/sketch-build-process/"
+        }
+      ],
+      "codeExample": {
+        "title": "Explicit HTTP commands for GPIO18",
+        "code": "#include <WiFi.h>\n#include <WebServer.h>\nWebServer server(80);\nbool ledOn = false;\nvoid setLed(bool on) {\n  ledOn = on;\n  digitalWrite(18, on ? HIGH : LOW);\n}\nvoid sendState() {\n  server.send(200, \"text/plain\", ledOn ? \"ON\" : \"OFF\");\n}\nvoid turnOn() { setLed(true); sendState(); }\nvoid turnOff() { setLed(false); sendState(); }\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(18, OUTPUT);\n  setLed(false);\n  WiFi.softAP(\"CourseLab\", \"coursepass\");\n  server.on(\"/on\", turnOn);\n  server.on(\"/off\", turnOff);\n  server.on(\"/status\", sendState);\n  server.begin();\n  Serial.println(\"HTTP ready\");\n}\nvoid loop() { server.handleClient(); delay(1); }\n",
+        "output": "HTTP ready",
+        "explanation": "Paste into the linked prepared LED lab. /on and /off return ON and OFF with HTTP 200; /status reports the current state. These are virtual requests within VoltQuest.",
+        "exercise": "Run on ESP32 or S3, request /on twice, then /status, /off and /missing. Expect the LED to stay on after the repeated ON and a 404 for the unknown route.",
+        "tutorialId": "iot-web-control",
+        "boards": [
+          "esp32",
+          "esp32s3"
+        ]
+      }
+    },
+    {
+      "id": "programming-mqtt",
+      "version": 1,
+      "track": "programming",
+      "order": 12,
+      "title": "MQTT and the connected-controller capstone",
+      "summary": "Combine bounded callbacks, explicit commands, telemetry and command expiry in an ESP32 program you can test.",
+      "difficulty": "Intermediate",
+      "minutes": 45,
+      "prerequisites": [
+        "programming-esp32"
+      ],
+      "lessons": [
+        {
+          "title": "Separate transport, topic and payload",
+          "text": "MQTT clients communicate through a broker. A subscription selects topics; a publish sends a payload on a topic. Connecting is not the same as subscribing, and publishing a command is not proof that a device applied it. PubSubClient uses a transport object, a broker configuration and regular loop service. Its callback receives a topic, payload bytes and explicit length. Do not assume payload bytes are zero-terminated text. The VoltQuest broker and Wi-Fi are virtual, with simplified connectivity rather than real cloud networking.",
+          "id": "lesson-1"
+        },
+        {
+          "title": "Validate a command and give it an expiry policy",
+          "text": "Check the exact topic, allowed length and complete command before changing state. Keep invalid messages from renewing a command lease. An ON command may grant a short interval of activity, after which the device returns to OFF unless a fresh valid command renews it. Store the acceptance timestamp and use unsigned elapsed subtraction. OFF should apply immediately. A lease bounds stale intent, but it is not authentication and does not replace hardware interlocks or an explicit disconnect policy in a deployed device.",
+          "id": "lesson-2"
+        },
+        {
+          "title": "Verify the complete connected control loop",
+          "text": "A useful capstone has one authoritative output state, separate network and timer service, and telemetry that agrees with the applied state. Test a valid command, repeated renewal, malformed payload, wrong topic, explicit OFF and lease expiry. The sample also accepts serial characters 1 and 0 as local test inputs so the prepared LED lab can demonstrate the same command handler. Boot connection waits are bounded here; production reconnect, delivery acknowledgement, authentication and real radio behavior require a hardware implementation beyond this teaching example.",
+          "id": "lesson-3"
+        }
+      ],
+      "workedExample": "After the virtual connection is ready, sending serial 1 applies ON, lights GPIO18 and publishes ON on course/state. With no renewal, a two-second lease expires, the LED switches OFF and OFF is published. Send 1 again before expiry to restart the lease. A wrong MQTT topic or malformed payload must neither turn the LED on nor extend its lifetime. Serial 0 exercises immediate OFF through the same application function.",
+      "application": "Use the LED lab for local command and expiry tests, then study MQTT publication in the sensor lab. For a full sandbox experiment, build the same GPIO18 LED circuit and use the IoT inspector to inject ON or OFF on course/cmd. Compare telemetry with the actual output and test invalid input during an active lease.",
+      "lab": {
+        "tutorialId": "esp32-mqtt",
+        "task": "Run the prepared sensor publisher on ESP32/S3. Change temperature and inspect the published payload, then identify the transport object, topic and client.loop call."
+      },
+      "extraLabs": [
+        {
+          "tutorialId": "cpp-nonblocking",
+          "task": "Choose ESP32 or ESP32-S3 and paste the capstone sketch. Send 1 to light the prepared GPIO18 LED, renew with another 1, then observe automatic OFF after two seconds without renewal."
+        }
+      ],
+      "practice": [
+        {
+          "prompt": "What tells an MQTT callback how many payload bytes are valid?",
+          "options": [
+            {
+              "id": "a",
+              "text": "The explicit length argument"
+            },
+            {
+              "id": "b",
+              "text": "Assuming a zero byte after the text"
+            },
+            {
+              "id": "c",
+              "text": "The GPIO number"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "The callback’s payload is a byte sequence bounded by length, not a guaranteed C string.",
+          "lessonId": "lesson-1",
+          "id": "practice-1"
+        },
+        {
+          "prompt": "Should an invalid command extend the ON lease?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Yes, every received byte proves intent"
+            },
+            {
+              "id": "b",
+              "text": "No, only an accepted command may renew it"
+            },
+            {
+              "id": "c",
+              "text": "Only if the payload is very long"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "Validation must complete before state or acceptance time changes.",
+          "lessonId": "lesson-2",
+          "id": "practice-2"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "prompt": "What is the MQTT broker’s role?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Convert PWM into DC voltage"
+              },
+              {
+                "id": "b",
+                "text": "Compile every Arduino sketch"
+              },
+              {
+                "id": "c",
+                "text": "Route published messages to matching subscriptions"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Topics connect publishers and subscribers through the broker.",
+            "lessonId": "lesson-1",
+            "id": "exam-1"
+          },
+          {
+            "prompt": "An ON lease is 2000 ms and no valid renewal arrives. What should the sample do?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Set OFF after the lease expires"
+              },
+              {
+                "id": "b",
+                "text": "Remain ON forever"
+              },
+              {
+                "id": "c",
+                "text": "Increase the lease for invalid payloads"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The timestamp check bounds the lifetime of a remote ON command.",
+            "lessonId": "lesson-2",
+            "id": "exam-2"
+          },
+          {
+            "prompt": "What is stronger evidence of applied control than publishing a command alone?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The topic name is short"
+              },
+              {
+                "id": "b",
+                "text": "Matching observed output and reported state"
+              },
+              {
+                "id": "c",
+                "text": "The source has no comments"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "End-to-end verification checks what the device actually did and reported.",
+            "lessonId": "lesson-3",
+            "id": "exam-3"
+          },
+          {
+            "prompt": "What should an ON payload on the wrong topic do?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Override every other topic"
+              },
+              {
+                "id": "b",
+                "text": "Renew the current lease silently"
+              },
+              {
+                "id": "c",
+                "text": "Leave state and lease unchanged"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Topic validation is part of command acceptance, even when payload text looks valid.",
+            "lessonId": "lesson-2",
+            "id": "exam-4"
+          },
+          {
+            "prompt": "Does a command lease authenticate the sender?",
+            "options": [
+              {
+                "id": "a",
+                "text": "No, it only limits how long accepted intent remains active"
+              },
+              {
+                "id": "b",
+                "text": "Yes, timeouts prove identity"
+              },
+              {
+                "id": "c",
+                "text": "Yes, if the LED is bright"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Authentication, transport security and hardware protection are separate deployment concerns.",
+            "lessonId": "lesson-2",
+            "id": "exam-5"
+          }
+        ]
+      },
+      "formulas": [
+        {
+          "title": "Expire stale commands",
+          "equation": "expired = ledOn && (now - acceptedAt >= leaseMs)",
+          "symbols": "Timestamps and leaseMs are unsigned milliseconds; ledOn is Boolean.",
+          "assumptions": "Only valid ON updates acceptedAt. Poll often and use the unsigned rollover assumptions from the timing course.",
+          "example": "ON accepted at 1000 ms expires at about 3000 ms with a 2000 ms lease; a renewal at 2500 ms moves expiry to about 4500 ms."
+        }
+      ],
+      "sources": [
+        {
+          "title": "PubSubClient: public API declarations",
+          "url": "https://github.com/knolleary/pubsubclient/blob/master/src/PubSubClient.h"
+        },
+        {
+          "title": "Espressif: Arduino-ESP32 Wi-Fi API",
+          "url": "https://docs.espressif.com/projects/arduino-esp32/en/latest/api/wifi.html"
+        },
+        {
+          "title": "Arduino: Blink Without Delay",
+          "url": "https://docs.arduino.cc/built-in-examples/digital/BlinkWithoutDelay/"
+        }
+      ],
+      "codeExample": {
+        "title": "A connected LED with a command lease",
+        "code": "#include <WiFi.h>\n#include <PubSubClient.h>\nWiFiClient transport;\nPubSubClient client(transport);\nbool ledOn = false;\nunsigned long acceptedAt = 0;\nvoid applyCommand(String command) {\n  if (command != \"ON\" && command != \"OFF\") return;\n  ledOn = command == \"ON\";\n  if (ledOn) acceptedAt = millis();\n  digitalWrite(18, ledOn ? HIGH : LOW);\n  client.publish(\"course/state\", ledOn ? \"ON\" : \"OFF\");\n  Serial.println(ledOn ? \"ON\" : \"OFF\");\n}\nvoid receive(char* topic, byte* payload, unsigned int length) {\n  if (String(topic) != \"course/cmd\" || length > 3) return;\n  String command = \"\";\n  for (unsigned int i = 0; i < length; i++) command += char(payload[i]);\n  applyCommand(command);\n}\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(18, OUTPUT);\n  digitalWrite(18, LOW);\n  WiFi.begin(\"VoltNet\", \"\");\n  unsigned long started = millis();\n  while (WiFi.status() != WL_CONNECTED && millis() - started < 3000UL) delay(10);\n  client.setServer(\"broker.voltquest\", 1883);\n  client.setCallback(receive);\n  if (WiFi.status() == WL_CONNECTED && client.connect(\"course-controller\")) {\n    client.subscribe(\"course/cmd\");\n    Serial.println(\"MQTT ready\");\n  } else Serial.println(\"Offline: local control only\");\n}\nvoid loop() {\n  client.loop();\n  if (Serial.available() > 0) {\n    char key = Serial.read();\n    if (key == '1') applyCommand(\"ON\");\n    else if (key == '0') applyCommand(\"OFF\");\n  }\n  if (ledOn && millis() - acceptedAt >= 2000UL) applyCommand(\"OFF\");\n  delay(1);\n}\n",
+        "output": "MQTT ready\nON\nOFF",
+        "explanation": "After MQTT ready, send serial 1. ON reports the applied state, then OFF appears after about two seconds without renewal. The prepared LED responds and MQTT messages report the same state.",
+        "exercise": "Use ESP32/S3 in the linked LED lab. Renew with 1 before two seconds, send 0 for immediate OFF, and try x to verify it does not renew. In Sandbox, inject exact and malformed MQTT commands through the IoT inspector.",
+        "tutorialId": "cpp-nonblocking",
+        "boards": [
+          "esp32",
+          "esp32s3"
+        ]
+      }
     }
   ]
 }

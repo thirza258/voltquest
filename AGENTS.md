@@ -1,6 +1,6 @@
 # VoltQuest — agent handoff log
 
-**Last verified: 2026-09-14.** This is the state document: what exists, what remains unfinished,
+**Last verified: 2026-09-15.** This is the state document: what exists, what remains unfinished,
 and what to do next. The specifications in `docs/` remain binding.
 
 | Read | When |
@@ -13,6 +13,8 @@ and what to do next. The specifications in `docs/` remain binding.
 | `docs/DESIGN.md` | Before visual/UI changes. |
 | `docs/TUTORIALS.md`, `docs/RASPBERRY_PI.md` | Before editing tutorials or Pi support. |
 | `docs/ASSISTANT.md` | Before editing localization, the circuit AI guide or Claude Code/Codex MCP. |
+| `docs/HPC.md` | Before editing the C/C++ HPC curriculum, experiments or native source/testing. |
+| `docs/CYBERSECURITY.md` | Before editing web security courses, local request labs, defenses or investigation notebooks. |
 
 ## 1. Current build, not the target product
 
@@ -21,6 +23,17 @@ There are **41 firmware tutorials**, ordered Easy → Intermediate → Hard, wit
 real simulation, explanations of program and hardware concepts, exact breadboard placement,
 cable endpoint tables and click-to-highlight wiring. The circuit is prepared/read-only, but
 buttons, pots, touch and sensor controls remain interactive.
+
+Tutorials and Courses also link to `/hpc`: ten detailed C17/C++17 HPC courses with forty theory
+sections, twenty formula cards, ten numerical/model experiments, thirty practice questions and ten
+exams. `/sandbox?bench=hpc` has separate local projects and editable/downloadable native source.
+Native programs compile on the learner's computer; browser Run uses the bounded experiment controls.
+
+Tutorials and Courses now also link to `/cybersecurity`: ten web security courses with forty theory
+sections, ten guided vulnerability tutorials, thirty practice questions and ten five-question exams.
+`/sandbox?bench=cybersecurity` offers editable requests against a fictional local shop, observed
+data/state changes, nine configurable defenses, regression checks and separate saved notebooks/reports.
+Labs have no network, host filesystem or script execution. Read `docs/CYBERSECURITY.md` for boundaries.
 
 Ten tutorials form an Arduino/ESP32 C++ programming path:
 - Easy: setup/loop, variables/types, arithmetic, conditions.
@@ -52,9 +65,9 @@ repository or commit without the user's explicit request.
 ## 2. Verification
 
 Latest full `make check`:
-- **1,038 frontend tests in 69 files pass.**
-- **103 backend tests pass.**
-- Production build succeeds; initial JS payload is **476.8 KiB gzipped**, below the 1500 KiB budget.
+- **1,241 frontend tests in 77 files pass.**
+- **104 backend tests pass.**
+- Production build succeeds; initial JS payload is **525.1 KiB gzipped**, below the 1500 KiB budget.
 - ESLint has no errors. Two existing exhaustive-deps warnings remain in
   `features/campaign/CampaignMap.jsx:84`; these are unrelated to the assistant/localization work.
 - Node prints the existing jsdom/localStorage warning; persistence tests use the memory-storage helper.
@@ -82,6 +95,111 @@ their explanation or timing is correct. `features/tutorials/programming.test.js`
 numeric output, command dispatch and LED state transitions on all four C++ boards.
 
 ## 3. Completed in this continuation
+
+### Cybersecurity courses and web vulnerability sandbox (2026-09-15)
+
+Open **`/cybersecurity`**, linked from Tutorials/Courses, or **`/sandbox?bench=cybersecurity`**.
+Ten ordered courses cover HTTP/information exposure, object authorization, session-role trust,
+SQL injection, HTML/XSS, path traversal, CSRF, SSRF, mass assignment and a combined investigation.
+Each has four detailed sections, four guided steps, an interactive lab, an applied challenge,
+three practice questions and a five-question 80% exam. Existing `vq.courses.v1` stores section
+checks and best/last scores; practice, incomplete submissions and duplicates don't add attempts.
+
+`engine/cybersecurity/{model,scenarios}.js` executes bounded local request handlers with fictional
+accounts, orders, products, files and service fixtures. Learners edit method/path/headers/body,
+inspect actual responses and mutations, toggle nine defenses and retest. The profile-to-admin
+chain uses changed fixture state between requests. The capstone starts with three independent
+weaknesses and runs 30 checks including normal behavior and alternate probes. SQL has a small
+documented parser; HTML is inert source with a structural indicator, not script-execution proof.
+No proxy/scanner, real network, host filesystem, arbitrary code or backend execution is added.
+
+`voltquest-cybersecurity` notebooks retain exact request drafts, controls and notes, with separate
+`vq.cybersecurity.v1.<lab>` saves and confirmed load/import/reset/lab selection. Unfinished JSON
+can be saved but cannot be sent. Imports discard fabricated evidence. Reports export the latest
+30 captured exchanges (explicit truncation), current controls, regression results and notes.
+Changing defenses resets shop state and invalidates verification; history remains inspectable.
+The independent formats don't extend CircuitDoc, accounts, public course APIs, MCP or showcase.
+133 interface translations support Indonesian; narratives/questions/technical traces use a stated
+English fallback. Locale changes preserve the whole investigation and assessment choices.
+
+Full `make check`: **1,241 frontend / 104 backend**, production build and **525.1 KiB** initial gzip
+budget pass. Only the two existing CampaignMap hook warnings and Node localStorage notice remain.
+The model/page chunks stay lazy, and the generated sitemap contains **148 URLs**. Final targeted
+tests and production rebuild also pass after the response media-type/localized-label refinement.
+Production Chromium with isolated SQLite verified all ten normal/probe/patched flows, the actual
+privilege chain, 30/30 capstone checks, exact notebook/report downloads, save/reload/import with
+confirmation, incomplete-exam rejection, 80% grading/persistence, language-state retention and
+desktop/390 px layouts without page overflow. Tutorial/Course links work; no browser application
+errors were reported. Other browsers and real-device performance remain release checks.
+
+### High-performance computing in C / C++ (2026-09-14)
+
+Open **`/hpc`**, linked from Tutorials and Courses, or **`/sandbox?bench=hpc`**. Ten ordered courses
+cover native correctness/ownership, benchmarking, memory locality, matrix tiling, SIMD, OpenMP
+reductions, scheduling, Amdahl/Roofline, MPI collectives and a distributed stencil. Each has four
+detailed sections, two formula cards, four experiment steps, three practice questions, a five-question
+80% exam, a native source walkthrough, executable test cases and an applied challenge. Existing
+`vq.courses.v1` saves read sections and best/last exam scores. Standard course APIs remain separate.
+
+`engine/hpc/model.js` implements actual bounded arithmetic and reference comparisons plus explicitly
+labeled cache/scheduling/scaling/communication models. Fresh Workers have deadlines/cancellation and
+ignore stale responses; parameter edits invalidate prior results. The independent `voltquest-hpc`
+file preserves settings, C and C++ drafts and notes; import/load/reset confirm replacement. Saves
+use `vq.hpc.v1.<lab>`, outside circuit/account/MCP/showcase storage. Source edits affect downloads,
+not browser Run. New UI controls support Indonesian; HPC narratives/questions use English fallback.
+
+The same source generator supplies twenty standalone native examples to the editor and verification
+script. **20 native builds / 126 behavioral executions pass**, including real OpenMP and MPI with
+one, two and four threads/processes. **10 core builds / 36 runs also pass with ASan/UBSan**. Tests
+cover odd sizes, clipped tiles, vector tails, synchronized reductions, schedule variants, zero-count
+MPI ranks and multi-step halos. Use `make test-hpc-native`; Apple Clang needs `HPC_OMP_PREFIX` pointing
+to libomp. Multi-node network performance and GPU execution are not implemented or claimed.
+
+Full `make check`: **1,181 frontend / 104 backend**, production build and **521.1 KiB** initial gzip
+budget pass; only the two existing CampaignMap hook warnings and Node localStorage notice remain.
+HPC page/model chunks stay lazy. The sitemap now has **137 URLs**. Production Chromium with an
+isolated SQLite backend verified all ten Worker experiments, deliberate stale-halo failure, changed
+settings clearing results, exact edited source/JSON downloads, import confirmation, save/reload,
+80% exam grading/persistence, English/Indonesian state preservation and 390 px layouts without page
+overflow. Tutorials/Courses links work and no browser application errors were reported. Read HPC.md
+for models, limits, native setup and remaining cross-browser/real-device verification boundaries.
+
+### C, C++ and Arduino / ESP32 programming courses (2026-09-14)
+
+Open **`/courses?track=programming`**, also linked from Tutorials and Courses. Twelve ordered
+courses cover C/C++ and framework distinctions, sketch lifecycle, numeric types/overflow, decisions,
+functions/scope, arrays/C strings/pointer lifetime/bit flags, C++ objects/libraries, ADC/PWM portability,
+millis/debounce/rollover, serial framing/debugging, state machines, ESP32 HTTP and an MQTT capstone.
+There are **36 new lessons, 24 practice questions, 60 exam questions and 12 exams**, with worked
+examples, application exercises, explicit expected output and guided experiments. The full Courses
+catalogue now has **34 courses / 102 sections / 58 formula cards / 238 questions / 34 exams**.
+
+Every new course includes a complete copyable/downloadable sketch with a supported-board selector
+and separate-tab prepared-lab link. Learners explicitly paste into the lab editor; opening the link
+keeps the tutorial's original example. Course answers/read checks survive that link and language
+switching. All new instructional/assessment prose supports English and Indonesian. Existing course
+ids/versions and local progress remain intact; guides gain exact programming-section readings.
+The public API accepts `track=programming` and returns the same code-example metadata. The generated
+sitemap contains **126 URLs**. There are still 41 firmware tutorials / 106 original board variants.
+
+Keep native and simulated capabilities distinct: Arduino sketches use C++, ESP32 names a chip family,
+and native ESP-IDF/FreeRTOS and general classes/templates/pointer access are outside the interpreter.
+The courses explain native signed-overflow rules, hardware ADC calibration and newer versus legacy
+LEDC APIs. Networking is virtual; the MQTT lease sample does not implement production reconnect or
+authentication. See COURSES.md for the additive `codeExample` schema and instructional boundaries.
+
+Full `make check`: **1,127 frontend / 104 backend**, production build and **516.7 KiB** initial gzip
+budget pass, with the two existing CampaignMap hook warnings. All **44 course-example/board pairs**
+run through the real inline solver/VM and prepared circuits. Regressions cover explained output,
+fragmented/oversized serial recovery, state timing, rollover, repeatable HTTP/real LED state, exact
+MQTT commands, renewal and expiry, translations, API discovery, progress preservation and sitemap.
+
+Production Chromium with an isolated SQLite backend verified course/API discovery, incomplete-exam
+rejection, an 80% pass restored after reload, preserved answers/read checks/board across Indonesian
+switching, exact `.ino` download, and a separate-tab Nano Worker run of the copied sketch. ESP32-S3
+HTTP returned matching ON/OFF with solved LED brightness 0.527/0.000; the ESP32 MQTT example published
+matching state and expired ON to OFF. Desktop and 390 px layouts fit without page overflow, and no
+browser application errors occurred. Other browsers and real-device performance remain release checks.
 
 ### Sandbox 3D view and eight additional parts (2026-09-14)
 

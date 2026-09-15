@@ -1,5 +1,14 @@
 # Interactive tutorials
 
+The hub links to `/cybersecurity`: ten web security courses with forty theory sections, guided
+vulnerability tutorials, practice questions and exams. `/sandbox?bench=cybersecurity` has an
+editable local request playground and independent notebooks. These are web teaching models,
+separate from the 41 firmware tutorials and 106 board variants. See [CYBERSECURITY.md](CYBERSECURITY.md).
+
+The hub also links to **High-performance computing in C & C++** at `/hpc`: ten detailed courses
+with numerical/model experiments, native source and tests, practice questions and exams.
+`/sandbox?bench=hpc` is independent of firmware circuits and their 106 board variants. See [HPC.md](HPC.md).
+
 `/tutorials` is the searchable tutorial hub; `/tutorials/:tutorialId?board=<boardId>` opens a
 guided simulation. The campaign remains at `/` and links prominently to the tutorial hub.
 The shared header includes Tutorials. These routes are lazy-loaded.

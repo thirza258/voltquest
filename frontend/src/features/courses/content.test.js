@@ -5,16 +5,18 @@ import dictionary from '../../i18n/id.json'
 
 const narratives = course => [course.title, course.summary, course.workedExample, course.application, course.lab.task, ...(course.extraLabs ?? []).map(lab => lab.task), ...course.formulas.flatMap(formula => [formula.title, formula.symbols, formula.assumptions, formula.example]),
   ...course.lessons.flatMap(lesson => [lesson.title, lesson.text]),
+  ...(course.codeExample ? [course.codeExample.title, course.codeExample.explanation, course.codeExample.exercise] : []),
   ...[...course.practice, ...course.exam.questions].flatMap(question => [question.prompt, question.explanation, ...question.options.map(option => option.text)])]
 
-it('ships the two ten-course tracks and dedicated IoT and drone foundations', () => {
-  expect(COURSE_TRACKS.map(track => track.id)).toEqual(['electrical', 'iot-parts', 'iot-foundations', 'drone-foundations'])
-  expect(COURSES).toHaveLength(22)
-  expect(new Set(COURSES.map(course => course.id)).size).toBe(22)
+it('ships electrical, IoT, drone and the twelve-course programming path', () => {
+  expect(COURSE_TRACKS.map(track => track.id)).toEqual(['electrical', 'iot-parts', 'iot-foundations', 'drone-foundations', 'programming'])
+  expect(COURSES).toHaveLength(34)
+  expect(new Set(COURSES.map(course => course.id)).size).toBe(34)
   for (const track of COURSE_TRACKS) {
     const courses = COURSES.filter(course => course.track === track.id)
-    expect(courses.map(course => course.order)).toEqual(track.id.endsWith('foundations') ? [1] : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-    expect(courses.map(course => course.difficulty)).toEqual(track.id.endsWith('foundations') ? ['Fundamental'] : [...Array(5).fill('Fundamental'), ...Array(5).fill('Intermediate')])
+    const count = track.id === 'programming' ? 12 : track.id.endsWith('foundations') ? 1 : 10
+    expect(courses.map(course => course.order)).toEqual(Array.from({ length: count }, (_, i) => i + 1))
+    expect(courses.map(course => course.difficulty)).toEqual(Array.from({ length: count }, (_, i) => i < 5 ? 'Fundamental' : 'Intermediate'))
     expect(getTrack(track.id)).toBe(track)
     expect(dictionary[track.title]).toBeTruthy()
     expect(dictionary[track.summary]).toBeTruthy()

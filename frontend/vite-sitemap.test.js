@@ -17,6 +17,7 @@ describe('collectRoutes', () => {
     expect(routes).toContain('/campaign')
     expect(routes).toContain('/tutorials')
     expect(routes).toContain('/courses')
+    expect(routes).toContain('/hpc')
     expect(routes).toContain('/sandbox')
     expect(routes).toContain('/showcase')
     expect(routes).toContain('/leaderboard')
@@ -38,7 +39,7 @@ describe('collectRoutes', () => {
 
   it('covers all course routes', () => {
     const expected = readJson(path.join(contentDir, 'courses.json')).courses.map(course => `/courses/${course.id}`)
-    expect(expected).toHaveLength(22)
+    expect(expected).toHaveLength(34)
     expect(routes.filter(route => route.startsWith('/courses/'))).toEqual(expected)
   })
 
@@ -46,6 +47,20 @@ describe('collectRoutes', () => {
     expect(routes).not.toContain('/profile')
     expect(routes.some((route) => route.startsWith('/sandbox/'))).toBe(false)
     expect(routes.some((route) => route.startsWith('/showcase/'))).toBe(false)
+  })
+
+  it('includes all ten HPC courses', () => {
+    const expected = readJson(path.join(contentDir, 'hpc.json')).courses.map(course => `/hpc/${course.id}`)
+    expect(expected).toHaveLength(10)
+    expect(routes.filter(route => route.startsWith('/hpc/'))).toEqual(expected)
+  })
+
+  it('includes the cybersecurity path and every authored course', () => {
+    const expected = readJson(path.join(contentDir, 'cybersecurity.json')).courses.map(course => `/cybersecurity/${course.id}`)
+    expect(expected).toHaveLength(10)
+    expect(routes).toContain('/cybersecurity')
+    expect(routes.filter(route => route.startsWith('/cybersecurity/'))).toEqual(expected)
+    expect(new Set(routes).size).toBe(routes.length)
   })
 
   it('skips level ids that no quest file backs', () => {
@@ -62,8 +77,10 @@ describe('collectRoutes', () => {
       fs.writeFileSync(path.join(dir, 'courses.json'), JSON.stringify({ courses: [{ id: 'ee-circuits' }] }))
       fs.writeFileSync(path.join(dir, 'robotics.json'), JSON.stringify({ tutorials: [{ id: 'robot-motion' }] }))
       fs.writeFileSync(path.join(dir, 'vision.json'), JSON.stringify({ tutorials: [{ id: 'opencv-foundations' }] }))
+      fs.writeFileSync(path.join(dir, 'hpc.json'), JSON.stringify({ courses: [{ id: 'hpc-correctness' }] }))
+      fs.writeFileSync(path.join(dir, 'cybersecurity.json'), JSON.stringify({ courses: [{ id: 'cyber-http' }] }))
       expect(collectRoutes(dir)).toEqual([
-        '/', '/campaign', '/play/w1-l1', '/play/w2-l1', '/tutorials', '/tutorials/cpp-start', '/courses', '/courses/ee-circuits', '/vision', '/vision/opencv-foundations', '/robotics', '/robotics/robot-motion', '/sandbox', '/showcase', '/leaderboard',
+        '/', '/campaign', '/play/w1-l1', '/play/w2-l1', '/tutorials', '/tutorials/cpp-start', '/courses', '/courses/ee-circuits', '/vision', '/vision/opencv-foundations', '/robotics', '/robotics/robot-motion', '/hpc', '/hpc/hpc-correctness', '/cybersecurity', '/cybersecurity/cyber-http', '/sandbox', '/showcase', '/leaderboard',
       ])
     } finally {
       fs.rmSync(dir, { recursive: true, force: true })

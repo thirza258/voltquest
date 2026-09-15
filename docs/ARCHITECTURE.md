@@ -175,3 +175,21 @@ Courses expose a backend public catalogue; robotics/vision catalogues are fronte
 `StudyLesson` shares assessments and local progress across the advanced curricula. Distinct formats,
 explicit replace confirmations and separate storage keys keep circuit/drone workspaces isolated.
 The OpenCV dependency is prebuilt and locally emitted, not added to the firmware VM or Pi Python subset.
+
+### HPC learning extension
+
+H2 owns `features/hpc`, `content/hpc.json` and the native companion source generator. The pure
+deterministic boundary owns `engine/hpc`; feature Worker adapters own lifetime and timeouts.
+HPC pages and their model are separate lazy chunks. Existing course assessment/progress functions
+are reused without changing their five-question exam contract. `scripts/check-hpc-native.mjs`
+compiles the downloadable C17/C++17 programs on the developer host, including optional OpenMP/MPI;
+it is a verification tool, not an application execution service. See [HPC.md](HPC.md).
+
+### Cybersecurity learning extension
+
+H2 owns `features/cybersecurity` and `content/cybersecurity.json`; the pure engine boundary owns
+`engine/cybersecurity`. Small, bounded synchronous request handlers operate on fictional fixture
+data without network, DOM, filesystem or backend execution. The UI owns requests, account state,
+history, notebook persistence and confirmed replacement. Shared course assessment/progress code
+retains its existing contract. The static promo card imports neither curriculum nor engine, keeping
+other hubs light. Vite splits the engine into a dedicated lazy chunk. See [CYBERSECURITY.md](CYBERSECURITY.md).

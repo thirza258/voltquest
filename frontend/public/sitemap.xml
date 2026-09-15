@@ -99,6 +99,18 @@
   <url><loc>https://pcb.nevatal.id/courses/iot-power-integration</loc></url>
   <url><loc>https://pcb.nevatal.id/courses/iot-foundations</loc></url>
   <url><loc>https://pcb.nevatal.id/courses/drone-foundations</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses/programming-start</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses/programming-numbers</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses/programming-decisions</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses/programming-functions</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses/programming-arrays</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses/programming-cpp</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses/programming-analog</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses/programming-time</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses/programming-serial</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses/programming-state</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses/programming-esp32</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses/programming-mqtt</loc></url>
   <url><loc>https://pcb.nevatal.id/vision</loc></url>
   <url><loc>https://pcb.nevatal.id/vision/opencv-foundations</loc></url>
   <url><loc>https://pcb.nevatal.id/vision/opencv-drone</loc></url>
@@ -112,6 +124,28 @@
   <url><loc>https://pcb.nevatal.id/robotics/robot-sensors</loc></url>
   <url><loc>https://pcb.nevatal.id/robotics/ros2-services</loc></url>
   <url><loc>https://pcb.nevatal.id/robotics/robot-waypoints</loc></url>
+  <url><loc>https://pcb.nevatal.id/hpc</loc></url>
+  <url><loc>https://pcb.nevatal.id/hpc/hpc-correctness</loc></url>
+  <url><loc>https://pcb.nevatal.id/hpc/hpc-benchmarking</loc></url>
+  <url><loc>https://pcb.nevatal.id/hpc/hpc-memory</loc></url>
+  <url><loc>https://pcb.nevatal.id/hpc/hpc-tiling</loc></url>
+  <url><loc>https://pcb.nevatal.id/hpc/hpc-simd</loc></url>
+  <url><loc>https://pcb.nevatal.id/hpc/hpc-openmp</loc></url>
+  <url><loc>https://pcb.nevatal.id/hpc/hpc-scheduling</loc></url>
+  <url><loc>https://pcb.nevatal.id/hpc/hpc-scaling</loc></url>
+  <url><loc>https://pcb.nevatal.id/hpc/hpc-mpi</loc></url>
+  <url><loc>https://pcb.nevatal.id/hpc/hpc-capstone</loc></url>
+  <url><loc>https://pcb.nevatal.id/cybersecurity</loc></url>
+  <url><loc>https://pcb.nevatal.id/cybersecurity/cyber-http</loc></url>
+  <url><loc>https://pcb.nevatal.id/cybersecurity/cyber-idor</loc></url>
+  <url><loc>https://pcb.nevatal.id/cybersecurity/cyber-auth</loc></url>
+  <url><loc>https://pcb.nevatal.id/cybersecurity/cyber-sql</loc></url>
+  <url><loc>https://pcb.nevatal.id/cybersecurity/cyber-xss</loc></url>
+  <url><loc>https://pcb.nevatal.id/cybersecurity/cyber-path</loc></url>
+  <url><loc>https://pcb.nevatal.id/cybersecurity/cyber-csrf</loc></url>
+  <url><loc>https://pcb.nevatal.id/cybersecurity/cyber-ssrf</loc></url>
+  <url><loc>https://pcb.nevatal.id/cybersecurity/cyber-mass</loc></url>
+  <url><loc>https://pcb.nevatal.id/cybersecurity/cyber-capstone</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox</loc></url>
   <url><loc>https://pcb.nevatal.id/showcase</loc></url>
   <url><loc>https://pcb.nevatal.id/leaderboard</loc></url>

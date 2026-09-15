@@ -1,5 +1,62 @@
 # Integration notes
 
+## Cybersecurity path (2026-09-15)
+
+- The hub/course routes and `bench=cybersecurity` share one lazy page. Keep the promo card independent
+  of content/engine imports. Vite needs the dedicated `cybersecurity-model` branch before generic
+  engine chunking, otherwise the request engine becomes part of the eager circuit payload.
+- Requests mutate only returned fixture state. Defense changes reset accounts before retesting;
+  otherwise a previously promoted customer makes a correct profile fix look broken. Regression
+  sequences retain their own state and never mutate the active investigation.
+- Verification checks response data and state as well as status. SQL/XSS fixed probes can return
+  200; their safe body contents matter. XSS output stays React text and carries no execution claim.
+- Notebook drafts can contain unfinished JSON. Validate actual request syntax on Send, independently
+  of save/export. Imported verification/history fields are discarded; replacements start fresh
+  evidence. Latest-30 histories explicitly mark truncation in reports.
+- Course ids share existing `vq.courses.v1` progress; notebooks use `vq.cybersecurity.v1.<lab>`.
+  Neither enters circuit projects, the public course API, account storage, MCP or showcase.
+- The app shell may initialize a guest, but lab requests make no network calls. Browser checks use
+  an isolated SQLite backend for the shell. No real vulnerable server is added. Read [CYBERSECURITY.md](CYBERSECURITY.md).
+
+## C / C++ HPC path (2026-09-14)
+
+- `/hpc` and `?bench=hpc` keep content, model chunks, storage and Worker instances separate from
+  circuit/robotics/vision documents. Preserve source/notes and exam state through locale changes.
+- Model results belong to their captured parameters. Any parameter change clears old results and
+  cancels the current Worker; generation checks ignore late delivery. Native source edits affect
+  downloads only, as stated beside both workflows.
+- Native timing on very small inputs can hit timer resolution. Print unavailable rates, never
+  infinity or a fabricated minimum duration. Release measurements and sanitizer runs are separate.
+- MPI Scatterv allows zero-count ranks; the native stencil explicitly requires ranks≤cells, while
+  the browser stencil skips empty partitions. Do not silently equate these documented policies.
+- Keep the native verification script importing the same source generator used by the editor so
+  downloadable examples cannot drift from compiled/tested examples. Read [HPC.md](HPC.md).
+
+## Programming courses (2026-09-14)
+
+Twelve `programming-*` entries in the shared courses JSON add a fifth track and optional
+`codeExample` fields. The backend course filter must allow `programming`; adding content alone
+would otherwise leave the public filtered endpoint rejecting the new track. The existing sitemap
+derives all 34 course paths automatically (126 public URLs overall).
+
+The code panel links to an existing prepared tutorial and supported board in a separate tab;
+learners explicitly paste the copied sketch. Do not label the expected output as a live result or
+automatically replace a tutorial's edited code. Curriculum data remains confined to lazy course
+routes; tutorial guides contain only canonical course/section references. Existing course records
+and tutorial identities retain their versions and state across localization.
+
+All 44 example/board pairs execute in the same inline solver/VM used by labs. The two connected
+examples match the prepared GPIO18 LED on ESP32/S3. The serial example accepts semicolon in addition
+to newline because the lab's serial input is a single-line HTML input. MQTT local test characters
+1/0 use the same application function as the MQTT callback, enabling lease/LED experiments in the
+tutorial; the Sandbox IoT inspector can exercise inbound MQTT. Runtime regressions assert real
+incoming MQTT behavior separately, including malformed commands that must not renew the lease.
+
+Preserve the native language distinction: signed overflow is undefined in real C/C++, even though
+the teaching VM wraps it. General pointer access, reference parameters, user classes/templates and
+native ESP-IDF/FreeRTOS remain beyond this runtime. Current pin-based and legacy channel-based LEDC
+APIs must be identified in explanations before exporting examples to hardware.
+
 ## Sandbox 3D and expanded parts (2026-09-14)
 
 The optional `canvas/three` viewer consumes the same CircuitDoc/SimState as the SVG. Convert world

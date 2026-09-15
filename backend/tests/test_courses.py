@@ -16,8 +16,8 @@ def course_content(client, monkeypatch):
 def test_public_courses_and_formula_content(client, course_content):
     response = client.get("/api/courses")
     assert response.status_code == 200
-    assert response.json()["total"] == 22
-    assert len(response.json()["tracks"]) == 4
+    assert response.json()["total"] == 34
+    assert len(response.json()["tracks"]) == 5
     for track in ("electrical", "iot-parts"):
         entries = client.get("/api/courses", params={"track": track}).json()["courses"]
         assert [entry["order"] for entry in entries] == list(range(1, 11))
@@ -44,7 +44,7 @@ def test_course_loader_and_absent_content(client, tmp_path):
     from app.services import content
     try:
         content.load_content(Path(__file__).resolve().parents[2] / "content")
-        assert len(content.get_courses()) == 22
+        assert len(content.get_courses()) == 34
         content.load_content(tmp_path)
         assert client.get("/api/courses").json() == {"tracks": [], "courses": [], "total": 0}
         (tmp_path / "courses.json").write_text('{"tracks": null, "courses": "invalid"}')
@@ -62,3 +62,20 @@ def test_course_loader_and_absent_content(client, tmp_path):
         assert content.get_course_tracks() == []
     finally:
         content.load_content()
+
+
+def test_programming_track_examples_and_existing_courses_are_public(client, course_content):
+    response = client.get('/api/courses', params={'track': 'programming'})
+    assert response.status_code == 200
+    courses = response.json()['courses']
+    assert response.json()['total'] == 12
+    assert [course['order'] for course in courses] == list(range(1, 13))
+    assert client.get('/api/courses', params={'track': 'programming', 'difficulty': 'Fundamental'}).json()['total'] == 5
+    assert client.get('/api/courses', params={'track': 'programming', 'q': 'mqtt'}).json()['total'] == 1
+    for course in courses:
+        detail = client.get(f"/api/courses/{course['id']}")
+        assert detail.status_code == 200
+        assert detail.json() == course
+        assert course['codeExample']['code'].strip().endswith('}')
+        assert course['codeExample']['boards']
+    assert client.get('/api/courses/ee-circuits').json()['version'] == 1
