@@ -54,6 +54,14 @@ describe('collectRoutes', () => {
     expect(routes.filter(route => route.startsWith('/hpc/'))).toEqual(expected)
   })
 
+  it('includes the cybersecurity path and every authored course', () => {
+    const expected = readJson(path.join(contentDir, 'cybersecurity.json')).courses.map(course => `/cybersecurity/${course.id}`)
+    expect(expected).toHaveLength(10)
+    expect(routes).toContain('/cybersecurity')
+    expect(routes.filter(route => route.startsWith('/cybersecurity/'))).toEqual(expected)
+    expect(new Set(routes).size).toBe(routes.length)
+  })
+
   it('skips level ids that no quest file backs', () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'voltquest-sitemap-'))
     try {
@@ -69,8 +77,9 @@ describe('collectRoutes', () => {
       fs.writeFileSync(path.join(dir, 'robotics.json'), JSON.stringify({ tutorials: [{ id: 'robot-motion' }] }))
       fs.writeFileSync(path.join(dir, 'vision.json'), JSON.stringify({ tutorials: [{ id: 'opencv-foundations' }] }))
       fs.writeFileSync(path.join(dir, 'hpc.json'), JSON.stringify({ courses: [{ id: 'hpc-correctness' }] }))
+      fs.writeFileSync(path.join(dir, 'cybersecurity.json'), JSON.stringify({ courses: [{ id: 'cyber-http' }] }))
       expect(collectRoutes(dir)).toEqual([
-        '/', '/play/w1-l1', '/play/w2-l1', '/tutorials', '/tutorials/cpp-start', '/courses', '/courses/ee-circuits', '/vision', '/vision/opencv-foundations', '/robotics', '/robotics/robot-motion', '/hpc', '/hpc/hpc-correctness', '/sandbox', '/showcase', '/leaderboard',
+        '/', '/play/w1-l1', '/play/w2-l1', '/tutorials', '/tutorials/cpp-start', '/courses', '/courses/ee-circuits', '/vision', '/vision/opencv-foundations', '/robotics', '/robotics/robot-motion', '/hpc', '/hpc/hpc-correctness', '/cybersecurity', '/cybersecurity/cyber-http', '/sandbox', '/showcase', '/leaderboard',
       ])
     } finally {
       fs.rmSync(dir, { recursive: true, force: true })

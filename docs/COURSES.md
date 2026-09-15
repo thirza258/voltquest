@@ -1,5 +1,11 @@
 # Self-study courses
 
+**Cybersecurity** at `/cybersecurity` adds a separate ten-course path with forty theory sections,
+ten guided web vulnerability labs, thirty practice questions and ten five-question exams. It shares
+the local progress/assessment contract and links from Courses/Tutorials. The independent request
+sandbox and notebook format are documented in [CYBERSECURITY.md](CYBERSECURITY.md). The standard
+public course API remains unchanged.
+
 The **High-performance computing in C & C++** card links to `/hpc`, a separate ten-course path
 with forty sections, twenty formula cards, ten browser experiments, thirty practice questions and
 ten five-question exams. It shares browser-local assessment behavior and adds editable/downloadable

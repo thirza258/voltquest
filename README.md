@@ -24,6 +24,14 @@ guides. `/sandbox?bench=hpc` runs bounded numerical experiments and clearly labe
 models, with independent save/load, JSON import/export and notes. Native source compiles locally;
 the browser does not emulate a CPU/GPU cluster or execute arbitrary C/C++. See [the HPC guide](docs/HPC.md).
 
+**Cybersecurity:** open `/cybersecurity` for ten web security courses with forty theory sections,
+ten guided vulnerability tutorials, thirty practice questions and ten exams. Investigate a fictional
+shop through editable requests, inspect actual fixture data/state, apply defenses and verify fixes.
+Topics cover HTTP, authorization, session trust, SQL injection, HTML/XSS, path traversal, CSRF,
+SSRF and mass assignment, ending in a multi-issue capstone. `/sandbox?bench=cybersecurity` adds
+saved notebooks, confirmed JSON import and evidence reports. Requests stay local; files/services
+are fictional and HTML remains inert. See [the cybersecurity guide](docs/CYBERSECURITY.md).
+
 The **32-quest campaign**, freeform **sandbox**, local **Monaco/Blockly editors**, **virtual phone**,
 **showcase with interactive previews and forking**, and **profile/leaderboard** are implemented.
 Sandbox projects support account saves, independent local drafts, JSON import, JSON/PNG/code/BOM

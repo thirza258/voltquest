@@ -1,5 +1,23 @@
 # Integration notes
 
+## Cybersecurity path (2026-09-15)
+
+- The hub/course routes and `bench=cybersecurity` share one lazy page. Keep the promo card independent
+  of content/engine imports. Vite needs the dedicated `cybersecurity-model` branch before generic
+  engine chunking, otherwise the request engine becomes part of the eager circuit payload.
+- Requests mutate only returned fixture state. Defense changes reset accounts before retesting;
+  otherwise a previously promoted customer makes a correct profile fix look broken. Regression
+  sequences retain their own state and never mutate the active investigation.
+- Verification checks response data and state as well as status. SQL/XSS fixed probes can return
+  200; their safe body contents matter. XSS output stays React text and carries no execution claim.
+- Notebook drafts can contain unfinished JSON. Validate actual request syntax on Send, independently
+  of save/export. Imported verification/history fields are discarded; replacements start fresh
+  evidence. Latest-30 histories explicitly mark truncation in reports.
+- Course ids share existing `vq.courses.v1` progress; notebooks use `vq.cybersecurity.v1.<lab>`.
+  Neither enters circuit projects, the public course API, account storage, MCP or showcase.
+- The app shell may initialize a guest, but lab requests make no network calls. Browser checks use
+  an isolated SQLite backend for the shell. No real vulnerable server is added. Read [CYBERSECURITY.md](CYBERSECURITY.md).
+
 ## C / C++ HPC path (2026-09-14)
 
 - `/hpc` and `?bench=hpc` keep content, model chunks, storage and Worker instances separate from

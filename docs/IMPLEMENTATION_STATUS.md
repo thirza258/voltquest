@@ -1,5 +1,27 @@
 # PRD implementation verification
 
+### Cybersecurity learning extension (2026-09-15)
+
+`/cybersecurity` and `/sandbox?bench=cybersecurity` provide ten ordered web security courses, forty
+theory sections, ten guided vulnerability labs, thirty practice questions and ten five-question
+exams. Editable requests operate on fictional local fixtures; defense toggles change real handler
+decisions and a 30-check capstone includes ordinary behavior and a stateful profile-to-admin chain.
+Saved notebooks, confirmed imports, exact JSON/report exports and local assessment progress are
+implemented. See [CYBERSECURITY.md](CYBERSECURITY.md) for contracts and explicit model boundaries.
+
+Full `make check`: **1,241 frontend tests / 104 backend tests**, production build and **525.1 KiB**
+initial gzip payload pass. Final targeted tests (59) and rebuild pass after the small media-type
+and label refinement. Cybersecurity code stays lazy; the sitemap contains 148 URLs. Existing
+CampaignMap hook warnings and the environment's localStorage notice remain.
+
+Production Chromium with an isolated SQLite backend verified all ten normal/probe/patched flows,
+actual stateful privilege change and its remediation, 30/30 capstone checks, exact notebook/report
+downloads, save/reload and import confirmation, incomplete-exam rejection, an 80% pass persisted
+through reload, English/Indonesian state preservation, hub links and desktop/390 px layouts without
+page overflow. No browser application errors. The labs do not contact external targets, query a
+database, render unsafe HTML or access host files. Cross-browser/real-device behavior remains
+release verification.
+
 ### HPC learning extension (2026-09-14)
 
 `/hpc` and `/sandbox?bench=hpc` add ten C17/C++17 courses, forty detailed sections, twenty formula

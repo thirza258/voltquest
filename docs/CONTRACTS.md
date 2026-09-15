@@ -523,3 +523,14 @@ performs bounded numerical experiments and explicitly labeled performance models
 owns scheduling, cancellation and disposal. Native source is edited/downloaded and tested locally,
 never compiled or executed by the app. Project format `voltquest-hpc` has separate browser storage
 and validated import/export; it does not extend CircuitDoc, board ids, account APIs, MCP or showcase.
+
+## 18. Cybersecurity learning path
+
+`/cybersecurity`, `/cybersecurity/:lessonId` and `/sandbox?bench=cybersecurity&lesson=<courseId>`
+follow [CYBERSECURITY.md](CYBERSECURITY.md). Ten frontend-only courses reuse course assessments
+and progress. `engine/cybersecurity/{model,scenarios}.js` implements bounded local request handlers,
+fictional account state, defenses and isolated regression cases. No request causes network access,
+host filesystem operations, backend execution or HTML/script execution. The independent notebook
+format saves drafts/controls/notes, while separate evidence reports capture executed exchanges.
+Confirmed replacements start fresh fixtures. No CircuitDoc, board id, account project, public
+course API, MCP or showcase contract changes. Model and curriculum chunks load lazily.

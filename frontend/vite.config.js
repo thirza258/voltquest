@@ -40,6 +40,7 @@ export default defineConfig({
           if (id.includes('node_modules/blockly')) return 'blockly'
           if (id.includes('node_modules/three/')) return 'three'
           if (id.includes('/src/engine/hpc/')) return 'hpc-model'
+          if (id.includes('/src/engine/cybersecurity/')) return 'cybersecurity-model'
           if (id.includes('/src/engine/')) return 'engine'
           if (id.includes('node_modules/react') || id.includes('node_modules/scheduler') || id.includes('node_modules/zustand') || id.includes('node_modules/react-router')) return 'vendor'
           return undefined

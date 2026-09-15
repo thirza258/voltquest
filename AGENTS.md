@@ -1,6 +1,6 @@
 # VoltQuest — agent handoff log
 
-**Last verified: 2026-09-14.** This is the state document: what exists, what remains unfinished,
+**Last verified: 2026-09-15.** This is the state document: what exists, what remains unfinished,
 and what to do next. The specifications in `docs/` remain binding.
 
 | Read | When |
@@ -14,6 +14,7 @@ and what to do next. The specifications in `docs/` remain binding.
 | `docs/TUTORIALS.md`, `docs/RASPBERRY_PI.md` | Before editing tutorials or Pi support. |
 | `docs/ASSISTANT.md` | Before editing localization, the circuit AI guide or Claude Code/Codex MCP. |
 | `docs/HPC.md` | Before editing the C/C++ HPC curriculum, experiments or native source/testing. |
+| `docs/CYBERSECURITY.md` | Before editing web security courses, local request labs, defenses or investigation notebooks. |
 
 ## 1. Current build, not the target product
 
@@ -27,6 +28,12 @@ Tutorials and Courses also link to `/hpc`: ten detailed C17/C++17 HPC courses wi
 sections, twenty formula cards, ten numerical/model experiments, thirty practice questions and ten
 exams. `/sandbox?bench=hpc` has separate local projects and editable/downloadable native source.
 Native programs compile on the learner's computer; browser Run uses the bounded experiment controls.
+
+Tutorials and Courses now also link to `/cybersecurity`: ten web security courses with forty theory
+sections, ten guided vulnerability tutorials, thirty practice questions and ten five-question exams.
+`/sandbox?bench=cybersecurity` offers editable requests against a fictional local shop, observed
+data/state changes, nine configurable defenses, regression checks and separate saved notebooks/reports.
+Labs have no network, host filesystem or script execution. Read `docs/CYBERSECURITY.md` for boundaries.
 
 Ten tutorials form an Arduino/ESP32 C++ programming path:
 - Easy: setup/loop, variables/types, arithmetic, conditions.
@@ -58,9 +65,9 @@ repository or commit without the user's explicit request.
 ## 2. Verification
 
 Latest full `make check`:
-- **1,181 frontend tests in 74 files pass.**
+- **1,241 frontend tests in 77 files pass.**
 - **104 backend tests pass.**
-- Production build succeeds; initial JS payload is **521.1 KiB gzipped**, below the 1500 KiB budget.
+- Production build succeeds; initial JS payload is **525.1 KiB gzipped**, below the 1500 KiB budget.
 - ESLint has no errors. Two existing exhaustive-deps warnings remain in
   `features/campaign/CampaignMap.jsx:84`; these are unrelated to the assistant/localization work.
 - Node prints the existing jsdom/localStorage warning; persistence tests use the memory-storage helper.
@@ -88,6 +95,42 @@ their explanation or timing is correct. `features/tutorials/programming.test.js`
 numeric output, command dispatch and LED state transitions on all four C++ boards.
 
 ## 3. Completed in this continuation
+
+### Cybersecurity courses and web vulnerability sandbox (2026-09-15)
+
+Open **`/cybersecurity`**, linked from Tutorials/Courses, or **`/sandbox?bench=cybersecurity`**.
+Ten ordered courses cover HTTP/information exposure, object authorization, session-role trust,
+SQL injection, HTML/XSS, path traversal, CSRF, SSRF, mass assignment and a combined investigation.
+Each has four detailed sections, four guided steps, an interactive lab, an applied challenge,
+three practice questions and a five-question 80% exam. Existing `vq.courses.v1` stores section
+checks and best/last scores; practice, incomplete submissions and duplicates don't add attempts.
+
+`engine/cybersecurity/{model,scenarios}.js` executes bounded local request handlers with fictional
+accounts, orders, products, files and service fixtures. Learners edit method/path/headers/body,
+inspect actual responses and mutations, toggle nine defenses and retest. The profile-to-admin
+chain uses changed fixture state between requests. The capstone starts with three independent
+weaknesses and runs 30 checks including normal behavior and alternate probes. SQL has a small
+documented parser; HTML is inert source with a structural indicator, not script-execution proof.
+No proxy/scanner, real network, host filesystem, arbitrary code or backend execution is added.
+
+`voltquest-cybersecurity` notebooks retain exact request drafts, controls and notes, with separate
+`vq.cybersecurity.v1.<lab>` saves and confirmed load/import/reset/lab selection. Unfinished JSON
+can be saved but cannot be sent. Imports discard fabricated evidence. Reports export the latest
+30 captured exchanges (explicit truncation), current controls, regression results and notes.
+Changing defenses resets shop state and invalidates verification; history remains inspectable.
+The independent formats don't extend CircuitDoc, accounts, public course APIs, MCP or showcase.
+133 interface translations support Indonesian; narratives/questions/technical traces use a stated
+English fallback. Locale changes preserve the whole investigation and assessment choices.
+
+Full `make check`: **1,241 frontend / 104 backend**, production build and **525.1 KiB** initial gzip
+budget pass. Only the two existing CampaignMap hook warnings and Node localStorage notice remain.
+The model/page chunks stay lazy, and the generated sitemap contains **148 URLs**. Final targeted
+tests and production rebuild also pass after the response media-type/localized-label refinement.
+Production Chromium with isolated SQLite verified all ten normal/probe/patched flows, the actual
+privilege chain, 30/30 capstone checks, exact notebook/report downloads, save/reload/import with
+confirmation, incomplete-exam rejection, 80% grading/persistence, language-state retention and
+desktop/390 px layouts without page overflow. Tutorial/Course links work; no browser application
+errors were reported. Other browsers and real-device performance remain release checks.
 
 ### High-performance computing in C / C++ (2026-09-14)
 

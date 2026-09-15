@@ -54,6 +54,14 @@ learning model. Do not imply a full Linux computer or arbitrary Python packages 
 
 ## Self-study courses
 
+The cybersecurity path uses a teal overview, three learning stages, searchable cards and the shared
+exam form. Course text has a readable column and outline; the guided lab occupies the full content
+width. The lab pairs request editor and response/trace, then shows defense controls, regression
+results and a notebook. Code blocks and route tables scroll locally. Label local fixture behavior,
+inert HTML, known model limits and current-result scope. Show PASS/FAIL text alongside color.
+Replacement modals protect drafts and evidence; language changes preserve the active investigation.
+See [CYBERSECURITY.md](CYBERSECURITY.md).
+
 The HPC path uses an ordered four-stage overview, searchable course cards, a readable section
 column with an outline, worked formulas, native testing guides and the shared assessment form.
 The lab gives each parameter a labeled control and reports numerical checks in text as well as

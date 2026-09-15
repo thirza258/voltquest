@@ -184,3 +184,12 @@ HPC pages and their model are separate lazy chunks. Existing course assessment/p
 are reused without changing their five-question exam contract. `scripts/check-hpc-native.mjs`
 compiles the downloadable C17/C++17 programs on the developer host, including optional OpenMP/MPI;
 it is a verification tool, not an application execution service. See [HPC.md](HPC.md).
+
+### Cybersecurity learning extension
+
+H2 owns `features/cybersecurity` and `content/cybersecurity.json`; the pure engine boundary owns
+`engine/cybersecurity`. Small, bounded synchronous request handlers operate on fictional fixture
+data without network, DOM, filesystem or backend execution. The UI owns requests, account state,
+history, notebook persistence and confirmed replacement. Shared course assessment/progress code
+retains its existing contract. The static promo card imports neither curriculum nor engine, keeping
+other hubs light. Vite splits the engine into a dedicated lazy chunk. See [CYBERSECURITY.md](CYBERSECURITY.md).
