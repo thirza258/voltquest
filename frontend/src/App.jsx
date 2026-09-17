@@ -10,6 +10,7 @@ const TutorialsPage = lazy(() => import('./features/tutorials/TutorialsPage.jsx'
 const TutorialPage = lazy(() => import('./features/tutorials/TutorialPage.jsx'))
 const VisionPage = lazy(() => import('./features/vision/VisionPage.jsx'))
 const HpcPage = lazy(() => import('./features/hpc/HpcPage.jsx'))
+const MatlabPage = lazy(() => import('./features/matlab/MatlabPage.jsx'))
 const CybersecurityPage = lazy(() => import('./features/cybersecurity/CybersecurityPage.jsx'))
 const RoboticsPage = lazy(() => import('./features/robotics/RoboticsPage.jsx'))
 const CoursesPage = lazy(() => import('./features/courses/CoursesPage.jsx'))
@@ -23,6 +24,7 @@ const LeaderboardPage = lazy(() => import('./features/profile/LeaderboardPage.js
 
 function SandboxRoute() {
   const [search] = useSearchParams()
+  if (search.get('bench') === 'matlab') return <MatlabPage sandbox />
   if (search.get('bench') === 'cybersecurity') return <CybersecurityPage sandbox />
   if (search.get('bench') === 'hpc') return <HpcPage sandbox />
   if (search.get('bench') === 'vision') return <VisionPage sandbox />
@@ -51,6 +53,8 @@ export default function App() {
       <Route path="/courses/:courseId" element={<CoursePage />} />
       <Route path="/hpc" element={<HpcPage />} />
       <Route path="/hpc/:lessonId" element={<HpcPage />} />
+      <Route path="/matlab" element={<MatlabPage />} />
+      <Route path="/matlab/:lessonId" element={<MatlabPage />} />
       <Route path="/cybersecurity" element={<CybersecurityPage />} />
       <Route path="/cybersecurity/:lessonId" element={<CybersecurityPage />} />
       <Route path="/play/:levelId" element={<WorkspacePage />} />

@@ -1,5 +1,26 @@
 # Integration notes
 
+## MATLAB path (2026-09-17)
+
+- Source edits actually change browser computation here, unlike HPC's native-source panel.
+  Always capture source for a run, cancel on edits and ignore stale responses. A fresh Worker
+  owns each execution; the inline fallback uses the same work-bounded interpreter.
+- Matrices store values in column-major order and use one-based indices. Relational operations
+  retain logical type for masks. Indexed writes copy arrays, preserving ordinary assignment and
+  anonymous-function capture semantics. Scalar expansion is supported; other implicit expansion
+  and automatic growth are explicitly rejected. No MATLAB host runtime is embedded.
+- MATLAB R2026a changed full-convolution orientation: output is a row unless both inputs are
+  columns. This subset follows that rule. Browser `fzero` uses bracketed bisection, `rng` uses a
+  local LCG, and full-rank small solves use pivoting/QR; these are documented teaching algorithms.
+- The reference directory has 244 entries and its 73 browser signatures are checked against the
+  runtime. Each supported example executes in tests. Desktop examples state required products;
+  `imshow` is available in base MATLAB. Optional toolboxes are never claimed as browser features.
+- Notebook saves use `vq.matlab.v1.<courseId>` and preserve unfinished source. Imports discard
+  fabricated results. Course checks/exams reuse `vq.courses.v1`; a section checkpoint never adds an
+  exam attempt. Locale changes retain all working state. Course narratives use English fallback.
+- Keep `matlab-model` before Vite's generic engine chunk rule and keep promo cards independent of
+  content. Curriculum and engine remain lazy; no firmware, backend API or CircuitDoc extension.
+
 ## Cybersecurity path (2026-09-15)
 
 - The hub/course routes and `bench=cybersecurity` share one lazy page. Keep the promo card independent

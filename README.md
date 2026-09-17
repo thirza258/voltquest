@@ -32,6 +32,15 @@ SSRF and mass assignment, ending in a multi-issue capstone. `/sandbox?bench=cybe
 saved notebooks, confirmed JSON import and evidence reports. Requests stay local; files/services
 are fictional and HTML remains inert. See [the cybersecurity guide](docs/CYBERSECURITY.md).
 
+**MATLAB:** open `/matlab` for eighteen courses covering arrays, programming, plots, linear algebra,
+data analysis, fitting, calculus, ODE simulation, signals, control, Monte Carlo, optimization,
+performance, parallel/GPU concepts and a thermal capstone. Includes 72 section questions, 18 exams,
+18 editable browser scripts and 18 desktop companions. A 244-entry function guide links to the
+complete MathWorks catalog and distinguishes 73 supported browser functions from desktop features.
+`/sandbox?bench=matlab` computes with edited scripts, displays variables and plots, and supports
+local notebooks, confirmed JSON import/export and exact `.m` downloads. It is a documented
+MATLAB-style teaching subset, not MATLAB/Simulink or a full toolbox runtime. See [MATLAB.md](docs/MATLAB.md).
+
 The **32-quest campaign**, freeform **sandbox**, local **Monaco/Blockly editors**, **virtual phone**,
 **showcase with interactive previews and forking**, and **profile/leaderboard** are implemented.
 Sandbox projects support account saves, independent local drafts, JSON import, JSON/PNG/code/BOM

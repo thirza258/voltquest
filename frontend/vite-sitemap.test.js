@@ -62,6 +62,13 @@ describe('collectRoutes', () => {
     expect(new Set(routes).size).toBe(routes.length)
   })
 
+  it('includes the MATLAB path and every course', () => {
+    const expected = readJson(path.join(contentDir, 'matlab.json')).courses.map(course => `/matlab/${course.id}`)
+    expect(expected).toHaveLength(18)
+    expect(routes).toContain('/matlab')
+    expect(routes.filter(route => route.startsWith('/matlab/'))).toEqual(expected)
+  })
+
   it('skips level ids that no quest file backs', () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'voltquest-sitemap-'))
     try {
@@ -77,9 +84,10 @@ describe('collectRoutes', () => {
       fs.writeFileSync(path.join(dir, 'robotics.json'), JSON.stringify({ tutorials: [{ id: 'robot-motion' }] }))
       fs.writeFileSync(path.join(dir, 'vision.json'), JSON.stringify({ tutorials: [{ id: 'opencv-foundations' }] }))
       fs.writeFileSync(path.join(dir, 'hpc.json'), JSON.stringify({ courses: [{ id: 'hpc-correctness' }] }))
+      fs.writeFileSync(path.join(dir, 'matlab.json'), JSON.stringify({ courses: [{ id: 'matlab-start' }] }))
       fs.writeFileSync(path.join(dir, 'cybersecurity.json'), JSON.stringify({ courses: [{ id: 'cyber-http' }] }))
       expect(collectRoutes(dir)).toEqual([
-        '/', '/play/w1-l1', '/play/w2-l1', '/tutorials', '/tutorials/cpp-start', '/courses', '/courses/ee-circuits', '/vision', '/vision/opencv-foundations', '/robotics', '/robotics/robot-motion', '/hpc', '/hpc/hpc-correctness', '/cybersecurity', '/cybersecurity/cyber-http', '/sandbox', '/showcase', '/leaderboard',
+        '/', '/play/w1-l1', '/play/w2-l1', '/tutorials', '/tutorials/cpp-start', '/courses', '/courses/ee-circuits', '/vision', '/vision/opencv-foundations', '/robotics', '/robotics/robot-motion', '/hpc', '/hpc/hpc-correctness', '/matlab', '/matlab/matlab-start', '/cybersecurity', '/cybersecurity/cyber-http', '/sandbox', '/showcase', '/leaderboard',
       ])
     } finally {
       fs.rmSync(dir, { recursive: true, force: true })

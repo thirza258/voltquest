@@ -534,3 +534,20 @@ host filesystem operations, backend execution or HTML/script execution. The inde
 format saves drafts/controls/notes, while separate evidence reports capture executed exchanges.
 Confirmed replacements start fresh fixtures. No CircuitDoc, board id, account project, public
 course API, MCP or showcase contract changes. Model and curriculum chunks load lazily.
+
+## 19. MATLAB learning path
+
+`/matlab`, `/matlab/:lessonId` and `/sandbox?bench=matlab&lesson=<courseId>` follow
+[MATLAB.md](MATLAB.md). Eighteen frontend-only courses have four sections with individual
+checkpoints and five-question exams using the existing course progress contract. The pure
+`engine/matlab/{parser,numeric,functions,model}.js` modules interpret a documented finite-real
+MATLAB-style subset, with strict work/allocation bounds and no host execution bridge. Feature
+Workers own timeouts, cancellation and lifecycle. Editing source invalidates prior results.
+
+`runMatlab(source)` returns `{source,output,outputTruncated,workspace,plots,labels,operations}`;
+workspace previews carry full dimensions, up to 256 column-major values and a truncation marker.
+Plot series retain complete bounded x/y data. `SIGNATURES` defines the exact 73 supported calls.
+The separate function directory also describes desktop-only MATLAB/toolbox capabilities.
+`voltquest-matlab` notebooks store versioned course id, source and notes under `vq.matlab.v1.*`.
+Imports discard claimed results and confirm replacement. No CircuitDoc, board, backend project,
+public course API, assistant, MCP or showcase contract changes. See MATLAB.md for all limits.

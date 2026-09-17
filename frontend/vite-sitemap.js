@@ -47,6 +47,7 @@ export function collectRoutes(contentDir) {
   const robotics = (readJson(path.join(contentDir, 'robotics.json')).tutorials ?? []).map(item => `/robotics/${item.id}`)
   const vision = (readJson(path.join(contentDir, 'vision.json')).tutorials ?? []).map(item => `/vision/${item.id}`)
   const hpc = (readJson(path.join(contentDir, 'hpc.json')).courses ?? []).map(item => `/hpc/${item.id}`)
+  const matlab = (readJson(path.join(contentDir, 'matlab.json')).courses ?? []).map(item => `/matlab/${item.id}`)
   const cybersecurity = (readJson(path.join(contentDir, 'cybersecurity.json')).courses ?? []).map(item => `/cybersecurity/${item.id}`)
   return [
     '/',
@@ -61,6 +62,8 @@ export function collectRoutes(contentDir) {
     ...robotics,
     '/hpc',
     ...hpc,
+    '/matlab',
+    ...matlab,
     '/cybersecurity',
     ...cybersecurity,
     '/sandbox',

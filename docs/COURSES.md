@@ -1,5 +1,12 @@
 # Self-study courses
 
+**MATLAB** at `/matlab` adds eighteen courses, seventy-two detailed sections with an individual
+question in every section, eighteen guided scripts and eighteen five-question exams. Its curated
+244-entry function reference distinguishes 73 executable browser signatures from desktop/toolbox
+guidance. `/sandbox?bench=matlab` executes an editable finite-real MATLAB-style subset, displays
+workspace values and plots, and keeps independent notebooks. It shares local assessment progress
+without changing the standard course API. See [MATLAB.md](MATLAB.md).
+
 **Cybersecurity** at `/cybersecurity` adds a separate ten-course path with forty theory sections,
 ten guided web vulnerability labs, thirty practice questions and ten five-question exams. It shares
 the local progress/assessment contract and links from Courses/Tutorials. The independent request

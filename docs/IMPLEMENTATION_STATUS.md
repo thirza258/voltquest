@@ -1,5 +1,30 @@
 # PRD implementation verification
 
+### MATLAB learning extension (2026-09-17)
+
+`/matlab` and `/sandbox?bench=matlab` provide eighteen courses, seventy-two theory sections and
+section checkpoints, eighteen five-question exams, eighteen editable numeric scripts and desktop
+companions. A curated 244-entry reference distinguishes 73 exact executable browser signatures
+from desktop guidance and links to the complete MathWorks catalog. Edited scripts actually run
+through a bounded numerical parser/engine and fresh Workers, with workspace inspection and plots.
+Independent notebooks, confirmed replacement, exact `.m`/JSON export and existing assessment
+progress are implemented. See [MATLAB.md](MATLAB.md) for contracts and compatibility limits.
+
+Full `make check` passes **1,416 frontend / 104 backend tests**, production build and **527.9 KiB**
+initial gzip budget. Final 174 targeted tests and rebuild pass after the small convolution/reference
+refinement. Course/model chunks remain lazy and the sitemap contains 167 URLs. Existing warnings
+are unchanged. Tests execute every browser starter and every supported reference example, plus
+numerical oracles, bounded failures, worker disposal, notebook boundaries and assessment behavior.
+
+Production Chromium with an isolated SQLite shell backend verified all eighteen real Worker runs,
+edited outputs/plots, exact source/notebook/result downloads, save/reload and confirmed import,
+unsupported-function errors, independent section practice, incomplete-exam rejection, persisted
+80% grading and English/Indonesian state preservation. Desktop and 390 px layouts have no page
+overflow; hub/navigation links work and no application errors were observed. Actual MATLAB and
+optional toolbox execution is unverified here because MATLAB is not installed. The browser subset
+does not claim full MATLAB/Simulink, complex-number support, native timings or parallel/GPU execution.
+Other browsers and real-device performance remain release checks.
+
 ### Cybersecurity learning extension (2026-09-15)
 
 `/cybersecurity` and `/sandbox?bench=cybersecurity` provide ten ordered web security courses, forty

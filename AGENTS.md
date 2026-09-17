@@ -1,6 +1,6 @@
 # VoltQuest — agent handoff log
 
-**Last verified: 2026-09-15.** This is the state document: what exists, what remains unfinished,
+**Last verified: 2026-09-17.** This is the state document: what exists, what remains unfinished,
 and what to do next. The specifications in `docs/` remain binding.
 
 | Read | When |
@@ -15,6 +15,7 @@ and what to do next. The specifications in `docs/` remain binding.
 | `docs/ASSISTANT.md` | Before editing localization, the circuit AI guide or Claude Code/Codex MCP. |
 | `docs/HPC.md` | Before editing the C/C++ HPC curriculum, experiments or native source/testing. |
 | `docs/CYBERSECURITY.md` | Before editing web security courses, local request labs, defenses or investigation notebooks. |
+| `docs/MATLAB.md` | Before editing MATLAB courses, the numerical script interpreter, function reference or notebooks. |
 
 ## 1. Current build, not the target product
 
@@ -34,6 +35,13 @@ sections, ten guided vulnerability tutorials, thirty practice questions and ten 
 `/sandbox?bench=cybersecurity` offers editable requests against a fictional local shop, observed
 data/state changes, nine configurable defenses, regression checks and separate saved notebooks/reports.
 Labs have no network, host filesystem or script execution. Read `docs/CYBERSECURITY.md` for boundaries.
+
+Tutorials and Courses also link to `/matlab`: eighteen courses with seventy-two detailed sections,
+a question in each section, eighteen five-question exams and desktop companion scripts. The
+244-entry function directory distinguishes 73 executable browser functions from desktop guidance.
+`/sandbox?bench=matlab` executes edited scripts in a bounded MATLAB-style numeric interpreter,
+with workspace inspection, plots and independent saved notebooks. It is not a full MATLAB/Simulink
+runtime and does not run optional toolboxes or parallel/GPU code. Read `docs/MATLAB.md`.
 
 Ten tutorials form an Arduino/ESP32 C++ programming path:
 - Easy: setup/loop, variables/types, arithmetic, conditions.
@@ -65,9 +73,9 @@ repository or commit without the user's explicit request.
 ## 2. Verification
 
 Latest full `make check`:
-- **1,241 frontend tests in 77 files pass.**
+- **1,416 frontend tests in 81 files pass.**
 - **104 backend tests pass.**
-- Production build succeeds; initial JS payload is **525.1 KiB gzipped**, below the 1500 KiB budget.
+- Production build succeeds; initial JS payload is **527.9 KiB gzipped**, below the 1500 KiB budget.
 - ESLint has no errors. Two existing exhaustive-deps warnings remain in
   `features/campaign/CampaignMap.jsx:84`; these are unrelated to the assistant/localization work.
 - Node prints the existing jsdom/localStorage warning; persistence tests use the memory-storage helper.
@@ -95,6 +103,49 @@ their explanation or timing is correct. `features/tutorials/programming.test.js`
 numeric output, command dispatch and LED state transitions on all four C++ boards.
 
 ## 3. Completed in this continuation
+
+### MATLAB courses, function reference and editable numerical sandbox (2026-09-17)
+
+Open **`/matlab`**, linked from Tutorials/Courses, or **`/sandbox?bench=matlab`**. Eighteen ordered
+courses progress through workspace/types, arrays, mathematics, programming, plots, linear algebra,
+data/statistics, fitting, calculus, ODE simulation, signals, feedback/Simulink concepts, Monte Carlo,
+optimization, performance, parallel/GPU concepts, specialist products and a thermal capstone.
+Each has four substantial sections with an individual checkpoint, four guided steps, an editable
+script, an applied challenge, a desktop companion and a five-question 80% exam: **72 sections,
+72 section questions, 90 exam questions**. Existing `vq.courses.v1` stores checks and scores;
+practice, incomplete and duplicate submissions do not add exam attempts.
+
+`engine/matlab/{parser,numeric,functions,model}.js` implements a finite-real MATLAB-style subset:
+one-based column-major arrays, matrix/element operators, indexed assignment, control flow,
+anonymous captures, small pivoted/QR solves, statistics, interpolation, fitting, integration,
+bracketed roots, deterministic random experiments and real plot data. No eval, host bridge,
+network, filesystem, backend execution, toolbox runtime, complex arithmetic or GPU/parallel
+execution is added. Work/allocation limits complement five-second Worker deadlines. Every Run
+starts fresh; edits/cancellation/disposal stop the Worker and invalidate old results.
+
+The searchable **244-entry** reference exposes **73 exact executable function signatures** and
+links to official MathWorks documentation/full catalog. Desktop-only entries name required
+products. Browser fzero uses bisection and rng a different generator from MATLAB; conv follows
+the R2026a orientation rule. Native MATLAB/toolbox companions were not executed in this workspace
+because MATLAB is not installed; all 18 browser scripts and 73 reference examples are executed
+in tests. Do not describe the teaching subset as full MATLAB or claim measured native speedups.
+
+`voltquest-matlab` notebooks retain exact source (including unfinished code) and notes under
+`vq.matlab.v1.<courseId>`. Load/import/reset/preset changes confirm replacement; imports discard
+fabricated results. `.m` exports match the editor; computed-result JSON captures actual source,
+output, bounded workspace previews and full bounded plot series. Interactive plots offer sample
+inspection and paginated data. Interface text supports Indonesian with a disclosed English
+curriculum/reference fallback; changing locale preserves all working and assessment state.
+
+Full `make check`: **1,416 frontend / 104 backend**, production build and **527.9 KiB** initial
+gzip pass. Final targeted **174 tests** and production rebuild pass after the convolution/reference
+refinement. MATLAB chunks remain lazy; sitemap has **167 URLs**. Only the two existing CampaignMap
+hook warnings and Node localStorage notice remain. Production Chromium with isolated SQLite
+verified all 18 actual Worker scripts, edited calculations and plot data, exact `.m`/JSON downloads,
+save/reload/import confirmation, unsupported-call errors, independent section questions, incomplete
+exam rejection, persisted 80% grading, locale preservation and desktop/390 px layouts without page
+overflow. Tutorials/Courses/home navigation worked; no browser application errors were observed.
+Cross-browser, real-device performance and actual MATLAB/toolbox execution remain verification limits.
 
 ### Cybersecurity courses and web vulnerability sandbox (2026-09-15)
 
