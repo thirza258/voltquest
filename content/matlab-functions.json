@@ -1,0 +1,2273 @@
+{
+  "functions": [
+    {
+      "name": "abs",
+      "category": "Arithmetic and trigonometry",
+      "description": "Absolute magnitude",
+      "signature": "abs(A)",
+      "example": "abs([-2 3])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/abs.html"
+    },
+    {
+      "name": "sqrt",
+      "category": "Arithmetic and trigonometry",
+      "description": "Positive real square root",
+      "signature": "sqrt(A)",
+      "example": "sqrt([0 4 9])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/sqrt.html"
+    },
+    {
+      "name": "exp",
+      "category": "Arithmetic and trigonometry",
+      "description": "Natural exponential",
+      "signature": "exp(A)",
+      "example": "exp([0 1])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/exp.html"
+    },
+    {
+      "name": "log",
+      "category": "Arithmetic and trigonometry",
+      "description": "Natural logarithm",
+      "signature": "log(A)",
+      "example": "log([1 2])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/log.html"
+    },
+    {
+      "name": "log10",
+      "category": "Arithmetic and trigonometry",
+      "description": "Base-ten logarithm",
+      "signature": "log10(A)",
+      "example": "log10([1 10 100])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/log10.html"
+    },
+    {
+      "name": "log2",
+      "category": "Arithmetic and trigonometry",
+      "description": "Base-two logarithm",
+      "signature": "log2(A)",
+      "example": "log2([1 2 8])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/log2.html"
+    },
+    {
+      "name": "sin",
+      "category": "Arithmetic and trigonometry",
+      "description": "Sine of radians",
+      "signature": "sin(A)",
+      "example": "sin([0 pi/2])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/sin.html"
+    },
+    {
+      "name": "cos",
+      "category": "Arithmetic and trigonometry",
+      "description": "Cosine of radians",
+      "signature": "cos(A)",
+      "example": "cos([0 pi])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/cos.html"
+    },
+    {
+      "name": "tan",
+      "category": "Arithmetic and trigonometry",
+      "description": "Tangent of radians",
+      "signature": "tan(A)",
+      "example": "tan([0 pi/4])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/tan.html"
+    },
+    {
+      "name": "asin",
+      "category": "Arithmetic and trigonometry",
+      "description": "Inverse sine, in radians",
+      "signature": "asin(A)",
+      "example": "asin([0 1])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/asin.html"
+    },
+    {
+      "name": "acos",
+      "category": "Arithmetic and trigonometry",
+      "description": "Inverse cosine, in radians",
+      "signature": "acos(A)",
+      "example": "acos([0 1])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/acos.html"
+    },
+    {
+      "name": "atan",
+      "category": "Arithmetic and trigonometry",
+      "description": "Inverse tangent, in radians",
+      "signature": "atan(A)",
+      "example": "atan([0 1])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/atan.html"
+    },
+    {
+      "name": "sind",
+      "category": "Arithmetic and trigonometry",
+      "description": "Sine of degrees",
+      "signature": "sind(A)",
+      "example": "sind([0 30 90])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/sind.html"
+    },
+    {
+      "name": "cosd",
+      "category": "Arithmetic and trigonometry",
+      "description": "Cosine of degrees",
+      "signature": "cosd(A)",
+      "example": "cosd([0 60 180])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/cosd.html"
+    },
+    {
+      "name": "tand",
+      "category": "Arithmetic and trigonometry",
+      "description": "Tangent of degrees",
+      "signature": "tand(A)",
+      "example": "tand([0 45])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/tand.html"
+    },
+    {
+      "name": "floor",
+      "category": "Arithmetic and trigonometry",
+      "description": "Round toward negative infinity",
+      "signature": "floor(A)",
+      "example": "floor([-1.7 1.7])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/floor.html"
+    },
+    {
+      "name": "ceil",
+      "category": "Arithmetic and trigonometry",
+      "description": "Round toward positive infinity",
+      "signature": "ceil(A)",
+      "example": "ceil([-1.7 1.7])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/ceil.html"
+    },
+    {
+      "name": "round",
+      "category": "Arithmetic and trigonometry",
+      "description": "Round to nearest integer, ties away from zero",
+      "signature": "round(A)",
+      "example": "round([-1.5 1.5])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/round.html"
+    },
+    {
+      "name": "fix",
+      "category": "Arithmetic and trigonometry",
+      "description": "Round toward zero",
+      "signature": "fix(A)",
+      "example": "fix([-1.7 1.7])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/fix.html"
+    },
+    {
+      "name": "sign",
+      "category": "Arithmetic and trigonometry",
+      "description": "Sign of each real value",
+      "signature": "sign(A)",
+      "example": "sign([-3 0 4])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/sign.html"
+    },
+    {
+      "name": "mod",
+      "category": "Arithmetic and trigonometry",
+      "description": "Floor-based remainder; divisor zero returns the input",
+      "signature": "mod(A,B)",
+      "example": "mod([-3 3],4)",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/mod.html"
+    },
+    {
+      "name": "rem",
+      "category": "Arithmetic and trigonometry",
+      "description": "Truncation-based remainder",
+      "signature": "rem(A,B)",
+      "example": "rem([-3 3],4)",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/rem.html"
+    },
+    {
+      "name": "atan2",
+      "category": "Arithmetic and trigonometry",
+      "description": "Four-quadrant angle in radians",
+      "signature": "atan2(Y,X)",
+      "example": "atan2(1,-1)",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/atan2.html"
+    },
+    {
+      "name": "hypot",
+      "category": "Arithmetic and trigonometry",
+      "description": "Euclidean length from two components",
+      "signature": "hypot(A,B)",
+      "example": "hypot(3,4)",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/hypot.html"
+    },
+    {
+      "name": "zeros",
+      "category": "Arrays and indexing",
+      "description": "Preallocate a zero array",
+      "signature": "zeros(n) or zeros(m,n)",
+      "example": "zeros(2,3)",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/zeros.html"
+    },
+    {
+      "name": "ones",
+      "category": "Arrays and indexing",
+      "description": "Construct a unit-valued array",
+      "signature": "ones(n) or ones(m,n)",
+      "example": "ones(2,3)",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/ones.html"
+    },
+    {
+      "name": "eye",
+      "category": "Arrays and indexing",
+      "description": "Construct a square identity matrix",
+      "signature": "eye(n)",
+      "example": "eye(3)",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/eye.html"
+    },
+    {
+      "name": "linspace",
+      "category": "Arrays and indexing",
+      "description": "Choose a count of evenly spaced values",
+      "signature": "linspace(a,b,n)",
+      "example": "linspace(0,1,5)",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/linspace.html"
+    },
+    {
+      "name": "logspace",
+      "category": "Arrays and indexing",
+      "description": "Evenly spaced base-ten exponents",
+      "signature": "logspace(a,b,n)",
+      "example": "logspace(0,2,3)",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/logspace.html"
+    },
+    {
+      "name": "reshape",
+      "category": "Arrays and indexing",
+      "description": "Change shape while retaining column-major order",
+      "signature": "reshape(A,m,n)",
+      "example": "reshape(1:6,2,3)",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/reshape.html"
+    },
+    {
+      "name": "transpose",
+      "category": "Arrays and indexing",
+      "description": "Swap rows and columns",
+      "signature": "transpose(A)",
+      "example": "transpose([1 2;3 4])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/transpose.html"
+    },
+    {
+      "name": "diag",
+      "category": "Arrays and indexing",
+      "description": "Build a diagonal matrix or extract its main diagonal",
+      "signature": "diag(v) or diag(A)",
+      "example": "diag([2 3 4])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/diag.html"
+    },
+    {
+      "name": "size",
+      "category": "Arrays and indexing",
+      "description": "Inspect row and column dimensions",
+      "signature": "size(A) or size(A,dim)",
+      "example": "size(zeros(2,3))",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/size.html"
+    },
+    {
+      "name": "numel",
+      "category": "Arrays and indexing",
+      "description": "Count all array elements",
+      "signature": "numel(A)",
+      "example": "numel(ones(2,3))",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/numel.html"
+    },
+    {
+      "name": "length",
+      "category": "Arrays and indexing",
+      "description": "Return the largest array dimension",
+      "signature": "length(A)",
+      "example": "length(zeros(2,3))",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/length.html"
+    },
+    {
+      "name": "find",
+      "category": "Arrays and indexing",
+      "description": "Return one-based linear positions of nonzero entries",
+      "signature": "find(A)",
+      "example": "find([0 5 0 7])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/find.html"
+    },
+    {
+      "name": "logical",
+      "category": "Arrays and indexing",
+      "description": "Convert numeric values to a logical mask",
+      "signature": "logical(A)",
+      "example": "logical([0 2 -1])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/logical.html"
+    },
+    {
+      "name": "double",
+      "category": "Arrays and indexing",
+      "description": "Convert a logical array to numeric doubles",
+      "signature": "double(A)",
+      "example": "double([true false])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/double.html"
+    },
+    {
+      "name": "sum",
+      "category": "Statistics and reductions",
+      "description": "Sum along the first nonsingleton dimension, or dimension 1/2",
+      "signature": "sum(A) or sum(A,dim)",
+      "example": "sum([1 2;3 4],1)",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/sum.html"
+    },
+    {
+      "name": "prod",
+      "category": "Statistics and reductions",
+      "description": "Multiply entries along a dimension",
+      "signature": "prod(A) or prod(A,dim)",
+      "example": "prod([1 2 3])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/prod.html"
+    },
+    {
+      "name": "mean",
+      "category": "Statistics and reductions",
+      "description": "Arithmetic mean along a dimension",
+      "signature": "mean(A) or mean(A,dim)",
+      "example": "mean([1 2 3])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/mean.html"
+    },
+    {
+      "name": "median",
+      "category": "Statistics and reductions",
+      "description": "Middle of sorted entries along a dimension",
+      "signature": "median(A) or median(A,dim)",
+      "example": "median([1 100 2])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/median.html"
+    },
+    {
+      "name": "std",
+      "category": "Statistics and reductions",
+      "description": "Standard deviation; 0 is sample, 1 is population",
+      "signature": "std(A) or std(A,0|1)",
+      "example": "std([1 2 3])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/std.html"
+    },
+    {
+      "name": "var",
+      "category": "Statistics and reductions",
+      "description": "Variance; 0 is sample, 1 is population",
+      "signature": "var(A) or var(A,0|1)",
+      "example": "var([1 2 3],1)",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/var.html"
+    },
+    {
+      "name": "min",
+      "category": "Statistics and reductions",
+      "description": "Dimension-default minimum or element-wise pair minimum",
+      "signature": "min(A) or min(A,B)",
+      "example": "min([3 1 2])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/min.html"
+    },
+    {
+      "name": "max",
+      "category": "Statistics and reductions",
+      "description": "Dimension-default maximum or element-wise pair maximum",
+      "signature": "max(A) or max(A,B)",
+      "example": "max([3 1 2])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/max.html"
+    },
+    {
+      "name": "sort",
+      "category": "Statistics and reductions",
+      "description": "Sort a real vector ascending",
+      "signature": "sort(v)",
+      "example": "sort([3 1 2])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/sort.html"
+    },
+    {
+      "name": "cumsum",
+      "category": "Statistics and reductions",
+      "description": "Cumulative sum of a vector",
+      "signature": "cumsum(v)",
+      "example": "cumsum([1 2 3])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/cumsum.html"
+    },
+    {
+      "name": "any",
+      "category": "Statistics and reductions",
+      "description": "Test whether any entry in each reduction slice is nonzero",
+      "signature": "any(A) or any(A,dim)",
+      "example": "any([0 0 1])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/any.html"
+    },
+    {
+      "name": "all",
+      "category": "Statistics and reductions",
+      "description": "Test whether every entry in each reduction slice is nonzero",
+      "signature": "all(A) or all(A,dim)",
+      "example": "all([1 2 3])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/all.html"
+    },
+    {
+      "name": "dot",
+      "category": "Linear algebra",
+      "description": "Inner product of two equal-length real vectors",
+      "signature": "dot(a,b)",
+      "example": "dot([1 2],[3 4])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/dot.html"
+    },
+    {
+      "name": "cross",
+      "category": "Linear algebra",
+      "description": "Cross product of two three-element vectors",
+      "signature": "cross(a,b)",
+      "example": "cross([1 0 0],[0 1 0])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/cross.html"
+    },
+    {
+      "name": "norm",
+      "category": "Linear algebra",
+      "description": "Euclidean vector norm or explicit Frobenius matrix norm",
+      "signature": "norm(v) or norm(A,\"fro\")",
+      "example": "norm([3 4])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/norm.html"
+    },
+    {
+      "name": "det",
+      "category": "Linear algebra",
+      "description": "Determinant of a square matrix up to 64 by 64",
+      "signature": "det(A)",
+      "example": "det([2 1;1 3])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/det.html"
+    },
+    {
+      "name": "inv",
+      "category": "Linear algebra",
+      "description": "Inverse of a small full-rank square matrix; prefer backslash to solve",
+      "signature": "inv(A)",
+      "example": "inv([2 1;1 3])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/inv.html"
+    },
+    {
+      "name": "diff",
+      "category": "Numerical methods and signals",
+      "description": "First differences of a vector, without implicit spacing",
+      "signature": "diff(v)",
+      "example": "diff([1 4 9])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/diff.html"
+    },
+    {
+      "name": "gradient",
+      "category": "Numerical methods and signals",
+      "description": "Finite differences with scalar spacing; one-sided boundaries",
+      "signature": "gradient(v) or gradient(v,h)",
+      "example": "gradient([0 1 4],1)",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/gradient.html"
+    },
+    {
+      "name": "trapz",
+      "category": "Numerical methods and signals",
+      "description": "Trapezoidal integral of a vector with explicit or unit spacing",
+      "signature": "trapz(y) or trapz(x,y)",
+      "example": "trapz([0 0.5 1],[0 0.25 1])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/trapz.html"
+    },
+    {
+      "name": "polyfit",
+      "category": "Numerical methods and signals",
+      "description": "Full-rank polynomial least squares; degree 0–6 and at most 128 samples",
+      "signature": "polyfit(x,y,degree)",
+      "example": "polyfit([0 1 2],[1 3 5],1)",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/polyfit.html"
+    },
+    {
+      "name": "polyval",
+      "category": "Numerical methods and signals",
+      "description": "Evaluate descending polynomial coefficients with Horner’s rule",
+      "signature": "polyval(p,x)",
+      "example": "polyval([2 1],[0 1 2])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/polyval.html"
+    },
+    {
+      "name": "interp1",
+      "category": "Numerical methods and signals",
+      "description": "Linear interpolation inside a strictly increasing sampled interval",
+      "signature": "interp1(x,y,xq)",
+      "example": "interp1([0 2],[1 5],1)",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/interp1.html"
+    },
+    {
+      "name": "conv",
+      "category": "Numerical methods and signals",
+      "description": "Full one-dimensional convolution; R2026a orientation: column output only when both inputs are columns",
+      "signature": "conv(a,b)",
+      "example": "conv([1 2 3],[1 1])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/conv.html"
+    },
+    {
+      "name": "fzero",
+      "category": "Numerical methods and signals",
+      "description": "Bisection of a continuous scalar function on a sign-changing bracket; 80 steps, relative bracket tolerance 1e-10",
+      "signature": "fzero(@(x) expression,[a,b])",
+      "example": "fzero(@(x) x.^2-2,[0 2])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/fzero.html"
+    },
+    {
+      "name": "rand",
+      "category": "Random experiments",
+      "description": "Uniform pseudorandom values; local generator differs from MATLAB",
+      "signature": "rand() or rand(n) or rand(m,n)",
+      "example": "rng(7);\nrand(1,4)",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/rand.html"
+    },
+    {
+      "name": "randn",
+      "category": "Random experiments",
+      "description": "Normal pseudorandom values from the local teaching generator",
+      "signature": "randn() or randn(n) or randn(m,n)",
+      "example": "rng(7);\nrandn(1,4)",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/randn.html"
+    },
+    {
+      "name": "rng",
+      "category": "Random experiments",
+      "description": "Set a local deterministic seed; not MATLAB sequence compatibility",
+      "signature": "rng(seed)",
+      "example": "rng(42);\ndisp(rand(1,3));",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/rng.html"
+    },
+    {
+      "name": "disp",
+      "category": "Programming and plotting",
+      "description": "Print text or a bounded numeric preview",
+      "signature": "disp(value)",
+      "example": "disp([1 2 3])",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/disp.html"
+    },
+    {
+      "name": "assert",
+      "category": "Programming and plotting",
+      "description": "Stop with an error when a condition is false",
+      "signature": "assert(condition) or assert(condition,\"message\")",
+      "example": "assert(abs(0.1+0.2-0.3)<1e-12)",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/assert.html"
+    },
+    {
+      "name": "plot",
+      "category": "Programming and plotting",
+      "description": "Plot one real vector or one x/y pair, at most 4096 samples",
+      "signature": "plot(y) or plot(x,y)",
+      "example": "t=linspace(0,1,21);\nplot(t,t.^2);",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/plot.html"
+    },
+    {
+      "name": "title",
+      "category": "Programming and plotting",
+      "description": "Set a text plot title",
+      "signature": "title(\"text\")",
+      "example": "plot([1 2 3]);\ntitle(\"Three samples\");",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/title.html"
+    },
+    {
+      "name": "xlabel",
+      "category": "Programming and plotting",
+      "description": "Label the horizontal axis",
+      "signature": "xlabel(\"text\")",
+      "example": "plot([1 2 3]);\nxlabel(\"Sample index\");",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/xlabel.html"
+    },
+    {
+      "name": "ylabel",
+      "category": "Programming and plotting",
+      "description": "Label the vertical axis",
+      "signature": "ylabel(\"text\")",
+      "example": "plot([1 2 3]);\nylabel(\"Amplitude\");",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/ylabel.html"
+    },
+    {
+      "name": "hold",
+      "category": "Programming and plotting",
+      "description": "Keep or replace plotted series, up to eight",
+      "signature": "hold(\"on\"|\"off\")",
+      "example": "plot([1 2]);\nhold(\"on\");\nplot([2 1]);",
+      "scope": "browser",
+      "product": "MATLAB-style browser subset",
+      "url": "https://www.mathworks.com/help/matlab/ref/hold.html"
+    },
+    {
+      "name": "whos",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "whos",
+      "description": "Inspect workspace variable sizes and types.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "class",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "class(A)",
+      "description": "Inspect an object or array data type.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "single",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "single(A)",
+      "description": "Convert to single precision.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "uint8",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "uint8(A)",
+      "description": "Convert to unsigned eight-bit integers with MATLAB conversion rules.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "int32",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "int32(A)",
+      "description": "Convert to signed 32-bit integers.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "complex",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "complex(a,b)",
+      "description": "Construct complex values.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "real",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "real(z)",
+      "description": "Extract the real component.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "imag",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "imag(z)",
+      "description": "Extract the imaginary component.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "conj",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "conj(z)",
+      "description": "Complex conjugation.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "angle",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "angle(z)",
+      "description": "Phase angle in radians.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "string",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "string(value)",
+      "description": "Construct a string array.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "char",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "char(value)",
+      "description": "Construct a character array.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "strcat",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "strcat(a,b)",
+      "description": "Concatenate text.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "sprintf",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "sprintf(format,values)",
+      "description": "Format text without displaying it.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "fprintf",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "fprintf(format,values)",
+      "description": "Write formatted output; file variants require actual file access.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "str2double",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "str2double(text)",
+      "description": "Parse numeric text; inspect conversion failures.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "strcmp",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "strcmp(a,b)",
+      "description": "Compare text for equality.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "contains",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "contains(text,pattern)",
+      "description": "Search text for a pattern.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "split",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "split(text,delimiter)",
+      "description": "Split text into pieces.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "regexp",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "regexp(text,pattern)",
+      "description": "Match regular expressions.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "cell",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "cell(m,n)",
+      "description": "Create a cell array for heterogeneous values.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "struct",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "struct(field,value)",
+      "description": "Create a structure with named fields.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "fieldnames",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "fieldnames(S)",
+      "description": "List structure fields.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "isempty",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "isempty(A)",
+      "description": "Test whether any array dimension is zero.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "isequal",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "isequal(A,B)",
+      "description": "Check value and shape equality.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "isnan",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "isnan(A)",
+      "description": "Locate NaN entries.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "isfinite",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "isfinite(A)",
+      "description": "Check values for finite numeric results.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "validateattributes",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "validateattributes(A,classes,attributes)",
+      "description": "Validate an input contract.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "error",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "error(message)",
+      "description": "Raise a diagnostic error.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "warning",
+      "category": "Language and data structures",
+      "product": "MATLAB (base)",
+      "signature": "warning(message)",
+      "description": "Issue a warning without necessarily stopping.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/programming-and-data-types.html"
+    },
+    {
+      "name": "repmat",
+      "category": "Array tools and specialized mathematics",
+      "product": "MATLAB (base)",
+      "signature": "repmat(A,m,n)",
+      "description": "Repeat an array in a tiled layout.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/elementary-math.html"
+    },
+    {
+      "name": "cat",
+      "category": "Array tools and specialized mathematics",
+      "product": "MATLAB (base)",
+      "signature": "cat(dim,A,B)",
+      "description": "Concatenate along a chosen dimension.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/elementary-math.html"
+    },
+    {
+      "name": "permute",
+      "category": "Array tools and specialized mathematics",
+      "product": "MATLAB (base)",
+      "signature": "permute(A,order)",
+      "description": "Reorder dimensions of an N-dimensional array.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/elementary-math.html"
+    },
+    {
+      "name": "squeeze",
+      "category": "Array tools and specialized mathematics",
+      "product": "MATLAB (base)",
+      "signature": "squeeze(A)",
+      "description": "Remove singleton dimensions.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/elementary-math.html"
+    },
+    {
+      "name": "flip",
+      "category": "Array tools and specialized mathematics",
+      "product": "MATLAB (base)",
+      "signature": "flip(A,dim)",
+      "description": "Reverse values along a dimension.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/elementary-math.html"
+    },
+    {
+      "name": "unique",
+      "category": "Array tools and specialized mathematics",
+      "product": "MATLAB (base)",
+      "signature": "unique(A)",
+      "description": "Extract distinct entries.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/elementary-math.html"
+    },
+    {
+      "name": "sortrows",
+      "category": "Array tools and specialized mathematics",
+      "product": "MATLAB (base)",
+      "signature": "sortrows(A)",
+      "description": "Sort rows lexicographically.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/elementary-math.html"
+    },
+    {
+      "name": "meshgrid",
+      "category": "Array tools and specialized mathematics",
+      "product": "MATLAB (base)",
+      "signature": "[X,Y]=meshgrid(x,y)",
+      "description": "Build coordinate grids for surfaces.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/elementary-math.html"
+    },
+    {
+      "name": "ndgrid",
+      "category": "Array tools and specialized mathematics",
+      "product": "MATLAB (base)",
+      "signature": "[X,Y]=ndgrid(x,y)",
+      "description": "Build N-dimensional computational grids.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/elementary-math.html"
+    },
+    {
+      "name": "expm1",
+      "category": "Array tools and specialized mathematics",
+      "product": "MATLAB (base)",
+      "signature": "expm1(x)",
+      "description": "Compute exp(x)-1 accurately near zero.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/elementary-math.html"
+    },
+    {
+      "name": "log1p",
+      "category": "Array tools and specialized mathematics",
+      "product": "MATLAB (base)",
+      "signature": "log1p(x)",
+      "description": "Compute log(1+x) accurately near zero.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/elementary-math.html"
+    },
+    {
+      "name": "factorial",
+      "category": "Array tools and specialized mathematics",
+      "product": "MATLAB (base)",
+      "signature": "factorial(n)",
+      "description": "Factorial of nonnegative integers.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/elementary-math.html"
+    },
+    {
+      "name": "gamma",
+      "category": "Array tools and specialized mathematics",
+      "product": "MATLAB (base)",
+      "signature": "gamma(x)",
+      "description": "Gamma function with its documented domain.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/elementary-math.html"
+    },
+    {
+      "name": "erf",
+      "category": "Array tools and specialized mathematics",
+      "product": "MATLAB (base)",
+      "signature": "erf(x)",
+      "description": "Error function.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/elementary-math.html"
+    },
+    {
+      "name": "sparse",
+      "category": "Array tools and specialized mathematics",
+      "product": "MATLAB (base)",
+      "signature": "sparse(i,j,v,m,n)",
+      "description": "Store a matrix through nonzero entries.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/elementary-math.html"
+    },
+    {
+      "name": "full",
+      "category": "Array tools and specialized mathematics",
+      "product": "MATLAB (base)",
+      "signature": "full(S)",
+      "description": "Convert sparse data to a full matrix.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/elementary-math.html"
+    },
+    {
+      "name": "kron",
+      "category": "Array tools and specialized mathematics",
+      "product": "MATLAB (base)",
+      "signature": "kron(A,B)",
+      "description": "Kronecker product.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/elementary-math.html"
+    },
+    {
+      "name": "mldivide",
+      "category": "Decompositions and advanced numerical methods",
+      "product": "MATLAB (base)",
+      "signature": "x=A\\b",
+      "description": "Solve linear systems; the browser supports the operator only for small full-rank square or tall inputs.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/linear-algebra.html"
+    },
+    {
+      "name": "mrdivide",
+      "category": "Decompositions and advanced numerical methods",
+      "product": "MATLAB (base)",
+      "signature": "X=B/A",
+      "description": "Solve a right-sided matrix equation.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/linear-algebra.html"
+    },
+    {
+      "name": "lu",
+      "category": "Decompositions and advanced numerical methods",
+      "product": "MATLAB (base)",
+      "signature": "[L,U,P]=lu(A)",
+      "description": "Pivoted LU factorization.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/linear-algebra.html"
+    },
+    {
+      "name": "qr",
+      "category": "Decompositions and advanced numerical methods",
+      "product": "MATLAB (base)",
+      "signature": "[Q,R]=qr(A)",
+      "description": "Orthogonal-triangular factorization.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/linear-algebra.html"
+    },
+    {
+      "name": "svd",
+      "category": "Decompositions and advanced numerical methods",
+      "product": "MATLAB (base)",
+      "signature": "[U,S,V]=svd(A)",
+      "description": "Singular value decomposition.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/linear-algebra.html"
+    },
+    {
+      "name": "eig",
+      "category": "Decompositions and advanced numerical methods",
+      "product": "MATLAB (base)",
+      "signature": "[V,D]=eig(A)",
+      "description": "Eigenvectors and eigenvalues.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/linear-algebra.html"
+    },
+    {
+      "name": "chol",
+      "category": "Decompositions and advanced numerical methods",
+      "product": "MATLAB (base)",
+      "signature": "R=chol(A)",
+      "description": "Cholesky factorization of a positive-definite matrix.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/linear-algebra.html"
+    },
+    {
+      "name": "rank",
+      "category": "Decompositions and advanced numerical methods",
+      "product": "MATLAB (base)",
+      "signature": "rank(A)",
+      "description": "Estimate numerical rank using a tolerance.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/linear-algebra.html"
+    },
+    {
+      "name": "cond",
+      "category": "Decompositions and advanced numerical methods",
+      "product": "MATLAB (base)",
+      "signature": "cond(A)",
+      "description": "Estimate sensitivity through a condition number.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/linear-algebra.html"
+    },
+    {
+      "name": "rcond",
+      "category": "Decompositions and advanced numerical methods",
+      "product": "MATLAB (base)",
+      "signature": "rcond(A)",
+      "description": "Reciprocal condition estimate.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/linear-algebra.html"
+    },
+    {
+      "name": "pinv",
+      "category": "Decompositions and advanced numerical methods",
+      "product": "MATLAB (base)",
+      "signature": "pinv(A)",
+      "description": "Moore-Penrose pseudoinverse.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/linear-algebra.html"
+    },
+    {
+      "name": "lsqminnorm",
+      "category": "Decompositions and advanced numerical methods",
+      "product": "MATLAB (base)",
+      "signature": "lsqminnorm(A,b)",
+      "description": "Minimum-norm least-squares solution.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/linear-algebra.html"
+    },
+    {
+      "name": "expm",
+      "category": "Decompositions and advanced numerical methods",
+      "product": "MATLAB (base)",
+      "signature": "expm(A)",
+      "description": "Matrix exponential, distinct from element-wise exp.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/linear-algebra.html"
+    },
+    {
+      "name": "integral",
+      "category": "Integration, differential equations and fitting",
+      "product": "MATLAB (base)",
+      "signature": "integral(f,a,b)",
+      "description": "Adaptive numerical integration of a function.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/numerical-integration-and-differential-equations.html"
+    },
+    {
+      "name": "integral2",
+      "category": "Integration, differential equations and fitting",
+      "product": "MATLAB (base)",
+      "signature": "integral2(f,xmin,xmax,ymin,ymax)",
+      "description": "Two-dimensional numerical quadrature.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/numerical-integration-and-differential-equations.html"
+    },
+    {
+      "name": "integral3",
+      "category": "Integration, differential equations and fitting",
+      "product": "MATLAB (base)",
+      "signature": "integral3(f,xmin,xmax,ymin,ymax,zmin,zmax)",
+      "description": "Three-dimensional numerical quadrature.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/numerical-integration-and-differential-equations.html"
+    },
+    {
+      "name": "cumtrapz",
+      "category": "Integration, differential equations and fitting",
+      "product": "MATLAB (base)",
+      "signature": "cumtrapz(x,y)",
+      "description": "Cumulative sampled-data integration.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/numerical-integration-and-differential-equations.html"
+    },
+    {
+      "name": "ode45",
+      "category": "Integration, differential equations and fitting",
+      "product": "MATLAB (base)",
+      "signature": "[t,y]=ode45(f,tspan,y0)",
+      "description": "Adaptive solver for nonstiff ordinary differential equations.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/numerical-integration-and-differential-equations.html"
+    },
+    {
+      "name": "ode15s",
+      "category": "Integration, differential equations and fitting",
+      "product": "MATLAB (base)",
+      "signature": "[t,y]=ode15s(f,tspan,y0)",
+      "description": "Solver for stiff differential equations and supported DAEs.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/numerical-integration-and-differential-equations.html"
+    },
+    {
+      "name": "odeset",
+      "category": "Integration, differential equations and fitting",
+      "product": "MATLAB (base)",
+      "signature": "odeset(name,value)",
+      "description": "Set solver tolerances and options.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/numerical-integration-and-differential-equations.html"
+    },
+    {
+      "name": "deval",
+      "category": "Integration, differential equations and fitting",
+      "product": "MATLAB (base)",
+      "signature": "deval(sol,t)",
+      "description": "Evaluate a solver solution structure.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/numerical-integration-and-differential-equations.html"
+    },
+    {
+      "name": "interp2",
+      "category": "Integration, differential equations and fitting",
+      "product": "MATLAB (base)",
+      "signature": "interp2(X,Y,V,Xq,Yq)",
+      "description": "Interpolation on a two-dimensional grid.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/numerical-integration-and-differential-equations.html"
+    },
+    {
+      "name": "spline",
+      "category": "Integration, differential equations and fitting",
+      "product": "MATLAB (base)",
+      "signature": "spline(x,y,xq)",
+      "description": "Cubic spline interpolation.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/numerical-integration-and-differential-equations.html"
+    },
+    {
+      "name": "pchip",
+      "category": "Integration, differential equations and fitting",
+      "product": "MATLAB (base)",
+      "signature": "pchip(x,y,xq)",
+      "description": "Shape-preserving piecewise cubic interpolation.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/numerical-integration-and-differential-equations.html"
+    },
+    {
+      "name": "roots",
+      "category": "Integration, differential equations and fitting",
+      "product": "MATLAB (base)",
+      "signature": "roots(p)",
+      "description": "Polynomial roots, possibly complex.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/numerical-integration-and-differential-equations.html"
+    },
+    {
+      "name": "polyder",
+      "category": "Integration, differential equations and fitting",
+      "product": "MATLAB (base)",
+      "signature": "polyder(p)",
+      "description": "Differentiate polynomial coefficients.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/numerical-integration-and-differential-equations.html"
+    },
+    {
+      "name": "polyint",
+      "category": "Integration, differential equations and fitting",
+      "product": "MATLAB (base)",
+      "signature": "polyint(p)",
+      "description": "Integrate polynomial coefficients.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/numerical-integration-and-differential-equations.html"
+    },
+    {
+      "name": "fminsearch",
+      "category": "Integration, differential equations and fitting",
+      "product": "MATLAB (base)",
+      "signature": "fminsearch(f,x0)",
+      "description": "Derivative-free local unconstrained minimization.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/numerical-integration-and-differential-equations.html"
+    },
+    {
+      "name": "fminbnd",
+      "category": "Integration, differential equations and fitting",
+      "product": "MATLAB (base)",
+      "signature": "fminbnd(f,a,b)",
+      "description": "Bounded scalar minimization.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/numerical-integration-and-differential-equations.html"
+    },
+    {
+      "name": "readtable",
+      "category": "Files, tables and time series",
+      "product": "MATLAB (base)",
+      "signature": "readtable(filename)",
+      "description": "Import heterogeneous tabular data.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/data-import-and-export.html"
+    },
+    {
+      "name": "writetable",
+      "category": "Files, tables and time series",
+      "product": "MATLAB (base)",
+      "signature": "writetable(T,filename)",
+      "description": "Write a table to a file.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/data-import-and-export.html"
+    },
+    {
+      "name": "readmatrix",
+      "category": "Files, tables and time series",
+      "product": "MATLAB (base)",
+      "signature": "readmatrix(filename)",
+      "description": "Import a numeric matrix.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/data-import-and-export.html"
+    },
+    {
+      "name": "writematrix",
+      "category": "Files, tables and time series",
+      "product": "MATLAB (base)",
+      "signature": "writematrix(A,filename)",
+      "description": "Write numeric array data.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/data-import-and-export.html"
+    },
+    {
+      "name": "detectImportOptions",
+      "category": "Files, tables and time series",
+      "product": "MATLAB (base)",
+      "signature": "detectImportOptions(filename)",
+      "description": "Inspect and configure an import schema.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/data-import-and-export.html"
+    },
+    {
+      "name": "load",
+      "category": "Files, tables and time series",
+      "product": "MATLAB (base)",
+      "signature": "load(filename)",
+      "description": "Read saved variables or documented text data.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/data-import-and-export.html"
+    },
+    {
+      "name": "save",
+      "category": "Files, tables and time series",
+      "product": "MATLAB (base)",
+      "signature": "save(filename,variables)",
+      "description": "Persist workspace variables.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/data-import-and-export.html"
+    },
+    {
+      "name": "table",
+      "category": "Files, tables and time series",
+      "product": "MATLAB (base)",
+      "signature": "table(variables)",
+      "description": "Organize heterogeneous named columns.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/data-import-and-export.html"
+    },
+    {
+      "name": "timetable",
+      "category": "Files, tables and time series",
+      "product": "MATLAB (base)",
+      "signature": "timetable(times,variables)",
+      "description": "Associate variables with row times.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/data-import-and-export.html"
+    },
+    {
+      "name": "datetime",
+      "category": "Files, tables and time series",
+      "product": "MATLAB (base)",
+      "signature": "datetime(text)",
+      "description": "Represent dates and clock times.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/data-import-and-export.html"
+    },
+    {
+      "name": "duration",
+      "category": "Files, tables and time series",
+      "product": "MATLAB (base)",
+      "signature": "duration(h,m,s)",
+      "description": "Represent elapsed durations.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/data-import-and-export.html"
+    },
+    {
+      "name": "ismissing",
+      "category": "Files, tables and time series",
+      "product": "MATLAB (base)",
+      "signature": "ismissing(A)",
+      "description": "Identify type-appropriate missing values.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/data-import-and-export.html"
+    },
+    {
+      "name": "rmmissing",
+      "category": "Files, tables and time series",
+      "product": "MATLAB (base)",
+      "signature": "rmmissing(A)",
+      "description": "Remove entries or rows under a missing-data policy.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/data-import-and-export.html"
+    },
+    {
+      "name": "fillmissing",
+      "category": "Files, tables and time series",
+      "product": "MATLAB (base)",
+      "signature": "fillmissing(A,method)",
+      "description": "Fill missing data using an explicit method.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/data-import-and-export.html"
+    },
+    {
+      "name": "groupsummary",
+      "category": "Files, tables and time series",
+      "product": "MATLAB (base)",
+      "signature": "groupsummary(T,groups,method)",
+      "description": "Compute summaries by group.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/data-import-and-export.html"
+    },
+    {
+      "name": "join",
+      "category": "Files, tables and time series",
+      "product": "MATLAB (base)",
+      "signature": "join(A,B)",
+      "description": "Combine tables by keys.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/data-import-and-export.html"
+    },
+    {
+      "name": "retime",
+      "category": "Files, tables and time series",
+      "product": "MATLAB (base)",
+      "signature": "retime(TT,times,method)",
+      "description": "Resample timetable observations.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/data-import-and-export.html"
+    },
+    {
+      "name": "synchronize",
+      "category": "Files, tables and time series",
+      "product": "MATLAB (base)",
+      "signature": "synchronize(TT1,TT2)",
+      "description": "Align timetables on a common time basis.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/data-import-and-export.html"
+    },
+    {
+      "name": "figure",
+      "category": "Desktop graphics",
+      "product": "MATLAB (base)",
+      "signature": "figure",
+      "description": "Create or select a figure.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/graphics.html"
+    },
+    {
+      "name": "subplot",
+      "category": "Desktop graphics",
+      "product": "MATLAB (base)",
+      "signature": "subplot(m,n,p)",
+      "description": "Place axes in a grid.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/graphics.html"
+    },
+    {
+      "name": "tiledlayout",
+      "category": "Desktop graphics",
+      "product": "MATLAB (base)",
+      "signature": "tiledlayout(m,n)",
+      "description": "Organize a tiled figure layout.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/graphics.html"
+    },
+    {
+      "name": "nexttile",
+      "category": "Desktop graphics",
+      "product": "MATLAB (base)",
+      "signature": "nexttile",
+      "description": "Create the next axes in a tiled layout.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/graphics.html"
+    },
+    {
+      "name": "legend",
+      "category": "Desktop graphics",
+      "product": "MATLAB (base)",
+      "signature": "legend(labels)",
+      "description": "Identify plotted series.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/graphics.html"
+    },
+    {
+      "name": "grid",
+      "category": "Desktop graphics",
+      "product": "MATLAB (base)",
+      "signature": "grid on",
+      "description": "Show reference grid lines.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/graphics.html"
+    },
+    {
+      "name": "scatter",
+      "category": "Desktop graphics",
+      "product": "MATLAB (base)",
+      "signature": "scatter(x,y)",
+      "description": "Draw individual data points.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/graphics.html"
+    },
+    {
+      "name": "bar",
+      "category": "Desktop graphics",
+      "product": "MATLAB (base)",
+      "signature": "bar(x,y)",
+      "description": "Display bars for numeric or grouped values.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/graphics.html"
+    },
+    {
+      "name": "histogram",
+      "category": "Desktop graphics",
+      "product": "MATLAB (base)",
+      "signature": "histogram(x)",
+      "description": "Inspect a distribution with stated bins.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/graphics.html"
+    },
+    {
+      "name": "errorbar",
+      "category": "Desktop graphics",
+      "product": "MATLAB (base)",
+      "signature": "errorbar(x,y,e)",
+      "description": "Display values with defined uncertainty bars.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/graphics.html"
+    },
+    {
+      "name": "semilogx",
+      "category": "Desktop graphics",
+      "product": "MATLAB (base)",
+      "signature": "semilogx(x,y)",
+      "description": "Use a logarithmic horizontal axis.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/graphics.html"
+    },
+    {
+      "name": "loglog",
+      "category": "Desktop graphics",
+      "product": "MATLAB (base)",
+      "signature": "loglog(x,y)",
+      "description": "Use logarithmic axes.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/graphics.html"
+    },
+    {
+      "name": "imagesc",
+      "category": "Desktop graphics",
+      "product": "MATLAB (base)",
+      "signature": "imagesc(A)",
+      "description": "Display scaled matrix colors.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/graphics.html"
+    },
+    {
+      "name": "surf",
+      "category": "Desktop graphics",
+      "product": "MATLAB (base)",
+      "signature": "surf(X,Y,Z)",
+      "description": "Display a three-dimensional surface.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/graphics.html"
+    },
+    {
+      "name": "contour",
+      "category": "Desktop graphics",
+      "product": "MATLAB (base)",
+      "signature": "contour(X,Y,Z)",
+      "description": "Display constant-value curves.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/graphics.html"
+    },
+    {
+      "name": "colorbar",
+      "category": "Desktop graphics",
+      "product": "MATLAB (base)",
+      "signature": "colorbar",
+      "description": "Show the value-to-color scale.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/graphics.html"
+    },
+    {
+      "name": "exportgraphics",
+      "category": "Desktop graphics",
+      "product": "MATLAB (base)",
+      "signature": "exportgraphics(ax,filename)",
+      "description": "Export a graphics object.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/graphics.html"
+    },
+    {
+      "name": "fft",
+      "category": "Frequency analysis",
+      "product": "MATLAB (base)",
+      "signature": "fft(x)",
+      "description": "Fast complex discrete Fourier transform.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/fourier-analysis-and-filtering.html"
+    },
+    {
+      "name": "ifft",
+      "category": "Frequency analysis",
+      "product": "MATLAB (base)",
+      "signature": "ifft(X)",
+      "description": "Inverse discrete Fourier transform.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/fourier-analysis-and-filtering.html"
+    },
+    {
+      "name": "fft2",
+      "category": "Frequency analysis",
+      "product": "MATLAB (base)",
+      "signature": "fft2(A)",
+      "description": "Two-dimensional Fourier transform.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/fourier-analysis-and-filtering.html"
+    },
+    {
+      "name": "fftshift",
+      "category": "Frequency analysis",
+      "product": "MATLAB (base)",
+      "signature": "fftshift(X)",
+      "description": "Reorder transform output around zero frequency.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/fourier-analysis-and-filtering.html"
+    },
+    {
+      "name": "filter",
+      "category": "Frequency analysis",
+      "product": "MATLAB (base)",
+      "signature": "filter(b,a,x)",
+      "description": "Apply a discrete transfer-function recurrence.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/fourier-analysis-and-filtering.html"
+    },
+    {
+      "name": "conv2",
+      "category": "Frequency analysis",
+      "product": "MATLAB (base)",
+      "signature": "conv2(A,B)",
+      "description": "Two-dimensional convolution.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/fourier-analysis-and-filtering.html"
+    },
+    {
+      "name": "movmean",
+      "category": "Frequency analysis",
+      "product": "MATLAB (base)",
+      "signature": "movmean(x,k)",
+      "description": "Moving mean with documented endpoint policy.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/fourier-analysis-and-filtering.html"
+    },
+    {
+      "name": "timeit",
+      "category": "Performance and parallel computing",
+      "product": "MATLAB (base)",
+      "signature": "timeit(f)",
+      "description": "Repeated timing of a function handle.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/matlab_prog/techniques-for-improving-performance.html"
+    },
+    {
+      "name": "tic",
+      "category": "Performance and parallel computing",
+      "product": "MATLAB (base)",
+      "signature": "tic",
+      "description": "Start a chosen timing interval.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/matlab_prog/techniques-for-improving-performance.html"
+    },
+    {
+      "name": "toc",
+      "category": "Performance and parallel computing",
+      "product": "MATLAB (base)",
+      "signature": "toc",
+      "description": "Read elapsed time for a timing interval.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/matlab_prog/techniques-for-improving-performance.html"
+    },
+    {
+      "name": "profile",
+      "category": "Performance and parallel computing",
+      "product": "MATLAB (base)",
+      "signature": "profile on",
+      "description": "Collect desktop function execution profiles.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/matlab_prog/techniques-for-improving-performance.html"
+    },
+    {
+      "name": "parfor",
+      "category": "Performance and parallel computing",
+      "product": "Parallel Computing Toolbox",
+      "signature": "parfor k=1:N",
+      "description": "Run independent loop iterations on workers; language construct, not a function call.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/parallel-computing/index.html"
+    },
+    {
+      "name": "parpool",
+      "category": "Performance and parallel computing",
+      "product": "Parallel Computing Toolbox",
+      "signature": "parpool",
+      "description": "Start a parallel pool.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/parallel-computing/index.html"
+    },
+    {
+      "name": "parfeval",
+      "category": "Performance and parallel computing",
+      "product": "Parallel Computing Toolbox",
+      "signature": "parfeval(pool,f,nout,args)",
+      "description": "Schedule asynchronous work on a pool.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/parallel-computing/index.html"
+    },
+    {
+      "name": "fetchOutputs",
+      "category": "Performance and parallel computing",
+      "product": "Parallel Computing Toolbox",
+      "signature": "fetchOutputs(future)",
+      "description": "Obtain results of completed asynchronous work.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/parallel-computing/index.html"
+    },
+    {
+      "name": "gpuArray",
+      "category": "Performance and parallel computing",
+      "product": "Parallel Computing Toolbox",
+      "signature": "gpuArray(A)",
+      "description": "Transfer data to supported GPU memory.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/parallel-computing/index.html"
+    },
+    {
+      "name": "gather",
+      "category": "Performance and parallel computing",
+      "product": "Parallel Computing Toolbox",
+      "signature": "gather(G)",
+      "description": "Bring supported distributed or GPU results to the client.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/parallel-computing/index.html"
+    },
+    {
+      "name": "gputimeit",
+      "category": "Performance and parallel computing",
+      "product": "Parallel Computing Toolbox",
+      "signature": "gputimeit(f)",
+      "description": "Measure a GPU workload with appropriate synchronization.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/parallel-computing/index.html"
+    },
+    {
+      "name": "gpuDevice",
+      "category": "Performance and parallel computing",
+      "product": "Parallel Computing Toolbox",
+      "signature": "gpuDevice",
+      "description": "Inspect or select a supported GPU.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/parallel-computing/index.html"
+    },
+    {
+      "name": "distributed",
+      "category": "Performance and parallel computing",
+      "product": "Parallel Computing Toolbox",
+      "signature": "distributed(A)",
+      "description": "Create an array distributed among workers.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/parallel-computing/index.html"
+    },
+    {
+      "name": "tf",
+      "category": "Control and simulation products",
+      "product": "Control System Toolbox",
+      "signature": "tf(num,den)",
+      "description": "Create a transfer-function model.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/control/index.html"
+    },
+    {
+      "name": "ss",
+      "category": "Control and simulation products",
+      "product": "Control System Toolbox",
+      "signature": "ss(A,B,C,D)",
+      "description": "Create a state-space model.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/control/index.html"
+    },
+    {
+      "name": "step",
+      "category": "Control and simulation products",
+      "product": "Control System Toolbox",
+      "signature": "step(system)",
+      "description": "Compute or plot a step response.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/control/index.html"
+    },
+    {
+      "name": "lsim",
+      "category": "Control and simulation products",
+      "product": "Control System Toolbox",
+      "signature": "lsim(system,u,t)",
+      "description": "Simulate a linear system under an input history.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/control/index.html"
+    },
+    {
+      "name": "feedback",
+      "category": "Control and simulation products",
+      "product": "Control System Toolbox",
+      "signature": "feedback(G,H)",
+      "description": "Connect models in feedback.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/control/index.html"
+    },
+    {
+      "name": "pid",
+      "category": "Control and simulation products",
+      "product": "Control System Toolbox",
+      "signature": "pid(Kp,Ki,Kd)",
+      "description": "Create a PID controller model.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/control/index.html"
+    },
+    {
+      "name": "bode",
+      "category": "Control and simulation products",
+      "product": "Control System Toolbox",
+      "signature": "bode(system)",
+      "description": "Inspect frequency response.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/control/index.html"
+    },
+    {
+      "name": "c2d",
+      "category": "Control and simulation products",
+      "product": "Control System Toolbox",
+      "signature": "c2d(system,Ts)",
+      "description": "Discretize a continuous model with a specified method.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/control/index.html"
+    },
+    {
+      "name": "dcgain",
+      "category": "Control and simulation products",
+      "product": "Control System Toolbox",
+      "signature": "dcgain(system)",
+      "description": "Compute steady-state gain.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/control/index.html"
+    },
+    {
+      "name": "sim",
+      "category": "Control and simulation products",
+      "product": "Simulink",
+      "signature": "sim(model)",
+      "description": "Execute an actual Simulink model in a licensed environment.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/simulink/index.html"
+    },
+    {
+      "name": "new_system",
+      "category": "Control and simulation products",
+      "product": "Simulink",
+      "signature": "new_system(name)",
+      "description": "Create a Simulink model.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/simulink/index.html"
+    },
+    {
+      "name": "add_block",
+      "category": "Control and simulation products",
+      "product": "Simulink",
+      "signature": "add_block(source,destination)",
+      "description": "Add a block to a model.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/simulink/index.html"
+    },
+    {
+      "name": "set_param",
+      "category": "Control and simulation products",
+      "product": "Simulink",
+      "signature": "set_param(object,parameter,value)",
+      "description": "Set Simulink object parameters.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/simulink/index.html"
+    },
+    {
+      "name": "fmincon",
+      "category": "Specialist products",
+      "product": "Optimization Toolbox",
+      "signature": "fmincon(objective,x0,...)",
+      "description": "Constrained nonlinear optimization.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/optim/index.html"
+    },
+    {
+      "name": "lsqnonlin",
+      "category": "Specialist products",
+      "product": "Optimization Toolbox",
+      "signature": "lsqnonlin(residual,x0,...)",
+      "description": "Nonlinear least-squares estimation.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/optim/index.html"
+    },
+    {
+      "name": "linprog",
+      "category": "Specialist products",
+      "product": "Optimization Toolbox",
+      "signature": "linprog(f,A,b,...)",
+      "description": "Linear programming.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/optim/index.html"
+    },
+    {
+      "name": "quadprog",
+      "category": "Specialist products",
+      "product": "Optimization Toolbox",
+      "signature": "quadprog(H,f,...)",
+      "description": "Quadratic programming.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/optim/index.html"
+    },
+    {
+      "name": "syms",
+      "category": "Specialist products",
+      "product": "Symbolic Math Toolbox",
+      "signature": "syms x",
+      "description": "Declare symbolic objects; command form.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/symbolic/index.html"
+    },
+    {
+      "name": "sym",
+      "category": "Specialist products",
+      "product": "Symbolic Math Toolbox",
+      "signature": "sym(value)",
+      "description": "Construct a symbolic object.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/symbolic/index.html"
+    },
+    {
+      "name": "subs",
+      "category": "Specialist products",
+      "product": "Symbolic Math Toolbox",
+      "signature": "subs(expression,old,new)",
+      "description": "Substitute into symbolic expressions.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/symbolic/index.html"
+    },
+    {
+      "name": "simplify",
+      "category": "Specialist products",
+      "product": "Symbolic Math Toolbox",
+      "signature": "simplify(expression)",
+      "description": "Simplify under explicit assumptions.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/symbolic/index.html"
+    },
+    {
+      "name": "solve",
+      "category": "Specialist products",
+      "product": "Symbolic Math Toolbox",
+      "signature": "solve(equations,variables)",
+      "description": "Solve symbolic equations.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/symbolic/index.html"
+    },
+    {
+      "name": "dsolve",
+      "category": "Specialist products",
+      "product": "Symbolic Math Toolbox",
+      "signature": "dsolve(equations,conditions)",
+      "description": "Solve supported differential equations symbolically.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/symbolic/index.html"
+    },
+    {
+      "name": "matlabFunction",
+      "category": "Specialist products",
+      "product": "Symbolic Math Toolbox",
+      "signature": "matlabFunction(expression)",
+      "description": "Generate a numeric function from a symbolic expression.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/symbolic/index.html"
+    },
+    {
+      "name": "imshow",
+      "category": "Specialist products",
+      "product": "MATLAB (base)",
+      "signature": "imshow(image)",
+      "description": "Display an image with appropriate type/range handling.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/ref/imshow.html"
+    },
+    {
+      "name": "imfilter",
+      "category": "Specialist products",
+      "product": "Image Processing Toolbox",
+      "signature": "imfilter(image,kernel)",
+      "description": "Filter with an explicit boundary policy.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/images/index.html"
+    },
+    {
+      "name": "imbinarize",
+      "category": "Specialist products",
+      "product": "Image Processing Toolbox",
+      "signature": "imbinarize(image)",
+      "description": "Threshold an image.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/images/index.html"
+    },
+    {
+      "name": "edge",
+      "category": "Specialist products",
+      "product": "Image Processing Toolbox",
+      "signature": "edge(image,method)",
+      "description": "Detect edges with a stated method.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/images/index.html"
+    },
+    {
+      "name": "regionprops",
+      "category": "Specialist products",
+      "product": "Image Processing Toolbox",
+      "signature": "regionprops(mask,properties)",
+      "description": "Measure labelled or connected regions.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/images/index.html"
+    },
+    {
+      "name": "imread",
+      "category": "Specialist products",
+      "product": "MATLAB (base)",
+      "signature": "imread(filename)",
+      "description": "Read an image file into arrays.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/matlab/ref/imread.html"
+    },
+    {
+      "name": "fitlm",
+      "category": "Specialist products",
+      "product": "Statistics and Machine Learning Toolbox",
+      "signature": "fitlm(X,y)",
+      "description": "Fit and diagnose a linear regression model.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/stats/index.html"
+    },
+    {
+      "name": "fitctree",
+      "category": "Specialist products",
+      "product": "Statistics and Machine Learning Toolbox",
+      "signature": "fitctree(X,labels)",
+      "description": "Train a classification tree.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/stats/index.html"
+    },
+    {
+      "name": "kmeans",
+      "category": "Specialist products",
+      "product": "Statistics and Machine Learning Toolbox",
+      "signature": "kmeans(X,k)",
+      "description": "Cluster observations into k groups.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/stats/index.html"
+    },
+    {
+      "name": "pca",
+      "category": "Specialist products",
+      "product": "Statistics and Machine Learning Toolbox",
+      "signature": "pca(X)",
+      "description": "Principal component analysis.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/stats/index.html"
+    },
+    {
+      "name": "cvpartition",
+      "category": "Specialist products",
+      "product": "Statistics and Machine Learning Toolbox",
+      "signature": "cvpartition(labels,method)",
+      "description": "Create an evaluation partition.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/stats/index.html"
+    },
+    {
+      "name": "butter",
+      "category": "Specialist products",
+      "product": "Signal Processing Toolbox",
+      "signature": "butter(order,cutoff)",
+      "description": "Design a Butterworth filter.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/signal/index.html"
+    },
+    {
+      "name": "freqz",
+      "category": "Specialist products",
+      "product": "Signal Processing Toolbox",
+      "signature": "freqz(b,a)",
+      "description": "Evaluate a digital filter frequency response.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/signal/index.html"
+    },
+    {
+      "name": "spectrogram",
+      "category": "Specialist products",
+      "product": "Signal Processing Toolbox",
+      "signature": "spectrogram(x,window,overlap,...)",
+      "description": "Compute a time-frequency representation.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/signal/index.html"
+    },
+    {
+      "name": "trainnet",
+      "category": "Specialist products",
+      "product": "Deep Learning Toolbox",
+      "signature": "trainnet(data,targets,network,loss,options)",
+      "description": "Train a neural network with the actual toolbox.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/deeplearning/index.html"
+    },
+    {
+      "name": "minibatchpredict",
+      "category": "Specialist products",
+      "product": "Deep Learning Toolbox",
+      "signature": "minibatchpredict(network,data)",
+      "description": "Run batched predictions from a trained network.",
+      "scope": "desktop",
+      "url": "https://www.mathworks.com/help/deeplearning/index.html"
+    }
+  ]
+}

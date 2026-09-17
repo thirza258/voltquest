@@ -1,5 +1,10 @@
 # Interactive tutorials
 
+The hub links to `/matlab`: eighteen courses from arrays and plotting through numerical methods,
+simulation, performance and parallel/GPU concepts. Each of seventy-two sections has a checkpoint;
+each course has a five-question exam, browser script and desktop companion. The simple numerical
+sandbox and curated function reference are separate from firmware/board lessons. See [MATLAB.md](MATLAB.md).
+
 The hub links to `/cybersecurity`: ten web security courses with forty theory sections, guided
 vulnerability tutorials, practice questions and exams. `/sandbox?bench=cybersecurity` has an
 editable local request playground and independent notebooks. These are web teaching models,

@@ -193,3 +193,13 @@ data without network, DOM, filesystem or backend execution. The UI owns requests
 history, notebook persistence and confirmed replacement. Shared course assessment/progress code
 retains its existing contract. The static promo card imports neither curriculum nor engine, keeping
 other hubs light. Vite splits the engine into a dedicated lazy chunk. See [CYBERSECURITY.md](CYBERSECURITY.md).
+
+### MATLAB learning extension
+
+H2 owns `features/matlab`, `content/matlab.json` and `content/matlab-functions.json`. The pure
+numerical boundary owns `engine/matlab`: parser, bounded column-major matrices, allowlisted
+functions and interpretation. No eval, host object bridge or scheduling belongs in the engine.
+The feature Worker owns deadlines and disposal; React owns editing, result invalidation, plotting,
+confirmed notebook replacement and existing course progress. Pages and model are separate lazy
+chunks; navigation-only cards import no curriculum. Desktop companion scripts require actual
+MATLAB and their listed products; they are not executed by the app. See [MATLAB.md](MATLAB.md).

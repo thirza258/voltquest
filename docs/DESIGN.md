@@ -54,6 +54,14 @@ learning model. Do not imply a full Linux computer or arbitrary Python packages 
 
 ## Self-study courses
 
+MATLAB uses an ordered four-stage overview, searchable course cards and a searchable function
+reference with Browser/Desktop scope and product requirements. Each readable course section has
+a collapsible checkpoint; exams use the shared assessment form. The editor labels its MATLAB-style
+subset, pairs actual output with a workspace table and plots with a sample slider and paginated
+numeric data. Source, tables and reference signatures scroll within their panels on mobile.
+Desktop companion downloads are separate from editable browser scripts. Replacements confirm
+before changing source/notes; locale changes retain all state. See [MATLAB.md](MATLAB.md).
+
 The cybersecurity path uses a teal overview, three learning stages, searchable cards and the shared
 exam form. Course text has a readable column and outline; the guided lab occupies the full content
 width. The lab pairs request editor and response/trace, then shows defense controls, regression

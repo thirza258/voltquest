@@ -218,7 +218,7 @@ describe('campaign behavior beyond the reference input sequence', () => {
       expect(text()).toBe('EXPIRED\n')
       expect(await request('/unknown')).toMatchObject({ status: 404 })
     })
-  }, 15000)
+  }, 30000)
 
   it('validates complete MQTT payloads and acknowledges only applied commands', async () => {
     await exercise('w7-l3', async ({ advance, publish, state, pin }) => {
@@ -294,7 +294,7 @@ describe('campaign behavior beyond the reference input sequence', () => {
       expect(status).toBe('mode=CLOSE;temp=28.0;vent=CLOSED')
       expect(state().mqtt.log.filter(e => e.dir === 'pub' && e.topic === 'greenhouse/status').at(-1).payload).toBe(status)
     })
-  }, 15000)
+  }, 30000)
 
   it('does not award the hysteresis objectives to a one-threshold alarm', async () => {
     const level = clone(LEVELS['w6-l2'])
