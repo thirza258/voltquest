@@ -104,6 +104,17 @@ numeric output, command dispatch and LED state transitions on all four C++ board
 
 ## 3. Completed in this continuation
 
+### Expanded sitemap indexing for courses, tutorials, benches and variants (2026-09-18)
+
+Expanded `frontend/vite-sitemap.js` and `frontend/public/sitemap.xml` to include crawlable entry points previously unindexed:
+- **5 course track hubs**: `/courses?track=programming`, `electrical`, `iot-parts`, `iot-foundations`, `drone-foundations`.
+- **6 tutorial board hubs** and **2 topic hubs**: `/tutorials?board=uno`, `nano`, `esp32`, `esp32s3`, `raspberrypi4`, `raspberrypi5`, plus `/tutorials?topic=iot-foundations`, `drone-foundations`.
+- **65 tutorial board variants**: `/tutorials/:id?board=:board` covering all 106 interactive tutorial/board combinations.
+- **5 dedicated sandbox benches**: `/sandbox?bench=matlab`, `cybersecurity`, `hpc`, `vision`, `robotics`.
+- **49 sandbox bench lesson presets**: preconfigured interactive workbenches for each lesson/course in vision (6), robotics (5), HPC (10), MATLAB (18), and cybersecurity (10).
+
+Total sitemap index increased from 168 to **300 unique URLs**. All URLs are well-formed XML with proper `&amp;` escaping, tested with Vitest and verified in production build.
+
 ### MATLAB courses, function reference and editable numerical sandbox (2026-09-17)
 
 Open **`/matlab`**, linked from Tutorials/Courses, or **`/sandbox?bench=matlab`**. Eighteen ordered

@@ -38,24 +38,68 @@ function levelRoutes(contentDir) {
 
 /** Every crawlable route, ordered the way a new player meets them. */
 export function collectRoutes(contentDir) {
-  const tutorials = (readJson(path.join(contentDir, 'tutorials.json')).tutorials ?? [])
+  const tutorialsData = readJson(path.join(contentDir, 'tutorials.json'))
+  const tutorialList = tutorialsData.tutorials ?? []
+  const tutorials = tutorialList
     .map((tutorial) => tutorial.id)
     .filter(Boolean)
-  const courses = (readJson(path.join(contentDir, 'courses.json')).courses ?? [])
+  const tutorialBoards = [...new Set(tutorialList.flatMap((t) => t.boards ?? []))]
+    .map((board) => `/tutorials?board=${board}`)
+  const tutorialTopics = [...new Set(tutorialList.map((t) => t.track).filter(Boolean))]
+    .map((topic) => `/tutorials?topic=${topic}`)
+  const tutorialVariants = tutorialList.flatMap((t) =>
+    (t.boards ?? []).slice(1).map((board) => `/tutorials/${t.id}?board=${board}`)
+  )
+
+  const coursesData = readJson(path.join(contentDir, 'courses.json'))
+  const courses = (coursesData.courses ?? [])
     .map(course => course.id)
     .filter(Boolean)
-  const robotics = (readJson(path.join(contentDir, 'robotics.json')).tutorials ?? []).map(item => `/robotics/${item.id}`)
-  const vision = (readJson(path.join(contentDir, 'vision.json')).tutorials ?? []).map(item => `/vision/${item.id}`)
-  const hpc = (readJson(path.join(contentDir, 'hpc.json')).courses ?? []).map(item => `/hpc/${item.id}`)
-  const matlab = (readJson(path.join(contentDir, 'matlab.json')).courses ?? []).map(item => `/matlab/${item.id}`)
-  const cybersecurity = (readJson(path.join(contentDir, 'cybersecurity.json')).courses ?? []).map(item => `/cybersecurity/${item.id}`)
+  const courseTracks = (coursesData.tracks ?? [])
+    .map(track => track.id)
+    .filter(Boolean)
+    .map(id => `/courses?track=${id}`)
+
+  const roboticsData = readJson(path.join(contentDir, 'robotics.json')).tutorials ?? []
+  const robotics = roboticsData.map(item => `/robotics/${item.id}`)
+  const roboticsLessons = roboticsData.map(item => item.id).filter(Boolean)
+
+  const visionData = readJson(path.join(contentDir, 'vision.json')).tutorials ?? []
+  const vision = visionData.map(item => `/vision/${item.id}`)
+  const visionLessons = visionData.map(item => item.id).filter(Boolean)
+
+  const hpcData = readJson(path.join(contentDir, 'hpc.json')).courses ?? []
+  const hpc = hpcData.map(item => `/hpc/${item.id}`)
+  const hpcCourses = hpcData.map(item => item.id).filter(Boolean)
+
+  const matlabData = readJson(path.join(contentDir, 'matlab.json')).courses ?? []
+  const matlab = matlabData.map(item => `/matlab/${item.id}`)
+  const matlabCourses = matlabData.map(item => item.id).filter(Boolean)
+
+  const cybersecurityData = readJson(path.join(contentDir, 'cybersecurity.json')).courses ?? []
+  const cybersecurity = cybersecurityData.map(item => `/cybersecurity/${item.id}`)
+  const cyberCourses = cybersecurityData.map(item => item.id).filter(Boolean)
+
+  const sandboxBenches = ['matlab', 'cybersecurity', 'hpc', 'vision', 'robotics'].map(bench => `/sandbox?bench=${bench}`)
+  const sandboxPresets = [
+    ...visionLessons.map(id => `/sandbox?bench=vision&lesson=${id}`),
+    ...roboticsLessons.map(id => `/sandbox?bench=robotics&lesson=${id}`),
+    ...hpcCourses.map(id => `/sandbox?bench=hpc&lesson=${id}`),
+    ...matlabCourses.map(id => `/sandbox?bench=matlab&lesson=${id}`),
+    ...cyberCourses.map(id => `/sandbox?bench=cybersecurity&lesson=${id}`),
+  ]
+
   return [
     '/',
     '/campaign',
     ...levelRoutes(contentDir),
     '/tutorials',
+    ...tutorialBoards,
+    ...tutorialTopics,
     ...tutorials.map((id) => `/tutorials/${id}`),
+    ...tutorialVariants,
     '/courses',
+    ...courseTracks,
     ...courses.map(id => `/courses/${id}`),
     '/vision',
     ...vision,
@@ -68,6 +112,8 @@ export function collectRoutes(contentDir) {
     '/cybersecurity',
     ...cybersecurity,
     '/sandbox',
+    ...sandboxBenches,
+    ...sandboxPresets,
     '/showcase',
     '/leaderboard',
   ]

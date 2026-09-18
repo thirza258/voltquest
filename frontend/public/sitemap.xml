@@ -35,6 +35,14 @@
   <url><loc>https://pcb.nevatal.id/play/w7-l5</loc></url>
   <url><loc>https://pcb.nevatal.id/play/w7-l6</loc></url>
   <url><loc>https://pcb.nevatal.id/tutorials</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials?board=uno</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials?board=nano</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials?board=esp32</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials?board=raspberrypi4</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials?board=raspberrypi5</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials?topic=iot-foundations</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials?topic=drone-foundations</loc></url>
   <url><loc>https://pcb.nevatal.id/tutorials/cpp-start</loc></url>
   <url><loc>https://pcb.nevatal.id/tutorials/uno-first-light</loc></url>
   <url><loc>https://pcb.nevatal.id/tutorials/cpp-variables</loc></url>
@@ -76,7 +84,77 @@
   <url><loc>https://pcb.nevatal.id/tutorials/uno-debounce</loc></url>
   <url><loc>https://pcb.nevatal.id/tutorials/uno-morse</loc></url>
   <url><loc>https://pcb.nevatal.id/tutorials/pi-button-dimmer</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-start?board=nano</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-start?board=esp32</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-start?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/uno-first-light?board=nano</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-variables?board=nano</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-variables?board=esp32</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-variables?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/uno-blink?board=nano</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-arithmetic?board=nano</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-arithmetic?board=esp32</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-arithmetic?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/uno-button?board=nano</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-conditions?board=nano</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-conditions?board=esp32</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-conditions?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/uno-serial?board=nano</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/esp32-first-light?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/pi-blink?board=raspberrypi5</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/pi-pin-numbering?board=raspberrypi5</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/iot-sense-act?board=nano</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/iot-sense-act?board=esp32</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/iot-sense-act?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/iot-telemetry?board=nano</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/iot-telemetry?board=esp32</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/iot-telemetry?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/iot-web-control?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/drone-imu-basics?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/drone-esc-basics?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/drone-hover-basics?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/uno-potentiometer?board=nano</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-functions?board=nano</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-functions?board=esp32</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-functions?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/uno-pwm?board=nano</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-loops?board=nano</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-loops?board=esp32</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-loops?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/uno-servo?board=nano</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-arrays?board=nano</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-arrays?board=esp32</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-arrays?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/uno-lcd?board=nano</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/esp32-pwm?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/esp32-adc?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/esp32-touch?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/esp32-weather?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/esp32-wifi?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/pi-button?board=raspberrypi5</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/pi-pwm?board=raspberrypi5</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/pi-loops?board=raspberrypi5</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-nonblocking?board=nano</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-nonblocking?board=esp32</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-nonblocking?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-commands?board=nano</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-commands?board=esp32</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-commands?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-state-machine?board=nano</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-state-machine?board=esp32</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/cpp-state-machine?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/esp32-web?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/esp32-mqtt?board=esp32s3</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/pi-traffic?board=raspberrypi5</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/uno-debounce?board=nano</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/uno-morse?board=nano</loc></url>
+  <url><loc>https://pcb.nevatal.id/tutorials/pi-button-dimmer?board=raspberrypi5</loc></url>
   <url><loc>https://pcb.nevatal.id/courses</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses?track=electrical</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses?track=iot-parts</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses?track=iot-foundations</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses?track=drone-foundations</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses?track=programming</loc></url>
   <url><loc>https://pcb.nevatal.id/courses/ee-circuits</loc></url>
   <url><loc>https://pcb.nevatal.id/courses/ee-ohms-law</loc></url>
   <url><loc>https://pcb.nevatal.id/courses/ee-networks</loc></url>
@@ -166,6 +244,60 @@
   <url><loc>https://pcb.nevatal.id/cybersecurity/cyber-mass</loc></url>
   <url><loc>https://pcb.nevatal.id/cybersecurity/cyber-capstone</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=cybersecurity</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=hpc</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=vision</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=robotics</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=opencv-foundations</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=opencv-drone</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=opencv-robotics</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=vision-transformers</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=vision-deployment</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=vision-integration</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=robotics&amp;lesson=robot-motion</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=robotics&amp;lesson=ros2-topics</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=robotics&amp;lesson=robot-sensors</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=robotics&amp;lesson=ros2-services</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=robotics&amp;lesson=robot-waypoints</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=hpc&amp;lesson=hpc-correctness</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=hpc&amp;lesson=hpc-benchmarking</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=hpc&amp;lesson=hpc-memory</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=hpc&amp;lesson=hpc-tiling</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=hpc&amp;lesson=hpc-simd</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=hpc&amp;lesson=hpc-openmp</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=hpc&amp;lesson=hpc-scheduling</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=hpc&amp;lesson=hpc-scaling</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=hpc&amp;lesson=hpc-mpi</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=hpc&amp;lesson=hpc-capstone</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab&amp;lesson=matlab-start</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab&amp;lesson=matlab-arrays</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab&amp;lesson=matlab-math</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab&amp;lesson=matlab-programming</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab&amp;lesson=matlab-plots</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab&amp;lesson=matlab-linear-algebra</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab&amp;lesson=matlab-data</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab&amp;lesson=matlab-fitting</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab&amp;lesson=matlab-calculus</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab&amp;lesson=matlab-ode</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab&amp;lesson=matlab-signals</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab&amp;lesson=matlab-control</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab&amp;lesson=matlab-random</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab&amp;lesson=matlab-optimization</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab&amp;lesson=matlab-performance</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab&amp;lesson=matlab-parallel</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab&amp;lesson=matlab-toolboxes</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab&amp;lesson=matlab-capstone</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=cybersecurity&amp;lesson=cyber-http</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=cybersecurity&amp;lesson=cyber-idor</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=cybersecurity&amp;lesson=cyber-auth</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=cybersecurity&amp;lesson=cyber-sql</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=cybersecurity&amp;lesson=cyber-xss</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=cybersecurity&amp;lesson=cyber-path</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=cybersecurity&amp;lesson=cyber-csrf</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=cybersecurity&amp;lesson=cyber-ssrf</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=cybersecurity&amp;lesson=cyber-mass</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=cybersecurity&amp;lesson=cyber-capstone</loc></url>
   <url><loc>https://pcb.nevatal.id/showcase</loc></url>
   <url><loc>https://pcb.nevatal.id/leaderboard</loc></url>
 </urlset>

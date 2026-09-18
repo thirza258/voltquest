@@ -1,5 +1,12 @@
 # PRD implementation verification
 
+### Expanded sitemap indexing (2026-09-18)
+
+Expanded `frontend/vite-sitemap.js` and `frontend/public/sitemap.xml` to include crawlable entry points:
+course tracks, tutorial board hubs & topic filters, all 106 tutorial board variants, dedicated sandbox benches
+(MATLAB, Cybersecurity, HPC, Vision, Robotics), and 49 lesson sandbox presets. Sitemap index grew from 168 to
+**300 URLs**. Full `make check` passes with all tests, production build, and payload budget.
+
 ### MATLAB learning extension (2026-09-17)
 
 `/matlab` and `/sandbox?bench=matlab` provide eighteen courses, seventy-two theory sections and

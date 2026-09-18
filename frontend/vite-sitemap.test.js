@@ -32,21 +32,50 @@ describe('collectRoutes', () => {
     expect(routes.filter((route) => route.startsWith('/play/'))).toEqual(expected)
   })
 
-  it('covers every tutorial', () => {
-    const expected = readJson(path.join(contentDir, 'tutorials.json')).tutorials.map((t) => `/tutorials/${t.id}`)
-    expect(routes.filter((route) => route.startsWith('/tutorials/'))).toEqual(expected)
+  it('covers every tutorial and board variant', () => {
+    const tutorialList = readJson(path.join(contentDir, 'tutorials.json')).tutorials
+    const expected = tutorialList.map((t) => `/tutorials/${t.id}`)
+    expect(routes.filter((route) => route.startsWith('/tutorials/') && !route.includes('?'))).toEqual(expected)
+    const expectedVariants = tutorialList.flatMap((t) => (t.boards ?? []).slice(1).map((board) => `/tutorials/${t.id}?board=${board}`))
+    expect(routes.filter((route) => route.startsWith('/tutorials/') && route.includes('?'))).toEqual(expectedVariants)
   })
 
-  it('covers all course routes', () => {
-    const expected = readJson(path.join(contentDir, 'courses.json')).courses.map(course => `/courses/${course.id}`)
+  it('covers all course routes and tracks', () => {
+    const courseData = readJson(path.join(contentDir, 'courses.json'))
+    const expected = courseData.courses.map(course => `/courses/${course.id}`)
     expect(expected).toHaveLength(34)
     expect(routes.filter(route => route.startsWith('/courses/'))).toEqual(expected)
+    const expectedTracks = courseData.tracks.map(track => `/courses?track=${track.id}`)
+    expect(expectedTracks).toHaveLength(5)
+    expect(routes.filter(route => route.startsWith('/courses?track='))).toEqual(expectedTracks)
   })
 
   it('omits per-player and user-generated routes', () => {
     expect(routes).not.toContain('/profile')
     expect(routes.some((route) => route.startsWith('/sandbox/'))).toBe(false)
     expect(routes.some((route) => route.startsWith('/showcase/'))).toBe(false)
+  })
+
+  it('includes tutorial board and topic filters', () => {
+    const tutorialList = readJson(path.join(contentDir, 'tutorials.json')).tutorials
+    const boards = [...new Set(tutorialList.flatMap(t => t.boards ?? []))].map(board => `/tutorials?board=${board}`)
+    expect(boards).toHaveLength(6)
+    expect(routes.filter(route => route.startsWith('/tutorials?board='))).toEqual(boards)
+    const topics = [...new Set(tutorialList.map(t => t.track).filter(Boolean))].map(topic => `/tutorials?topic=${topic}`)
+    expect(topics).toHaveLength(2)
+    expect(routes.filter(route => route.startsWith('/tutorials?topic='))).toEqual(topics)
+  })
+
+  it('includes dedicated sandbox benches and lesson presets', () => {
+    const benches = ['matlab', 'cybersecurity', 'hpc', 'vision', 'robotics'].map(bench => `/sandbox?bench=${bench}`)
+    for (const bench of benches) {
+      expect(routes).toContain(bench)
+    }
+    expect(routes.filter(route => route.startsWith('/sandbox?bench=vision&lesson='))).toHaveLength(6)
+    expect(routes.filter(route => route.startsWith('/sandbox?bench=robotics&lesson='))).toHaveLength(5)
+    expect(routes.filter(route => route.startsWith('/sandbox?bench=hpc&lesson='))).toHaveLength(10)
+    expect(routes.filter(route => route.startsWith('/sandbox?bench=matlab&lesson='))).toHaveLength(18)
+    expect(routes.filter(route => route.startsWith('/sandbox?bench=cybersecurity&lesson='))).toHaveLength(10)
   })
 
   it('includes all ten HPC courses', () => {
@@ -88,7 +117,37 @@ describe('collectRoutes', () => {
       fs.writeFileSync(path.join(dir, 'matlab.json'), JSON.stringify({ courses: [{ id: 'matlab-start' }] }))
       fs.writeFileSync(path.join(dir, 'cybersecurity.json'), JSON.stringify({ courses: [{ id: 'cyber-http' }] }))
       expect(collectRoutes(dir)).toEqual([
-        '/', '/campaign', '/play/w1-l1', '/play/w2-l1', '/tutorials', '/tutorials/cpp-start', '/courses', '/courses/ee-circuits', '/vision', '/vision/opencv-foundations', '/robotics', '/robotics/robot-motion', '/hpc', '/hpc/hpc-correctness', '/matlab', '/matlab/matlab-start', '/cybersecurity', '/cybersecurity/cyber-http', '/sandbox', '/showcase', '/leaderboard',
+        '/',
+        '/campaign',
+        '/play/w1-l1',
+        '/play/w2-l1',
+        '/tutorials',
+        '/tutorials/cpp-start',
+        '/courses',
+        '/courses/ee-circuits',
+        '/vision',
+        '/vision/opencv-foundations',
+        '/robotics',
+        '/robotics/robot-motion',
+        '/hpc',
+        '/hpc/hpc-correctness',
+        '/matlab',
+        '/matlab/matlab-start',
+        '/cybersecurity',
+        '/cybersecurity/cyber-http',
+        '/sandbox',
+        '/sandbox?bench=matlab',
+        '/sandbox?bench=cybersecurity',
+        '/sandbox?bench=hpc',
+        '/sandbox?bench=vision',
+        '/sandbox?bench=robotics',
+        '/sandbox?bench=vision&lesson=opencv-foundations',
+        '/sandbox?bench=robotics&lesson=robot-motion',
+        '/sandbox?bench=hpc&lesson=hpc-correctness',
+        '/sandbox?bench=matlab&lesson=matlab-start',
+        '/sandbox?bench=cybersecurity&lesson=cyber-http',
+        '/showcase',
+        '/leaderboard',
       ])
     } finally {
       fs.rmSync(dir, { recursive: true, force: true })
