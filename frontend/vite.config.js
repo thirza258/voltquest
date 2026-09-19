@@ -42,6 +42,7 @@ export default defineConfig({
           if (id.includes('/src/engine/hpc/')) return 'hpc-model'
           if (id.includes('/src/engine/matlab/')) return 'matlab-model'
           if (id.includes('/src/engine/agents/')) return 'agents-model'
+          if (id.includes('/src/engine/computer/')) return 'computer-model'
           if (id.includes('/src/engine/cybersecurity/')) return 'cybersecurity-model'
           if (id.includes('/src/engine/')) return 'engine'
           if (id.includes('node_modules/react') || id.includes('node_modules/scheduler') || id.includes('node_modules/zustand') || id.includes('node_modules/react-router')) return 'vendor'

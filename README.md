@@ -2,6 +2,24 @@
 
 ## Current build
 
+**Verifiable PDF certificates:** pass any of the 121 course exams with at least 80%, then issue
+a certificate with your name, course, score, date, QR code and verification link. `/certificates`
+recovers your certificates and checks public records or PDF fingerprints. These are unproctored
+self-study certificates. Set `PUBLIC_APP_URL` to your public frontend origin before issuing them;
+see [the certificate guide](docs/CERTIFICATES.md).
+
+**Computer fundamentals and assembly:** `/computer-architecture` has eighteen courses, beginning
+with eight on bits, logic gates, NAND, Boolean design, adders, routing and ALUs, then latches,
+registers, memory and CPU control. Six assembly courses cover encodings, memory, flags, loops,
+real-ISA comparisons and a programmable CPU capstone. Includes 72 section checkpoints, 18 exams,
+editable gates and a four-bit teaching CPU at `/sandbox?bench=computer`, plus module-by-module
+Minecraft/redstone build notes. See [the computer guide](docs/COMPUTER_ARCHITECTURE.md).
+
+**Course gamification:** every course path shares learning XP, levels, seven badges, a daily goal,
+study streaks and automatic freezes. Begin with one freeze and earn more every seven active study
+days (up to two held). Progress stays in this browser, independently of campaign/account XP.
+See [learning rewards](docs/LEARNING_REWARDS.md).
+
 Start with **`/tutorials`**: 41 runnable tutorials progress from Easy through Intermediate to Hard,
 including ten Arduino/ESP32 C++ programming lessons and Raspberry Pi 4/5 Python GPIO lessons.
 Each lesson includes editable code, a live simulation, program and hardware explanations, and exact

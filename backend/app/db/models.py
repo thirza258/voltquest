@@ -11,6 +11,7 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Integer,
+    LargeBinary,
     String,
     Text,
     UniqueConstraint,
@@ -113,3 +114,23 @@ class AgentAccess(Base):
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     context: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     context_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class CourseCertificate(Base):
+    """Immutable self-study issuance record and exact downloadable PDF."""
+
+    __tablename__ = "course_certificates"
+    __table_args__ = (UniqueConstraint("player_id", "course_id", "course_version", name="uq_certificate_player_course_version"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    player_id: Mapped[str] = mapped_column(String(36), ForeignKey("players.id", ondelete="CASCADE"), nullable=False, index=True)
+    course_id: Mapped[str] = mapped_column(String(80), nullable=False)
+    course_version: Mapped[int] = mapped_column(Integer, nullable=False)
+    course_title: Mapped[str] = mapped_column(String(240), nullable=False)
+    course_path: Mapped[str] = mapped_column(String(160), nullable=False)
+    learner_name: Mapped[str] = mapped_column(String(80), nullable=False)
+    percent: Mapped[int] = mapped_column(Integer, nullable=False)
+    issued_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
+    verification_url: Mapped[str] = mapped_column(String(300), nullable=False)
+    pdf_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    pdf: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)

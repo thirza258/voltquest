@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     content_dir: str = "../content"
     cors_origins: str = "http://localhost:5173,http://localhost:8080"
     app_version: str = "1.0.0"
+    public_app_url: str = "http://localhost:5173"
     jwt_algorithm: str = "HS256"
     jwt_expiry_days: int = 30
     ai_api_key: SecretStr = Field(default="", validation_alias=AliasChoices("OPENROUTER_API_KEY", "AI_API_KEY"))

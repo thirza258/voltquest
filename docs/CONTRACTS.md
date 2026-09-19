@@ -571,3 +571,45 @@ downloads only. Companions execute locally, with separately opted-in model/GitHu
 python and notes. Confirmed import/load/reset/preset replacement discards execution claims.
 Storage is `vq.ai-agents.v1.<lesson>`; public project/API/MCP/circuit contracts are unchanged.
 The curriculum, native text and engine remain lazy. See AI_AGENTS.md for scope and limits.
+
+## 21. Computer architecture and assembly
+
+`/computer-architecture`, `/computer-architecture/:lessonId`, `?stage=assembly` and
+`/sandbox?bench=computer&lesson=<id>` follow [COMPUTER_ARCHITECTURE.md](COMPUTER_ARCHITECTURE.md).
+Eighteen frontend-only courses share existing section checks and five-question exams. Eight
+courses emphasize gates; six focus on assembly. The independent pure `engine/computer` boundary
+exports bounded gate parsing/evaluation, simultaneous DFF clocking, NOR latch state, truth tables,
+and an assembler plus fetch/decode/execute model for the original VQ4 teaching ISA.
+
+`voltquest-computer` notebooks preserve exact source, named input bits and notes under
+`vq.computer.v1.<lesson>`. Confirmed replacement clears execution evidence; source edits invalidate
+results. The models compute ideal digital behavior, not analog timing, Minecraft mechanics or a
+native processor ISA. No CircuitDoc, board, backend, public course API, MCP or showcase changes.
+Keep `ComputerPage` and `computer-model` lazy.
+
+## 22. Shared course learning rewards
+
+[LEARNING_REWARDS.md](LEARNING_REWARDS.md) defines `vq.learning.v1`: browser-local reward keys,
+active study days, current/best streak, at most two automatic freezes and bounded daily history.
+`saveCourseProgress` records successful section/exam transitions; `Assessment` records completed
+practice. Incomplete or duplicate submissions award nothing. XP milestones are one-time; completed
+practice/exams may count once per local calendar day for activity. All course paths share the panel.
+
+Freeze reconciliation runs on activity, view, focus and date refresh and persists consumed freezes.
+Historical undated course checks/scores receive milestone XP without invented study dates. Storage
+failures leave lessons usable with a notice. These rewards are independent of player/account XP,
+leaderboards and certification; no backend schema or existing course progress version changes.
+
+## 23. Course certificates
+
+`/certificates` and `/certificates/:certificateId` follow [CERTIFICATES.md](CERTIFICATES.md).
+The shared `Assessment` accepts optional `course` metadata and exposes certificate issuance only
+after a complete passing exam. Submitted answer ids are graded again by the backend across all
+121 courses. A learner-chosen name and explicit public-link consent precede issuance. Certificates
+describe an unproctored self-study pass, with a self-declared name, not accredited qualifications.
+
+Player-authenticated issuance/listing and public UUID verification/PDF download use the separate
+`/api/certificates` API and additive `course_certificates` table. Each player/course/version has
+one immutable record and exact PDF. SHA-256 supports local file comparison in the verifier;
+`PUBLIC_APP_URL` is the trusted link origin. Existing rewards, progress, public catalogue discovery,
+CircuitDoc, simulation and account XP contracts are unchanged. See API.md for request/response shapes.

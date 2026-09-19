@@ -1,3 +1,4 @@
+import CourseRewards from './CourseRewards.jsx'
 import { Link, useSearchParams } from 'react-router-dom'
 import { ArrowRight, BookOpen, CheckCircle2, Clock } from 'lucide-react'
 import { useI18n } from '../../i18n/index.jsx'
@@ -11,6 +12,7 @@ import FundamentalsExplorer from './FundamentalsExplorer.jsx'
 import CybersecurityPromo from '../cybersecurity/CybersecurityPromo.jsx'
 import MatlabPromo from '../matlab/MatlabPromo.jsx'
 import AgentPromo from '../agents/AgentPromo.jsx'
+import ComputerPromo from '../computer/ComputerPromo.jsx'
 
 const fieldClass = 'h-10 w-full rounded-md border border-line-strong bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500'
 export const courseLinkClass = 'inline-flex items-center gap-2 rounded-md font-medium text-brand-700 underline-offset-4 hover:underline focus:outline-none focus:ring-2 focus:ring-brand-500'
@@ -38,6 +40,7 @@ export default function CoursesPage() {
   return <div className="min-h-screen bg-surface-page">
     <AppHeader />
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-8">
+      <CourseRewards />
       <Link to="/tutorials" className={courseLinkClass}>{t('Back to tutorials')}</Link>
       <div className="my-7 max-w-3xl">
         <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-brand-700">{t('Learn the principles. Write the program. Build the device.')}</p>
@@ -50,6 +53,7 @@ export default function CoursesPage() {
       <section className="mb-6 rounded-lg border border-teal-200 bg-teal-50 p-5" aria-labelledby="hpc-courses-title"><h2 id="hpc-courses-title" className="text-xl font-semibold">{t('High-performance computing in C & C++')}</h2><p className="mt-2 text-sm leading-6 text-ink-secondary">{t('Ten detailed courses with interactive experiments, editable native C/C++ examples, testing guides, practice questions and exams. Learn benchmarking, caches, SIMD, OpenMP, MPI and a distributed stencil capstone.')}</p><div className="mt-4 flex flex-wrap gap-4"><Link to="/hpc" className={courseLinkClass}>{t('Explore HPC courses')}</Link><Link to="/sandbox?bench=hpc" className={courseLinkClass}>{t('Open HPC sandbox')}</Link></div></section>
       <CybersecurityPromo />
       <AgentPromo />
+      <ComputerPromo />
       <MatlabPromo />
       <FundamentalsExplorer />
       <div className="mb-7 grid gap-4 rounded-lg border border-line bg-white p-4 md:grid-cols-3">

@@ -129,6 +129,12 @@ export const api = {
     list: (params = {}) => get('/courses', { query: params }),
     get: (id) => get(`/courses/${encodeURIComponent(id)}`),
   },
+  certificates: {
+    mine: (courseId, options = {}) => get('/certificates/mine', { ...options, query: { course_id: courseId } }),
+    issue: body => post('/certificates', body),
+    verify: (id, options) => get(`/certificates/${encodeURIComponent(id)}`, options),
+    pdf: id => get(`/certificates/${encodeURIComponent(id)}/pdf`, { responseType: 'blob' }),
+  },
   players: {
     /** POST /api/players/guest → { token, player } */
     guest: () => post('/players/guest'),

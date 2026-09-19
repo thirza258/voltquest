@@ -39,7 +39,9 @@ it('provides six complete courses, a distinct integration capstone, and valid co
 })
 it('renders the complete course hub and integration entry point', () => {
   render(<MemoryRouter initialEntries={['/vision']}><Routes><Route path="/vision" element={<VisionPage />} /></Routes></MemoryRouter>)
-  expect(screen.getAllByRole('heading', { level: 2 })).toHaveLength(6)
+  for (const tutorial of VISION_TUTORIALS) {
+    expect(screen.getByRole('heading', { level: 2, name: tutorial.title }).closest('a').getAttribute('href')).toBe(`/vision/${tutorial.id}`)
+  }
   expect(screen.getByRole('link', { name: 'Open the integration capstone' }).getAttribute('href')).toBe('/vision/vision-integration')
 })
 it('processes changed settings and saves/exports only the current validated configuration', async () => {

@@ -1,3 +1,4 @@
+import CourseRewards from './CourseRewards.jsx'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, CheckCircle2, FlaskConical } from 'lucide-react'
@@ -58,6 +59,7 @@ function CourseSession({ course }) {
   return <div className="min-h-screen bg-surface-page">
     <AppHeader />
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-8">
+      <CourseRewards />
       <Link to={`/courses?track=${course.track}`} className={courseLinkClass}><ArrowLeft size={16} />{t(track.title)}</Link>
       <header className="my-6 max-w-4xl">
         <div className="mb-3 flex flex-wrap gap-2"><Badge tone="brand">{t('Course {number} of {total}', { number: course.order, total: siblings.length })}</Badge><Badge>{t(course.difficulty)}</Badge><Badge>{t('{minutes} min', { minutes: course.minutes })}</Badge></div>
@@ -114,7 +116,7 @@ function CourseSession({ course }) {
             {[course.lab, ...(course.extraLabs ?? [])].map((lab, i) => <div key={lab.tutorialId} className="mt-5 rounded-lg border border-teal-200 bg-teal-50 p-4"><h3 className="flex items-center gap-2 font-semibold text-ink"><FlaskConical size={18} />{t('Related circuit lab')} {course.extraLabs?.length ? i + 1 : ''}</h3><p className="mt-2 text-sm leading-relaxed text-ink-secondary">{t(lab.task)}</p><Link to={`/tutorials/${lab.tutorialId}`} target="_blank" rel="noopener noreferrer" className={`${courseLinkClass} mt-3`}>{t('Open related lab in a new tab')}<ArrowRight size={14} /></Link><p className="mt-2 text-xs text-slate-600">{t('The lab opens separately so your current exam choices stay here. It practises selected concepts with prepared wiring.')}</p></div>)}
           </section>
           <section id="practice" className={`${panelClass} scroll-mt-6`} aria-labelledby="practice-title"><h2 id="practice-title" className="mb-4 text-xl font-semibold text-ink">{t('Practice questions')}</h2><Assessment questions={course.practice} /></section>
-          <section id="exam" className={`${panelClass} scroll-mt-6`} aria-labelledby="exam-title"><h2 id="exam-title" className="mb-4 text-xl font-semibold text-ink">{t('Course exam')}</h2><Assessment questions={course.exam.questions} exam passPercent={course.exam.passPercent} onResult={recordExam} /></section>
+          <section id="exam" className={`${panelClass} scroll-mt-6`} aria-labelledby="exam-title"><h2 id="exam-title" className="mb-4 text-xl font-semibold text-ink">{t('Course exam')}</h2><Assessment course={course} questions={course.exam.questions} exam passPercent={course.exam.passPercent} onResult={recordExam} /></section>
           {course.sources.length > 0 && <section className={panelClass} aria-labelledby="sources-title"><h2 id="sources-title" className="text-lg font-semibold text-ink">{t('Reference reading')}</h2><ul className="mt-3 space-y-3 text-sm">{course.sources.map(source => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer" className={courseLinkClass}>{source.title}</a></li>)}</ul></section>}
           <nav className="flex flex-col justify-between gap-4 border-t border-line pt-6 text-sm sm:flex-row" aria-label={t('Course navigation')}>
             {previous ? <Link to={`/courses/${previous.id}`} className={courseLinkClass}><ArrowLeft size={16} />{t('Previous course')}</Link> : <Link to="/courses" className={courseLinkClass}>{t('All courses')}</Link>}

@@ -1,5 +1,12 @@
 # Interactive tutorials
 
+The hub links to `/computer-architecture`: eighteen gate-first computer courses, including six
+assembly courses and editable logic/register/CPU experiments. Minecraft/redstone notes explain
+how the same module contracts transfer to other media. See COMPUTER_ARCHITECTURE.md. The shared
+learning panel shows course XP, study streaks and automatic freezes (LEARNING_REWARDS.md), plus
+the certificate hub for completed course exams (CERTIFICATES.md). Firmware tutorials remain
+separate from course exam certification; running a sketch alone does not issue a certificate.
+
 The hub links to `/ai-agents?view=tutorials`: twenty guided AI agent tutorials, also included
 in their courses. `/ai-agents/:lessonId/tutorial` provides a checkable procedure and editable
 local harness. `/sandbox?bench=ai-agents` offers independent notebooks, skills and native

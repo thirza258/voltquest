@@ -1,0 +1,22 @@
+import { useI18n } from '../../i18n/index.jsx'
+import { bits } from '../../engine/computer/logic.js'
+import { MAX_CLOCKS } from '../../engine/computer/cpu.js'
+import { panelClass } from './project.js'
+
+export default function CpuView({ state }) {
+  const { t } = useI18n()
+  const latest = state.trace.at(-1)
+  return <section className={panelClass} aria-label={t('CPU state and trace')}>
+    <h3 className="text-lg font-semibold">{t('CPU state and trace')}</h3>
+    <p role="status" className="mt-3 text-sm font-semibold text-brand-700">{state.halted ? t('Program halted') : state.clocks >= MAX_CLOCKS ? t('Clock limit reached. Reset to start again.') : `${t('Next phase')}: ${t(state.phase)}`} · {t('Clocks')}: {state.clocks}/{MAX_CLOCKS}</p>
+    <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">{[['PC', state.pc, 4], ['IR', state.ir, 8], ['A', state.a, 4], ['OUT', state.out, 4]].map(([name, value, width]) => <div className="rounded border border-teal-200 bg-teal-50 p-3" key={name}><h4 className="text-sm font-semibold">{name}</h4><p className="mt-1 break-all font-mono text-lg">{bits(value, width)}</p><p className="text-xs text-slate-600">{value} · 0x{value.toString(16).toUpperCase().padStart(width / 4, '0')}</p></div>)}</div>
+    <p className="mt-3 font-mono text-sm">Z={state.z} · C={state.c}</p>
+    <div className="mt-4 overflow-x-auto rounded-md border border-line bg-slate-50 p-3"><p className="whitespace-nowrap font-mono text-xs leading-7">PC → ROM → IR → {t('Decode')} → {t('Control')}<br />A + RAM/{t('Immediate')} → ALU → A → OUT</p></div>
+    {latest && <p className="mt-3 break-words rounded bg-amber-50 p-3 font-mono text-xs leading-6">{t('Last clock')}: {latest.phase} · {latest.controls}</p>}
+    <p className="mt-4 text-sm"><strong>{t('Output history')}: </strong><span className="break-words font-mono" data-testid="cpu-output">{state.output.length ? state.output.join(', ') : '—'}</span>{state.outputTruncated && <span className="ml-2 text-amber-800">{t('Showing the latest 64 outputs.')}</span>}</p>
+    <div className="mt-5 grid gap-5 lg:grid-cols-2"><div className="min-w-0 overflow-x-auto"><table className="w-full text-left text-xs"><caption className="mb-2 text-left font-semibold">{t('Assembled program')}</caption><thead><tr>{['Address', 'Source', 'Bits', 'Hex'].map(label => <th scope="col" key={label} className="p-2">{t(label)}</th>)}</tr></thead><tbody>{state.program.listing.map(row => <tr className={`border-t border-line font-mono ${row.address === state.pc ? 'bg-teal-50' : ''}`} key={row.address}><th scope="row" className="p-2">{row.address}</th><td className="whitespace-nowrap p-2">{row.source}</td><td className="p-2">{bits(row.word, 8)}</td><td className="p-2">{row.word.toString(16).toUpperCase().padStart(2, '0')}</td></tr>)}</tbody></table><p className="mt-2 text-xs leading-6 text-slate-600">{t('The highlighted address is PC, the next fetch location. Unused ROM words contain HLT.')}</p></div>
+      <div className="min-w-0"><h4 className="mb-3 text-sm font-semibold">{t('Data RAM · 16 four-bit words')}</h4><div className="grid grid-cols-4 gap-2">{state.ram.map((value, address) => <div key={address} className="rounded border border-line bg-slate-50 p-2 font-mono text-xs"><span className="text-slate-600">[{address}]</span><p className="mt-1">{bits(value)} ({value})</p></div>)}</div></div>
+    </div>
+    <details className="mt-5" open><summary className="cursor-pointer text-sm font-semibold text-brand-700">{t('Clock trace')} ({state.trace.length})</summary>{state.traceTruncated && <p className="mt-2 text-xs text-amber-800">{t('Showing the latest 96 clocks; earlier trace rows were discarded.')}</p>}<div className="mt-3 max-h-80 overflow-auto"><table className="w-full text-left text-xs"><thead><tr>{['Clock', 'Phase', 'PC before → after', 'Instruction / control', 'A before → after', 'Z / C'].map(label => <th key={label} scope="col" className="whitespace-nowrap p-2">{t(label)}</th>)}</tr></thead><tbody>{state.trace.map(row => <tr className="border-t border-line font-mono" key={row.clock}><td className="p-2">{row.clock}</td><td className="p-2">{row.phase}</td><td className="p-2">{row.pcBefore} → {row.pcAfter}</td><td className="min-w-52 p-2">{row.mnemonic && <strong className="block">{row.mnemonic}</strong>}{row.controls}</td><td className="p-2">{row.aBefore} → {row.a}</td><td className="p-2">{row.z} / {row.c}</td></tr>)}</tbody></table></div></details>
+  </section>
+}

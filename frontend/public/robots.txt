@@ -6,6 +6,7 @@ Allow: /
 
 # Per-player and user-generated pages: no stable content to index.
 Disallow: /profile
+Disallow: /certificates/
 Disallow: /sandbox/
 Disallow: /showcase/
 

@@ -1,5 +1,26 @@
 # Self-study courses
 
+**PDF certificates** are available for each of the 121 courses across all paths. The shared exam
+form accepts a learner name and consent after an 80% pass; the server independently checks the
+submitted answers and issues one immutable certificate per player/course/version. `/certificates`
+recovers certificates and looks up public verification codes. PDFs include a QR/link, and the
+verifier checks original-file SHA-256 locally. See [CERTIFICATES.md](CERTIFICATES.md). These are
+unproctored self-study completion certificates, not accredited qualifications.
+
+**Computer architecture and assembly** at `/computer-architecture` adds eighteen courses:
+eight on gates and arithmetic, four on stored state and CPU control, and six on assembly.
+Each has four substantial sections with independent checkpoints, a guided editable experiment,
+a transferable Minecraft/redstone build challenge and a five-question exam. The gate simulator
+and VQ4 teaching CPU run edited source at `/sandbox?bench=computer`. See
+[COMPUTER_ARCHITECTURE.md](COMPUTER_ARCHITECTURE.md) for the curriculum and model limits.
+
+**Learning rewards** are shared across this catalogue and every advanced course path: one-time
+section/practice/exam XP, levels, seven badges, a three-step daily goal, current/best study streaks
+and automatic freezes. Start with one freeze; earn another every seven active study days, holding
+at most two. Frozen days preserve a streak without adding study days or XP. Existing undated
+progress receives milestone XP without creating past activity. See [LEARNING_REWARDS.md](LEARNING_REWARDS.md)
+for date handling, persistence and deduplication. This is separate from campaign/account XP.
+
 **AI agents** at `/ai-agents` adds twenty courses, eighty sections with individual questions,
 twenty standalone guided tutorials and twenty five-question exams. The JavaScript-first CLI
 capstone has a runnable Python companion. Local experiments teach context/cost accounting,

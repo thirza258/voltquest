@@ -1,3 +1,4 @@
+import CourseRewards from '../courses/CourseRewards.jsx'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import content from '@content/vision.json'
 import { AppHeader } from '../workspace/AppHeader.jsx'
@@ -20,6 +21,7 @@ export default function VisionPage({ sandbox = false }) {
   const [search] = useSearchParams()
   const lesson = VISION_TUTORIALS.find(item => item.id === (sandbox ? search.get('lesson') : lessonId))
   return <div className="min-h-screen bg-surface-page"><AppHeader /><main className="mx-auto max-w-7xl px-4 py-8 sm:px-8">
+      <CourseRewards />
     <Link className="mb-6 inline-block text-sm text-brand-700 underline" to={lessonId || sandbox ? '/vision' : '/tutorials'}>{t(lessonId || sandbox ? 'All computer vision courses' : 'All tutorials')}</Link>
     {sandbox ? <><h1 className="mb-3 text-3xl font-semibold">{t('Computer vision sandbox')}</h1><p className="mb-6 text-sm text-slate-600">{t('Explore OpenCV, patch attention and device integration with editable scenes and local processing.')}</p><VisionLab key={lesson?.id ?? 'free'} initialConfig={lesson?.config ?? DEFAULT_VISION} integrated={lesson?.integrated ?? false} /></>
       : lesson ? <StudyLesson key={lesson.id} lesson={lesson} next={VISION_TUTORIALS[lesson.order]} basePath="/vision" sandboxLink={`/sandbox?bench=vision&lesson=${lesson.id}`}><VisionLab initialConfig={lesson.config} integrated={lesson.integrated} /><Examples ids={lesson.exampleIds} /></StudyLesson>

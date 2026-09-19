@@ -117,9 +117,11 @@ describe('collectRoutes', () => {
       fs.writeFileSync(path.join(dir, 'matlab.json'), JSON.stringify({ courses: [{ id: 'matlab-start' }] }))
       fs.writeFileSync(path.join(dir, 'cybersecurity.json'), JSON.stringify({ courses: [{ id: 'cyber-http' }] }))
       fs.writeFileSync(path.join(dir, 'ai-agents.json'), JSON.stringify({ courses: [{ id: 'agents-cli' }] }))
+      fs.writeFileSync(path.join(dir, 'computer-architecture.json'), JSON.stringify({ courses: [{ id: 'computer-bits' }] }))
       expect(collectRoutes(dir)).toEqual([
         '/',
         '/campaign',
+        '/certificates',
         '/play/w1-l1',
         '/play/w2-l1',
         '/tutorials',
@@ -140,6 +142,9 @@ describe('collectRoutes', () => {
         '/ai-agents?view=tutorials',
         '/ai-agents/agents-cli',
         '/ai-agents/agents-cli/tutorial',
+        '/computer-architecture',
+        '/computer-architecture?stage=assembly',
+        '/computer-architecture/computer-bits',
         '/sandbox',
         '/sandbox?bench=matlab',
         '/sandbox?bench=cybersecurity',
@@ -147,12 +152,14 @@ describe('collectRoutes', () => {
         '/sandbox?bench=vision',
         '/sandbox?bench=robotics',
         '/sandbox?bench=ai-agents',
+        '/sandbox?bench=computer',
         '/sandbox?bench=vision&lesson=opencv-foundations',
         '/sandbox?bench=robotics&lesson=robot-motion',
         '/sandbox?bench=hpc&lesson=hpc-correctness',
         '/sandbox?bench=matlab&lesson=matlab-start',
         '/sandbox?bench=cybersecurity&lesson=cyber-http',
         '/sandbox?bench=ai-agents&lesson=agents-cli',
+        '/sandbox?bench=computer&lesson=computer-bits',
         '/showcase',
         '/leaderboard',
       ])
@@ -171,6 +178,17 @@ it('indexes every AI agent course, guided tutorial and sandbox preset', () => {
   }
   expect(routes).toContain('/sandbox?bench=ai-agents')
   expect(new Set(routes).size).toBe(routes.length)
+})
+
+it('indexes every computer course, the assembly sequence and each runnable preset', () => {
+  const courses = readJson(path.join(contentDir, 'computer-architecture.json')).courses
+  expect(courses).toHaveLength(18)
+  expect(routes).toContain('/computer-architecture?stage=assembly')
+  expect(routes).toContain('/sandbox?bench=computer')
+  for (const course of courses) {
+    expect(routes).toContain(`/computer-architecture/${course.id}`)
+    expect(routes).toContain(`/sandbox?bench=computer&lesson=${course.id}`)
+  }
 })
 
 describe('renderSitemap', () => {

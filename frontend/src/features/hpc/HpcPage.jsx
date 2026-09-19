@@ -1,3 +1,4 @@
+import CourseRewards from '../courses/CourseRewards.jsx'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import content from '@content/hpc.json'
 import { useI18n } from '../../i18n/index.jsx'
@@ -37,6 +38,7 @@ export default function HpcPage({ sandbox = false }) {
   const course = HPC_COURSES.find(item => item.id === requested)
   const index = course ? HPC_COURSES.indexOf(course) : -1
   return <div className="min-h-screen bg-surface-page"><AppHeader /><main className="mx-auto max-w-6xl px-4 py-8 sm:px-8">
+      <CourseRewards />
     {locale === 'id' && <p className="mb-5 text-sm text-slate-600">{t('HPC course narratives, questions and native source are currently in English. Interface controls support Indonesian.')}</p>}
     {requested && !course ? <><h1 className="text-2xl font-semibold">{t('Course not found')}</h1><Link to="/hpc" className={`${hpcLinkClass} mt-4 inline-block`}>{t('All HPC courses')}</Link></>
       : sandbox ? <><Link to={course ? `/hpc/${course.id}` : '/hpc'} className={hpcLinkClass}>{t(course ? 'Back to the course' : 'All HPC courses')}</Link><h1 className="mb-3 mt-6 text-3xl font-semibold">{t('HPC sandbox')}</h1><p className="mb-6 max-w-3xl text-sm leading-6 text-ink-secondary">{t('Explore performance models, test numerical behavior, edit native source and keep an experiment notebook. Choose a lab below or open its course for the full explanation.')}</p><HpcLab key={course?.id ?? 'free'} initialLab={course?.lab ?? 'correctness'} free /></>

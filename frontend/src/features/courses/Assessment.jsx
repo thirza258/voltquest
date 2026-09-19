@@ -2,13 +2,16 @@ import { useId, useRef, useState } from 'react'
 import { useI18n } from '../../i18n/index.jsx'
 import { Button } from '../../ui/index.js'
 import { gradeQuestions } from './content.js'
+import { recordPracticeLearning } from './learningRewards.js'
+import CourseCertificate from './CourseCertificate.jsx'
 
-export default function Assessment({ questions, exam = false, passPercent = 80, onResult }) {
+export default function Assessment({ questions, exam = false, passPercent = 80, onResult, course }) {
   const { t } = useI18n()
   const formId = useId()
   const [answers, setAnswers] = useState({})
   const [result, setResult] = useState(null)
   const [error, setError] = useState(false)
+  const [rewardError, setRewardError] = useState(false)
   const formRef = useRef(null)
   const resultRef = useRef(null)
   const graded = gradeQuestions(questions, answers)
@@ -23,17 +26,19 @@ export default function Assessment({ questions, exam = false, passPercent = 80, 
     }
     setError(false)
     setResult(graded)
+    if (!exam) setRewardError(!recordPracticeLearning(questions, graded))
     onResult?.(graded)
     // The status container is always mounted so keyboard focus can move to the new feedback.
     resultRef.current?.focus()
   }
   function retry() {
+    setRewardError(false)
     setAnswers({})
     setResult(null)
     setError(false)
     formRef.current?.querySelector('input')?.focus()
   }
-  return <form ref={formRef} onSubmit={submit} noValidate className="space-y-5" aria-label={t(exam ? 'Course exam' : 'Practice questions')}>
+  return <><form ref={formRef} onSubmit={submit} noValidate className="space-y-5" aria-label={t(exam ? 'Course exam' : 'Practice questions')}>
     <p className="text-sm leading-relaxed text-ink-secondary">{exam
       ? t('Answer all five questions, then submit. Pass with {percent}% (4 of 5). Answers and explanations appear after submission. There is no time limit; retries are welcome.', { percent: passPercent })
       : t('Choose an answer for each practice question, then check your reasoning. Practice does not count toward your exam score.')}</p>
@@ -52,6 +57,7 @@ export default function Assessment({ questions, exam = false, passPercent = 80, 
       </div>}
     </fieldset>)}
     {error && <p role="alert" className="text-sm text-rose-700">{t('Answer every question before submitting. Your choices have been kept.')}</p>}
+    {rewardError && <p role="alert" className="text-sm text-amber-800">{t('Learning rewards could not be saved. Your course remains usable; check browser storage.')}</p>}
     <div ref={resultRef} tabIndex={-1} role="status" className="rounded-md outline-none focus:ring-2 focus:ring-brand-500">
       {result && <div className={`rounded-lg border p-4 ${result.percent >= passPercent ? 'border-emerald-200 bg-emerald-50' : 'border-amber-200 bg-amber-50'}`}>
         <p className="font-semibold text-ink">{exam ? t(result.percent >= passPercent ? 'Exam passed' : 'Keep learning — try again') : t('Practice results')}</p>
@@ -64,5 +70,5 @@ export default function Assessment({ questions, exam = false, passPercent = 80, 
       : <Button type="submit">{t(exam ? 'Submit exam' : 'Check practice answers')}</Button>}
       <span className="text-sm text-slate-600">{t('{count} of {total} answered', { count: graded.results.filter(item => item.answered).length, total: questions.length })}</span>
     </div>
-  </form>
+  </form>{exam && course && <CourseCertificate course={course} answers={result?.percent >= passPercent ? answers : null} />}</>
 }

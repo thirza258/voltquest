@@ -1,5 +1,45 @@
 # Integration notes
 
+## Verifiable course certificates (2026-09-20)
+
+- Every exam host passes its canonical `course` to shared `Assessment`; robotics/vision use
+  `StudyLesson`. The certificate form is a sibling of the exam form, avoiding nested forms.
+  Practice never issues certificates. Local historical scores need a fresh submitted exam.
+- Backend grading reads all eight known catalogues, independently of the 34-course public
+  discovery API. Never accept client percentages, answer keys, timestamps or PDF claims.
+- Persist the original PDF and SHA-256. Snapshot title/version, learner name and score. The
+  unique player/course/version constraint makes retries idempotent. `PUBLIC_APP_URL` supplies
+  printed/QR links; configure it before issuance. Request Host cannot choose the issuer origin.
+- SQLite reads may strip timezone metadata; the public record restores UTC explicitly. First
+  issuance and a subsequent read must return the same timestamp representation.
+- Learner consent covers public name/course/score/date. Private account identifiers are omitted.
+  PDF checking stays local in Web Crypto. Lists reset on player changes and cancelled requests
+  cannot restore old records. Unsupported PDF name glyphs request transliteration. See CERTIFICATES.md.
+
+## Computer courses and learning rewards (2026-09-20)
+
+- Computer/assembly ids reuse `vq.courses.v1`. Their independent notebooks use
+  `vq.computer.v1.<lesson>`; imported results/XP are discarded. Keep the `computer-model`
+  chunk rule before generic engine chunking. Promo links import no curriculum or engine.
+- DFFs sample every data/enable/reset from the old state before any bit changes. Feedback
+  through a DFF is valid; any combinational cycle, including a disconnected one, is rejected.
+  Invalid NOR latch input makes the stored state unknown until set/reset recovers it.
+- VQ4 has separate instruction ROM and data RAM; labels are instruction addresses, allowed
+  only on branches. Three explicit clocks execute each instruction. Subtraction C means
+  no borrow. Source edits clear results; live gate input changes retain clocked memory.
+- `vq.learning.v1` is independent of player XP. Snapshot rewards before writing first-time
+  course progress so legacy milestone migration cannot swallow today's first action.
+  Practice keys include canonical prompt/lesson/id because older catalogues reuse short ids.
+- Reconciliation persists freezes consumed by opening a page, even without study that day.
+  Otherwise a later visit could incorrectly refund the bank. Compare local civil dates,
+  keep today open, and never manufacture activity from legacy undated course progress.
+- The progress panel's announcement uses `aria-live` without a second generic status role.
+  Existing page tests locate their course headings by title and target, allowing the shared
+  learning panel to have its own accessible heading.
+
+See [COMPUTER_ARCHITECTURE.md](COMPUTER_ARCHITECTURE.md) and
+[LEARNING_REWARDS.md](LEARNING_REWARDS.md) for exact contracts and limits.
+
 ## AI agent path (2026-09-19)
 
 - `agents-*` course ids share `vq.courses.v1` without changing existing course versions or APIs.

@@ -1,3 +1,4 @@
+import CourseRewards from '../courses/CourseRewards.jsx'
 import { useEffect } from 'react'
 import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { useI18n } from '../../i18n/index.jsx'
@@ -37,6 +38,7 @@ export default function MatlabPage({ sandbox = false }) {
   const requested = sandbox ? search.get('lesson') : lessonId
   const course = MATLAB_COURSES.find(item => item.id === requested), index = course ? MATLAB_COURSES.indexOf(course) : -1
   return <div className="min-h-screen bg-surface-page"><AppHeader /><main className="mx-auto max-w-6xl px-4 py-8 sm:px-8">
+      <CourseRewards />
     {locale === 'id' && <p className="mb-5 text-sm text-slate-600">{t('MATLAB narratives, questions and function descriptions are currently in English. Interface controls support Indonesian.')}</p>}
     {requested && !course ? <><h1 className="text-2xl font-semibold">{t('Course not found')}</h1><Link to="/matlab" className={`${linkClass} mt-4 inline-block`}>{t('All MATLAB courses')}</Link></>
       : sandbox ? <><Link to={course ? `/matlab/${course.id}` : '/matlab'} className={linkClass}>{t(course ? 'Back to the course' : 'All MATLAB courses')}</Link><h1 className="mb-3 mt-6 text-3xl font-semibold">{t('MATLAB sandbox')}</h1><p className="mb-6 max-w-3xl text-sm leading-6 text-ink-secondary">{t('Compute with editable scripts, inspect arrays, plot results and keep a numerical notebook. Choose a preset to explore another topic.')}</p><MatlabLab key={course?.id ?? 'free'} initialLesson={course?.id} free /></>

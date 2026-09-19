@@ -1,3 +1,4 @@
+import CourseRewards from '../courses/CourseRewards.jsx'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { useI18n } from '../../i18n/index.jsx'
 import { AppHeader } from '../workspace/AppHeader.jsx'
@@ -32,6 +33,7 @@ export default function AgentsPage({ sandbox = false, tutorial = false }) {
   const requested = sandbox ? params.get('lesson') : lessonId
   const course = AGENT_COURSES.find(item => item.id === requested), index = course ? AGENT_COURSES.indexOf(course) : -1
   return <div className="min-h-screen bg-surface-page"><AppHeader /><main className="mx-auto max-w-6xl px-4 py-8 sm:px-8">
+      <CourseRewards />
     {locale === 'id' && <p className="mb-5 text-sm text-slate-600">{t('AI agent narratives, questions and technical traces are currently in English. Interface controls support Indonesian.')}</p>}
     {requested && !course ? <><h1 className="text-2xl font-semibold">{t('Course not found')}</h1><Link to="/ai-agents" className={`${linkClass} mt-4 inline-block`}>{t('All AI agent courses')}</Link></>
       : sandbox ? <><Link className={linkClass} to={course ? `/ai-agents/${course.id}` : '/ai-agents'}>{t(course ? 'Back to the course' : 'All AI agent courses')}</Link><h1 className="mb-3 mt-6 text-3xl font-semibold">{t('AI agent sandbox')}</h1><p className="mb-6 max-w-3xl text-sm leading-6 text-ink-secondary">{t('Build an inspectable agent loop, manage context and cost, write skills and test app integrations in a local notebook.')}</p><AgentLab key={course?.id ?? 'free'} initialLesson={course?.id} free /></>

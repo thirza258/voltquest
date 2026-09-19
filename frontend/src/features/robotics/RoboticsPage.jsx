@@ -1,3 +1,4 @@
+import CourseRewards from '../courses/CourseRewards.jsx'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import content from '@content/robotics.json'
 import { AppHeader } from '../workspace/AppHeader.jsx'
@@ -13,6 +14,7 @@ export default function RoboticsPage({ sandbox = false }) {
   const [search] = useSearchParams()
   const lesson = ROBOTICS_TUTORIALS.find(item => item.id === (sandbox ? search.get('lesson') : lessonId))
   return <div className="min-h-screen bg-surface-page"><AppHeader /><main className="mx-auto max-w-7xl px-4 py-8 sm:px-8">
+      <CourseRewards />
     <Link className="mb-6 inline-block text-sm text-brand-700 underline" to={lessonId || sandbox ? '/robotics' : '/tutorials'}>{t(lessonId || sandbox ? 'All robotics tutorials' : 'All tutorials')}</Link>
     {sandbox ? <><h1 className="mb-3 text-3xl font-semibold">{t('Robotics sandbox')}</h1><p className="mb-6 text-sm text-slate-600">{t('Experiment freely with a mobile robot and ROS 2 concepts. Load a saved robot or edit the world below.')}</p><RoboticsLab key={lesson?.id ?? 'free'} initialProject={lesson?.project ?? DEFAULT_PROJECT} /></>
       : lesson ? <StudyLesson key={lesson.id} lesson={lesson} next={ROBOTICS_TUTORIALS[lesson.order]} basePath="/robotics" sandboxLink={`/sandbox?bench=robotics&lesson=${lesson.id}`}><RoboticsLab initialProject={lesson.project} /></StudyLesson>

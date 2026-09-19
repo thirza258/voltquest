@@ -54,6 +54,24 @@ learning model. Do not imply a full Linux computer or arbitrary Python packages 
 
 ## Self-study courses
 
+After a passing exam, the certificate panel accepts a name and public-link consent, then offers
+a PDF and verifier link. Existing issuance is recoverable without repeating an exam. The public
+verifier distinguishes an issued record, missing code and unavailable server, and compares a
+locally selected PDF with the original SHA-256. PDFs use landscape ivory/teal styling with a QR
+code, literal learner name and canonical course title. Show the unproctored, self-declared scope.
+
+All course paths show a compact **Your learning journey** card with current/best study streak,
+freeze bank, XP/level and a three-step daily goal. At small widths its four stats use two columns.
+Native details reveal recent studied/frozen days, seven badges and exact reward/freeze rules.
+Use actual persisted activity, accessible labels, polite updates and text alongside color.
+
+The computer path uses the shared header, readable course outline and white/teal cards, with
+stages for gates, stored state and assembly. Edited circuits produce a signal-colored SVG and
+equivalent signal table; CPU results show registers, encoded instructions, RAM and clock traces.
+Large diagrams, code and tables scroll within their cards. Keep all input bits and clock/run
+actions keyboard accessible. Minecraft build notes describe transferable modules and timing
+assumptions; they are not a game simulator. See COMPUTER_ARCHITECTURE.md and LEARNING_REWARDS.md.
+
 The AI agent path has four ordered stages, searchable course/tutorial views and a readable
 section outline. Each section has its own collapsible checkpoint; exams use the shared form.
 The lab pairs editable JSON with context/cost controls and shows observed events, a per-request

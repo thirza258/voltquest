@@ -1,3 +1,4 @@
+import CourseRewards from '../courses/CourseRewards.jsx'
 import { useI18n } from '../../i18n/index.jsx'
 import { useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
@@ -9,6 +10,7 @@ import { Badge, ChipMascot, EmptyState } from '../../ui/index.js'
 import CybersecurityPromo from '../cybersecurity/CybersecurityPromo.jsx'
 import MatlabPromo from '../matlab/MatlabPromo.jsx'
 import AgentPromo from '../agents/AgentPromo.jsx'
+import ComputerPromo from '../computer/ComputerPromo.jsx'
 
 export default function TutorialsPage() {
   const { t } = useI18n()
@@ -31,6 +33,7 @@ export default function TutorialsPage() {
     <div className="min-h-screen bg-surface-page">
       <AppHeader />
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-8">
+      <CourseRewards />
         <div className="mb-8 flex items-start justify-between gap-6">
           <div className="max-w-2xl">
             <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-brand-700">{t("The VoltQuest learning lab")}</p>
@@ -43,6 +46,7 @@ export default function TutorialsPage() {
         <CybersecurityPromo />
         <MatlabPromo />
         <AgentPromo />
+        <ComputerPromo />
         <section className="mb-7 rounded-lg border border-teal-200 bg-teal-50 p-5" aria-labelledby="hpc-path-title">
           <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">{t('C / C++ learning path')}</p>
           <h2 id="hpc-path-title" className="mt-2 text-xl font-semibold text-ink">{t('High-performance computing in C & C++')}</h2>

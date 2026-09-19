@@ -13,10 +13,12 @@ const VisionPage = lazy(() => import('./features/vision/VisionPage.jsx'))
 const HpcPage = lazy(() => import('./features/hpc/HpcPage.jsx'))
 const MatlabPage = lazy(() => import('./features/matlab/MatlabPage.jsx'))
 const AgentsPage = lazy(() => import('./features/agents/AgentsPage.jsx'))
+const ComputerPage = lazy(() => import('./features/computer/ComputerPage.jsx'))
 const CybersecurityPage = lazy(() => import('./features/cybersecurity/CybersecurityPage.jsx'))
 const RoboticsPage = lazy(() => import('./features/robotics/RoboticsPage.jsx'))
 const CoursesPage = lazy(() => import('./features/courses/CoursesPage.jsx'))
 const CoursePage = lazy(() => import('./features/courses/CoursePage.jsx'))
+const CertificatesPage = lazy(() => import('./features/courses/CertificatesPage.jsx'))
 const WorkspacePage = lazy(() => import('./features/workspace/WorkspacePage.jsx'))
 const SandboxPage = lazy(() => import('./features/sandbox/SandboxPage.jsx'))
 const ShowcasePage = lazy(() => import('./features/showcase/ShowcasePage.jsx'))
@@ -26,6 +28,7 @@ const LeaderboardPage = lazy(() => import('./features/profile/LeaderboardPage.js
 
 function SandboxRoute() {
   const [search] = useSearchParams()
+  if (search.get('bench') === 'computer') return <ComputerPage sandbox />
   if (search.get('bench') === 'ai-agents') return <AgentsPage sandbox />
   if (search.get('bench') === 'matlab') return <MatlabPage sandbox />
   if (search.get('bench') === 'cybersecurity') return <CybersecurityPage sandbox />
@@ -55,6 +58,10 @@ export default function App() {
       <Route path="/tutorials/:tutorialId" element={<TutorialPage />} />
       <Route path="/courses" element={<CoursesPage />} />
       <Route path="/courses/:courseId" element={<CoursePage />} />
+      <Route path="/certificates" element={<CertificatesPage />} />
+      <Route path="/certificates/:certificateId" element={<CertificatesPage />} />
+      <Route path="/computer-architecture" element={<ComputerPage />} />
+      <Route path="/computer-architecture/:lessonId" element={<ComputerPage />} />
       <Route path="/hpc" element={<HpcPage />} />
       <Route path="/hpc/:lessonId" element={<HpcPage />} />
       <Route path="/matlab" element={<MatlabPage />} />

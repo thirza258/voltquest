@@ -30,7 +30,10 @@ it('authors exactly five ordered lessons with valid experiments, formulas, asses
   }
 })
 it('links the five tutorials and freeform sandbox', () => {
-  page('/robotics'); expect(screen.getAllByRole('heading', { level: 2 })).toHaveLength(5)
+  page('/robotics')
+  for (const tutorial of ROBOTICS_TUTORIALS) {
+    expect(screen.getByRole('heading', { level: 2, name: tutorial.title }).closest('a').getAttribute('href')).toBe(`/robotics/${tutorial.id}`)
+  }
   expect(screen.getByRole('link', { name: 'Open robotics sandbox' }).getAttribute('href')).toBe('/sandbox?bench=robotics')
 })
 it('drives the actual model using publish and step controls and resets through the service', () => {

@@ -118,6 +118,18 @@ voltquest/
 
 ## Module ownership (implementation work packages)
 
+Course certificate UI belongs to H2 in `features/courses`, using the shared assessment's optional
+`course` prop. Backend ownership covers `api/routes/certificates.py`, `schemas/certificates.py`,
+`services/{certificates,certificate_pdf}.py` and the additive `CourseCertificate` model. Services
+own grading/persistence/PDF construction; routes only adapt HTTP. See CERTIFICATES.md.
+
+The computer learning extension belongs to H2 (`features/computer`,
+`content/computer-architecture.json`). Its pure `engine/computer` modules own digital gate/state
+evaluation and the VQ4 assembler/CPU. H2 also owns shared `features/courses/learningRewards.js`
+and `CourseRewards.jsx`; the existing course progress and assessment modules are their only
+learning-action integration points. These features do not modify account XP, backend storage,
+CircuitDoc or firmware execution. See COMPUTER_ARCHITECTURE.md and LEARNING_REWARDS.md.
+
 | Package | Paths | Depends on contracts |
 | --- | --- | --- |
 | A backend | `backend/**` | API.md, QUEST_SCHEMA.md (loads content), catalog/cosmetics JSON |

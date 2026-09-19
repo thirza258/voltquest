@@ -2,6 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://pcb.nevatal.id/</loc></url>
   <url><loc>https://pcb.nevatal.id/campaign</loc></url>
+  <url><loc>https://pcb.nevatal.id/certificates</loc></url>
   <url><loc>https://pcb.nevatal.id/play/w1-l1</loc></url>
   <url><loc>https://pcb.nevatal.id/play/w1-l2</loc></url>
   <url><loc>https://pcb.nevatal.id/play/w1-l3</loc></url>
@@ -285,6 +286,26 @@
   <url><loc>https://pcb.nevatal.id/ai-agents/agents-durable/tutorial</loc></url>
   <url><loc>https://pcb.nevatal.id/ai-agents/agents-evaluation/tutorial</loc></url>
   <url><loc>https://pcb.nevatal.id/ai-agents/agents-cli/tutorial</loc></url>
+  <url><loc>https://pcb.nevatal.id/computer-architecture</loc></url>
+  <url><loc>https://pcb.nevatal.id/computer-architecture?stage=assembly</loc></url>
+  <url><loc>https://pcb.nevatal.id/computer-architecture/computer-bits</loc></url>
+  <url><loc>https://pcb.nevatal.id/computer-architecture/computer-gates</loc></url>
+  <url><loc>https://pcb.nevatal.id/computer-architecture/computer-nand</loc></url>
+  <url><loc>https://pcb.nevatal.id/computer-architecture/computer-boolean</loc></url>
+  <url><loc>https://pcb.nevatal.id/computer-architecture/computer-adders</loc></url>
+  <url><loc>https://pcb.nevatal.id/computer-architecture/computer-arithmetic</loc></url>
+  <url><loc>https://pcb.nevatal.id/computer-architecture/computer-routing</loc></url>
+  <url><loc>https://pcb.nevatal.id/computer-architecture/computer-alu</loc></url>
+  <url><loc>https://pcb.nevatal.id/computer-architecture/computer-latches</loc></url>
+  <url><loc>https://pcb.nevatal.id/computer-architecture/computer-registers</loc></url>
+  <url><loc>https://pcb.nevatal.id/computer-architecture/computer-memory</loc></url>
+  <url><loc>https://pcb.nevatal.id/computer-architecture/computer-cpu</loc></url>
+  <url><loc>https://pcb.nevatal.id/computer-architecture/assembly-encoding</loc></url>
+  <url><loc>https://pcb.nevatal.id/computer-architecture/assembly-memory</loc></url>
+  <url><loc>https://pcb.nevatal.id/computer-architecture/assembly-flags</loc></url>
+  <url><loc>https://pcb.nevatal.id/computer-architecture/assembly-loops</loc></url>
+  <url><loc>https://pcb.nevatal.id/computer-architecture/assembly-real-isas</loc></url>
+  <url><loc>https://pcb.nevatal.id/computer-architecture/computer-capstone</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=cybersecurity</loc></url>
@@ -292,6 +313,7 @@
   <url><loc>https://pcb.nevatal.id/sandbox?bench=vision</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=robotics</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=computer</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=opencv-foundations</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=opencv-drone</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=opencv-robotics</loc></url>
@@ -361,6 +383,24 @@
   <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents&amp;lesson=agents-durable</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents&amp;lesson=agents-evaluation</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents&amp;lesson=agents-cli</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=computer&amp;lesson=computer-bits</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=computer&amp;lesson=computer-gates</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=computer&amp;lesson=computer-nand</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=computer&amp;lesson=computer-boolean</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=computer&amp;lesson=computer-adders</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=computer&amp;lesson=computer-arithmetic</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=computer&amp;lesson=computer-routing</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=computer&amp;lesson=computer-alu</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=computer&amp;lesson=computer-latches</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=computer&amp;lesson=computer-registers</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=computer&amp;lesson=computer-memory</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=computer&amp;lesson=computer-cpu</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=computer&amp;lesson=assembly-encoding</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=computer&amp;lesson=assembly-memory</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=computer&amp;lesson=assembly-flags</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=computer&amp;lesson=assembly-loops</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=computer&amp;lesson=assembly-real-isas</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=computer&amp;lesson=computer-capstone</loc></url>
   <url><loc>https://pcb.nevatal.id/showcase</loc></url>
   <url><loc>https://pcb.nevatal.id/leaderboard</loc></url>
 </urlset>

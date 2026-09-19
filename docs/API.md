@@ -82,13 +82,32 @@ Env: `DATABASE_URL` (default `sqlite:///./voltquest.db`), `JWT_SECRET` (default 
 - `GET /api/courses/{course_id}` → complete course or 404. Invalid filters return 422.
 
 Both endpoints are public. Missing content returns an empty catalog. Answer keys and explanations
-are public study material. Assessment progress is browser-local; there is no server grading or XP.
+are public study material. Assessment progress is browser-local and grants no campaign XP.
+The separate certificate issuance endpoint grades submitted answers on the server.
 `api.courses.list(params)` and `api.courses.get(id)` expose the endpoints in the frontend API client.
 
 The catalogue now includes `track=programming` (12 C/Arduino C++/ESP32 courses), for 34 courses
 across five tracks. Programming details include optional
 `codeExample:{title,code,output,explanation,exercise,tutorialId,boards}`; output is an authored
 expectation and the API never runs the code. Existing course ids, versions and grading shapes remain.
+
+## Course certificates (2026-09-20)
+
+- `POST /api/certificates` (player auth, guests allowed):
+  `{course_id,course_version,learner_name,answers:{questionId:optionId},share_consent:true}`.
+  Requires five valid current exam answers and at least 80%, across all 121 courses. Success
+  and replay return HTTP 200 with the same immutable certificate. Invalid/incomplete/failed
+  answers or absent consent return 422; stale version 409; unknown course 404.
+- `GET /api/certificates/mine?course_id=` (player auth) → `{certificates:[Certificate]}`.
+- `GET /api/certificates/{uuid}` (public) → `Certificate` or 404.
+- `GET /api/certificates/{uuid}/pdf` (public) → original PDF attachment or 404.
+
+`Certificate {id,learner_name,course_id,course_version,course_title,course_path,percent,issued_at,
+verification_url,pdf_sha256,assessment:'unproctored-self-study',status:'issued'}`. Public records
+omit ownership identifiers and answers. PDFs/public records use no-store/noindex headers.
+The additive `course_certificates` table stores the snapshot and exact PDF binary, unique by
+player/course/version. `PUBLIC_APP_URL` sets the trusted frontend origin in links/QR codes;
+request Host headers are ignored. See [CERTIFICATES.md](CERTIFICATES.md) for all boundaries.
 
 ## AI assistant (2026-09-12 extension)
 

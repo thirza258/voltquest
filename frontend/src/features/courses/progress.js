@@ -1,4 +1,5 @@
 import { readJson, writeJson } from '../../lib/storage.js'
+import { readLearning, recordCourseLearning } from './learningRewards.js'
 
 export const COURSE_PROGRESS_KEY = 'vq.courses.v1'
 const emptyProgress = () => ({ read: [], attempts: 0, bestPercent: null, lastPercent: null })
@@ -16,7 +17,10 @@ export function readCourseProgress(course) {
 }
 
 export function saveCourseProgress(course, progress) {
+  const previous = readCourseProgress(course)
+  const learning = readLearning()
   const saved = readJson(COURSE_PROGRESS_KEY)
   const entries = saved && typeof saved === 'object' && !Array.isArray(saved) ? saved : {}
-  return writeJson(COURSE_PROGRESS_KEY, { ...entries, [course.id]: { ...progress, version: course.version } })
+  const ok = writeJson(COURSE_PROGRESS_KEY, { ...entries, [course.id]: { ...progress, version: course.version } })
+  return ok && recordCourseLearning(course, previous, progress, learning)
 }
