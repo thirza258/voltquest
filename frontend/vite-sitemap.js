@@ -80,13 +80,16 @@ export function collectRoutes(contentDir) {
   const cybersecurity = cybersecurityData.map(item => `/cybersecurity/${item.id}`)
   const cyberCourses = cybersecurityData.map(item => item.id).filter(Boolean)
 
-  const sandboxBenches = ['matlab', 'cybersecurity', 'hpc', 'vision', 'robotics'].map(bench => `/sandbox?bench=${bench}`)
+  const agentCourses = (readJson(path.join(contentDir, 'ai-agents.json')).courses ?? []).map(item => item.id)
+
+  const sandboxBenches = ['matlab', 'cybersecurity', 'hpc', 'vision', 'robotics', 'ai-agents'].map(bench => `/sandbox?bench=${bench}`)
   const sandboxPresets = [
     ...visionLessons.map(id => `/sandbox?bench=vision&lesson=${id}`),
     ...roboticsLessons.map(id => `/sandbox?bench=robotics&lesson=${id}`),
     ...hpcCourses.map(id => `/sandbox?bench=hpc&lesson=${id}`),
     ...matlabCourses.map(id => `/sandbox?bench=matlab&lesson=${id}`),
     ...cyberCourses.map(id => `/sandbox?bench=cybersecurity&lesson=${id}`),
+    ...agentCourses.map(id => `/sandbox?bench=ai-agents&lesson=${id}`),
   ]
 
   return [
@@ -111,6 +114,10 @@ export function collectRoutes(contentDir) {
     ...matlab,
     '/cybersecurity',
     ...cybersecurity,
+    '/ai-agents',
+    '/ai-agents?view=tutorials',
+    ...agentCourses.map(id => `/ai-agents/${id}`),
+    ...agentCourses.map(id => `/ai-agents/${id}/tutorial`),
     '/sandbox',
     ...sandboxBenches,
     ...sandboxPresets,

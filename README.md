@@ -41,6 +41,16 @@ complete MathWorks catalog and distinguishes 73 supported browser functions from
 local notebooks, confirmed JSON import/export and exact `.m` downloads. It is a documented
 MATLAB-style teaching subset, not MATLAB/Simulink or a full toolbox runtime. See [MATLAB.md](docs/MATLAB.md).
 
+**AI agents:** open `/ai-agents` for twenty courses and twenty guided tutorials covering Codex,
+Claude Code, Google Antigravity, skills, MCP, app integrations, harnesses, context, tokens and cost.
+Advanced lessons cover retrieval, multimodal tools, delegation, durable workflows and evaluation.
+There are 80 section checkpoints and 20 five-question exams with saved scores. The editable
+`/sandbox?bench=ai-agents` runs scripted proposals through real bounded tools, approval/question
+pauses and a token/cost ledger, with independent notebooks and trace exports. The capstone includes
+editable, downloadable JavaScript-first and Python CLIs, verified offline, with optional live model
+and read-only GitHub integration. Browser labs use local fixtures; they do not call an LLM or execute
+native code. Official sources are linked and dated. See [the AI agent guide](docs/AI_AGENTS.md).
+
 The **32-quest campaign**, freeform **sandbox**, local **Monaco/Blockly editors**, **virtual phone**,
 **showcase with interactive previews and forking**, and **profile/leaderboard** are implemented.
 Sandbox projects support account saves, independent local drafts, JSON import, JSON/PNG/code/BOM

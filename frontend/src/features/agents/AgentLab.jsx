@@ -1,0 +1,109 @@
+import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useI18n } from '../../i18n/index.jsx'
+import { Button, Modal } from '../../ui/index.js'
+import { readJson, writeJson } from '../../lib/storage.js'
+import { downloadJson, downloadText } from '../../lib/download.js'
+import { contextTokens, evaluateHarness, initialState, parseConfig, runUntilPause, stepAgent, TOOLS } from '../../engine/agents/model.js'
+import { AGENT_COURSES, createProject, MAX_NOTEBOOK_BYTES, parseProject, STORAGE_PREFIX, validateProject } from './project.js'
+import { codeClass, fieldClass, linkClass, panelClass } from './styles.js'
+
+export default function AgentLab({ initialLesson, free = false }) {
+  const { t } = useI18n()
+  const [project, setProject] = useState(() => createProject(initialLesson))
+  const [run, setRun] = useState(null), [checks, setChecks] = useState(null)
+  const [pending, setPending] = useState(null), [error, setError] = useState(''), [message, setMessage] = useState('')
+  const [answer, setAnswer] = useState(''), [language, setLanguage] = useState('javascript'), [dirty, setDirty] = useState(false)
+  const inputRef = useRef(null), generation = useRef(0)
+  useEffect(() => () => { generation.current++ }, [])
+  const course = AGENT_COURSES.find(course => course.id === project.lesson)
+  function edit(values, execution = false) {
+    generation.current++; setPending(null); setProject(previous => ({ ...previous, ...values })); setDirty(true); setMessage(''); setError('')
+    if (execution) { setRun(null); setChecks(null); setAnswer('') }
+  }
+  function attempt(work) { try { work(); setError('') } catch (failure) { setError(failure.message) } }
+  function execute(all = false) {
+    attempt(() => {
+      const state = run ?? initialState(parseConfig(project.source), project.skill)
+      setRun(all ? runUntilPause(state) : stepAgent(state)); setMessage('')
+    })
+  }
+  function decision(value) { attempt(() => { setRun(stepAgent(run, value)); setAnswer('') }) }
+  function replace(value) {
+    generation.current++; setProject(value); setPending(null); setRun(null); setChecks(null); setAnswer(''); setError(''); setMessage('Notebook opened. Run to produce fresh evidence.'); setDirty(false)
+  }
+  function save() { attempt(() => {
+    const value = validateProject(project)
+    if (!writeJson(STORAGE_PREFIX + project.lesson, value)) throw new Error('Browser storage is unavailable. Export your notebook to keep it.')
+    setDirty(false); setMessage('AI agent notebook saved in this browser.')
+  }) }
+  function load() { attempt(() => {
+    generation.current++
+    const value = readJson(STORAGE_PREFIX + project.lesson)
+    if (!value) throw new Error('No saved notebook was found for this preset.')
+    setPending(validateProject(value, free ? undefined : initialLesson))
+  }) }
+  async function importFile(event) {
+    const file = event.target.files?.[0]; event.target.value = ''
+    if (!file) return
+    const id = ++generation.current
+    try {
+      if (file.size > MAX_NOTEBOOK_BYTES) throw new Error('AI agent notebooks must fit within 192 KiB.')
+      const value = parseProject(await file.text(), free ? undefined : initialLesson)
+      if (generation.current === id) { setPending(value); setError('') }
+    } catch (failure) { if (generation.current === id) setError(failure.message) }
+  }
+  function quickEdit(key, value) {
+    attempt(() => {
+      const config = parseConfig(project.source)
+      if (key.startsWith('rates.')) config.rates[key.slice(6)] = Number(value)
+      else config[key] = Number(value)
+      const source = JSON.stringify(config, null, 2)
+      parseConfig(source)
+      edit({ source }, true)
+    })
+  }
+  let config = null
+  try { config = parseConfig(project.source) } catch { /* Incomplete drafts remain editable and saveable. */ }
+  const active = run && !['completed', 'stopped'].includes(run.status)
+  const waiting = run && ['approval', 'question'].includes(run.status)
+  return <div className="space-y-5" data-agent-lesson={project.lesson}>
+    <section className={panelClass} aria-label={t('Agent harness editor')}>
+      <div className="flex flex-wrap justify-between gap-3"><h2 className="text-xl font-semibold">{t('Agent harness editor')}</h2><span className="text-xs text-slate-600">{t(dirty ? 'Unsaved changes' : 'Current notebook')}</span></div>
+      <p className="mt-3 text-sm leading-6 text-ink-secondary">{t('Edit the JSON proposals and run a local agent harness. Tools change a fictional workspace and issue tracker. The model is a scripted fixture: no API key, paid inference, real app access or arbitrary code execution.')}</p>
+      {free && <label className="mt-4 block text-sm">{t('Choose an AI agent tutorial')}<select className={`${fieldClass} mt-1`} value={project.lesson} onChange={event => { generation.current++; setPending(createProject(event.target.value)) }}>{AGENT_COURSES.map(item => <option key={item.id} value={item.id}>{item.title}</option>)}</select></label>}
+      <div className="mt-4 grid items-start gap-5 xl:grid-cols-[minmax(0,1.5fr)_minmax(240px,1fr)]">
+        <label className="block min-w-0 text-sm font-medium">{t('Harness JSON')}<textarea className={`${fieldClass} mt-2 min-h-96 whitespace-pre font-mono text-xs leading-6`} spellCheck={false} wrap="off" rows={19} value={project.source} onChange={event => edit({ source: event.target.value }, true)} onKeyDown={event => { if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') { event.preventDefault(); execute(true) } }} /></label>
+        <div className="min-w-0 rounded-md border border-line bg-slate-50 p-4"><h3 className="font-semibold">{t('Context and cost controls')}</h3><p className="mt-2 text-xs leading-6 text-slate-600">{t('Tokens use UTF-8 bytes / 4, rounded up. Rates are hypothetical USD per million tokens. Cached tokens still occupy context. Edit the JSON to change context, scopes and proposed turns.')}</p>
+          <div className="mt-3 grid grid-cols-2 gap-3">{[['contextWindow', 'Context window', 64, 128000, 1], ['outputReserve', 'Output reserve', 16, 8000, 1], ['maxTurns', 'Maximum turns', 1, 32, 1], ['budgetUsd', 'Budget USD', 0, 100, 0.001], ['cachedTokens', 'Assumed cached tokens', 0, 128000, 1], ['rates.input', 'Input rate', 0, 1000, 0.1], ['rates.cached', 'Cached rate', 0, 1000, 0.1], ['rates.output', 'Output rate', 0, 1000, 0.1]].map(([key, label, min, max, step]) => <label key={key} className="text-xs leading-5">{t(label)}<input type="number" className={`${fieldClass} mt-1`} min={min} max={max} step={step} disabled={!config} key={`${key}:${config ? (key.startsWith('rates.') ? config.rates[key.slice(6)] : config[key]) : ''}`} defaultValue={config ? (key.startsWith('rates.') ? config.rates[key.slice(6)] : config[key]) : ''} onBlur={event => { if (event.target.value !== '') quickEdit(key, event.target.value) }} /></label>)}</div>
+          {!config && <p className="mt-3 text-xs text-amber-900">{t('Finish valid JSON to enable these controls.')}</p>}
+        </div>
+      </div>
+      <div className="mt-4 flex flex-wrap gap-2"><Button onClick={() => execute(true)} disabled={Boolean(waiting || (run && !active))}>{t('Run until pause')}</Button><Button variant="secondary" onClick={() => execute(false)} disabled={Boolean(waiting || (run && !active))}>{t('Step one turn')}</Button><Button variant="secondary" disabled={!active} onClick={() => setRun({ ...run, status: 'stopped', pending: null, stopReason: 'Stopped by the learner.' })}>{t('Stop run')}</Button><Button variant="secondary" onClick={() => { setRun(null); setAnswer(''); setMessage('Ready for a fresh run.'); setError('') }}>{t('New run')}</Button><Button variant="ghost" onClick={() => { generation.current++; setPending(createProject(project.lesson)) }}>{t('Reset notebook')}</Button></div>
+      <details className="mt-4 text-sm leading-6"><summary className="cursor-pointer font-semibold text-brand-700">{t('Proposal syntax and tool directory')}</summary><p className="mt-3 text-slate-600">{t('Turn types: tool with name and args; ask, compact and finish with text. Compaction retains pinned context and your authored summary. Later proposals are scripted and do not adapt to answers. Limits: 32 turns, 64 KiB JSON, bounded text and results. A failed tool call returns an error to the trace; it does not grant more permissions.')}</p><div className="mt-3 overflow-x-auto"><table className="w-full text-left text-xs"><thead><tr>{['Tool', 'Arguments', 'Required scope'].map(label => <th className="p-2" key={label} scope="col">{t(label)}</th>)}</tr></thead><tbody>{TOOLS.map(tool => <tr key={tool.name} className="border-t border-line"><th scope="row" className="p-2 font-mono">{tool.name}</th><td className="p-2 font-mono">{tool.fields.join(', ') || '—'}{tool.write && <span className="ml-2 text-amber-800">{t('Approval required')}</span>}</td><td className="p-2 font-mono">{tool.scope}</td></tr>)}</tbody></table></div><p className="mt-3 text-xs text-slate-600">{t('MCP fixture: in-memory subset pinned to 2025-11-25; initialize, notifications/initialized, tools/list, tools/call, resources/list, resources/read, prompts/list and prompts/get. No transport, authentication or asynchronous task implementation.')}</p></details>
+      <details className="mt-4 text-sm leading-6"><summary className="cursor-pointer font-medium text-brand-700">{t('Expected result for the original example')}</summary><p className="mt-2 text-ink-secondary">{course.expected}</p></details>
+      <p role="status" className="mt-3 text-sm text-brand-700">{t(message)}</p>{error && <p role="alert" className="mt-3 whitespace-pre-wrap break-words rounded border border-rose-200 bg-rose-50 p-3 text-sm text-rose-900">{t(error)}</p>}
+    </section>
+    {run && <section className={`${panelClass} space-y-5`} aria-label={t('Agent run results')}>
+      <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-xl font-semibold">{t('Agent run results')}</h2><Button variant="secondary" size="sm" onClick={() => downloadJson({ format: 'voltquest-agent-trace', version: 1, lesson: project.lesson, config: run.config, skill: run.skill, trace: run.trace, ledger: run.ledger, status: run.status, stopReason: run.stopReason, files: run.files, issues: run.issues }, `${project.lesson}-trace.json`)}>{t('Export run trace')}</Button></div>
+      <div className="flex flex-wrap gap-4 text-sm"><strong>{t('State')}: {t(run.status)}</strong><span>{t('Requests')}: {run.ledger.length}</span><span>{t('Current context estimate')}: {contextTokens(run)}</span><span>{t('Hypothetical cost')}: ${run.totalUsd.toFixed(6)}</span></div>
+      {run.stopReason && <p role="status" className="rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">{t(run.stopReason)}</p>}
+      {run.status === 'approval' && <div className="rounded-md border border-amber-300 bg-amber-50 p-4" role="region" aria-label={t('Pending tool approval')}><h3 className="font-semibold">{t('Review this exact local write')}</h3><pre className={`${codeClass} my-3`} tabIndex={0}>{JSON.stringify(run.pending, null, 2)}</pre><div className="flex flex-wrap gap-2"><Button onClick={() => decision({ approve: true })}>{t('Approve this call')}</Button><Button variant="secondary" onClick={() => decision({ approve: false })}>{t('Deny this call')}</Button></div></div>}
+      {run.status === 'question' && <form className="rounded-md border border-teal-200 bg-teal-50 p-4" onSubmit={event => { event.preventDefault(); decision({ answer }) }}><label className="block text-sm font-medium">{t('Agent question')}<span className="mt-2 block font-normal">{run.pending.text}</span><input className={`${fieldClass} my-3`} aria-label={t('Your answer to the agent')} value={answer} maxLength={2000} onChange={event => setAnswer(event.target.value)} /></label><Button type="submit" disabled={!answer.trim()}>{t('Submit answer')}</Button></form>}
+      <div className="overflow-x-auto"><table className="w-full text-left text-xs"><caption className="mb-2 text-left font-semibold">{t('Modeled request ledger')}</caption><thead><tr>{['Turn', 'Input', 'Cached subset', 'Output', 'Reserved output', 'Cost USD'].map(label => <th key={label} scope="col" className="p-2">{t(label)}</th>)}</tr></thead><tbody>{run.ledger.map(row => <tr key={row.turn} className="border-t border-line font-mono"><td className="p-2">{row.turn}</td><td className="p-2">{row.input}</td><td className="p-2">{row.cached}</td><td className="p-2">{row.output}</td><td className="p-2">{row.reserved}</td><td className="p-2">{row.costUsd.toFixed(6)}</td></tr>)}</tbody></table></div>
+      <div><h3 className="mb-3 font-semibold">{t('Observed events')}</h3><ol className="space-y-2">{run.trace.map(item => <li key={item.index}><details className="rounded-md border border-line p-3"><summary className="cursor-pointer break-words text-sm"><span className="font-mono text-brand-700">{item.index}. {item.type}</span> · {t('Turn')} {item.turn}{item.detail.name ? ` · ${item.detail.name}` : ''}</summary><pre className={`${codeClass} mt-3`} tabIndex={0}>{JSON.stringify(item.detail, null, 2)}</pre></details></li>)}</ol></div>
+      <div className="grid min-w-0 gap-4 md:grid-cols-2"><details className="min-w-0 rounded-md border border-line p-3"><summary className="cursor-pointer font-semibold">{t('Virtual workspace files')}</summary><pre className={`${codeClass} mt-3`} tabIndex={0}>{JSON.stringify(run.files, null, 2)}</pre></details><details className="min-w-0 rounded-md border border-line p-3"><summary className="cursor-pointer font-semibold">{t('Fictional app issues')} ({run.issues.length})</summary><pre className={`${codeClass} mt-3`} tabIndex={0}>{JSON.stringify(run.issues, null, 2)}</pre></details></div>
+      <details><summary className="cursor-pointer text-sm font-semibold text-brand-700">{t('Inspect current context')}</summary><pre className={`${codeClass} mt-3`} tabIndex={0}>{JSON.stringify(run.context, null, 2)}</pre></details>
+    </section>}
+    <section className={panelClass}><h2 className="text-lg font-semibold">{t('Skill workshop')}</h2><p className="mt-2 text-sm leading-6 text-slate-600">{t('Write a focused SKILL.md, then use lint_skill and load_skill in your plan. The linter checks a small frontmatter subset; it does not certify safety or execute scripts.')}</p><label className="mt-4 block text-sm">{t('Editable SKILL.md')}<textarea className={`${fieldClass} mt-2 font-mono text-xs leading-6`} rows={10} wrap="off" spellCheck={false} value={project.skill} onChange={event => edit({ skill: event.target.value }, true)} /></label><Button className="mt-3" variant="secondary" onClick={() => downloadText(project.skill, 'SKILL.md')}>{t('Download SKILL.md')}</Button></section>
+    <section className={panelClass}><h2 className="text-lg font-semibold">{t('Harness regression checks')}</h2><p className="mt-2 text-sm leading-6 text-slate-600">{t('Run six independent positive and negative cases against the harness. These checks test local execution boundaries, not live model quality or every possible plan.')}</p><Button className="mt-3" variant="secondary" onClick={() => attempt(() => setChecks(evaluateHarness(parseConfig(project.source), project.skill)))}>{t('Run regression checks')}</Button>{checks && <div className="mt-4" aria-label={t('Regression results')} role="region"><p role="status" className="mb-3 font-semibold">{checks.filter(item => item.passed).length}/{checks.length} {t('checks passed')}</p>{checks.map(item => <details key={item.name} className="mt-2 rounded border border-line p-3"><summary className="cursor-pointer text-sm">{item.passed ? 'PASS' : 'FAIL'} · {t(item.name)}</summary><pre className={`${codeClass} mt-3`} tabIndex={0}>{JSON.stringify(item.trace, null, 2)}</pre></details>)}</div>}</section>
+    <section className={panelClass} id="cli-companions"><h2 className="text-lg font-semibold">{t('Build your own CLI: JavaScript and Python')}</h2><p className="mt-2 text-sm leading-6 text-ink-secondary">{t('Edit and download a working CLI. Run native source in your own terminal; browser Run uses the separate JSON fixture. Both companions include an offline demo, self-tests, virtual tools, human questions and approval. Live model calls and a read-only GitHub integration are opt-in.')}</p><label className="mt-4 block text-sm">{t('Companion language')}<select className={`${fieldClass} mt-1`} value={language} onChange={event => setLanguage(event.target.value)}><option value="javascript">JavaScript / Node.js — {t('main path')}</option><option value="python">Python — {t('companion')}</option></select></label>
+      <details className="mt-4" open={project.lesson === 'agents-cli' ? true : undefined}><summary className="cursor-pointer text-sm font-semibold text-brand-700">{t('Edit native CLI source')}</summary><label className="mt-3 block text-sm">{t('Editable CLI source')}<textarea className={`${fieldClass} mt-2 font-mono text-xs leading-6`} rows={15} wrap="off" spellCheck={false} value={project[language]} onChange={event => edit({ [language]: event.target.value })} /></label></details><Button variant="secondary" className="mt-3" onClick={() => downloadText(project[language], language === 'javascript' ? 'agent.mjs' : 'agent.py')}>{t('Download CLI source')}</Button>
+      <h3 className="mt-5 font-semibold">{t('Run on your computer')}</h3><pre className={`${codeClass} mt-3`} tabIndex={0}>{language === 'javascript' ? '# Node.js 22+; no packages required\nnode agent.mjs --self-test\nnode agent.mjs --demo' : '# Python 3.11+; standard library only\npython3 agent.py --self-test\npython3 agent.py --demo'}</pre><p className="mt-3 text-sm leading-6 text-slate-600">{t('The demo asks for a title and requires typing yes before its virtual write. It does not save host files. The virtual tools are an application boundary, not an OS sandbox.')}</p>
+      <details className="mt-4 text-sm leading-6"><summary className="cursor-pointer font-semibold text-brand-700">{t('Connect a real model and GitHub from your terminal')}</summary><p className="mt-3 text-slate-600">{t('Set OPENAI_API_KEY and OPENAI_MODEL privately in your terminal environment. Choose a model available to your account using current official documentation. Never paste credentials into this notebook. Live mode can incur API charges: at most eight requests with 800 output tokens each, no automatic retries, and no hard dollar cap.')}</p><pre className={`${codeClass} mt-3`} tabIndex={0}>{`${language === 'javascript' ? 'node agent.mjs' : 'python3 agent.py'} --live "Read report.txt and draft an issue; ask before writing."\n\n# Optional: configure GITHUB_REPOSITORY=owner/repo\n# and GITHUB_TOKEN if the repository requires it.\n${language === 'javascript' ? 'node agent.mjs' : 'python3 agent.py'} --live --github "Summarize repository issues; do not write."`}</pre><p className="mt-3 text-slate-600">{t('The GitHub reader uses a fixed API host, one configured repository and at most five returned records. It does not post issues. Provider usage is reported separately from hypothetical browser costs. MCP networking, durable execution and arbitrary shell tools are extension exercises, not implemented companion features.')}</p></details>
+      <Link to="/ai-agents/agents-cli" target="_blank" rel="noopener noreferrer" className={`${linkClass} mt-4 inline-block text-sm`}>{t('Read the CLI capstone')}</Link>
+    </section>
+    <section className={panelClass}><h2 className="text-lg font-semibold">{t('AI agent notebook')}</h2><p className="mt-2 text-sm leading-6 text-slate-600">{t('Save exact JSON drafts, skill text, both CLI sources and notes separately for each preset. Loading or importing starts fresh evidence. Do not put credentials in saved or exported text.')}</p><label className="mt-4 block text-sm">{t('Experiment notes')}<textarea className={`${fieldClass} mt-1`} rows={4} value={project.notes} onChange={event => edit({ notes: event.target.value })} /></label><div className="mt-4 flex flex-wrap gap-2"><Button variant="secondary" onClick={save}>{t('Save notebook')}</Button><Button variant="secondary" onClick={load}>{t('Load saved notebook')}</Button><Button variant="secondary" onClick={() => attempt(() => downloadJson(validateProject(project), `${project.lesson}.json`))}>{t('Export notebook')}</Button><Button variant="secondary" onClick={() => inputRef.current?.click()}>{t('Import notebook')}</Button></div><input className="sr-only" ref={inputRef} type="file" accept=".json,application/json" aria-label={t('Import AI agent notebook file')} onChange={importFile} /></section>
+    <Modal open={Boolean(pending)} onClose={() => setPending(null)} title={t('Replace AI agent notebook?')} description={t('This replaces the JSON, skill, both CLI sources and notes, and clears run evidence. Save or export first to keep your current work.')} footer={<><Button variant="secondary" onClick={() => setPending(null)}>{t('Cancel')}</Button><Button onClick={() => replace(pending)}>{t('Replace notebook')}</Button></>}><p className="text-sm">{AGENT_COURSES.find(item => item.id === pending?.lesson)?.title}</p></Modal>
+  </div>
+}

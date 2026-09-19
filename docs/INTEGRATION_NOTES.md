@@ -1,5 +1,24 @@
 # Integration notes
 
+## AI agent path (2026-09-19)
+
+- `agents-*` course ids share `vq.courses.v1` without changing existing course versions or APIs.
+  Standalone tutorials use `/ai-agents/:lessonId/tutorial`; the free bench uses `bench=ai-agents`.
+- Browser proposals are authored JSON, not LLM output. Tools actually validate scopes/arguments
+  and mutate returned in-memory state. Later fixture turns do not adapt to user answers.
+  Pending approval/question resumes do not charge a second model request. Compaction keeps
+  pinned entries; cached tokens count toward the context window and are a subset of input.
+- The MCP fixture is explicitly pinned to 2025-11-25. It is not a current full transport SDK.
+  An uninitialized call returns a protocol error; invalid tool arguments use isError results.
+- Notebook imports retain unfinished drafts and strip all execution/approval claims. Newer
+  edits invalidate asynchronous import reads. JSON/skill edits invalidate trace and checks;
+  native-source edits affect downloads only. Never store provider keys in these notebooks.
+- Native companions are the exact files tested by Vitest and the Python verification script.
+  Live adapters are tested with mocked HTTP; no paid inference or real app account is tested.
+  Node/Python tools operate in memory, not an OS sandbox. GitHub reading is separately opted in.
+- Keep the `agents-model` chunk rule before generic engine chunking. Static promos import no
+  curriculum. See [AI_AGENTS.md](AI_AGENTS.md) for teaching and verification boundaries.
+
 ## MATLAB path (2026-09-17)
 
 - Source edits actually change browser computation here, unlike HPC's native-source panel.

@@ -8,6 +8,7 @@ import { AppHeader } from '../workspace/AppHeader.jsx'
 import { Badge, ChipMascot, EmptyState } from '../../ui/index.js'
 import CybersecurityPromo from '../cybersecurity/CybersecurityPromo.jsx'
 import MatlabPromo from '../matlab/MatlabPromo.jsx'
+import AgentPromo from '../agents/AgentPromo.jsx'
 
 export default function TutorialsPage() {
   const { t } = useI18n()
@@ -41,6 +42,7 @@ export default function TutorialsPage() {
         </div>
         <CybersecurityPromo />
         <MatlabPromo />
+        <AgentPromo />
         <section className="mb-7 rounded-lg border border-teal-200 bg-teal-50 p-5" aria-labelledby="hpc-path-title">
           <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">{t('C / C++ learning path')}</p>
           <h2 id="hpc-path-title" className="mt-2 text-xl font-semibold text-ink">{t('High-performance computing in C & C++')}</h2>

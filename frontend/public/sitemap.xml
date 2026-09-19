@@ -243,12 +243,55 @@
   <url><loc>https://pcb.nevatal.id/cybersecurity/cyber-ssrf</loc></url>
   <url><loc>https://pcb.nevatal.id/cybersecurity/cyber-mass</loc></url>
   <url><loc>https://pcb.nevatal.id/cybersecurity/cyber-capstone</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents?view=tutorials</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-foundations</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-codex</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-claude</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-antigravity</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-instructions</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-context</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-tokens</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-cost</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-tools</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-use-skills</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-build-skills</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-mcp</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-integrations</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-harness</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-retrieval</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-multimodal</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-subagents</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-durable</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-evaluation</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-cli</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-foundations/tutorial</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-codex/tutorial</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-claude/tutorial</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-antigravity/tutorial</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-instructions/tutorial</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-context/tutorial</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-tokens/tutorial</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-cost/tutorial</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-tools/tutorial</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-use-skills/tutorial</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-build-skills/tutorial</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-mcp/tutorial</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-integrations/tutorial</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-harness/tutorial</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-retrieval/tutorial</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-multimodal/tutorial</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-subagents/tutorial</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-durable/tutorial</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-evaluation/tutorial</loc></url>
+  <url><loc>https://pcb.nevatal.id/ai-agents/agents-cli/tutorial</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=cybersecurity</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=hpc</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=vision</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=robotics</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=opencv-foundations</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=opencv-drone</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=opencv-robotics</loc></url>
@@ -298,6 +341,26 @@
   <url><loc>https://pcb.nevatal.id/sandbox?bench=cybersecurity&amp;lesson=cyber-ssrf</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=cybersecurity&amp;lesson=cyber-mass</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=cybersecurity&amp;lesson=cyber-capstone</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents&amp;lesson=agents-foundations</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents&amp;lesson=agents-codex</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents&amp;lesson=agents-claude</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents&amp;lesson=agents-antigravity</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents&amp;lesson=agents-instructions</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents&amp;lesson=agents-context</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents&amp;lesson=agents-tokens</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents&amp;lesson=agents-cost</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents&amp;lesson=agents-tools</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents&amp;lesson=agents-use-skills</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents&amp;lesson=agents-build-skills</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents&amp;lesson=agents-mcp</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents&amp;lesson=agents-integrations</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents&amp;lesson=agents-harness</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents&amp;lesson=agents-retrieval</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents&amp;lesson=agents-multimodal</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents&amp;lesson=agents-subagents</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents&amp;lesson=agents-durable</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents&amp;lesson=agents-evaluation</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents&amp;lesson=agents-cli</loc></url>
   <url><loc>https://pcb.nevatal.id/showcase</loc></url>
   <url><loc>https://pcb.nevatal.id/leaderboard</loc></url>
 </urlset>

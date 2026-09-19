@@ -116,6 +116,7 @@ describe('collectRoutes', () => {
       fs.writeFileSync(path.join(dir, 'hpc.json'), JSON.stringify({ courses: [{ id: 'hpc-correctness' }] }))
       fs.writeFileSync(path.join(dir, 'matlab.json'), JSON.stringify({ courses: [{ id: 'matlab-start' }] }))
       fs.writeFileSync(path.join(dir, 'cybersecurity.json'), JSON.stringify({ courses: [{ id: 'cyber-http' }] }))
+      fs.writeFileSync(path.join(dir, 'ai-agents.json'), JSON.stringify({ courses: [{ id: 'agents-cli' }] }))
       expect(collectRoutes(dir)).toEqual([
         '/',
         '/campaign',
@@ -135,17 +136,23 @@ describe('collectRoutes', () => {
         '/matlab/matlab-start',
         '/cybersecurity',
         '/cybersecurity/cyber-http',
+        '/ai-agents',
+        '/ai-agents?view=tutorials',
+        '/ai-agents/agents-cli',
+        '/ai-agents/agents-cli/tutorial',
         '/sandbox',
         '/sandbox?bench=matlab',
         '/sandbox?bench=cybersecurity',
         '/sandbox?bench=hpc',
         '/sandbox?bench=vision',
         '/sandbox?bench=robotics',
+        '/sandbox?bench=ai-agents',
         '/sandbox?bench=vision&lesson=opencv-foundations',
         '/sandbox?bench=robotics&lesson=robot-motion',
         '/sandbox?bench=hpc&lesson=hpc-correctness',
         '/sandbox?bench=matlab&lesson=matlab-start',
         '/sandbox?bench=cybersecurity&lesson=cyber-http',
+        '/sandbox?bench=ai-agents&lesson=agents-cli',
         '/showcase',
         '/leaderboard',
       ])
@@ -153,6 +160,17 @@ describe('collectRoutes', () => {
       fs.rmSync(dir, { recursive: true, force: true })
     }
   })
+})
+
+it('indexes every AI agent course, guided tutorial and sandbox preset', () => {
+  const courses = readJson(path.join(contentDir, 'ai-agents.json')).courses
+  for (const course of courses) {
+    expect(routes).toContain(`/ai-agents/${course.id}`)
+    expect(routes).toContain(`/ai-agents/${course.id}/tutorial`)
+    expect(routes).toContain(`/sandbox?bench=ai-agents&lesson=${course.id}`)
+  }
+  expect(routes).toContain('/sandbox?bench=ai-agents')
+  expect(new Set(routes).size).toBe(routes.length)
 })
 
 describe('renderSitemap', () => {

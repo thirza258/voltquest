@@ -1,6 +1,6 @@
 # VoltQuest — agent handoff log
 
-**Last verified: 2026-09-17.** This is the state document: what exists, what remains unfinished,
+**Last verified: 2026-09-19.** This is the state document: what exists, what remains unfinished,
 and what to do next. The specifications in `docs/` remain binding.
 
 | Read | When |
@@ -16,6 +16,7 @@ and what to do next. The specifications in `docs/` remain binding.
 | `docs/HPC.md` | Before editing the C/C++ HPC curriculum, experiments or native source/testing. |
 | `docs/CYBERSECURITY.md` | Before editing web security courses, local request labs, defenses or investigation notebooks. |
 | `docs/MATLAB.md` | Before editing MATLAB courses, the numerical script interpreter, function reference or notebooks. |
+| `docs/AI_AGENTS.md` | Before editing AI agent courses, harness experiments, skills/MCP fixtures or companion CLIs. |
 
 ## 1. Current build, not the target product
 
@@ -42,6 +43,14 @@ a question in each section, eighteen five-question exams and desktop companion s
 `/sandbox?bench=matlab` executes edited scripts in a bounded MATLAB-style numeric interpreter,
 with workspace inspection, plots and independent saved notebooks. It is not a full MATLAB/Simulink
 runtime and does not run optional toolboxes or parallel/GPU code. Read `docs/MATLAB.md`.
+
+Tutorials and Courses also link to `/ai-agents`: twenty courses, twenty guided tutorials,
+eighty section checkpoints and twenty five-question exams, ending in a JavaScript-first CLI
+with a Python companion. `/sandbox?bench=ai-agents` executes edited scripted proposals through
+bounded virtual tools, permissions, approvals/questions, context and token/cost accounting.
+Notebooks preserve JSON, skill text, both CLI sources and notes. Browser experiments use local
+fixtures; native companions support separately enabled live model and read-only GitHub calls.
+Read `docs/AI_AGENTS.md` for execution boundaries and verification limits.
 
 Ten tutorials form an Arduino/ESP32 C++ programming path:
 - Easy: setup/loop, variables/types, arithmetic, conditions.
@@ -73,9 +82,10 @@ repository or commit without the user's explicit request.
 ## 2. Verification
 
 Latest full `make check`:
-- **1,416 frontend tests in 81 files pass.**
+- **1,496 frontend tests in 85 files pass.** A final input-validation refinement passes all
+  **88 targeted tests**, including one added regression, plus lint and the production rebuild.
 - **104 backend tests pass.**
-- Production build succeeds; initial JS payload is **527.9 KiB gzipped**, below the 1500 KiB budget.
+- Production build succeeds; initial JS payload is **545.8 KiB gzipped**, below the 1500 KiB budget.
 - ESLint has no errors. Two existing exhaustive-deps warnings remain in
   `features/campaign/CampaignMap.jsx:84`; these are unrelated to the assistant/localization work.
 - Node prints the existing jsdom/localStorage warning; persistence tests use the memory-storage helper.
@@ -103,6 +113,48 @@ their explanation or timing is correct. `features/tutorials/programming.test.js`
 numeric output, command dispatch and LED state transitions on all four C++ boards.
 
 ## 3. Completed in this continuation
+
+### AI agent courses, guided tutorials and a JavaScript/Python CLI (2026-09-19)
+
+Open **`/ai-agents`**, linked from Tutorials, Courses and the home footer, or
+**`/sandbox?bench=ai-agents`**. Twenty courses progress through agent foundations, Codex,
+Claude Code, Google Antigravity, instructions, context, tokens, cost, tool schemas, using and
+creating skills, MCP, app integrations, secure harnesses, retrieval, multimodal tools,
+subagents, durable workflows and evaluation, ending in a personal CLI. Includes **80 sections,
+80 independent checkpoints, 100 exam questions and 20 guided tutorials** with editable presets,
+expected observations and applied challenges. Existing `vq.courses.v1` stores reading checks
+and exam scores; incomplete/duplicate submissions do not add attempts. Sources reviewed on
+2026-09-19 link to official documentation. The MCP fixture pins protocol 2025-11-25 explicitly;
+it does not claim to implement every current MCP feature or a vendor agent.
+
+`engine/agents/model.js` validates and executes scripted proposals against an in-memory workspace,
+document search, issue tracker, skill loader and MCP lifecycle/tool/resource/prompt fixture.
+Learners inspect real outcomes, approve or deny writes, answer questions, compact context, compare
+cache/input/output estimates and run six behavioral regression checks. Limits, scopes and schemas
+are enforced before tool execution. Token estimates and editable hypothetical prices are disclosed;
+no browser inference, network, shell, host filesystem or arbitrary native source execution is added.
+
+Independent `voltquest-ai-agents` notebooks preserve exact unfinished JSON, SKILL.md, JavaScript,
+Python and notes under `vq.ai-agents.v1.<lesson>`. Load/import/reset/preset changes confirm replacement;
+import discards invented evidence and approvals. Editing run inputs invalidates observed results.
+Trace reports capture actual configuration and events. Interface text supports Indonesian with a
+disclosed English curriculum/technical fallback, retaining working and assessment state on switching.
+
+Both downloadable CLIs run offline with real question/approval prompts, virtual tools and verification.
+Their optional live mode uses a chosen OpenAI model and environment credentials, with a separately
+enabled read-only GitHub integration, fixed hosts, bounded requests/responses and no automatic retries.
+Tests exercise both source files and mock their provider/integration transports. The virtual workspace
+is an application boundary, not an OS sandbox; live mode has request/token bounds, not a hard dollar cap.
+Live paid inference, real accounts and vendor CLI sessions were not executed in this workspace.
+
+Full `make check`: **1,496 frontend / 104 backend** tests, lint, production build and **545.8 KiB**
+initial gzip pass. The final input-validation refinement passes **88 targeted tests** and a production
+rebuild. The new page and harness chunks remain lazy; sitemap contains **363 URLs**. Production Chrome
+with isolated SQLite verified all twenty preset runs, the capstone question/approval/write/readback,
+six regression checks, exact source/trace downloads, notebook save/load/import confirmation and a
+390 px layout with preserved Indonesian state. Incomplete exams were rejected, an 80% pass and
+reading check survived reload, and language switching retained selected answers. Both native demo
+CLIs completed with actual terminal input and approved writes. See AI_AGENTS.md for verification limits.
 
 ### Expanded sitemap indexing for courses, tutorials, benches and variants (2026-09-18)
 

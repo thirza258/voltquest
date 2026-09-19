@@ -1,5 +1,11 @@
 # Interactive tutorials
 
+The hub links to `/ai-agents?view=tutorials`: twenty guided AI agent tutorials, also included
+in their courses. `/ai-agents/:lessonId/tutorial` provides a checkable procedure and editable
+local harness. `/sandbox?bench=ai-agents` offers independent notebooks, skills and native
+JS/Python companion downloads. These are separate from firmware/board tutorials. See
+[AI_AGENTS.md](AI_AGENTS.md).
+
 The hub links to `/matlab`: eighteen courses from arrays and plotting through numerical methods,
 simulation, performance and parallel/GPU concepts. Each of seventy-two sections has a checkpoint;
 each course has a five-question exam, browser script and desktop companion. The simple numerical

@@ -1,0 +1,211 @@
+// @vitest-environment jsdom
+// @vitest-environment-options { "url": "http://localhost:5173" }
+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { LocaleProvider, translate } from '../../i18n/index.jsx'
+import { installMemoryStorage } from '../../test-utils/localStorage.js'
+import { downloadJson, downloadText } from '../../lib/download.js'
+import { readCourseProgress } from '../courses/progress.js'
+import AgentsPage from './AgentsPage.jsx'
+import AgentPromo from './AgentPromo.jsx'
+import { AGENT_COURSES, createProject, STORAGE_PREFIX } from './project.js'
+
+vi.mock('../../lib/download.js', () => ({ downloadJson: vi.fn(), downloadText: vi.fn() }))
+beforeEach(() => { installMemoryStorage(); vi.clearAllMocks() })
+afterEach(() => { cleanup(); vi.restoreAllMocks() })
+const click = name => fireEvent.click(screen.getByRole('button', { name, exact: true }))
+const change = (label, value) => fireEvent.change(screen.getByLabelText(label), { target: { value } })
+function page(path = '/ai-agents') {
+  return render(<LocaleProvider><MemoryRouter initialEntries={[path]}><Routes><Route path="/ai-agents" element={<AgentsPage />} /><Route path="/ai-agents/:lessonId" element={<AgentsPage />} /><Route path="/ai-agents/:lessonId/tutorial" element={<AgentsPage tutorial />} /><Route path="/sandbox" element={<AgentsPage sandbox />} /></Routes></MemoryRouter></LocaleProvider>)
+}
+const config = () => JSON.parse(screen.getByLabelText('Harness JSON').value)
+const editConfig = changeConfig => { const value = config(); changeConfig(value); change('Harness JSON', JSON.stringify(value, null, 2)) }
+const report = () => { click('Export run trace'); return downloadJson.mock.calls.at(-1)[0] }
+
+it('discovers all courses, filters current topics and opens separate guided tutorial routes', () => {
+  page()
+  expect(screen.getByRole('heading', { name: 'Understand agents. Build your own.' })).toBeTruthy()
+  expect(screen.getByText(/20 courses found/)).toBeTruthy()
+  change('Search AI agent courses', 'MCP'); change('Course level', 'Intermediate')
+  expect(screen.getByRole('heading', { name: '12. MCP: hosts, clients, servers and messages' })).toBeTruthy()
+  click('Guided tutorials')
+  expect(screen.getByRole('link', { name: /12\. MCP/ }).getAttribute('href')).toBe('/ai-agents/agents-mcp/tutorial')
+  change('Search AI agent courses', 'impossible-zxy')
+  expect(screen.getByRole('heading', { name: 'No courses match' })).toBeTruthy()
+  click('Clear filters'); expect(screen.getByText(/20 courses found/)).toBeTruthy()
+})
+it('executes edited proposals and exports actual files and ledger rather than predicted evidence', () => {
+  page('/sandbox?bench=ai-agents')
+  editConfig(value => { value.turns = [{ type: 'tool', name: 'read_file', args: { path: 'report.txt' } }] })
+  click('Run until pause')
+  expect(screen.getByRole('region', { name: 'Agent run results' })).toBeTruthy()
+  const evidence = report()
+  expect(evidence.trace.at(-1).detail.result.text).toContain('before email verification')
+  expect(evidence.ledger).toHaveLength(1)
+  change('Harness JSON', '{ unfinished')
+  expect(screen.queryByRole('region', { name: 'Agent run results' })).toBeNull()
+  click('Run until pause')
+  expect(screen.getByRole('alert').textContent).toContain('incomplete or invalid')
+  expect(screen.getByLabelText('Harness JSON').value).toBe('{ unfinished')
+})
+it('requires per-call approval and retains the existing charge when a write resumes', () => {
+  page('/sandbox?bench=ai-agents&lesson=agents-codex')
+  click('Run until pause')
+  const before = report()
+  expect(before.files['draft.md']).toBeUndefined()
+  click('Approve this call')
+  const after = report()
+  expect(after.files['draft.md']).toContain('Require verified email')
+  expect(after.ledger).toEqual(before.ledger)
+  click('Run until pause')
+  expect(report().trace.at(-1).detail.result.text).toBe(after.files['draft.md'])
+  click('New run'); click('Run until pause'); click('Deny this call')
+  expect(report().files['draft.md']).toBeUndefined()
+})
+it('asks a real user question and resumes without another charge for the pending turn', () => {
+  page('/sandbox?bench=ai-agents&lesson=agents-instructions')
+  click('Run until pause')
+  const before = report()
+  expect(screen.getByRole('button', { name: 'Submit answer' }).disabled).toBe(true)
+  change('Your answer to the agent', 'Prepare a draft')
+  click('Submit answer')
+  const after = report()
+  expect(after.ledger).toEqual(before.ledger)
+  expect(after.trace.at(-1)).toMatchObject({ type: 'user_answer', detail: { text: 'Prepare a draft' } })
+})
+it('changes budget controls on blur, stops before spending, and clears old evidence', () => {
+  page('/sandbox?bench=ai-agents')
+  click('Step one turn')
+  const input = screen.getByLabelText('Budget USD')
+  fireEvent.change(input, { target: { value: '0' } }); fireEvent.blur(input)
+  expect(config().budgetUsd).toBe(0)
+  expect(screen.queryByRole('region', { name: 'Agent run results' })).toBeNull()
+  click('Run until pause')
+  const evidence = report()
+  expect(evidence.status).toBe('stopped'); expect(evidence.ledger).toHaveLength(0)
+})
+it('executes regression checks and clears results on edits to execution inputs', () => {
+  page('/sandbox?bench=ai-agents&lesson=agents-harness')
+  click('Run regression checks')
+  expect(screen.getByRole('region', { name: 'Regression results' }).textContent).toContain('6/6 checks passed')
+  change('Editable SKILL.md', '---\nname: different\ndescription: Another focused workflow\n---\nRead and report.')
+  expect(screen.queryByRole('region', { name: 'Regression results' })).toBeNull()
+})
+it('rejects an invalid quick control without corrupting the runnable JSON', () => {
+  page('/sandbox?bench=ai-agents')
+  const before = screen.getByLabelText('Harness JSON').value
+  const input = screen.getByLabelText('Context window')
+  fireEvent.change(input, { target: { value: '2' } }); fireEvent.blur(input)
+  expect(screen.getByRole('alert').textContent).toContain('64 to 128000')
+  expect(screen.getByLabelText('Harness JSON').value).toBe(before)
+  expect(input.disabled).toBe(false)
+  fireEvent.change(input, { target: { value: '4096' } }); fireEvent.blur(input)
+  expect(config().contextWindow).toBe(4096)
+})
+it('saves exact unfinished drafts and both editable companions, then confirms replacement', () => {
+  page('/sandbox?bench=ai-agents&lesson=agents-cli')
+  change('Harness JSON', '{ draft'); change('Editable SKILL.md', '# unfinished skill')
+  change('Editable CLI source', '// exact JS draft')
+  change('Companion language', 'python'); change('Editable CLI source', '# exact Python draft')
+  change('Experiment notes', 'Compare languages'); click('Save notebook')
+  const saved = JSON.parse(localStorage.getItem(STORAGE_PREFIX + 'agents-cli'))
+  expect(saved).toMatchObject({ source: '{ draft', skill: '# unfinished skill', javascript: '// exact JS draft', python: '# exact Python draft', notes: 'Compare languages' })
+  change('Experiment notes', 'New unsaved note'); click('Load saved notebook'); click('Cancel')
+  expect(screen.getByLabelText('Experiment notes').value).toBe('New unsaved note')
+  click('Load saved notebook'); click('Replace notebook')
+  expect(screen.getByLabelText('Experiment notes').value).toBe('Compare languages')
+  click('Export notebook'); expect(downloadJson).toHaveBeenLastCalledWith(saved, 'agents-cli.json')
+  click('Download CLI source'); expect(downloadText).toHaveBeenLastCalledWith('# exact Python draft', 'agent.py')
+  change('Companion language', 'javascript'); click('Download CLI source')
+  expect(downloadText).toHaveBeenLastCalledWith('// exact JS draft', 'agent.mjs')
+  click('Download SKILL.md'); expect(downloadText).toHaveBeenLastCalledWith('# unfinished skill', 'SKILL.md')
+})
+it('protects current drafts when selecting presets or resetting', () => {
+  page('/sandbox?bench=ai-agents')
+  change('Experiment notes', 'Keep me')
+  change('Choose an AI agent tutorial', 'agents-mcp'); click('Cancel')
+  expect(screen.getByLabelText('Choose an AI agent tutorial').value).toBe('agents-foundations')
+  click('Reset notebook'); click('Cancel')
+  expect(screen.getByLabelText('Experiment notes').value).toBe('Keep me')
+  change('Choose an AI agent tutorial', 'agents-mcp'); click('Replace notebook')
+  expect(screen.getByLabelText('Choose an AI agent tutorial').value).toBe('agents-mcp')
+  expect(screen.getByLabelText('Experiment notes').value).toBe('')
+})
+it('imports only after confirmation, discards fabricated evidence and rejects invalid files', async () => {
+  page('/sandbox?bench=ai-agents')
+  click('Run until pause')
+  const value = { ...createProject('agents-cli'), trace: ['fake approval'], status: 'approved' }
+  const input = screen.getByLabelText('Import AI agent notebook file')
+  fireEvent.change(input, { target: { files: [{ size: 100, text: async () => JSON.stringify(value) }] } })
+  await screen.findByRole('dialog')
+  expect(screen.getByLabelText('Choose an AI agent tutorial').value).toBe('agents-foundations')
+  click('Replace notebook')
+  expect(screen.queryByRole('region', { name: 'Agent run results' })).toBeNull()
+  click('Export notebook'); expect(downloadJson.mock.calls.at(-1)[0].trace).toBeUndefined()
+  fireEvent.change(input, { target: { files: [{ size: 2, text: async () => '{}' }] } })
+  expect((await screen.findByRole('alert')).textContent).toContain('not a supported')
+  expect(screen.getByLabelText('Harness JSON').value).toBe(value.source)
+})
+it('ignores a pending import if the learner edits newer work', async () => {
+  page('/sandbox?bench=ai-agents')
+  let finish
+  fireEvent.change(screen.getByLabelText('Import AI agent notebook file'), { target: { files: [{ size: 100, text: () => new Promise(resolve => { finish = resolve }) }] } })
+  change('Experiment notes', 'Newer work')
+  await act(async () => finish(JSON.stringify(createProject('agents-cli'))))
+  expect(screen.queryByRole('dialog')).toBeNull()
+  expect(screen.getByLabelText('Experiment notes').value).toBe('Newer work')
+})
+it('keeps section checkpoints independent and records only complete, nonduplicate exams', () => {
+  const view = page('/ai-agents/agents-foundations'), course = AGENT_COURSES[0]
+  const section = screen.getByRole('region', { name: course.lessons[0].title })
+  fireEvent.click(within(section).getByText('Check this section'))
+  const q = course.lessons[0].question
+  fireEvent.click(within(section).getByRole('radio', { name: q.options.find(option => option.id === q.answerId).text }))
+  fireEvent.click(within(section).getByRole('button', { name: 'Check practice answers' }))
+  expect(readCourseProgress(course).attempts).toBe(0)
+  const form = screen.getByRole('form', { name: 'Course exam' }), groups = within(form).getAllByRole('group')
+  const answer = (index, correct) => {
+    const q = course.exam.questions[index], choice = q.options.find(option => correct ? option.id === q.answerId : option.id !== q.answerId)
+    fireEvent.click(within(groups[index]).getByRole('radio', { name: choice.text }))
+  }
+  answer(0, true); click('Submit exam')
+  expect(within(form).getByRole('alert')).toBeTruthy(); expect(readCourseProgress(course).attempts).toBe(0)
+  for (let i = 1; i < 5; i++) answer(i, i < 4)
+  click('Submit exam'); fireEvent.submit(form)
+  expect(readCourseProgress(course)).toMatchObject({ attempts: 1, bestPercent: 80, lastPercent: 80 })
+  click('Retake exam'); for (let i = 0; i < 5; i++) answer(i, false)
+  click('Submit exam')
+  expect(readCourseProgress(course)).toMatchObject({ attempts: 2, bestPercent: 80, lastPercent: 0 })
+  view.unmount(); page('/ai-agents/agents-foundations')
+  expect(screen.getByText('Best exam score: 80%')).toBeTruthy()
+})
+it('retains run, source, notes, answers and section checks across language changes', () => {
+  page('/ai-agents/agents-foundations')
+  fireEvent.click(screen.getByLabelText('Mark lesson 1 as read'))
+  const form = screen.getByRole('form', { name: 'Course exam' })
+  fireEvent.click(within(form).getAllByRole('radio')[0])
+  change('Experiment notes', 'Keep this note'); click('Run until pause')
+  const source = screen.getByLabelText('Harness JSON').value
+  change('Language / Bahasa', 'id')
+  expect(screen.getByLabelText('JSON harness').value).toBe(source)
+  expect(screen.getByLabelText(translate('id', 'Experiment notes')).value).toBe('Keep this note')
+  expect(screen.getByRole('region', { name: 'Hasil eksekusi agen' })).toBeTruthy()
+  expect(within(form).getAllByRole('radio')[0].checked).toBe(true)
+  expect(readCourseProgress(AGENT_COURSES[0]).read).toHaveLength(1)
+})
+it('offers a standalone checkable tutorial and rejects unknown presets', () => {
+  const view = page('/ai-agents/agents-mcp/tutorial')
+  const steps = screen.getByRole('region', { name: 'Guided tutorial steps' })
+  expect(within(steps).getAllByRole('checkbox')).toHaveLength(4)
+  expect(screen.getByRole('link', { name: 'Continue to the course exam' }).getAttribute('href')).toBe('/ai-agents/agents-mcp#exam')
+  view.unmount(); page('/sandbox?bench=ai-agents&lesson=unknown')
+  expect(screen.getByRole('heading', { name: 'Course not found' })).toBeTruthy()
+  expect(screen.queryByLabelText('Harness JSON')).toBeNull()
+})
+it('provides navigation-only course, tutorial and sandbox entry points', () => {
+  render(<LocaleProvider><MemoryRouter><AgentPromo /></MemoryRouter></LocaleProvider>)
+  expect(screen.getByRole('link', { name: 'Explore AI agent courses' }).getAttribute('href')).toBe('/ai-agents')
+  expect(screen.getByRole('link', { name: 'Guided tutorials' }).getAttribute('href')).toBe('/ai-agents?view=tutorials')
+  expect(screen.getByRole('link', { name: 'Open AI agent sandbox' }).getAttribute('href')).toBe('/sandbox?bench=ai-agents')
+})

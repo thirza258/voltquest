@@ -1004,6 +1004,7 @@ export function LandingPage() {
             <nav aria-label="Footer navigation" className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs">
               <Link to="/campaign" className="py-1 hover:text-brand-600">{t("Campaign")}</Link>
               <Link to="/tutorials" className="py-1 hover:text-brand-600">{t("Tutorials")}</Link>
+              <Link to="/ai-agents" className="py-1 hover:text-brand-600">{t("AI agent learning path")}</Link>
               <Link to="/sandbox" className="py-1 hover:text-brand-600">{t("Sandbox")}</Link>
               <Link to="/showcase" className="py-1 hover:text-brand-600">{t("Showcase")}</Link>
               <Link to="/leaderboard" className="py-1 hover:text-brand-600">{t("Leaderboard")}</Link>

@@ -1,5 +1,27 @@
 # PRD implementation verification
 
+### AI agent learning extension (2026-09-19)
+
+`/ai-agents` provides twenty courses, twenty guided tutorials, eighty theory sections with
+independent checkpoints and twenty five-question exams. Topics include Codex, Claude Code,
+Google Antigravity, skills, MCP, app integrations, context/token/cost management, harnesses,
+retrieval, multimodal tools, subagents, durable workflows and evaluation. The capstone supplies
+editable JavaScript and Python CLIs, with JavaScript as the main path and dated official references.
+
+`/sandbox?bench=ai-agents` executes edited scripted proposals through real bounded virtual tools,
+approval/question pauses and a token/cost ledger. Notebooks, exact downloads, confirmed replacement
+and shared local assessment progress are implemented. Browser labs do not perform inference or
+contact external apps. Native companions have offline demos and separately enabled model/GitHub
+readers; their transport tests use controlled fixtures. See [AI_AGENTS.md](AI_AGENTS.md).
+
+Full `make check` passed **1,496 frontend / 104 backend tests**, lint, production build and the
+**545.8 KiB** initial gzip budget. A final control-validation refinement passed **88 targeted tests**
+and a rebuild. Production Chrome verified all twenty presets, approval/question/artifact flows,
+six regression cases, downloads, notebook replacement, exam persistence, locale retention and
+desktop/390 px layouts without overflow or application errors. Both terminal demos completed.
+The sitemap has **363 URLs**. Live paid calls, real account access, vendor clients and the full
+browser/device matrix remain unverified.
+
 ### Expanded sitemap indexing (2026-09-18)
 
 Expanded `frontend/vite-sitemap.js` and `frontend/public/sitemap.xml` to include crawlable entry points:

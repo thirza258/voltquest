@@ -54,6 +54,14 @@ learning model. Do not imply a full Linux computer or arbitrary Python packages 
 
 ## Self-study courses
 
+The AI agent path has four ordered stages, searchable course/tutorial views and a readable
+section outline. Each section has its own collapsible checkpoint; exams use the shared form.
+The lab pairs editable JSON with context/cost controls and shows observed events, a per-request
+ledger and actual virtual app state. Pending actions show exact arguments with approve/deny;
+questions wait for an answer. Skill and JS/Python source editors offer exact downloads.
+Clearly label scripted model behavior, hypothetical rates and native-only execution. Tables
+and code scroll within their panels. Replacement confirms; locale changes preserve state.
+
 MATLAB uses an ordered four-stage overview, searchable course cards and a searchable function
 reference with Browser/Desktop scope and product requirements. Each readable course section has
 a collapsible checkpoint; exams use the shared assessment form. The editor labels its MATLAB-style

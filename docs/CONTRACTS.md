@@ -551,3 +551,23 @@ The separate function directory also describes desktop-only MATLAB/toolbox capab
 `voltquest-matlab` notebooks store versioned course id, source and notes under `vq.matlab.v1.*`.
 Imports discard claimed results and confirm replacement. No CircuitDoc, board, backend project,
 public course API, assistant, MCP or showcase contract changes. See MATLAB.md for all limits.
+
+## 20. AI agent learning path
+
+`/ai-agents`, `/ai-agents/:lessonId`, `/ai-agents/:lessonId/tutorial` and
+`/sandbox?bench=ai-agents&lesson=<id>` follow [AI_AGENTS.md](AI_AGENTS.md). Twenty
+frontend-only courses share existing section progress and five-question 80% exam grading.
+Each has four independently graded checkpoints and a standalone guided tutorial.
+
+`engine/agents/model.js` exports `parseConfig`, `initialState`, `stepAgent`, `runUntilPause`,
+`contextTokens`, `estimateTokens`, `tokenCost`, `lintSkill`, `evaluateHarness`, `TOOLS`, `SCOPES`
+and limits/default skill constants. The model is a scripted fixture; execution is bounded,
+deterministic and in memory. No arbitrary code, host files, network or paid inference exists
+in the browser harness. Approval/question resumes retain the same turn and cost entry.
+JSON or skill edits invalidate evidence. Native JavaScript/Python source edits affect
+downloads only. Companions execute locally, with separately opted-in model/GitHub transport.
+
+`voltquest-ai-agents` notebooks contain version, lesson, exact source, skill, javascript,
+python and notes. Confirmed import/load/reset/preset replacement discards execution claims.
+Storage is `vq.ai-agents.v1.<lesson>`; public project/API/MCP/circuit contracts are unchanged.
+The curriculum, native text and engine remain lazy. See AI_AGENTS.md for scope and limits.

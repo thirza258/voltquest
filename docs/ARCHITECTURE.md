@@ -203,3 +203,13 @@ The feature Worker owns deadlines and disposal; React owns editing, result inval
 confirmed notebook replacement and existing course progress. Pages and model are separate lazy
 chunks; navigation-only cards import no curriculum. Desktop companion scripts require actual
 MATLAB and their listed products; they are not executed by the app. See [MATLAB.md](MATLAB.md).
+
+### AI agent learning extension
+
+H2 owns `features/agents`, `content/ai-agents.json` and the downloadable JS/Python companions.
+The pure harness boundary owns `engine/agents`: bounded fixture proposals, context accounting,
+tool schemas/scopes, approval/question transitions, local app state and a versioned MCP subset.
+React owns notebook persistence, replacement confirmation, traces and shared assessments.
+Native source is imported as text and never evaluated in the browser. Companion transport
+tests use mocks; Python behavior is verified by `scripts/check-agent-cli.py`. Static promos
+do not import the curriculum. See [AI_AGENTS.md](AI_AGENTS.md).

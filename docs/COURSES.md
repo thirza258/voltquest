@@ -1,5 +1,11 @@
 # Self-study courses
 
+**AI agents** at `/ai-agents` adds twenty courses, eighty sections with individual questions,
+twenty standalone guided tutorials and twenty five-question exams. The JavaScript-first CLI
+capstone has a runnable Python companion. Local experiments teach context/cost accounting,
+tools, skills, MCP and integrations through actual bounded fixture execution. See
+[AI_AGENTS.md](AI_AGENTS.md). This catalogue remains separate from the public course API.
+
 **MATLAB** at `/matlab` adds eighteen courses, seventy-two detailed sections with an individual
 question in every section, eighteen guided scripts and eighteen five-question exams. Its curated
 244-entry function reference distinguishes 73 executable browser signatures from desktop/toolbox
