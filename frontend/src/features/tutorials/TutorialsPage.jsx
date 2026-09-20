@@ -11,6 +11,8 @@ import CybersecurityPromo from '../cybersecurity/CybersecurityPromo.jsx'
 import MatlabPromo from '../matlab/MatlabPromo.jsx'
 import AgentPromo from '../agents/AgentPromo.jsx'
 import ComputerPromo from '../computer/ComputerPromo.jsx'
+import QtPromo from '../qt/QtPromo.jsx'
+import WinuiPromo from '../winui/WinuiPromo.jsx'
 
 export default function TutorialsPage() {
   const { t } = useI18n()
@@ -43,6 +45,8 @@ export default function TutorialsPage() {
           </div>
           <div className="hidden sm:block"><ChipMascot size={100} mood="thinking" /></div>
         </div>
+        <QtPromo />
+        <WinuiPromo />
         <CybersecurityPromo />
         <MatlabPromo />
         <AgentPromo />

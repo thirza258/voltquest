@@ -118,6 +118,8 @@ describe('collectRoutes', () => {
       fs.writeFileSync(path.join(dir, 'cybersecurity.json'), JSON.stringify({ courses: [{ id: 'cyber-http' }] }))
       fs.writeFileSync(path.join(dir, 'ai-agents.json'), JSON.stringify({ courses: [{ id: 'agents-cli' }] }))
       fs.writeFileSync(path.join(dir, 'computer-architecture.json'), JSON.stringify({ courses: [{ id: 'computer-bits' }] }))
+      fs.writeFileSync(path.join(dir, 'qt.json'), JSON.stringify({ courses: [{ id: 'qt-start' }] }))
+      fs.writeFileSync(path.join(dir, 'winui.json'), JSON.stringify({ courses: [{ id: 'winui-start' }] }))
       expect(collectRoutes(dir)).toEqual([
         '/',
         '/campaign',
@@ -145,6 +147,10 @@ describe('collectRoutes', () => {
         '/computer-architecture',
         '/computer-architecture?stage=assembly',
         '/computer-architecture/computer-bits',
+        '/qt',
+        '/qt/qt-start',
+        '/winui',
+        '/winui/winui-start',
         '/sandbox',
         '/sandbox?bench=matlab',
         '/sandbox?bench=cybersecurity',
@@ -192,6 +198,13 @@ it('indexes every computer course, the assembly sequence and each runnable prese
 })
 
 describe('renderSitemap', () => {
+  it('indexes the WinUI hub and all thirteen desktop courses', () => {
+    const courses = readJson(path.join(contentDir, 'winui.json')).courses
+    expect(courses).toHaveLength(13)
+    expect(routes).toContain('/winui')
+    expect(routes.filter(route => route.startsWith('/winui/'))).toEqual(courses.map(course => `/winui/${course.id}`))
+  })
+
   it('writes absolute URLs under the site origin', () => {
     const xml = renderSitemap(['/', '/play/w1-l1'], 'https://example.test')
     expect(xml).toContain('<loc>https://example.test/</loc>')

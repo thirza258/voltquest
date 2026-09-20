@@ -1,0 +1,3645 @@
+{
+  "title": "Windows desktop apps with C++ and WinUI 3",
+  "reviewedAt": "2026-09-20",
+  "stages": [
+    {
+      "id": "foundations",
+      "title": "Create your first window",
+      "range": "01–03",
+      "summary": "Toolchain, XAML layout and C++ input rules."
+    },
+    {
+      "id": "application",
+      "title": "Build application behavior",
+      "range": "04–09",
+      "summary": "Binding, navigation, dialogs, asynchronous work, files and HTTP APIs."
+    },
+    {
+      "id": "shipping",
+      "title": "Finish and ship an app",
+      "range": "10–13",
+      "summary": "Accessibility, tests, packaging and a task notebook capstone."
+    }
+  ],
+  "courses": [
+    {
+      "id": "winui-start",
+      "version": 1,
+      "order": 1,
+      "title": "01. Your first C++ WinUI desktop window",
+      "summary": "Create a Windows project, trace XAML into C++ code, and launch a window that responds to a button.",
+      "stage": "foundations",
+      "difficulty": "Fundamental",
+      "minutes": 45,
+      "prerequisites": [],
+      "lessons": [
+        {
+          "id": "winui-start-platform",
+          "title": "Choose the desktop stack",
+          "paragraphs": [
+            "A desktop application waits for input and asks Windows to draw controls. WinUI 3 supplies those controls through the Windows App SDK. C++/WinRT is the standard C++ projection used to call Windows Runtime APIs; XAML describes the object tree that becomes your interface. These pieces have different jobs, even when Visual Studio generates them together.",
+            "Use the C++ variant of the packaged WinUI desktop template. An Arduino sketch, a C# WinUI project and a UWP WinUI 2 project have different entry points and build systems. The VoltQuest examples target Microsoft.UI.Xaml and the Windows App SDK. Lessons run in your Windows development environment; reading and assessments work in this browser."
+          ],
+          "example": "Windows App SDK → WinUI 3 controls\nXAML → named UI objects\nC++/WinRT → event handlers and platform calls",
+          "pitfall": "Choosing a C# or UWP template because its name also contains XAML leaves you with incompatible source files.",
+          "question": {
+            "id": "winui-start-check-1",
+            "lessonId": "winui-start-platform",
+            "prompt": "Which combination is used in this path?",
+            "options": [
+              {
+                "id": "a",
+                "text": "WinUI 3, XAML and C++/WinRT"
+              },
+              {
+                "id": "b",
+                "text": "WinUI 2 with an Arduino setup/loop sketch"
+              },
+              {
+                "id": "c",
+                "text": "WPF with browser JavaScript"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The desktop template connects XAML to standard C++ through the Windows Runtime projection."
+          }
+        },
+        {
+          "id": "winui-start-tools",
+          "title": "Prepare and record the toolchain",
+          "paragraphs": [
+            "Use a Windows PC or Windows virtual machine with Visual Studio, its C++ compiler/toolset, a Windows SDK and the C++ WinUI templates. In the Installer select the WinUI development components and C++ support; names vary between supported Visual Studio releases. Search Create a new project for WinUI and filter Language to C++.",
+            "Name the app VoltQuestDesktop so that its generated namespace matches every downloadable lesson. Start with the stable Windows App SDK package selected by your template, record its exact NuGet version, and use an architecture your machine supports. Build and launch the untouched template first. This separates an installation problem from a later source change. Microsoft setup pages sometimes default to C#; retain the C++ selection."
+          ],
+          "example": "Project: VoltQuestDesktop\nTemplate: packaged WinUI desktop app, language C++\nConfiguration: Debug, matching x64 or ARM64\nRecord: Visual Studio, Windows SDK, Windows App SDK versions",
+          "pitfall": "A successful NuGet restore does not prove deployment or native launch succeeds. Test the untouched template before editing.",
+          "question": {
+            "id": "winui-start-check-2",
+            "lessonId": "winui-start-tools",
+            "prompt": "What should you do before replacing the template files?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Change every dependency to a preview version"
+              },
+              {
+                "id": "b",
+                "text": "Build and launch the unmodified C++ template"
+              },
+              {
+                "id": "c",
+                "text": "Delete the generated metadata"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A known working template is a useful baseline for debugging setup and source separately."
+          }
+        },
+        {
+          "id": "winui-start-files",
+          "title": "Follow the generated file boundary",
+          "paragraphs": [
+            "MainWindow.xaml declares the root window and a Button with Click=\"Action_Click\". MainWindow.xaml.h declares that handler; MainWindow.xaml.cpp defines it. The namespace in x:Class must match the C++ implementation and MainWindow.idl. The IDL file describes runtime metadata consumed by the XAML build.",
+            "InitializeComponent constructs the XAML tree before named accessors such as StatusText() are used. Generated .g.h and .g.cpp files are build outputs, so edit their source inputs instead. Keep the template App, pch, manifest, assets and project files. A lesson pack replaces the named MainWindow files; it is not a standalone solution file."
+          ],
+          "example": "<Button Content=\"Say hello\" Click=\"Action_Click\" />\n// In the matching C++ handler:\nStatusText().Text(L\"Hello from C++ and WinUI 3\");",
+          "pitfall": "Fixing a generated header directly is temporary: the next build can overwrite the change.",
+          "question": {
+            "id": "winui-start-check-3",
+            "lessonId": "winui-start-files",
+            "prompt": "Where does the Action_Click implementation belong?",
+            "options": [
+              {
+                "id": "a",
+                "text": "MainWindow.g.h"
+              },
+              {
+                "id": "b",
+                "text": "Package.appxmanifest"
+              },
+              {
+                "id": "c",
+                "text": "MainWindow.xaml.cpp"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "The code-behind implementation is authored source; generated files are outputs."
+          }
+        },
+        {
+          "id": "winui-start-debug",
+          "title": "Observe the event cycle",
+          "paragraphs": [
+            "Put a breakpoint inside Action_Click and press F5. The window appears before the handler runs. Activate the button with the mouse, then with the keyboard: both should reach the same handler and replace the status text. Continue execution to let the interface paint again.",
+            "Close the window and start again. The greeting returns to its initial state because no persistence has been added. Write down the trigger, the state change and the visible result. This small evidence table is more useful than a screenshot alone when later lessons add saving and background work."
+          ],
+          "example": "Launch → Ready\nActivate Say hello → Hello from C++ and WinUI 3\nClose and relaunch → Ready",
+          "pitfall": "A paused breakpoint also pauses UI work. A frozen window during debugging is not evidence of a deadlock.",
+          "question": {
+            "id": "winui-start-check-4",
+            "lessonId": "winui-start-debug",
+            "prompt": "When does the click handler execute?",
+            "options": [
+              {
+                "id": "a",
+                "text": "When the user activates its button"
+              },
+              {
+                "id": "b",
+                "text": "Once every screen refresh"
+              },
+              {
+                "id": "c",
+                "text": "Only before the window is created"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The event-driven application reacts to activation, including keyboard activation."
+          }
+        }
+      ],
+      "steps": [
+        "Create and launch a packaged C++ WinUI project named VoltQuestDesktop.",
+        "Download the lesson files and replace the four MainWindow files as described in README.md.",
+        "Rebuild, set an Action_Click breakpoint and launch with F5.",
+        "Activate Say hello by mouse and keyboard, then restart the app."
+      ],
+      "expected": "The window initially says Ready. Both activation methods display Hello from C++ and WinUI 3; restarting restores Ready.",
+      "challenge": {
+        "task": "Personalize the greeting and explain the complete path from a XAML event attribute to the visible text.",
+        "acceptance": [
+          "Provide the changed XAML and C++ handler.",
+          "Record mouse and keyboard results.",
+          "Record exact compiler and SDK versions with a successful native launch."
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "winui-start-exam-1",
+            "lessonId": "winui-start-platform",
+            "prompt": "A downloaded sample includes MainWindow.xaml.cpp. Which new project fits it?",
+            "options": [
+              {
+                "id": "a",
+                "text": "An Arduino Uno sketch"
+              },
+              {
+                "id": "b",
+                "text": "A C++ packaged WinUI 3 desktop app"
+              },
+              {
+                "id": "c",
+                "text": "A C# WPF application"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Choose the project whose generated C++/WinRT and XAML build matches the files."
+          },
+          {
+            "id": "winui-start-exam-2",
+            "lessonId": "winui-start-tools",
+            "prompt": "The untouched template cannot deploy. What is the best next step?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Rewrite the button handler"
+              },
+              {
+                "id": "b",
+                "text": "Delete all XAML controls"
+              },
+              {
+                "id": "c",
+                "text": "Resolve the template toolchain or deployment error first"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "The failure precedes the authored code, so first establish a working environment."
+          },
+          {
+            "id": "winui-start-exam-3",
+            "lessonId": "winui-start-files",
+            "prompt": "A generated .g.h edit disappears. Where should the permanent fix go?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The corresponding XAML, IDL or authored header"
+              },
+              {
+                "id": "b",
+                "text": "Another generated output directory"
+              },
+              {
+                "id": "c",
+                "text": "The browser cache"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Generation reproduces output from authored inputs."
+          },
+          {
+            "id": "winui-start-exam-4",
+            "lessonId": "winui-start-files",
+            "prompt": "Why call InitializeComponent before StatusText()?",
+            "options": [
+              {
+                "id": "a",
+                "text": "It compiles C++ in the browser"
+              },
+              {
+                "id": "b",
+                "text": "It creates the named XAML objects"
+              },
+              {
+                "id": "c",
+                "text": "It saves application data"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The accessor needs the constructed XAML object tree."
+          },
+          {
+            "id": "winui-start-exam-5",
+            "lessonId": "winui-start-debug",
+            "prompt": "The text resets after relaunch. Which conclusion is justified?",
+            "options": [
+              {
+                "id": "a",
+                "text": "WinUI cannot save files"
+              },
+              {
+                "id": "b",
+                "text": "The compiler discarded a click"
+              },
+              {
+                "id": "c",
+                "text": "This sample keeps its state only in memory"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Persistence is a separate feature introduced later."
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "WinUI 3 and the Windows App SDK",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/winui/winui3/"
+        },
+        {
+          "title": "Visual Studio: C++ WinUI templates",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/dev-tools/visual-studio"
+        },
+        {
+          "title": "Set up a Windows development environment",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/get-started/start-here"
+        },
+        {
+          "title": "C++/WinRT language projection",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/cpp-winrt/"
+        }
+      ]
+    },
+    {
+      "id": "winui-layout",
+      "version": 1,
+      "order": 2,
+      "title": "02. Build readable, resizable XAML layouts",
+      "summary": "Use Grid sizing, named controls and scrolling to make an input form survive narrow windows and large text.",
+      "stage": "foundations",
+      "difficulty": "Fundamental",
+      "minutes": 45,
+      "prerequisites": [
+        "winui-start"
+      ],
+      "lessons": [
+        {
+          "id": "winui-layout-tree",
+          "title": "Read XAML as an object tree",
+          "paragraphs": [
+            "A Window has one content root. Put a Grid under it, then nest labels, inputs and panels according to their relationships. x:Name gives code-behind an accessor; it is not visible label text. A TextBox Header labels the field for the person filling it in.",
+            "The layout sample contains a task title, an Add button and a status area. First read the XAML from the root downward and predict the tab sequence. Keep the visual order and interaction order consistent so that the form remains understandable without pointing at it."
+          ],
+          "example": "<Grid x:Name=\"RootPanel\" Padding=\"24\">\n  <TextBox Header=\"Task title\" x:Name=\"TitleInput\" />\n</Grid>",
+          "pitfall": "An x:Name such as TitleInput does not replace a user-facing label.",
+          "question": {
+            "id": "winui-layout-check-1",
+            "lessonId": "winui-layout-tree",
+            "prompt": "What is x:Name primarily for?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Choosing the app package identity"
+              },
+              {
+                "id": "b",
+                "text": "Referencing the object from markup or code"
+              },
+              {
+                "id": "c",
+                "text": "Displaying the field label"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Named object access and visible labeling are separate responsibilities."
+          }
+        },
+        {
+          "id": "winui-layout-sizing",
+          "title": "Allocate space with Auto and star",
+          "paragraphs": [
+            "An Auto row measures itself from its content; a star row receives a proportional share of remaining space. Give a task list the expanding row and the entry controls an Auto row. A fixed pixel height for every row can clip translated labels or large fonts.",
+            "The sample stacks its form vertically so it can fit a narrow window. Compare that behavior with a horizontal StackPanel whose children keep requesting their natural widths. Grid is useful when controls must share available width; a StackPanel is useful when a sequence simply grows along one axis."
+          ],
+          "example": "<Grid.RowDefinitions>\n  <RowDefinition Height=\"Auto\" />\n  <RowDefinition Height=\"*\" />\n  <RowDefinition Height=\"Auto\" />\n</Grid.RowDefinitions>",
+          "pitfall": "An expanding star row needs a finite available height. A parent that measures with infinite space changes the result.",
+          "question": {
+            "id": "winui-layout-check-2",
+            "lessonId": "winui-layout-sizing",
+            "prompt": "Which row should hold the growing task list?",
+            "options": [
+              {
+                "id": "a",
+                "text": "A zero-height row"
+              },
+              {
+                "id": "b",
+                "text": "A fixed 12-pixel row"
+              },
+              {
+                "id": "c",
+                "text": "The star-sized row"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "The list should receive the remaining bounded space."
+          }
+        },
+        {
+          "id": "winui-layout-resize",
+          "title": "Test constraints instead of one screenshot",
+          "paragraphs": [
+            "Resize the same running window to a comfortable desktop width and then a narrow width. Text should wrap inside the content area, while controls keep meaningful labels. Add a long task title and increase Windows text scaling. These tests expose assumptions that a default screenshot hides.",
+            "A ScrollViewer can let a long form stay reachable in a short window. For a ListView, prefer its own bounded scrolling region rather than placing it inside an unbounded vertical scroller. Use an adaptive state only when the arrangement genuinely needs to change; simple fluid sizing often handles the first version."
+          ],
+          "example": "Try: wide → narrow → short window\nRepeat with a long label and increased text size\nCheck: every action reachable, no clipped field label",
+          "pitfall": "Wrapping a whole long list in another vertical scroller can defeat the list’s intended sizing and virtualization.",
+          "question": {
+            "id": "winui-layout-check-3",
+            "lessonId": "winui-layout-resize",
+            "prompt": "What is a useful resize test?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Use narrow and short windows with long text"
+              },
+              {
+                "id": "b",
+                "text": "Inspect only the default window size"
+              },
+              {
+                "id": "c",
+                "text": "Assume Auto guarantees every possible layout"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Real constraints reveal clipping and reachability failures."
+          }
+        },
+        {
+          "id": "winui-layout-resources",
+          "title": "Separate appearance from behavior",
+          "paragraphs": [
+            "ThemeResource lets a brush or control style follow the current theme. The root background uses ApplicationPageBackgroundThemeBrush; standard controls retain their built-in states. Avoid repeating literal foreground and background colors on every child.",
+            "Layout changes should not change what Add means. The same handler can read TitleInput regardless of where the control is placed. This separation lets you improve spacing and contrast without changing validation or persistence behavior. Later accessibility work will test those appearance decisions with Windows themes."
+          ],
+          "example": "Background=\"{ThemeResource ApplicationPageBackgroundThemeBrush}\"\nTextWrapping=\"Wrap\"\nHorizontalAlignment=\"Stretch\"",
+          "pitfall": "Hard-coded pale text and a light background can become unreadable when only part of the UI responds to dark mode.",
+          "question": {
+            "id": "winui-layout-check-4",
+            "lessonId": "winui-layout-resources",
+            "prompt": "Why use a theme brush?",
+            "options": [
+              {
+                "id": "a",
+                "text": "It replaces the layout engine"
+              },
+              {
+                "id": "b",
+                "text": "Its value can follow the active Windows theme"
+              },
+              {
+                "id": "c",
+                "text": "It automatically validates task titles"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A theme resource handles appearance rather than application rules."
+          }
+        }
+      ],
+      "steps": [
+        "Install this lesson pack in the working template and build.",
+        "Resize the form to a narrow and then a short window.",
+        "Submit a long title and compare wrapping with field width.",
+        "Increase Windows text size and confirm Add stays reachable."
+      ],
+      "expected": "The vertically arranged input and action remain reachable through the form scroller, and the status text wraps inside the window.",
+      "challenge": {
+        "task": "Place the input and action side by side only at wider widths using an adaptive layout, preserving the same handler.",
+        "acceptance": [
+          "Provide narrow and wide observations, including keyboard order.",
+          "Check large text and a short window.",
+          "Explain which rows use Auto or star and why."
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "winui-layout-exam-1",
+            "lessonId": "winui-layout-tree",
+            "prompt": "A field has x:Name but no visible label. What should you add?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Another namespace alias"
+              },
+              {
+                "id": "b",
+                "text": "A compiler optimization"
+              },
+              {
+                "id": "c",
+                "text": "A descriptive Header or associated label"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "A person needs an actual field label."
+          },
+          {
+            "id": "winui-layout-exam-2",
+            "lessonId": "winui-layout-sizing",
+            "prompt": "A footer should fit its text while the list takes remaining height. Which pairing works?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Auto footer and star list row"
+              },
+              {
+                "id": "b",
+                "text": "Star footer and zero-height list"
+              },
+              {
+                "id": "c",
+                "text": "Two arbitrary fixed heights"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Size content to need and let the list use remaining space."
+          },
+          {
+            "id": "winui-layout-exam-3",
+            "lessonId": "winui-layout-resize",
+            "prompt": "A layout passes at 1200 pixels but clips at large text size. Is it finished?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Yes; accessibility is unrelated to layout"
+              },
+              {
+                "id": "b",
+                "text": "No; adjust constraints and repeat the failing case"
+              },
+              {
+                "id": "c",
+                "text": "Yes; the default screenshot passed"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A supported text setting is part of the layout contract."
+          },
+          {
+            "id": "winui-layout-exam-4",
+            "lessonId": "winui-layout-resize",
+            "prompt": "Why bound a ListView in a Grid row?",
+            "options": [
+              {
+                "id": "a",
+                "text": "To hide all its items"
+              },
+              {
+                "id": "b",
+                "text": "To store its items permanently"
+              },
+              {
+                "id": "c",
+                "text": "To give its scrolling area a finite size"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Bounded layout supports predictable scrolling."
+          },
+          {
+            "id": "winui-layout-exam-5",
+            "lessonId": "winui-layout-resources",
+            "prompt": "Moving Add into another panel requires which behavior change?",
+            "options": [
+              {
+                "id": "a",
+                "text": "None if its event and input references remain valid"
+              },
+              {
+                "id": "b",
+                "text": "A new storage database"
+              },
+              {
+                "id": "c",
+                "text": "A new application language"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Visual structure can evolve while the action contract stays the same."
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Responsive XAML layouts",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/ui/layouts-with-xaml"
+        },
+        {
+          "title": "XAML theme resources",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/platform/xaml/xaml-theme-resources"
+        },
+        {
+          "title": "Accessibility for Windows apps",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/design/accessibility/accessibility-overview"
+        }
+      ]
+    },
+    {
+      "id": "winui-events",
+      "version": 1,
+      "order": 3,
+      "title": "03. C++ state, input validation and events",
+      "summary": "Keep task rules in ordinary C++, connect them to WinUI events, and explain every success or rejected input.",
+      "stage": "foundations",
+      "difficulty": "Fundamental",
+      "minutes": 55,
+      "prerequisites": [
+        "winui-layout"
+      ],
+      "lessons": [
+        {
+          "id": "winui-events-state",
+          "title": "Keep one source of truth",
+          "paragraphs": [
+            "A label is a presentation of application state. Store the count in an integer member and render it after a successful operation instead of parsing it back out of a sentence. This avoids coupling a numeric rule to translated text or formatting.",
+            "The sample passes the input through TaskRules.h before changing the count. The same header will be used by the capstone and a console regression test. This creates a useful boundary: the rule knows about strings and counts; the window knows about TextBox and TextBlock objects."
+          ],
+          "example": "std::size_t m_count = 0;\n// Validate first, then mutate state, then update controls.",
+          "pitfall": "Incrementing before validation and trying to undo later makes failure handling needlessly fragile.",
+          "question": {
+            "id": "winui-events-check-1",
+            "lessonId": "winui-events-state",
+            "prompt": "What should be the authoritative count?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The last word in a status label"
+              },
+              {
+                "id": "b",
+                "text": "The current window width"
+              },
+              {
+                "id": "c",
+                "text": "A C++ state value"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Presentation should be derived from state rather than parsed back into it."
+          }
+        },
+        {
+          "id": "winui-events-strings",
+          "title": "Cross the string boundary deliberately",
+          "paragraphs": [
+            "TextBox.Text returns a winrt::hstring. For a synchronous portable rule, make a std::wstring from its characters and pass a string view into that local value. A view borrows storage; it does not extend the life of a temporary.",
+            "The teaching rule trims ASCII spaces and tabs at the edges, rejects empty titles and embedded control characters, and limits length to 80 wchar_t units. On Windows those units are UTF-16 code units, not user-perceived characters. This simple documented rule preserves ordinary Unicode text but is not full Unicode normalization."
+          ],
+          "example": "auto title = vq::clean_title(std::wstring{ TitleInput().Text().c_str() });\nif (auto error = vq::title_error(title); !error.empty()) { /* show error */ }",
+          "pitfall": "Keeping a string_view into a destroyed temporary leaves a dangling view even though the old text may seem readable.",
+          "question": {
+            "id": "winui-events-check-2",
+            "lessonId": "winui-events-strings",
+            "prompt": "Why is a retained string_view into a temporary unsafe?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The view does not own the characters"
+              },
+              {
+                "id": "b",
+                "text": "Views always copy the string"
+              },
+              {
+                "id": "c",
+                "text": "hstring disables string lifetimes"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Borrowed references must not outlive their storage."
+          }
+        },
+        {
+          "id": "winui-events-events",
+          "title": "Validate at the action boundary",
+          "paragraphs": [
+            "The Add handler is the point where draft input becomes an accepted task. Call the same validation rule there even if the UI also limits field length. A future import or alternate interaction should not bypass the domain rule.",
+            "Show a specific error and leave the draft intact when validation fails. On success update state, clear the field and return focus to it. Standard Button activation already supports keyboard use; avoid creating a separate mouse-only path with different behavior."
+          ],
+          "example": "Blank title → show error, count unchanged\n\"  Read XAML  \" → accept \"Read XAML\", count +1\nEmbedded newline → show error, draft retained",
+          "pitfall": "Silently discarding invalid input makes it impossible for a learner or app user to know what happened.",
+          "question": {
+            "id": "winui-events-check-3",
+            "lessonId": "winui-events-events",
+            "prompt": "What should a rejected title do to the count?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Reset every existing task"
+              },
+              {
+                "id": "b",
+                "text": "Leave it unchanged"
+              },
+              {
+                "id": "c",
+                "text": "Increase it and hide the task"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Rejected input must not mutate accepted state."
+          }
+        },
+        {
+          "id": "winui-events-ownership",
+          "title": "Use scope to manage resources",
+          "paragraphs": [
+            "Standard C++ values and C++/WinRT projection objects release their resources when their owning scope ends. Prefer these values to manual new/delete for routine strings, vectors and controls. A const reference parameter is convenient for a synchronous handler that does not retain it.",
+            "Long-lived event publishers and asynchronous callbacks need an explicit lifetime policy. A raw this pointer does not keep a window alive. Later asynchronous lessons demonstrate a strong reference across a bounded operation and a closed-window guard; external subscriptions should be revoked or use a weak reference."
+          ],
+          "example": "Synchronous input → read during this call\nOwned value → safe to retain in an object\nBorrowed reference → needs a known owner lifetime",
+          "pitfall": "A lambda capturing this owns the pointer value, not the object it points to.",
+          "question": {
+            "id": "winui-events-check-4",
+            "lessonId": "winui-events-ownership",
+            "prompt": "Does capturing raw this extend a window’s lifetime?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Yes, for every lambda"
+              },
+              {
+                "id": "b",
+                "text": "Only when compiled in Release"
+              },
+              {
+                "id": "c",
+                "text": "No; an ownership strategy is still needed"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "A pointer capture is not a strong object reference."
+          }
+        }
+      ],
+      "steps": [
+        "Build the sample and add a normal title.",
+        "Submit spaces only, then an 81-unit title, and inspect the unchanged count.",
+        "Submit a padded valid title and inspect the trimmed result.",
+        "Run TaskRules.test.cpp separately using the README command."
+      ],
+      "expected": "Valid titles increase the count. Blank, control-character and oversized titles leave it unchanged and display a specific reason.",
+      "challenge": {
+        "task": "Add a duplicate-title rule in the portable layer, then exercise it through both the console test and the window.",
+        "acceptance": [
+          "Keep invalid drafts visible.",
+          "Show unchanged state after rejection.",
+          "Document case sensitivity and whitespace behavior for duplicates."
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "winui-events-exam-1",
+            "lessonId": "winui-events-state",
+            "prompt": "A status message is translated. Which count design remains correct?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Keep a numeric member and format it for display"
+              },
+              {
+                "id": "b",
+                "text": "Parse digits from the translated sentence"
+              },
+              {
+                "id": "c",
+                "text": "Use the label length as the count"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The domain state should not depend on display language."
+          },
+          {
+            "id": "winui-events-exam-2",
+            "lessonId": "winui-events-strings",
+            "prompt": "The limit is 80 UTF-16 units on Windows. Is that always 80 visible characters?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only text in dark mode differs"
+              },
+              {
+                "id": "b",
+                "text": "No; some characters occupy multiple units"
+              },
+              {
+                "id": "c",
+                "text": "Yes, for every Unicode string"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Storage units and user-perceived characters differ."
+          },
+          {
+            "id": "winui-events-exam-3",
+            "lessonId": "winui-events-events",
+            "prompt": "An input contains only spaces. What is the correct transaction?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Increment first and return success"
+              },
+              {
+                "id": "b",
+                "text": "Clear the whole collection"
+              },
+              {
+                "id": "c",
+                "text": "Report the error and leave accepted state unchanged"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Validation happens before mutation."
+          },
+          {
+            "id": "winui-events-exam-4",
+            "lessonId": "winui-events-events",
+            "prompt": "Why validate in the handler as well as limiting the TextBox?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The domain boundary must enforce its own contract"
+              },
+              {
+                "id": "b",
+                "text": "To make the compiler run twice"
+              },
+              {
+                "id": "c",
+                "text": "Because Header cannot display text"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Input widgets are not the only possible callers of a rule."
+          },
+          {
+            "id": "winui-events-exam-5",
+            "lessonId": "winui-events-ownership",
+            "prompt": "A callback may outlive its owner. What needs review?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only the executable filename"
+              },
+              {
+                "id": "b",
+                "text": "Object lifetime and subscription cleanup"
+              },
+              {
+                "id": "c",
+                "text": "Only button color"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Delayed work needs a valid owner or a safe way to detect its absence."
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "C++/WinRT language projection",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/cpp-winrt/"
+        },
+        {
+          "title": "Events and routed events",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/platform/xaml/events-and-routed-events-overview"
+        },
+        {
+          "title": "C++/WinRT strong and weak references",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/cpp-winrt/weak-references"
+        }
+      ]
+    },
+    {
+      "id": "winui-binding",
+      "version": 1,
+      "order": 4,
+      "title": "04. Binding and observable task collections",
+      "summary": "Connect UI properties and collections to data, distinguish binding modes, and plan a C++ view model.",
+      "stage": "application",
+      "difficulty": "Intermediate",
+      "minutes": 60,
+      "prerequisites": [
+        "winui-events"
+      ],
+      "lessons": [
+        {
+          "id": "winui-binding-modes",
+          "title": "Trace a binding from source to target",
+          "paragraphs": [
+            "A binding connects a source property with a target control property. OneWay tracks source changes, TwoWay can also send supported target changes back, and OneTime takes an initial value. In x:Bind the default is OneTime, so state that changes later often needs an explicit mode and notification.",
+            "The sample uses element binding to mirror the task input into a preview TextBlock. This isolates the source-target relationship before introducing a custom runtime class. Editing the field changes the preview; it does not add an accepted task until Add is activated. Draft state and committed collection state remain distinct."
+          ],
+          "example": "<TextBlock Text=\"{Binding Text, ElementName=TitleInput, Mode=OneWay}\" />",
+          "pitfall": "A working preview binding does not mean the task has passed validation or been saved.",
+          "question": {
+            "id": "winui-binding-check-1",
+            "lessonId": "winui-binding-modes",
+            "prompt": "What does OneWay describe?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Updates from source to target"
+              },
+              {
+                "id": "b",
+                "text": "Automatic writes to a file"
+              },
+              {
+                "id": "c",
+                "text": "Always two-way editing"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Binding direction is about property updates, not persistence."
+          }
+        },
+        {
+          "id": "winui-binding-collection",
+          "title": "Tell the list when its items change",
+          "paragraphs": [
+            "An ordinary std::vector does not announce changes to a WinUI ItemsSource. The sample creates an IObservableVector<IInspectable> with single_threaded_observable_vector and appends boxed strings. Assign that collection once to ListView.ItemsSource; Append and RemoveAt then notify the control.",
+            "This is a deliberately simple text list. IInspectable is the Windows Runtime object interface, and box_value wraps the string for an object collection. Keep changes on the UI thread. If each task later has an editable title and completion state, use a typed runtime item with property notifications as well as an observable collection."
+          ],
+          "example": "auto tasks = winrt::single_threaded_observable_vector<winrt::Windows::Foundation::IInspectable>();\nTaskList().ItemsSource(tasks);\ntasks.Append(winrt::box_value(L\"Read about binding\"));",
+          "pitfall": "Collection-change notifications do not automatically announce changes inside each item.",
+          "question": {
+            "id": "winui-binding-check-2",
+            "lessonId": "winui-binding-collection",
+            "prompt": "What does an observable collection announce?",
+            "options": [
+              {
+                "id": "a",
+                "text": "All changes on disk"
+              },
+              {
+                "id": "b",
+                "text": "Items being added, removed or replaced"
+              },
+              {
+                "id": "c",
+                "text": "Every arbitrary C++ member write inside an item"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Collection and item property notifications are separate."
+          }
+        },
+        {
+          "id": "winui-binding-viewmodel",
+          "title": "Expose properties to XAML intentionally",
+          "paragraphs": [
+            "A larger task model can expose Title and IsDone through IDL-generated runtime metadata, then implement INotifyPropertyChanged in C++/WinRT. A setter first checks for a real value change, updates the stored value, and raises PropertyChanged with the exact property name. Consumers then know which property to read again.",
+            "For compiled x:Bind, the XAML compiler needs the relevant types in metadata. A plain private C++ field is not automatically a bindable public runtime property. Start by identifying what the view needs to observe, then define that surface. The downloaded text-list sample does not pretend to implement a full MVVM framework."
+          ],
+          "example": "// Setter design, shown as a sketch:\nif (m_title != value) {\n    m_title = value;\n    // Raise PropertyChanged for L\"Title\".\n}",
+          "pitfall": "Writing Title in XAML while raising a notification for title creates a different property name.",
+          "question": {
+            "id": "winui-binding-check-3",
+            "lessonId": "winui-binding-viewmodel",
+            "prompt": "What must a changing item property notify?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The project folder name"
+              },
+              {
+                "id": "b",
+                "text": "The current screen resolution"
+              },
+              {
+                "id": "c",
+                "text": "Its exact public property name"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Consumers re-read the named property when they receive its notification."
+          }
+        },
+        {
+          "id": "winui-binding-commands",
+          "title": "Keep commands and drafts separate",
+          "paragraphs": [
+            "A command represents an intended action and may report whether it can currently execute. A button can call a handler in a small app; an ICommand becomes useful when several UI elements share the same action and enabled-state policy. Neither pattern removes the need to validate at execution.",
+            "Trace Add as draft → validation → collection mutation → notification → rendered item. This sequence identifies where a fault belongs. If the rule accepted a title but the list never changed, inspect the collection assignment and its notifications before rewriting the XAML layout."
+          ],
+          "example": "Draft input → Add action → validate → Append\nAppend → collection notification → ListView refresh",
+          "pitfall": "Disabling a button is helpful feedback but is not a replacement for checking the action’s preconditions.",
+          "question": {
+            "id": "winui-binding-check-4",
+            "lessonId": "winui-binding-commands",
+            "prompt": "Where does an accepted title enter the list?",
+            "options": [
+              {
+                "id": "a",
+                "text": "At the collection mutation after validation"
+              },
+              {
+                "id": "b",
+                "text": "At every preview text update"
+              },
+              {
+                "id": "c",
+                "text": "Only after a theme change"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Committed state changes only when the action succeeds."
+          }
+        }
+      ],
+      "steps": [
+        "Build the sample and type without clicking Add; inspect the preview and empty list.",
+        "Add two valid titles and observe immediate list updates.",
+        "Submit a blank title and confirm no item appears.",
+        "Explain how an editable TaskItem would differ from a boxed immutable string."
+      ],
+      "expected": "The preview follows typed text; only successful Add actions append list items. Invalid input produces no collection change.",
+      "challenge": {
+        "task": "Design an IDL TaskItem with a Title property and describe a OneWay binding update from its setter.",
+        "acceptance": [
+          "Include metadata, setter and exact notification name.",
+          "Distinguish item notifications from collection notifications.",
+          "Keep the draft preview separate from accepted tasks."
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "winui-binding-exam-1",
+            "lessonId": "winui-binding-modes",
+            "prompt": "An x:Bind label remains at its initial value. What should you inspect?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Whether the EXE filename contains spaces"
+              },
+              {
+                "id": "b",
+                "text": "Binding mode and source notifications"
+              },
+              {
+                "id": "c",
+                "text": "Whether the window has a border"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "x:Bind defaults to OneTime; changing data requires the intended update mechanism."
+          },
+          {
+            "id": "winui-binding-exam-2",
+            "lessonId": "winui-binding-collection",
+            "prompt": "Appending to std::vector does not refresh a ListView. What is missing?",
+            "options": [
+              {
+                "id": "a",
+                "text": "A second mouse listener"
+              },
+              {
+                "id": "b",
+                "text": "A file picker"
+              },
+              {
+                "id": "c",
+                "text": "A collection notification path to the control"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "The control needs an observable collection or an explicit refresh strategy."
+          },
+          {
+            "id": "winui-binding-exam-3",
+            "lessonId": "winui-binding-collection",
+            "prompt": "An item title changes without adding or removing an item. What is relevant?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Item property notification"
+              },
+              {
+                "id": "b",
+                "text": "Only collection size notification"
+              },
+              {
+                "id": "c",
+                "text": "Only screen repaint frequency"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Changing an existing property differs from changing collection membership."
+          },
+          {
+            "id": "winui-binding-exam-4",
+            "lessonId": "winui-binding-viewmodel",
+            "prompt": "A private field is not visible to compiled XAML binding. What should you define?",
+            "options": [
+              {
+                "id": "a",
+                "text": "A longer field name"
+              },
+              {
+                "id": "b",
+                "text": "The required public metadata-backed property surface"
+              },
+              {
+                "id": "c",
+                "text": "A global using directive alone"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The XAML compiler consumes runtime type metadata for these bindings."
+          },
+          {
+            "id": "winui-binding-exam-5",
+            "lessonId": "winui-binding-commands",
+            "prompt": "Two buttons share Add. Where should the validation rule live?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Duplicated with different rules in each button"
+              },
+              {
+                "id": "b",
+                "text": "Only in a tooltip"
+              },
+              {
+                "id": "c",
+                "text": "In the shared action or domain layer"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Shared action policy prevents inconsistent accepted data."
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "XAML controls bound to C++/WinRT properties",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/cpp-winrt/binding-property"
+        },
+        {
+          "title": "C++/WinRT collections",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/cpp-winrt/collections"
+        },
+        {
+          "title": "Events and routed events",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/platform/xaml/events-and-routed-events-overview"
+        }
+      ]
+    },
+    {
+      "id": "winui-navigation",
+      "version": 1,
+      "order": 5,
+      "title": "05. Navigation and application state",
+      "summary": "Build a NavigationView shell, separate selected destinations from data, and plan page and back-stack behavior.",
+      "stage": "application",
+      "difficulty": "Intermediate",
+      "minutes": 50,
+      "prerequisites": [
+        "winui-binding"
+      ],
+      "lessons": [
+        {
+          "id": "winui-navigation-shell",
+          "title": "Give destinations stable identities",
+          "paragraphs": [
+            "Navigation labels are for people; route keys are for the program. The sample uses task and about tags on NavigationViewItem objects. SelectionChanged reads the selected item’s tag, not its translated Content. This keeps routing stable when the wording changes.",
+            "NavigationView supplies a shell and selection UI; it does not automatically invent your pages or data lifetime. This first sample switches content inside one window. It explicitly has no Frame history so you can inspect selection without assuming a back stack exists."
+          ],
+          "example": "<NavigationViewItem Content=\"Tasks\" Tag=\"tasks\" />\n<NavigationViewItem Content=\"About\" Tag=\"about\" />",
+          "pitfall": "Routing by displayed text breaks when a label is renamed or localized.",
+          "question": {
+            "id": "winui-navigation-check-1",
+            "lessonId": "winui-navigation-shell",
+            "prompt": "Which value makes a stable navigation key?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The current item width"
+              },
+              {
+                "id": "b",
+                "text": "An explicit tag such as tasks"
+              },
+              {
+                "id": "c",
+                "text": "The translated display label"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Internal keys can remain stable while labels change."
+          }
+        },
+        {
+          "id": "winui-navigation-pages",
+          "title": "Understand Frame and Page",
+          "paragraphs": [
+            "For a multi-page application, place a Frame in the shell and navigate to XAML Page runtime types. Add those pages using the C++ WinUI item template so the XAML, implementation and metadata agree. A Frame manages navigation history; a NavigationView is the navigation control around it.",
+            "Passing a small task id as a navigation parameter is often clearer than passing a live control. The destination can load the appropriate task from a shared model. UI objects should not become the application database or be shared across unrelated visual trees."
+          ],
+          "example": "NavigationView selection → stable route key\nRoute map → Frame.Navigate(page type, task id)\nPage → reads the shared task model",
+          "pitfall": "A NavigationViewItem label alone does not create a Page or a Frame history entry.",
+          "question": {
+            "id": "winui-navigation-check-2",
+            "lessonId": "winui-navigation-pages",
+            "prompt": "Which object owns page navigation history?",
+            "options": [
+              {
+                "id": "a",
+                "text": "TextBox"
+              },
+              {
+                "id": "b",
+                "text": "An arbitrary NavigationViewItem label"
+              },
+              {
+                "id": "c",
+                "text": "Frame"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Frame implements page navigation and a back stack."
+          }
+        },
+        {
+          "id": "winui-navigation-lifetime",
+          "title": "Keep data beyond a page visit",
+          "paragraphs": [
+            "A page can be constructed again when navigating, depending on its cache policy. If it owns the only task vector, leaving and recreating it can lose the current tasks. Put session data in an application model whose lifetime matches the intended session.",
+            "The sample keeps its visit count in MainWindow, so choosing About and returning to Tasks does not reset it. Closing the application still ends that lifetime. Compare page recreation, window lifetime and disk persistence rather than calling all three saving."
+          ],
+          "example": "Page lifetime < window session < persisted document\nChoose an owner that matches the requirement.",
+          "pitfall": "Caching a page is not the same as saving data for the next application launch.",
+          "question": {
+            "id": "winui-navigation-check-3",
+            "lessonId": "winui-navigation-lifetime",
+            "prompt": "Where should data needed by several pages live?",
+            "options": [
+              {
+                "id": "a",
+                "text": "In a shared model with a suitable lifetime"
+              },
+              {
+                "id": "b",
+                "text": "Only in a temporary local variable in one page"
+              },
+              {
+                "id": "c",
+                "text": "In a button label"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Data ownership should match the duration and consumers of that data."
+          }
+        },
+        {
+          "id": "winui-navigation-back",
+          "title": "Make back behavior intentional",
+          "paragraphs": [
+            "A back action should check whether the Frame can go back and then perform one navigation. Keep the shell selection synchronized with the destination actually displayed. Decide what happens with unsaved edits before changing pages, and make that policy consistent.",
+            "Write a sequence: tasks → detail → about → back. Predict the visible page and selected shell item after each step. The downloaded selection-only sample is a foundation for that exercise, not a claim that history, deep links or activation routing are already implemented."
+          ],
+          "example": "// A Frame-based extension checks CanGoBack() before GoBack().\n// This lesson sample has selection only, with no history.",
+          "pitfall": "Calling GoBack without checking history can fail, while changing only the highlight can leave the wrong page displayed.",
+          "question": {
+            "id": "winui-navigation-check-4",
+            "lessonId": "winui-navigation-back",
+            "prompt": "What should a back action check first?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Whether a task title is uppercase"
+              },
+              {
+                "id": "b",
+                "text": "Whether a previous Frame entry exists"
+              },
+              {
+                "id": "c",
+                "text": "Whether the window uses dark mode"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The history state determines whether back navigation is available."
+          }
+        }
+      ],
+      "steps": [
+        "Build and launch the NavigationView sample.",
+        "Select Tasks, then About, then Tasks and inspect the visit count.",
+        "Rename the visible Tasks label while keeping its tag unchanged and rebuild.",
+        "Sketch a Frame-based detail page and its back policy."
+      ],
+      "expected": "Selection changes the content. The stable tags still work after a visible label change, and session visits survive selection changes.",
+      "challenge": {
+        "task": "Extend the shell with a real Page and Frame, then describe and test its state and back-stack policy.",
+        "acceptance": [
+          "Create the page with matching C++ WinUI metadata.",
+          "Document tasks → detail → back results.",
+          "Keep task data when the page is recreated."
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "winui-navigation-exam-1",
+            "lessonId": "winui-navigation-shell",
+            "prompt": "A translated menu label breaks routing. What fixes the design?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Disable localization"
+              },
+              {
+                "id": "b",
+                "text": "Route by menu width"
+              },
+              {
+                "id": "c",
+                "text": "Use a stable route key separate from display text"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Presentation text should not serve as the application identifier."
+          },
+          {
+            "id": "winui-navigation-exam-2",
+            "lessonId": "winui-navigation-pages",
+            "prompt": "Adding NavigationViewItem creates which behavior automatically?",
+            "options": [
+              {
+                "id": "a",
+                "text": "A selectable navigation item"
+              },
+              {
+                "id": "b",
+                "text": "A complete Page and back stack"
+              },
+              {
+                "id": "c",
+                "text": "A persistent database"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Content navigation still needs an explicit implementation."
+          },
+          {
+            "id": "winui-navigation-exam-3",
+            "lessonId": "winui-navigation-lifetime",
+            "prompt": "Tasks vanish when a page is recreated. What should you inspect?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The text font"
+              },
+              {
+                "id": "b",
+                "text": "The lifetime of the task model"
+              },
+              {
+                "id": "c",
+                "text": "The theme brush"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A model owned only by the old page may have been discarded."
+          },
+          {
+            "id": "winui-navigation-exam-4",
+            "lessonId": "winui-navigation-lifetime",
+            "prompt": "A cached page retains tasks. Will they necessarily survive process exit?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Yes, all cached pages are stored on disk"
+              },
+              {
+                "id": "b",
+                "text": "Only when the page name is Tasks"
+              },
+              {
+                "id": "c",
+                "text": "No, persistence requires a separate mechanism"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Memory lifetime ends with the process."
+          },
+          {
+            "id": "winui-navigation-exam-5",
+            "lessonId": "winui-navigation-back",
+            "prompt": "Back shows a different page but the menu highlight is stale. What is missing?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Synchronization with the actual navigation result"
+              },
+              {
+                "id": "b",
+                "text": "Another file extension"
+              },
+              {
+                "id": "c",
+                "text": "An extra Add button"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Selection and displayed destination should describe the same state."
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "NavigationView",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/ui/controls/navigationview"
+        },
+        {
+          "title": "Visual Studio: C++ WinUI templates",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/dev-tools/visual-studio"
+        }
+      ]
+    },
+    {
+      "id": "winui-dialogs",
+      "version": 1,
+      "order": 6,
+      "title": "06. Dialogs, confirmation and recovery",
+      "summary": "Confirm a destructive action, attach dialogs to the right window, and keep cancellation from mutating data.",
+      "stage": "application",
+      "difficulty": "Intermediate",
+      "minutes": 45,
+      "prerequisites": [
+        "winui-navigation"
+      ],
+      "lessons": [
+        {
+          "id": "winui-dialogs-decision",
+          "title": "Ask at the point of a meaningful decision",
+          "paragraphs": [
+            "A confirmation is useful when an action would remove data the user may still want. Show the concrete action and its consequence, such as clearing the current draft. Choose Cancel as the safe default and keep the original draft available if the user dismisses the dialog.",
+            "Routine reversible actions usually need immediate feedback rather than repeated confirmations. In this sample Clear draft opens a ContentDialog because it would discard the typed text. The dialog itself does not clear anything; the handler changes the field only after receiving the primary result."
+          ],
+          "example": "Clear draft → explain consequence → wait\nPrimary result → clear\nCancel or dismissal → preserve draft",
+          "pitfall": "Clearing first and asking afterward reverses the expected confirmation contract.",
+          "question": {
+            "id": "winui-dialogs-check-1",
+            "lessonId": "winui-dialogs-decision",
+            "prompt": "When should the sample clear the draft?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Before opening the dialog"
+              },
+              {
+                "id": "b",
+                "text": "Whenever the dialog loses focus"
+              },
+              {
+                "id": "c",
+                "text": "After the primary confirmation result"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Confirmation must precede the state mutation."
+          }
+        },
+        {
+          "id": "winui-dialogs-root",
+          "title": "Attach the dialog to a XAML root",
+          "paragraphs": [
+            "A desktop WinUI window does not provide the old UWP CoreWindow model. Set ContentDialog.XamlRoot to the XamlRoot of a loaded element in the owning window, such as RootPanel().XamlRoot(). This tells the dialog which visual tree hosts it.",
+            "The click occurs after the root is loaded, so the sample can obtain that root. Do not try to show the dialog from a constructor before its visual tree is ready. Multiple windows each need the appropriate owning root rather than a process-wide guessed parent."
+          ],
+          "example": "dialog.XamlRoot(RootPanel().XamlRoot());\ndialog.DefaultButton(ContentDialogButton::Close);",
+          "pitfall": "A copied UWP dialog snippet can fail in a desktop window if its ownership assumptions are left unchanged.",
+          "question": {
+            "id": "winui-dialogs-check-2",
+            "lessonId": "winui-dialogs-root",
+            "prompt": "Where should the sample get a dialog XamlRoot?",
+            "options": [
+              {
+                "id": "a",
+                "text": "A loaded element in the owning window"
+              },
+              {
+                "id": "b",
+                "text": "A random page from another window"
+              },
+              {
+                "id": "c",
+                "text": "The package manifest"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Dialog ownership must match the active visual tree."
+          }
+        },
+        {
+          "id": "winui-dialogs-await",
+          "title": "Keep the UI responsive while deciding",
+          "paragraphs": [
+            "ShowAsync returns an operation that completes when the person chooses or dismisses the dialog. Await it with co_await in an event coroutine. A blocking get call on the UI thread can stop the very interaction needed to finish the operation.",
+            "Keep a strong reference across the operation, reject a second concurrent dialog request, and check whether the window has closed before updating it. The sample catches Windows Runtime failures and restores its busy flag. Fire-and-forget handlers must handle their own failures because the event caller is not awaiting their result."
+          ],
+          "example": "auto result = co_await dialog.ShowAsync();\nif (!m_closed && result == ContentDialogResult::Primary) { /* clear */ }",
+          "pitfall": "Using fire_and_forget does not make unhandled exceptions harmless.",
+          "question": {
+            "id": "winui-dialogs-check-3",
+            "lessonId": "winui-dialogs-await",
+            "prompt": "Why use co_await for ShowAsync?",
+            "options": [
+              {
+                "id": "a",
+                "text": "To turn the dialog into a console prompt"
+              },
+              {
+                "id": "b",
+                "text": "To return control to the UI while the decision is pending"
+              },
+              {
+                "id": "c",
+                "text": "To bypass the confirmation"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The UI must remain able to process the dialog interaction."
+          }
+        },
+        {
+          "id": "winui-dialogs-recovery",
+          "title": "Test dismissal and repeated input",
+          "paragraphs": [
+            "Exercise Primary, Cancel and Escape with a recognizable draft. Trigger Clear repeatedly to test the single-dialog guard. Close the window while the dialog is open and verify that completion does not try to update a closed surface.",
+            "Separate the user’s cancellation from an API failure. Cancellation is a normal outcome that preserves data; a platform failure needs an understandable status and a usable next attempt. Your evidence should state which path ran, rather than treating every non-primary result as a broken application."
+          ],
+          "example": "Primary: draft becomes empty\nCancel / Escape: exact draft retained\nRepeated request: one dialog at a time",
+          "pitfall": "Reporting cancellation as a fatal error makes a normal choice feel like a malfunction.",
+          "question": {
+            "id": "winui-dialogs-check-4",
+            "lessonId": "winui-dialogs-recovery",
+            "prompt": "What is the expected result of Cancel?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The draft is partially cleared"
+              },
+              {
+                "id": "b",
+                "text": "The entire app exits"
+              },
+              {
+                "id": "c",
+                "text": "The exact draft remains"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Cancel is a normal no-change outcome."
+          }
+        }
+      ],
+      "steps": [
+        "Type a recognizable draft and open Clear draft.",
+        "Cancel, then press Escape on a second attempt; compare the exact text.",
+        "Confirm once and verify the field clears.",
+        "Try repeated activation and close the window during the dialog."
+      ],
+      "expected": "Cancel and Escape preserve the draft. Primary clears it. The handler allows only one pending dialog and avoids updates after window closure.",
+      "challenge": {
+        "task": "Add a confirmation for deleting a selected task with its actual title in the message.",
+        "acceptance": [
+          "Show the specific task before confirmation.",
+          "Retain list and selection on cancellation.",
+          "Test repeated activation and closure."
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "winui-dialogs-exam-1",
+            "lessonId": "winui-dialogs-decision",
+            "prompt": "A task is deleted before ShowAsync completes. What is wrong?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Mutation happened before confirmation"
+              },
+              {
+                "id": "b",
+                "text": "The title is too short"
+              },
+              {
+                "id": "c",
+                "text": "The dialog needs a brighter button"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Confirmation is only useful when the decision comes before deletion."
+          },
+          {
+            "id": "winui-dialogs-exam-2",
+            "lessonId": "winui-dialogs-root",
+            "prompt": "A ContentDialog lacks its desktop visual owner. What should be set?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The app’s NuGet source"
+              },
+              {
+                "id": "b",
+                "text": "XamlRoot from the loaded owning content"
+              },
+              {
+                "id": "c",
+                "text": "A file extension filter"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The dialog belongs to a concrete XAML tree."
+          },
+          {
+            "id": "winui-dialogs-exam-3",
+            "lessonId": "winui-dialogs-await",
+            "prompt": "Why is ShowAsync().get() inappropriate on the UI thread?",
+            "options": [
+              {
+                "id": "a",
+                "text": "It always creates a second window"
+              },
+              {
+                "id": "b",
+                "text": "It changes the answer to Primary"
+              },
+              {
+                "id": "c",
+                "text": "It blocks the thread needed for interaction"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Use asynchronous suspension to let messages and input continue."
+          },
+          {
+            "id": "winui-dialogs-exam-4",
+            "lessonId": "winui-dialogs-await",
+            "prompt": "A fire-and-forget event throws after suspension. What should its implementation provide?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Exception handling and cleanup"
+              },
+              {
+                "id": "b",
+                "text": "An assumption that the event caller catches it"
+              },
+              {
+                "id": "c",
+                "text": "A swallowed busy flag"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The asynchronous event boundary must own failure handling."
+          },
+          {
+            "id": "winui-dialogs-exam-5",
+            "lessonId": "winui-dialogs-recovery",
+            "prompt": "The person dismisses the dialog. Which result is correct?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Delete the first item only"
+              },
+              {
+                "id": "b",
+                "text": "Keep data and allow a later attempt"
+              },
+              {
+                "id": "c",
+                "text": "Treat dismissal as consent"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Dismissal does not authorize the destructive action."
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "ContentDialog and XamlRoot",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/ui/controls/dialogs-and-flyouts/dialogs"
+        },
+        {
+          "title": "C++/WinRT concurrency and asynchronous operations",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/cpp-winrt/concurrency"
+        },
+        {
+          "title": "C++/WinRT strong and weak references",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/cpp-winrt/weak-references"
+        }
+      ]
+    },
+    {
+      "id": "winui-async",
+      "version": 1,
+      "order": 7,
+      "title": "07. Responsive asynchronous work and lifetimes",
+      "summary": "Capture inputs before suspension, return to the UI apartment, and prevent stale work from replacing newer intent.",
+      "stage": "application",
+      "difficulty": "Intermediate",
+      "minutes": 65,
+      "prerequisites": [
+        "winui-dialogs"
+      ],
+      "lessons": [
+        {
+          "id": "winui-async-thread",
+          "title": "Protect the UI thread",
+          "paragraphs": [
+            "The UI thread processes input, layout and painting. A long synchronous loop or sleep in a click handler delays all three. An asynchronous function does not automatically move computation elsewhere; the operation and awaiter determine where work runs and resumes.",
+            "The sample captures the UI apartment, awaits a bounded one-second delay and explicitly returns to that apartment before touching controls. The delay demonstrates responsiveness, not CPU acceleration or a real network request. Drag the window and edit the input while it is pending to observe the distinction."
+          ],
+          "example": "winrt::apartment_context ui;\nco_await winrt::resume_after(std::chrono::seconds{1});\nco_await ui; // UI updates follow this point.",
+          "pitfall": "Putting co_await somewhere in a function does not make an earlier heavy synchronous loop non-blocking.",
+          "question": {
+            "id": "winui-async-check-1",
+            "lessonId": "winui-async-thread",
+            "prompt": "What determines whether a long calculation blocks the UI?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Where and how the calculation executes"
+              },
+              {
+                "id": "b",
+                "text": "Whether its function name ends in Async"
+              },
+              {
+                "id": "c",
+                "text": "Whether its button uses an icon"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Asynchronous naming alone changes no scheduling behavior."
+          }
+        },
+        {
+          "id": "winui-async-capture",
+          "title": "Snapshot the operation’s inputs",
+          "paragraphs": [
+            "Copy the draft title before the first suspension. If the person changes the field during the delay, the pending operation still describes its original input. Do not read event parameters by reference after suspension unless their lifetime is guaranteed; take owned values for retained data.",
+            "Each start captures a request generation. A later start increments the generation, so the earlier result can be ignored. This is useful for searches and previews where the latest intent should win. The sample reports the captured title only if its generation still matches."
+          ],
+          "example": "auto request = ++m_generation;\nauto title = TitleInput().Text(); // owned hstring snapshot\n// Later: compare request with m_generation on the UI thread.",
+          "pitfall": "Reading the current TextBox after a delay can accidentally label an old result with a new query.",
+          "question": {
+            "id": "winui-async-check-2",
+            "lessonId": "winui-async-capture",
+            "prompt": "Why capture the title before awaiting?",
+            "options": [
+              {
+                "id": "a",
+                "text": "To persist it permanently"
+              },
+              {
+                "id": "b",
+                "text": "To associate the result with the input that started it"
+              },
+              {
+                "id": "c",
+                "text": "To stop all future edits"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "An operation should retain its own input snapshot."
+          }
+        },
+        {
+          "id": "winui-async-cancel",
+          "title": "Separate cancellation from ignoring a result",
+          "paragraphs": [
+            "Cancel increments the generation and updates the status. The timer may still finish, but its old result is discarded. This is result invalidation, not cancellation of underlying I/O. Labeling the distinction prevents claims that resources were stopped when they were only made irrelevant.",
+            "For a genuinely cancellable Windows Runtime operation, retain the operation object, request Cancel and handle cancellation along with ordinary failures. Cooperative CPU work also needs checkpoints. Decide whether closing the window cancels the work, ignores completion, or allows an owned background job to finish."
+          ],
+          "example": "Cancel → ++m_generation\nOld timer completes → request != m_generation → no UI update",
+          "pitfall": "Ignoring a result does not necessarily stop its network request, timer or computation.",
+          "question": {
+            "id": "winui-async-check-3",
+            "lessonId": "winui-async-cancel",
+            "prompt": "What does this sample’s Cancel guarantee?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The timer is forcibly destroyed"
+              },
+              {
+                "id": "b",
+                "text": "All operating-system work stops immediately"
+              },
+              {
+                "id": "c",
+                "text": "A superseded result will not update the UI"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "The sample invalidates results rather than cancelling its timer."
+          }
+        },
+        {
+          "id": "winui-async-lifetime",
+          "title": "Keep an owner alive without using a closed window",
+          "paragraphs": [
+            "get_strong keeps the implementation alive while a bounded coroutine is pending. The Closed handler separately records that its visual window is no longer available. Object lifetime and window usability are two different facts, so a strong reference alone is not enough.",
+            "For external publishers, a weak reference can avoid retaining a window unnecessarily: obtain a strong reference only if it is still alive when the callback arrives. Unsubscribe long-lived events when their owner is finished. Test starting twice, canceling, editing during work and closing during work to cover the edges a happy-path run misses."
+          ],
+          "example": "auto lifetime = get_strong();\n// After returning to the UI:\nif (m_closed || request != m_generation) co_return;",
+          "pitfall": "A live C++ implementation can still represent a window that has already closed.",
+          "question": {
+            "id": "winui-async-check-4",
+            "lessonId": "winui-async-lifetime",
+            "prompt": "What must be checked in addition to holding a strong reference?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Whether the visual window is still usable"
+              },
+              {
+                "id": "b",
+                "text": "Whether the title is English"
+              },
+              {
+                "id": "c",
+                "text": "Whether the app was built with an icon"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Keeping memory alive does not keep a closed visual surface usable."
+          }
+        }
+      ],
+      "steps": [
+        "Start with the title First and keep moving the window during the delay.",
+        "Change the title to Second and start again before the first result completes.",
+        "Start again, choose Cancel, and wait for the old timer to finish.",
+        "Close the window during a pending request and check the debugger for unhandled exceptions."
+      ],
+      "expected": "The window stays responsive. Only the latest captured request reports a result; Cancel invalidates pending results while their timers may finish.",
+      "challenge": {
+        "task": "Replace the demonstration delay with a real cancellable file operation and document its cancellation and lifetime policy.",
+        "acceptance": [
+          "Capture inputs by value.",
+          "Update controls only on their UI thread.",
+          "Distinguish stopping work from discarding a result.",
+          "Record close-during-work and superseded-request cases."
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "winui-async-exam-1",
+            "lessonId": "winui-async-thread",
+            "prompt": "A function called LoadAsync runs a heavy loop before its first await. What can happen?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The loop is skipped"
+              },
+              {
+                "id": "b",
+                "text": "The loop blocks its calling UI thread"
+              },
+              {
+                "id": "c",
+                "text": "The name automatically creates a worker"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Scheduling comes from execution and await behavior, not naming."
+          },
+          {
+            "id": "winui-async-exam-2",
+            "lessonId": "winui-async-capture",
+            "prompt": "Two preview requests finish out of order. How can the latest intent win?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Always apply the last response to arrive"
+              },
+              {
+                "id": "b",
+                "text": "Freeze the input forever"
+              },
+              {
+                "id": "c",
+                "text": "Check each captured generation before applying its result"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Generation checking prevents older work from overwriting newer intent."
+          },
+          {
+            "id": "winui-async-exam-3",
+            "lessonId": "winui-async-capture",
+            "prompt": "A coroutine retains event data beyond suspension. Which input form is safer?",
+            "options": [
+              {
+                "id": "a",
+                "text": "An owned copy of required values"
+              },
+              {
+                "id": "b",
+                "text": "A reference into temporary event storage"
+              },
+              {
+                "id": "c",
+                "text": "A pointer to a destroyed local string"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Owned inputs survive the original call frame."
+          },
+          {
+            "id": "winui-async-exam-4",
+            "lessonId": "winui-async-cancel",
+            "prompt": "Cancel only increments a generation. Which claim is accurate?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The work consumed no resources"
+              },
+              {
+                "id": "b",
+                "text": "Old results are ignored, while work may continue"
+              },
+              {
+                "id": "c",
+                "text": "The operating system killed the operation"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Invalidation and cancellation have different effects."
+          },
+          {
+            "id": "winui-async-exam-5",
+            "lessonId": "winui-async-lifetime",
+            "prompt": "get_strong is held but the window was closed. Should the result update its controls?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Yes, because memory exists"
+              },
+              {
+                "id": "b",
+                "text": "Only if the title is nonempty"
+              },
+              {
+                "id": "c",
+                "text": "No; also honor the closed-window guard"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Visual lifetime requires its own policy."
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "C++/WinRT concurrency and asynchronous operations",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/cpp-winrt/concurrency"
+        },
+        {
+          "title": "C++/WinRT strong and weak references",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/cpp-winrt/weak-references"
+        }
+      ]
+    },
+    {
+      "id": "winui-files",
+      "version": 1,
+      "order": 8,
+      "title": "08. Open files and handle desktop ownership",
+      "summary": "Use a Windows file picker from C++, handle cancellation, and inspect bounded text without assuming a UWP window.",
+      "stage": "application",
+      "difficulty": "Intermediate",
+      "minutes": 60,
+      "prerequisites": [
+        "winui-async"
+      ],
+      "lessons": [
+        {
+          "id": "winui-files-ownership",
+          "title": "Give the picker a desktop owner",
+          "paragraphs": [
+            "The lesson uses the established Windows.Storage.Pickers.FileOpenPicker API. In a WinUI desktop window this API needs an HWND owner through IInitializeWithWindow. Obtain the handle from IWindowNative on the current window, then initialize the picker before displaying it.",
+            "Include microsoft.ui.xaml.window.h, ShObjIdl.h and the picker projection header. Do not mix this ownership recipe with newer Microsoft.Windows.Storage.Pickers APIs: those have a different API surface. The specific namespace is part of the example’s contract."
+          ],
+          "example": "HWND hwnd{};\nwinrt::check_hresult(this->as<::IWindowNative>()->get_WindowHandle(&hwnd));\nwinrt::check_hresult(picker.as<::IInitializeWithWindow>()->Initialize(hwnd));",
+          "pitfall": "A picker copied from a UWP example may compile but fail to show without desktop ownership initialization.",
+          "question": {
+            "id": "winui-files-check-1",
+            "lessonId": "winui-files-ownership",
+            "prompt": "Which picker namespace uses the HWND recipe here?",
+            "options": [
+              {
+                "id": "a",
+                "text": "An arbitrary filesystem namespace"
+              },
+              {
+                "id": "b",
+                "text": "Windows.Storage.Pickers"
+              },
+              {
+                "id": "c",
+                "text": "Microsoft.UI.Xaml.Controls"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The documented interop contract belongs to this particular WinRT picker."
+          }
+        },
+        {
+          "id": "winui-files-cancel",
+          "title": "Treat selection as optional",
+          "paragraphs": [
+            "Add a .txt file-type filter, then await PickSingleFileAsync. A null result means the person canceled. Return to a useful status without trying to read it and leave any previously displayed document intact.",
+            "The selected StorageFile is an object representing a chosen file, not a command to run it. The app displays text literally in a TextBlock. It does not interpret scripts or shell commands in the file. A file extension is a convenient picker filter, not proof that bytes are trustworthy or well-formed."
+          ],
+          "example": "picker.FileTypeFilter().Append(L\".txt\");\nauto file = co_await picker.PickSingleFileAsync();\nif (!file) { /* canceled: preserve existing content */ }",
+          "pitfall": "Dereferencing a canceled picker result turns a normal choice into a failure.",
+          "question": {
+            "id": "winui-files-check-2",
+            "lessonId": "winui-files-cancel",
+            "prompt": "What does a null picker result mean?",
+            "options": [
+              {
+                "id": "a",
+                "text": "An empty file was selected"
+              },
+              {
+                "id": "b",
+                "text": "The application must exit"
+              },
+              {
+                "id": "c",
+                "text": "The person did not select a file"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Cancellation is represented separately from a selected empty document."
+          }
+        },
+        {
+          "id": "winui-files-bounds",
+          "title": "Read a bounded stream",
+          "paragraphs": [
+            "Open the selected file as a stream and check its size before allocating. The sample uses DataReader with an input limit of 64 KiB, a UTF-8 policy and a bounded LoadAsync request. It rejects files that are too large and checks the stream size again before accepting the result. A read failure should be reported without erasing the earlier view.",
+            "A size check alone followed by an unlimited ReadTextAsync would not create a strict read bound if another process grows the file. Request only the bounded size you accepted. This sample is a text viewer with a conservative encoding policy, not a general editor or a parser for every document format."
+          ],
+          "example": "Maximum input: 64 * 1024 bytes\nChosen stream → bounded DataReader load → UTF-8 text\nFailure → existing document remains visible",
+          "pitfall": "Checking a path or size once is not a guarantee that an external file can never change while it is being read.",
+          "question": {
+            "id": "winui-files-check-3",
+            "lessonId": "winui-files-bounds",
+            "prompt": "What enforces the actual read bound?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Requesting only a bounded number of bytes"
+              },
+              {
+                "id": "b",
+                "text": "Displaying a short filename"
+              },
+              {
+                "id": "c",
+                "text": "Giving the picker a .txt filter"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Filters and labels do not bound the read operation."
+          }
+        },
+        {
+          "id": "winui-files-failures",
+          "title": "Preserve the last good document",
+          "paragraphs": [
+            "Selection, opening, reading and decoding can fail independently. Build a new local result first and only replace the displayed text after the operation succeeds. The busy flag prevents overlapping picker workflows, and the closed-window guard prevents late visual updates.",
+            "Exercise Cancel, an empty file, a small UTF-8 file, an oversized file and a file that becomes unavailable. Explain each outcome without claiming every .txt file is UTF-8. File saving and document versioning appear in the capstone as separate responsibilities."
+          ],
+          "example": "Read succeeds → replace view\nCancel / failure / oversized → keep last good view",
+          "pitfall": "Clearing the view before an operation succeeds unnecessarily destroys useful context on failure.",
+          "question": {
+            "id": "winui-files-check-4",
+            "lessonId": "winui-files-failures",
+            "prompt": "When should the existing document view be replaced?",
+            "options": [
+              {
+                "id": "a",
+                "text": "On every cancellation"
+              },
+              {
+                "id": "b",
+                "text": "After a complete successful bounded read"
+              },
+              {
+                "id": "c",
+                "text": "As soon as the picker opens"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Construct and validate the new result before committing it to the UI."
+          }
+        }
+      ],
+      "steps": [
+        "Create a small UTF-8 .txt file and an empty .txt file on Windows.",
+        "Build the sample, open the small file and inspect its exact text.",
+        "Cancel the next picker and verify the text remains.",
+        "Try a file larger than 64 KiB, then the empty file, and inspect each status."
+      ],
+      "expected": "A selected bounded UTF-8 text file is displayed. Cancel or failure preserves the prior view; an oversized file is rejected, and an empty file succeeds with empty content.",
+      "challenge": {
+        "task": "Add a save-copy action with an explicit overwrite policy and a failure path that retains the current document.",
+        "acceptance": [
+          "Initialize the correct picker owner.",
+          "Handle cancellation without data loss.",
+          "Bound the write input and show success only after completion."
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "winui-files-exam-1",
+            "lessonId": "winui-files-ownership",
+            "prompt": "A Windows.Storage picker is used in WinUI 3 desktop. What interop is needed?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Cast it to a Grid"
+              },
+              {
+                "id": "b",
+                "text": "Create a UWP CoreWindow"
+              },
+              {
+                "id": "c",
+                "text": "Initialize it with the owning HWND"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "This picker requires desktop window ownership."
+          },
+          {
+            "id": "winui-files-exam-2",
+            "lessonId": "winui-files-cancel",
+            "prompt": "The person presses Cancel after viewing a file. What should happen?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The previous view remains"
+              },
+              {
+                "id": "b",
+                "text": "The old text is deleted"
+              },
+              {
+                "id": "c",
+                "text": "A null file is read"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Cancellation should not replace accepted content."
+          },
+          {
+            "id": "winui-files-exam-3",
+            "lessonId": "winui-files-bounds",
+            "prompt": "A .txt filter is set. Is every selected file guaranteed to be UTF-8?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only on x64"
+              },
+              {
+                "id": "b",
+                "text": "No; encoding still needs a policy and error handling"
+              },
+              {
+                "id": "c",
+                "text": "Yes, extensions prove encodings"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Extensions are names, not guarantees about contents."
+          },
+          {
+            "id": "winui-files-exam-4",
+            "lessonId": "winui-files-bounds",
+            "prompt": "Why use a bounded LoadAsync request after checking size?",
+            "options": [
+              {
+                "id": "a",
+                "text": "To bypass file selection"
+              },
+              {
+                "id": "b",
+                "text": "To run the text as C++"
+              },
+              {
+                "id": "c",
+                "text": "To keep the actual allocation and read bounded"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "The read request itself must respect the limit."
+          },
+          {
+            "id": "winui-files-exam-5",
+            "lessonId": "winui-files-failures",
+            "prompt": "Reading fails halfway through. Which commit policy is preferable?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Retain the last good view and report failure"
+              },
+              {
+                "id": "b",
+                "text": "Display partial bytes as a successful document"
+              },
+              {
+                "id": "c",
+                "text": "Erase the prior document"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Only a successful complete result should replace accepted state."
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Desktop ownership for Windows Runtime pickers",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/ui/display-ui-objects"
+        },
+        {
+          "title": "Create, write, and read a file",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/files/create-read-write-files"
+        },
+        {
+          "title": "C++/WinRT concurrency and asynchronous operations",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/cpp-winrt/concurrency"
+        }
+      ]
+    },
+    {
+      "id": "winui-api",
+      "version": 1,
+      "order": 9,
+      "title": "09. Fetch data and call HTTP APIs",
+      "summary": "Make real GET and POST requests with C++/WinRT HttpClient, compare JavaScript fetch, validate JSON, and handle errors, cancellation and timeouts using a local practice API.",
+      "stage": "application",
+      "difficulty": "Intermediate",
+      "minutes": 75,
+      "prerequisites": [
+        "winui-files"
+      ],
+      "lessons": [
+        {
+          "id": "winui-api-requests",
+          "title": "From fetch to native GET and POST",
+          "paragraphs": [
+            "An API is a contract for requests and responses. A task service can expose GET /tasks to read its collection and POST /tasks to create one task from a JSON body. The URL identifies the service and resource; the method describes the operation; headers describe the representation and other request metadata. A successful POST should be verified by a later GET, because changing a local list alone proves nothing about server state.",
+            "JavaScript fetch is a web API, also available in modern Node. It is not a built-in C++ function. A native C++/WinRT WinUI app can use Windows.Web.Http.HttpClient with HttpRequestMessage and co_await. This course supplies both a native window and a small fetch-demo.mjs terminal comparison against the same Python practice API. Both perform real HTTP when run locally; the VoltQuest website displays their source and does not execute either client."
+          ],
+          "example": "// Inside an asynchronous C++/WinRT function:\nusing namespace winrt::Windows::Web::Http;\nHttpRequestMessage request{HttpMethod::Get(),\n    winrt::Windows::Foundation::Uri{L\"http://127.0.0.1:8766/tasks\"}};\nrequest.Headers().Append(L\"Accept\", L\"application/json\");\nauto response = co_await client.SendRequestAsync(\n    request, HttpCompletionOption::ResponseHeadersRead);\n// Check status, bound the body and validate JSON before updating controls.",
+          "pitfall": "Pasting await fetch(...) into a C++ event handler does not create a native network client. The JavaScript companion and the WinUI source use different language APIs for the same HTTP contract.",
+          "question": {
+            "id": "winui-api-check-1",
+            "lessonId": "winui-api-requests",
+            "prompt": "Which native API sends HTTP requests in this C++ WinUI lesson?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Windows.Web.Http.HttpClient"
+              },
+              {
+                "id": "b",
+                "text": "JavaScript fetch compiled as C++"
+              },
+              {
+                "id": "c",
+                "text": "Microsoft.UI.Xaml.Controls.Button"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "HttpClient is the WinRT HTTP client; the downloadable JavaScript file is a separate comparison."
+          }
+        },
+        {
+          "id": "winui-api-json",
+          "title": "Serialize JSON, set headers and validate the response",
+          "paragraphs": [
+            "Construct POST data with JsonObject and JsonValue, then pass Stringify() to HttpStringContent with UnicodeEncoding::Utf8 and application/json. This handles embedded quotes and backslashes correctly. Accept requests JSON responses; Content-Type describes the body being sent. The sample also adds X-VoltQuest-Lab as ordinary request metadata. It is not an authentication credential. Request headers belong on HttpRequestMessage.Headers; content headers belong on its content.",
+            "JSON syntax alone is not a schema. The GET contract is an object containing a tasks array of at most 100 objects; each task needs a positive integral id and a trimmed string title of 1..80 UTF-16 units without control characters. POST returns one task object. The client checks the status and media type, reads a stream with a 64 KiB bound, parses JSON, and validates every task into a temporary collection. Only then does it replace the accepted list. A server returning HTML, malformed JSON or a numeric title must leave the previous data intact."
+          ],
+          "example": "using namespace winrt::Windows::Data::Json;\nJsonObject body;\nbody.Insert(L\"title\", JsonValue::CreateStringValue(L\"Read the API docs\"));\nrequest.Method(winrt::Windows::Web::Http::HttpMethod::Post());\nrequest.Content(winrt::Windows::Web::Http::HttpStringContent{\n    body.Stringify(), winrt::Windows::Storage::Streams::UnicodeEncoding::Utf8,\n    L\"application/json\"});\n// POST /tasks returns 201 {\"id\":2,\"title\":\"Read the API docs\"}.\n// GET /tasks must then contain the created task.",
+          "pitfall": "Concatenating unescaped input into JSON can change the payload or produce invalid syntax. Also, a 200 response containing {\"tasks\":[{\"title\":42}]} is not a valid task list.",
+          "question": {
+            "id": "winui-api-check-2",
+            "lessonId": "winui-api-json",
+            "prompt": "A response parses as JSON but a task title is a number. What should happen?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Display the number as trusted task text"
+              },
+              {
+                "id": "b",
+                "text": "Reject the response and keep the accepted list"
+              },
+              {
+                "id": "c",
+                "text": "Clear all tasks before reporting the error"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Schema validation happens before committing candidate tasks, so malformed data cannot partially replace the current list."
+          }
+        },
+        {
+          "id": "winui-api-lifetime",
+          "title": "Await requests, cancel work and handle uncertain writes",
+          "paragraphs": [
+            "A WinUI event handler must remain responsive while the network is slow. The sample captures a strong implementation reference, starts one request at a time, disables competing request inputs and awaits a WinRT IAsyncOperation. C++/WinRT awaits resume in the calling UI apartment here; the code does not move to a worker thread or call blocking .get() on the UI thread. The helper owns its request/client parameters across suspension and enables cancellation propagation to the pending send or body read.",
+            "Cancel requests cancellation of the active operation. A nonrepeating DispatcherQueueTimer also requests cancellation after ten seconds, while the slow fixture waits fifteen seconds. The timer depends on the UI queue and is not a precise hard deadline. Closing the window cancels pending work and a separate closed flag prevents later control updates. Cancellation cannot recall a POST already accepted by the server: a lost reply leaves the write outcome uncertain. Fetch current server state before retrying; a production design may use a server-supported idempotency key. This sample never retries writes automatically."
+          ],
+          "example": "// In the IAsyncOperation helper:\nauto cancellation = co_await winrt::get_cancellation_token();\ncancellation.enable_propagation();\n// In the window, retain the active operation:\nm_pending = vq::request_json(m_http, request);\nauto text = co_await m_pending;\n// A Cancel button or timeout can call m_pending.Cancel().\n// Validate results and check cancellation/closure before changing the view.",
+          "pitfall": "Cancel means a cancellation request, not server rollback. Retrying an uncertain POST automatically can create a duplicate task even when the original response was never displayed.",
+          "question": {
+            "id": "winui-api-check-3",
+            "lessonId": "winui-api-lifetime",
+            "prompt": "The user cancels after a POST reaches the server. Which assumption is valid?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The task is guaranteed to be deleted"
+              },
+              {
+                "id": "b",
+                "text": "The server never saw the request"
+              },
+              {
+                "id": "c",
+                "text": "The write may exist; reconcile before retrying"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Transport cancellation does not reverse server mutations, so an uncertain write needs readback or an idempotency protocol."
+          }
+        },
+        {
+          "id": "winui-api-failures",
+          "title": "Distinguish HTTP errors, transport errors and authentication",
+          "paragraphs": [
+            "An HTTP response with 401, 404 or 503 is a completed exchange with an error status. Native HttpClient and JavaScript fetch can return that response normally; catching exceptions alone misses it. Check IsSuccessStatusCode or response.ok, then handle status codes deliberately. A refused connection, DNS or TLS failure can instead throw before a usable response arrives. The practice selector supplies 404, 401, 503, invalid JSON, invalid schema, wrong media type, an oversized body and a slow response. Stop the fixture to observe a real connection failure, then restart and recover with GET.",
+            "The fixture uses unauthenticated loopback HTTP on 127.0.0.1, holds disposable data in memory and is not a public backend. A real remote service should use HTTPS and its documented identity flow. An Authorization: Bearer header carries an access token obtained through that flow; never embed a shared secret in source or a downloadable desktop executable. Native requests do not use browser CORS enforcement, which is not authentication. The 401 route only demonstrates an error response and does not implement login. Redirects are disabled in the sample, and authentication, token refresh and bounded retry policies are explicit extensions."
+          ],
+          "example": "// JavaScript comparison in fetch-demo.mjs (run with Node 18+):\nconst response = await fetch('http://127.0.0.1:8766/tasks', {\n  method: 'POST',\n  headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },\n  body: JSON.stringify({ title: 'Created with fetch' }),\n  signal: AbortSignal.timeout(10000),\n});\nif (!response.ok) throw new Error(`HTTP ${response.status}`);\nconst created = await response.json();\n// The full companion validates fields and performs a GET readback.",
+          "pitfall": "A 401 fixture is not a sign-in feature, CORS is not authorization, and placing an API secret in a desktop binary does not keep it secret. Use the provider’s actual desktop identity contract.",
+          "question": {
+            "id": "winui-api-check-4",
+            "lessonId": "winui-api-failures",
+            "prompt": "A GET returns HTTP 503 without throwing. How should the client detect failure?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Check the HTTP success/status field before accepting data"
+              },
+              {
+                "id": "b",
+                "text": "Assume success because no exception was thrown"
+              },
+              {
+                "id": "c",
+                "text": "Treat all JSON-shaped data as successful"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The server responded, so inspect the status separately from transport exceptions."
+          }
+        }
+      ],
+      "steps": [
+        "Start py -3 api_server.py on Windows. Build the source pack with ApiClient.h; keep the fixture terminal open. Fetch /tasks and confirm id 1, Learn native HTTP.",
+        "Enter a title containing quotes, create it with POST, then fetch /tasks again. Confirm the assigned id and exact title came back from the server. Optionally run node fetch-demo.mjs to compare JavaScript requests.",
+        "Try the 404, 401, 503, invalid JSON/schema, wrong-type and oversized GET presets. Each must report failure while preserving the prior list. Stop the API to test connection failure; restart it to recover.",
+        "Select the slow endpoint and cancel before completion, then repeat without canceling to exercise the ten-second cancellation timer. Close the window during a pending GET. Run py -3 -m unittest -v test_api_server.py with Python and Node installed for independent fixture checks."
+      ],
+      "expected": "On a fresh fixture, GET loads task 1. POST returns a new id and an exact JSON-escaped title; the next GET includes it. HTTP, transport and validation failures retain accepted tasks. Cancel and the timer prevent late UI replacement, but do not roll back server writes. These native observations require verification on Windows.",
+      "challenge": {
+        "task": "Add an explicit API refresh action to the task notebook. Keep server data and unsaved local edits distinct, and design a reconciliation step for an uncertain POST rather than automatically retrying it.",
+        "acceptance": [
+          "Send a real GET and POST with the documented headers and JSON representation; verify creation by GET readback.",
+          "Validate status, bounded response size, schema and every task before replacing accepted UI state.",
+          "Keep the window responsive; handle cancellation, timeout and closure without late control updates.",
+          "Explain how production HTTPS and a provider-supported sign-in flow would replace the unauthenticated local fixture without embedding secrets."
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "winui-api-exam-1",
+            "lessonId": "winui-api-requests",
+            "prompt": "You need a native C++ button to fetch a task collection. Which implementation fits?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Call HttpClient asynchronously and validate the response"
+              },
+              {
+                "id": "b",
+                "text": "Block the UI thread with .get() until the request finishes"
+              },
+              {
+                "id": "c",
+                "text": "Insert JavaScript fetch directly into MainWindow.xaml.cpp"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Use the native HTTP projection with co_await so the window can continue processing input."
+          },
+          {
+            "id": "winui-api-exam-2",
+            "lessonId": "winui-api-json",
+            "prompt": "A task title contains quotes and a backslash. How should a POST body be built?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Join the raw title between JSON quotes"
+              },
+              {
+                "id": "b",
+                "text": "Serialize a JsonObject and send UTF-8 application/json"
+              },
+              {
+                "id": "c",
+                "text": "Send it as a GET query while labeling it JSON"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A JSON serializer escapes string characters correctly, and Content-Type identifies the actual request representation."
+          },
+          {
+            "id": "winui-api-exam-3",
+            "lessonId": "winui-api-failures",
+            "prompt": "A server returns 401. The request itself completed. What is the next correct interpretation?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The network connection failed before any response"
+              },
+              {
+                "id": "b",
+                "text": "Every 401 should be retried indefinitely"
+              },
+              {
+                "id": "c",
+                "text": "Authentication is required or rejected; handle that status using the service contract"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "An HTTP authentication response is distinct from a transport exception; the course fixture does not implement login."
+          },
+          {
+            "id": "winui-api-exam-4",
+            "lessonId": "winui-api-lifetime",
+            "prompt": "A POST times out after the server created a task. What should recovery avoid?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Checking current server state"
+              },
+              {
+                "id": "b",
+                "text": "Blindly repeating the POST and creating a duplicate"
+              },
+              {
+                "id": "c",
+                "text": "Preserving the unsent draft for the learner"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The response may be lost after a successful mutation; readback or server-side idempotency is needed before retrying."
+          },
+          {
+            "id": "winui-api-exam-5",
+            "lessonId": "winui-api-json",
+            "prompt": "A GET begins with valid tasks but its last item has an invalid title. What should the UI commit?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only the valid prefix of the response"
+              },
+              {
+                "id": "b",
+                "text": "An empty list immediately"
+              },
+              {
+                "id": "c",
+                "text": "Nothing; keep the previous list until the entire response passes validation"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "The candidate collection is validated completely before ReplaceAll, preventing partial updates from malformed responses."
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "HTTP requests with HttpClient",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/networking/httpclient"
+        },
+        {
+          "title": "HttpClient.SendRequestAsync and completion options",
+          "url": "https://learn.microsoft.com/en-us/uwp/api/windows.web.http.httpclient.sendrequestasync"
+        },
+        {
+          "title": "Advanced C++/WinRT concurrency",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/cpp-winrt/concurrency-2"
+        },
+        {
+          "title": "Windows.Data.Json.JsonObject",
+          "url": "https://learn.microsoft.com/en-us/uwp/api/windows.data.json.jsonobject"
+        }
+      ]
+    },
+    {
+      "id": "winui-accessibility",
+      "version": 1,
+      "order": 10,
+      "title": "10. Themes, keyboard access and localization",
+      "summary": "Keep the interface usable with keyboard navigation, large text, contrast themes and different languages.",
+      "stage": "shipping",
+      "difficulty": "Intermediate",
+      "minutes": 55,
+      "prerequisites": [
+        "winui-api"
+      ],
+      "lessons": [
+        {
+          "id": "winui-accessibility-keyboard",
+          "title": "Make every action reachable",
+          "paragraphs": [
+            "Walk through the app with Tab, Shift+Tab, Enter and Space before reaching for the mouse. Standard controls provide useful keyboard behavior, but layout and focus decisions still matter. After adding a task, return focus to the task entry field when that matches the next likely action.",
+            "Test the entire sequence, including error recovery and dialog cancellation. A keyboard user should be able to discover what failed, correct the title and retry. A successful mouse click is not evidence that focus order or activation works for everyone."
+          ],
+          "example": "TitleInput().Focus(Microsoft::UI::Xaml::FocusState::Programmatic);\n// Test focus after both success and failure.",
+          "pitfall": "Removing focus visuals to make a control look cleaner can make keyboard location impossible to see.",
+          "question": {
+            "id": "winui-accessibility-check-1",
+            "lessonId": "winui-accessibility-keyboard",
+            "prompt": "What must keyboard verification cover?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only the first control"
+              },
+              {
+                "id": "b",
+                "text": "Only the app’s title bar"
+              },
+              {
+                "id": "c",
+                "text": "The complete action and recovery flow"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Reachability includes fixing invalid input and recovering from dialogs."
+          }
+        },
+        {
+          "id": "winui-accessibility-names",
+          "title": "Expose meaning to assistive technology",
+          "paragraphs": [
+            "Use descriptive visible text for actions and Header for inputs. AutomationProperties.Name is useful when the visible presentation does not provide a suitable accessible name. Prefer standard controls so their roles and interaction patterns remain available through UI Automation.",
+            "Read the interface with Narrator and inspect the name, role and current state of controls. A status update should also be discoverable without relying on color alone. The sample identifies the status as a polite live region; validate the actual announcement behavior on Windows rather than assuming markup is sufficient."
+          ],
+          "example": "<TextBlock x:Name=\"StatusText\" TextWrapping=\"Wrap\"\n  AutomationProperties.LiveSetting=\"Polite\" />",
+          "pitfall": "An accessibility attribute is an implementation step, not proof that a screen reader announces the intended result.",
+          "question": {
+            "id": "winui-accessibility-check-2",
+            "lessonId": "winui-accessibility-names",
+            "prompt": "How do you verify a screen-reader status update?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Exercise it with Narrator or an appropriate UI Automation check"
+              },
+              {
+                "id": "b",
+                "text": "Assume the attribute proves the outcome"
+              },
+              {
+                "id": "c",
+                "text": "Judge the status color"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Actual assistive behavior needs observation."
+          }
+        },
+        {
+          "id": "winui-accessibility-themes",
+          "title": "Honor theme resources and text scaling",
+          "paragraphs": [
+            "Use theme brushes and standard control templates for normal, disabled, focused and high-contrast states. The sample toggles the root RequestedTheme to demonstrate light and dark appearance while preserving the draft. High-contrast behavior still needs its own Windows setting and test.",
+            "Increase text scale and narrow the window at the same time. Controls may need extra height, labels may wrap, and a form may need scrolling. Contrast and resizing are functional requirements when people must read a status and reach its action."
+          ],
+          "example": "RootPanel().RequestedTheme(ElementTheme::Dark);\n// State stays in C++; appearance changes through resources.",
+          "pitfall": "A custom light/dark toggle does not certify high-contrast or large-text support.",
+          "question": {
+            "id": "winui-accessibility-check-3",
+            "lessonId": "winui-accessibility-themes",
+            "prompt": "What should a theme change do to the current draft?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Save it as a different task"
+              },
+              {
+                "id": "b",
+                "text": "Preserve it"
+              },
+              {
+                "id": "c",
+                "text": "Reset it automatically"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Appearance changes should not discard working state."
+          }
+        },
+        {
+          "id": "winui-accessibility-localization",
+          "title": "Move display strings into resources",
+          "paragraphs": [
+            "For a localized Windows app, place UI strings in language-specific .resw resources and connect XAML elements with x:Uid. Keep route tags, data keys and file schema identifiers stable. Translations should change what people read without changing how stored documents or event handlers are identified.",
+            "The downloaded theme sample uses English labels so it remains a small working starting point. The applied exercise adds resource files and tests a longer translation. Describe both language fallback and layout behavior; resource extraction alone is not a complete localization test."
+          ],
+          "example": "XAML: <Button x:Uid=\"AddTaskButton\" />\nResource key: AddTaskButton.Content\nStable program key: tasks",
+          "pitfall": "Translating a stored key or route tag can break compatibility with existing documents or navigation.",
+          "question": {
+            "id": "winui-accessibility-check-4",
+            "lessonId": "winui-accessibility-localization",
+            "prompt": "Which values should remain stable when localizing?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Every visible English sentence"
+              },
+              {
+                "id": "b",
+                "text": "The user’s Windows text scale"
+              },
+              {
+                "id": "c",
+                "text": "Program identifiers and document keys"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Display wording can vary while internal contracts remain unchanged."
+          }
+        }
+      ],
+      "steps": [
+        "Use the sample entirely by keyboard, including an invalid title and retry.",
+        "Type a draft, toggle the theme twice and compare its exact value.",
+        "Test Narrator, contrast themes and increased text scaling on Windows.",
+        "Add an Indonesian .resw string for the action and test a longer label."
+      ],
+      "expected": "The theme toggles without clearing the draft. Standard controls remain keyboard reachable; actual Narrator, contrast and localization results must be recorded from the Windows app.",
+      "challenge": {
+        "task": "Deliver a localized Add task flow with evidence for keyboard use, large text and screen-reader feedback.",
+        "acceptance": [
+          "Keep stable ids and data keys.",
+          "Record at least one longer translation.",
+          "Check success and invalid-input announcements."
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "winui-accessibility-exam-1",
+            "lessonId": "winui-accessibility-keyboard",
+            "prompt": "A mouse-only custom surface replaces a Button. What needs explicit work?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Keyboard activation, focus and automation behavior"
+              },
+              {
+                "id": "b",
+                "text": "Only its background image"
+              },
+              {
+                "id": "c",
+                "text": "Only the executable icon"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Replacing standard controls can remove built-in interaction support."
+          },
+          {
+            "id": "winui-accessibility-exam-2",
+            "lessonId": "winui-accessibility-names",
+            "prompt": "A green status dot signals success. What should accompany it?",
+            "options": [
+              {
+                "id": "a",
+                "text": "A mouse-only tooltip"
+              },
+              {
+                "id": "b",
+                "text": "Meaningful text available to assistive technology"
+              },
+              {
+                "id": "c",
+                "text": "A second green dot"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Meaning should not depend on perceiving one color."
+          },
+          {
+            "id": "winui-accessibility-exam-3",
+            "lessonId": "winui-accessibility-themes",
+            "prompt": "Changing dark mode clears an unfinished title. Is that intended here?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Yes; all themes need a new document"
+              },
+              {
+                "id": "b",
+                "text": "Only on ARM64"
+              },
+              {
+                "id": "c",
+                "text": "No; theme changes should preserve working state"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Presentation changes must not reset the draft."
+          },
+          {
+            "id": "winui-accessibility-exam-4",
+            "lessonId": "winui-accessibility-themes",
+            "prompt": "Dark mode looks correct. What still needs testing?",
+            "options": [
+              {
+                "id": "a",
+                "text": "High contrast, text scaling and interaction states"
+              },
+              {
+                "id": "b",
+                "text": "Nothing else about appearance"
+              },
+              {
+                "id": "c",
+                "text": "Only source comments"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Different accessibility settings expose different behavior."
+          },
+          {
+            "id": "winui-accessibility-exam-5",
+            "lessonId": "winui-accessibility-localization",
+            "prompt": "Which resource key matches a Button with x:Uid=\"AddTaskButton\"?",
+            "options": [
+              {
+                "id": "a",
+                "text": "MainWindow.g.cpp"
+              },
+              {
+                "id": "b",
+                "text": "AddTaskButton.Content"
+              },
+              {
+                "id": "c",
+                "text": "tasks.file.version"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "x:Uid resource lookup addresses the named element property."
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Accessibility for Windows apps",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/design/accessibility/accessibility-overview"
+        },
+        {
+          "title": "XAML theme resources",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/platform/xaml/xaml-theme-resources"
+        },
+        {
+          "title": "Localize strings in the UI and app manifest",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/mrtcore/localize-strings"
+        }
+      ]
+    },
+    {
+      "id": "winui-testing",
+      "version": 1,
+      "order": 11,
+      "title": "11. Debug and test native desktop behavior",
+      "summary": "Test portable C++ rules, inspect the running XAML tree, and distinguish build evidence from UI evidence.",
+      "stage": "shipping",
+      "difficulty": "Intermediate",
+      "minutes": 60,
+      "prerequisites": [
+        "winui-accessibility"
+      ],
+      "lessons": [
+        {
+          "id": "winui-testing-layers",
+          "title": "Test each boundary where it can fail",
+          "paragraphs": [
+            "A task app has at least three useful test layers: portable title rules, the window’s interaction flow and the installed application. Console tests can exercise rules quickly without starting WinUI. UI tests then verify that controls call those rules correctly and render their outcomes.",
+            "Keep TaskRules.h independent of WinUI so the same input cases can run with a standard C++ compiler. The sample tests trimming, empty input, control characters and both sides of the length boundary. Testing a separately reimplemented rule would not verify the rule the window actually uses."
+          ],
+          "example": "Portable rule → deterministic input/output tests\nWindow → native input, focus and visible state\nPackage → install, launch, update and data retention",
+          "pitfall": "A green portable test run cannot prove that XAML names or event wiring are correct.",
+          "question": {
+            "id": "winui-testing-check-1",
+            "lessonId": "winui-testing-layers",
+            "prompt": "What do the portable tests verify?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The shared C++ validation rules"
+              },
+              {
+                "id": "b",
+                "text": "The full WinUI window launch"
+              },
+              {
+                "id": "c",
+                "text": "The MSIX installer on every machine"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Each test layer has a specific scope of evidence."
+          }
+        },
+        {
+          "id": "winui-testing-boundaries",
+          "title": "Test edges and rejected transactions",
+          "paragraphs": [
+            "The important title cases are not just Read XAML. Test an empty string, tabs and spaces, embedded newlines, 80 units and 81 units, plus ordinary non-ASCII text. For each rejection check that accepted state did not change.",
+            "A capstone regression should also test saving, closing, reloading and recovering from invalid storage. Write down exact expected values before running. This keeps tests from simply repeating whatever the implementation happened to return."
+          ],
+          "example": "Length 80 → accepted\nLength 81 → rejected\nSpaces only → rejected\nPadded valid text → trimmed and accepted",
+          "pitfall": "Only testing happy-path titles misses the conditions most likely to damage a document or confuse a user.",
+          "question": {
+            "id": "winui-testing-check-2",
+            "lessonId": "winui-testing-boundaries",
+            "prompt": "Which pair tests the length boundary?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Two identical 20-unit strings"
+              },
+              {
+                "id": "b",
+                "text": "80 and 81 units"
+              },
+              {
+                "id": "c",
+                "text": "1 and 2 units only"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Values on opposite sides of the rule catch off-by-one errors."
+          }
+        },
+        {
+          "id": "winui-testing-debugger",
+          "title": "Use the debugger to locate the faulty layer",
+          "paragraphs": [
+            "Set a breakpoint at the handler boundary and inspect the captured title, validation result and collection size. If the handler never runs, compare the XAML event name with the C++ declaration and definition. If it runs with the wrong text, inspect the named input accessor and state ownership.",
+            "Use Visual Studio’s available XAML inspection tools to examine the running object tree and layout bounds. If a source name is missing during compilation, check x:Class, namespace and generated inputs before manually editing a generated header. First failure evidence usually narrows the problem more than repeated clean builds."
+          ],
+          "example": "Handler reached? → input correct? → rule result correct?\n→ collection changed? → view notified? → layout visible?",
+          "pitfall": "Repeated rebuilds cannot fix a logical error in a handler that is already compiling and running.",
+          "question": {
+            "id": "winui-testing-check-3",
+            "lessonId": "winui-testing-debugger",
+            "prompt": "The handler is never reached. What should you inspect first?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The file size limit"
+              },
+              {
+                "id": "b",
+                "text": "The certificate title"
+              },
+              {
+                "id": "c",
+                "text": "The XAML event hookup and matching method"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Start at the earliest broken boundary in the action chain."
+          }
+        },
+        {
+          "id": "winui-testing-evidence",
+          "title": "Report what actually ran",
+          "paragraphs": [
+            "Record the OS, architecture, configuration and dependency versions with native results. A browser can display these source files and verify course assessments, but it cannot compile or launch WinUI here. Separate native launch results from portable tests and source structure checks.",
+            "Use a small regression matrix for Add, invalid Add, remove selection, cancel, file failure and close-during-work. Re-run the cases affected by a code change. Release performance measurements should come from the actual Release executable with its environment stated, not from the lesson’s timer demonstration."
+          ],
+          "example": "Evidence: toolchain + input + expected result + observed result\nMark unexecuted Windows checks as pending, never as passed.",
+          "pitfall": "A production build of this website is not a build of its downloadable C++ WinUI examples.",
+          "question": {
+            "id": "winui-testing-check-4",
+            "lessonId": "winui-testing-evidence",
+            "prompt": "What can a browser source-view check establish?",
+            "options": [
+              {
+                "id": "a",
+                "text": "That the intended source is displayed and downloaded"
+              },
+              {
+                "id": "b",
+                "text": "That Windows deployment succeeded"
+              },
+              {
+                "id": "c",
+                "text": "That Narrator behavior is correct"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Native execution needs a Windows environment and separate observation."
+          }
+        }
+      ],
+      "steps": [
+        "Compile and run TaskRules.test.cpp using the README’s console command.",
+        "Build the WinUI sample and inspect the validation result in the debugger.",
+        "Change the 80-unit rule deliberately, rerun the boundary tests, then restore it.",
+        "Record which checks ran on Windows and which only tested portable C++."
+      ],
+      "expected": "The portable suite reports its counted checks. The native window presents matching validation outcomes; website tests alone do not establish a Windows launch.",
+      "challenge": {
+        "task": "Write a short regression report for the task notebook covering domain, UI and packaging layers.",
+        "acceptance": [
+          "Include a failing case before its fix.",
+          "Record the exact native toolchain.",
+          "Label any unexecuted check as pending."
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "winui-testing-exam-1",
+            "lessonId": "winui-testing-layers",
+            "prompt": "A test copies the validation algorithm into another function. What is the weakness?",
+            "options": [
+              {
+                "id": "a",
+                "text": "It replaces the need for assertions"
+              },
+              {
+                "id": "b",
+                "text": "It may pass while the shipped rule is broken"
+              },
+              {
+                "id": "c",
+                "text": "It automatically verifies WinUI"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Tests should exercise the same rule the window calls."
+          },
+          {
+            "id": "winui-testing-exam-2",
+            "lessonId": "winui-testing-boundaries",
+            "prompt": "A rejected title still increments the task count. Which assertion catches it?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The window has a title"
+              },
+              {
+                "id": "b",
+                "text": "The source has a comment"
+              },
+              {
+                "id": "c",
+                "text": "Accepted state remains unchanged after invalid input"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "A rejection test must inspect state as well as error text."
+          },
+          {
+            "id": "winui-testing-exam-3",
+            "lessonId": "winui-testing-debugger",
+            "prompt": "The handler runs and the vector changes, but the list does not. Where next?",
+            "options": [
+              {
+                "id": "a",
+                "text": "ItemsSource and collection notifications"
+              },
+              {
+                "id": "b",
+                "text": "The compiler installation first"
+              },
+              {
+                "id": "c",
+                "text": "The package logo"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The earliest known good boundaries narrow the remaining fault."
+          },
+          {
+            "id": "winui-testing-exam-4",
+            "lessonId": "winui-testing-evidence",
+            "prompt": "Only website tests ran on macOS. Which claim is accurate?",
+            "options": [
+              {
+                "id": "a",
+                "text": "MSIX installation was certified"
+              },
+              {
+                "id": "b",
+                "text": "Course behavior was tested; WinUI native launch remains unverified"
+              },
+              {
+                "id": "c",
+                "text": "All Windows desktop samples passed native launch"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Report the environment and scope of actual execution."
+          },
+          {
+            "id": "winui-testing-exam-5",
+            "lessonId": "winui-testing-evidence",
+            "prompt": "What should accompany a Release timing claim?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The duration of a teaching delay"
+              },
+              {
+                "id": "b",
+                "text": "Only a Debug screenshot"
+              },
+              {
+                "id": "c",
+                "text": "Measured native results and a stated environment"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Performance claims need actual measurements of the target executable."
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Visual Studio: C++ WinUI templates",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/dev-tools/visual-studio"
+        },
+        {
+          "title": "Debug your Windows app",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/ui/xaml-runtime-design-tools"
+        },
+        {
+          "title": "C++/WinRT language projection",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/cpp-winrt/"
+        }
+      ]
+    },
+    {
+      "id": "winui-packaging",
+      "version": 1,
+      "order": 12,
+      "title": "12. Package, install and update the app",
+      "summary": "Understand MSIX identity, runtime dependencies and architecture, then test the installed application beyond Visual Studio.",
+      "stage": "shipping",
+      "difficulty": "Intermediate",
+      "minutes": 55,
+      "prerequisites": [
+        "winui-testing"
+      ],
+      "lessons": [
+        {
+          "id": "winui-packaging-identity",
+          "title": "Separate package identity from executable name",
+          "paragraphs": [
+            "MSIX packaging describes the application’s identity, publisher, version, assets and deployment behavior. The executable filename is only one part of that artifact. Start from the packaged C++ template so generated assets and build settings form a coherent baseline.",
+            "Keep identity stable when testing an update that should retain the same application data. A differently named package may install alongside the old one instead of replacing it. Record the manifest identity and version with your test evidence so you know which app was launched."
+          ],
+          "example": "Record: identity name, publisher, version, target architecture\nThen test installation and launch from the installed app entry.",
+          "pitfall": "Renaming the EXE does not by itself define a correct package identity or update path.",
+          "question": {
+            "id": "winui-packaging-check-1",
+            "lessonId": "winui-packaging-identity",
+            "prompt": "What identifies an MSIX application beyond its EXE name?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The browser route"
+              },
+              {
+                "id": "b",
+                "text": "Package metadata including identity and publisher"
+              },
+              {
+                "id": "c",
+                "text": "The first task title"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Deployment identity is defined by the package contract."
+          }
+        },
+        {
+          "id": "winui-packaging-runtime",
+          "title": "Choose a dependency strategy deliberately",
+          "paragraphs": [
+            "Framework-dependent deployment relies on an appropriate installed Windows App SDK runtime. Self-contained deployment includes runtime components with the app at a size and servicing cost. Packaging choice and runtime-dependency choice are related but are not the same setting.",
+            "Follow the deployment guidance for the exact stable SDK version selected by your template. Do not copy a partial property list and assume it covers signing, initialization and dependencies for every packaged or unpackaged scenario. This path keeps its sample project packaged; unpackaged deployment is a later extension to validate separately."
+          ],
+          "example": "Framework-dependent: app + required runtime installation\nSelf-contained: app includes runtime components\nBoth still need architecture and deployment validation.",
+          "pitfall": "A framework-dependent executable may work on a developer PC only because the runtime is already installed there.",
+          "question": {
+            "id": "winui-packaging-check-2",
+            "lessonId": "winui-packaging-runtime",
+            "prompt": "Why test on a machine without development tools?",
+            "options": [
+              {
+                "id": "a",
+                "text": "To make XAML use JavaScript"
+              },
+              {
+                "id": "b",
+                "text": "To bypass the package manifest"
+              },
+              {
+                "id": "c",
+                "text": "To expose missing deployment dependencies"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "The development environment can hide missing runtime prerequisites."
+          }
+        },
+        {
+          "id": "winui-packaging-signing",
+          "title": "Treat architecture and trust as release inputs",
+          "paragraphs": [
+            "Build the architecture you intend to ship and test it on a compatible Windows machine. Match dependent native libraries to that architecture. Debug and Release are separate configurations; verify the installed Release build rather than assuming Debug launch proves a release artifact.",
+            "A sideloaded package needs an appropriate signing and trust setup. A development certificate is a local testing tool, not a universal distribution identity. Keep signing credentials outside source downloads and use the documented distribution process for your audience. The course provides a release checklist, not a signed installer."
+          ],
+          "example": "Source pack ≠ built executable ≠ signed MSIX\nVerify each artifact separately.",
+          "pitfall": "Shipping a private signing key inside an example archive is not a setup shortcut.",
+          "question": {
+            "id": "winui-packaging-check-3",
+            "lessonId": "winui-packaging-signing",
+            "prompt": "Does the lesson source archive contain a signed installer?",
+            "options": [
+              {
+                "id": "a",
+                "text": "No; the learner builds and packages it on Windows"
+              },
+              {
+                "id": "b",
+                "text": "Yes; a .cpp file is an MSIX"
+              },
+              {
+                "id": "c",
+                "text": "Only if downloaded in dark mode"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Source files still require a native build and a deployment process."
+          }
+        },
+        {
+          "id": "winui-packaging-updates",
+          "title": "Exercise install, update and data retention",
+          "paragraphs": [
+            "Create a task with the installed app, save it, close the process and reopen from the Start menu. Then build an update with the same intended identity and a higher package version, install it and inspect the saved task. Also test a fresh installation with no pre-existing data.",
+            "Document uninstall behavior, supported OS requirements and the runtime strategy for the selected SDK. A working update on one machine is local evidence, not certification of every Windows device. Keep a recovery copy of test data when deliberately exercising failure paths."
+          ],
+          "example": "Fresh install → launch → save → restart\nUpdate same identity → launch → verify prior data\nSeparate test: uninstall behavior",
+          "pitfall": "Launching only through F5 misses installed-app activation and dependency problems.",
+          "question": {
+            "id": "winui-packaging-check-4",
+            "lessonId": "winui-packaging-updates",
+            "prompt": "Which launch path belongs in a deployment test?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only the compiler command"
+              },
+              {
+                "id": "b",
+                "text": "The installed app entry outside Visual Studio"
+              },
+              {
+                "id": "c",
+                "text": "Only a browser course link"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Users launch an installed artifact, so test that path."
+          }
+        }
+      ],
+      "steps": [
+        "Build the downloadable package-ready sample in the C++ packaged template.",
+        "Record identity, SDK version, architecture and dependency strategy.",
+        "Produce and install a Release package using the template’s packaging workflow.",
+        "Launch outside Visual Studio and run the release checklist on a separate test environment."
+      ],
+      "expected": "The sample shows its release-check prompt after launch. Installation, signing, runtime availability and update behavior require actual Windows verification and are not supplied by the source archive.",
+      "challenge": {
+        "task": "Prepare an install-and-update report for the capstone with a documented runtime strategy.",
+        "acceptance": [
+          "Launch the installed Release app outside the IDE.",
+          "Verify an update retains the intended saved data.",
+          "Keep private signing material out of the source pack."
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "winui-packaging-exam-1",
+            "lessonId": "winui-packaging-identity",
+            "prompt": "An update installs as a second app. What should you compare?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Task title capitalization"
+              },
+              {
+                "id": "b",
+                "text": "TextBlock wrapping"
+              },
+              {
+                "id": "c",
+                "text": "Package identity and publisher"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Different identities can result in separate installations."
+          },
+          {
+            "id": "winui-packaging-exam-2",
+            "lessonId": "winui-packaging-runtime",
+            "prompt": "The EXE works only on the developer PC. What is a likely deployment gap?",
+            "options": [
+              {
+                "id": "a",
+                "text": "An undeclared or missing runtime dependency"
+              },
+              {
+                "id": "b",
+                "text": "Too many lesson checkpoints"
+              },
+              {
+                "id": "c",
+                "text": "The source archive uses UTF-8"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "A development machine may already contain required components."
+          },
+          {
+            "id": "winui-packaging-exam-3",
+            "lessonId": "winui-packaging-runtime",
+            "prompt": "Does packaged always mean self-contained?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only for C++"
+              },
+              {
+                "id": "b",
+                "text": "No; packaging and runtime strategy are distinct choices"
+              },
+              {
+                "id": "c",
+                "text": "Yes, they are synonyms"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "MSIX and dependency inclusion address different concerns."
+          },
+          {
+            "id": "winui-packaging-exam-4",
+            "lessonId": "winui-packaging-signing",
+            "prompt": "What should a shared source archive exclude?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Public build instructions"
+              },
+              {
+                "id": "b",
+                "text": "The MainWindow source files"
+              },
+              {
+                "id": "c",
+                "text": "Private signing credentials"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Signing secrets are not source dependencies for learners."
+          },
+          {
+            "id": "winui-packaging-exam-5",
+            "lessonId": "winui-packaging-updates",
+            "prompt": "F5 works. What deployment evidence is still missing?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Installed Release launch and dependency/update checks"
+              },
+              {
+                "id": "b",
+                "text": "Any need to test outside the IDE"
+              },
+              {
+                "id": "c",
+                "text": "Only the website screenshot"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Debug launch does not cover installed distribution behavior."
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Windows App SDK deployment overview",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/deploy-overview"
+        },
+        {
+          "title": "Package a desktop app with single-project MSIX",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/single-project-msix"
+        },
+        {
+          "title": "Visual Studio: C++ WinUI templates",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/dev-tools/visual-studio"
+        }
+      ]
+    },
+    {
+      "id": "winui-capstone",
+      "version": 1,
+      "order": 13,
+      "title": "13. Ship a C++ task notebook",
+      "summary": "Combine validation, an observable list, safe selection, asynchronous local JSON saving and a complete desktop verification plan.",
+      "stage": "shipping",
+      "difficulty": "Intermediate",
+      "minutes": 90,
+      "prerequisites": [
+        "winui-packaging"
+      ],
+      "lessons": [
+        {
+          "id": "winui-capstone-contract",
+          "title": "Define a small complete application",
+          "paragraphs": [
+            "The capstone accepts up to 100 task titles, rejects invalid entries, removes a selected task, and explicitly saves or loads a versioned document in the packaged app’s local data folder. The title rule is the same portable C++ header used earlier. A status line distinguishes an unsaved edit from a completed save.",
+            "This is intentionally a small task notebook: titles are ordered strings with no login, cloud sync, scheduling or collaborative edits. That scope lets you finish an understandable vertical slice. Starting a fresh process does not automatically load data; choose Load saved to make the disk boundary visible."
+          ],
+          "example": "Add → validate → append → unsaved\nRemove selected → bounds check → remove → unsaved\nSave → snapshot → async write → saved status",
+          "pitfall": "Calling an in-memory list saved before the file operation succeeds gives users false confidence.",
+          "question": {
+            "id": "winui-capstone-check-1",
+            "lessonId": "winui-capstone-contract",
+            "prompt": "When may the capstone report a successful save?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Immediately when Save is clicked"
+              },
+              {
+                "id": "b",
+                "text": "Whenever the list renders"
+              },
+              {
+                "id": "c",
+                "text": "After the asynchronous write completes"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Visible success must follow the operation it describes."
+          }
+        },
+        {
+          "id": "winui-capstone-document",
+          "title": "Version and validate the saved document",
+          "paragraphs": [
+            "The file contains a version number and a tasks array. JSON preserves quotes and non-ASCII titles through structured encoding. On load, enforce a byte limit, the expected schema version, the task-count limit, string item types and the same title rule before replacing the current collection.",
+            "Build a temporary vector from the entire document first. If one item is invalid, retain the current list and show an error. Do not accept a malformed file halfway and silently throw away the learner’s good tasks. The current implementation has one schema version; a future migration needs an explicit tested conversion."
+          ],
+          "example": "{\"version\":1,\"tasks\":[\"Read XAML\",\"Test keyboard input\"]}",
+          "pitfall": "A parseable JSON object is not necessarily a valid task document.",
+          "question": {
+            "id": "winui-capstone-check-2",
+            "lessonId": "winui-capstone-document",
+            "prompt": "What should happen when the third loaded item is invalid?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Reject the document and retain the current list"
+              },
+              {
+                "id": "b",
+                "text": "Keep only its first two items silently"
+              },
+              {
+                "id": "c",
+                "text": "Erase all current tasks"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Validate the complete candidate before committing it."
+          }
+        },
+        {
+          "id": "winui-capstone-save",
+          "title": "Snapshot state and serialize operations",
+          "paragraphs": [
+            "The window serializes the current accepted collection into a local string before the first await. It locks editing while a save or load is pending, avoiding overlap and making the result’s ownership easy to explain. StorageFile and FileIO perform the asynchronous local write; the UI does not call blocking get.",
+            "Saving replaces the lesson’s named local file. This is a teaching persistence path, not a crash-proof transactional database: a power loss or failing replacement can still require recovery. Loading asks before replacing current tasks. Cancel preserves the current list, and a closed-window guard prevents late control updates."
+          ],
+          "example": "Snapshot JSON → mark busy → await local write\nSuccess → show Saved\nFailure → preserve in-memory tasks, show error, allow retry",
+          "pitfall": "Serializing controls after an await can save a different state from the one that started the operation.",
+          "question": {
+            "id": "winui-capstone-check-3",
+            "lessonId": "winui-capstone-save",
+            "prompt": "Why snapshot before awaiting the write?",
+            "options": [
+              {
+                "id": "a",
+                "text": "To make filesystem failures impossible"
+              },
+              {
+                "id": "b",
+                "text": "To save a defined accepted state"
+              },
+              {
+                "id": "c",
+                "text": "To bypass schema validation"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Each operation needs clear ownership of its input data."
+          }
+        },
+        {
+          "id": "winui-capstone-acceptance",
+          "title": "Demonstrate the whole desktop flow",
+          "paragraphs": [
+            "Add two tasks, attempt an invalid third, remove one selection, save, close, relaunch and load. Then cancel a replacement and try loading an invalid document in a disposable app-data test environment. Confirm that good in-memory tasks survive failures and that the status matches the real outcome.",
+            "Run the portable tests, test narrow and large-text layouts, check keyboard behavior, and produce an installed Release build using the packaging course. These are separate evidence categories. The downloadable pack supplies complete MainWindow replacement files and portable rules, while Windows compilation, native UI behavior and MSIX distribution remain tasks for your Windows toolchain."
+          ],
+          "example": "Acceptance: valid edits + rejected edits + save/restart/load\nRecovery: canceled replacement + invalid document + failed write\nRelease: keyboard + resize + installed launch",
+          "pitfall": "A screenshot of two tasks does not demonstrate persistence, recovery or installed-app behavior.",
+          "question": {
+            "id": "winui-capstone-check-4",
+            "lessonId": "winui-capstone-acceptance",
+            "prompt": "Which sequence proves persistence beyond process memory?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Add two tasks and resize"
+              },
+              {
+                "id": "b",
+                "text": "Switch to dark mode"
+              },
+              {
+                "id": "c",
+                "text": "Save, close, relaunch, then load and compare"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "A new process must recover the accepted data from storage."
+          }
+        }
+      ],
+      "steps": [
+        "Build the pack in VoltQuestDesktop and add Read XAML and Test keyboard input.",
+        "Reject a blank title, select one task and remove it; save the remaining list.",
+        "Close and relaunch, choose Load saved and confirm replacement; compare the exact title.",
+        "Repeat with canceled replacement, invalid storage in a disposable test profile, keyboard input and an installed Release build."
+      ],
+      "expected": "The accepted list survives save → close → relaunch → explicit load. Invalid titles or documents and canceled replacement preserve accepted state; failures report an error without claiming a successful save.",
+      "challenge": {
+        "task": "Extend the notebook with completion state and a tested version-1-to-version-2 document migration.",
+        "acceptance": [
+          "Provide complete C++/WinRT and XAML changes.",
+          "Retain old title-only documents through a tested migration.",
+          "Cover save/reload, invalid import and selection bounds.",
+          "Record native toolchain, accessibility and installation evidence; mark anything untested."
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "winui-capstone-exam-1",
+            "lessonId": "winui-capstone-contract",
+            "prompt": "Save is clicked but FileIO later fails. Which status is correct?",
+            "options": [
+              {
+                "id": "a",
+                "text": "An error with in-memory tasks retained"
+              },
+              {
+                "id": "b",
+                "text": "Saved, because the click succeeded"
+              },
+              {
+                "id": "c",
+                "text": "All tasks permanently removed"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "An attempted write is not a completed save."
+          },
+          {
+            "id": "winui-capstone-exam-2",
+            "lessonId": "winui-capstone-document",
+            "prompt": "A valid JSON object has version 99. What should version 1 do?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Delete the version and load everything"
+              },
+              {
+                "id": "b",
+                "text": "Reject the unsupported schema without replacing tasks"
+              },
+              {
+                "id": "c",
+                "text": "Assume the format is compatible"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Version compatibility needs an explicit migration or rejection policy."
+          },
+          {
+            "id": "winui-capstone-exam-3",
+            "lessonId": "winui-capstone-document",
+            "prompt": "Why build a candidate vector before replacing ItemsSource data?",
+            "options": [
+              {
+                "id": "a",
+                "text": "To make invalid items invisible"
+              },
+              {
+                "id": "b",
+                "text": "To skip the task-count limit"
+              },
+              {
+                "id": "c",
+                "text": "To validate the whole document before committing"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Atomic acceptance preserves the old valid state when any candidate item fails."
+          },
+          {
+            "id": "winui-capstone-exam-4",
+            "lessonId": "winui-capstone-save",
+            "prompt": "What is a stated limitation of this teaching save path?",
+            "options": [
+              {
+                "id": "a",
+                "text": "It is not a crash-proof transactional database"
+              },
+              {
+                "id": "b",
+                "text": "It never writes a file"
+              },
+              {
+                "id": "c",
+                "text": "It compiles C++ in the browser"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Replacement and filesystem failures still require a documented recovery strategy."
+          },
+          {
+            "id": "winui-capstone-exam-5",
+            "lessonId": "winui-capstone-acceptance",
+            "prompt": "Which evidence completes the native task notebook flow?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Only an example source screenshot"
+              },
+              {
+                "id": "b",
+                "text": "Installed launch plus edits, rejection and save/restart/load checks"
+              },
+              {
+                "id": "c",
+                "text": "Only a website build"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The app’s real behavior spans interaction, persistence and deployment."
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "C++/WinRT collections",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/cpp-winrt/collections"
+        },
+        {
+          "title": "Create, write, and read a file",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/files/create-read-write-files"
+        },
+        {
+          "title": "C++/WinRT concurrency and asynchronous operations",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/develop/cpp-winrt/concurrency"
+        },
+        {
+          "title": "Windows App SDK deployment overview",
+          "url": "https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/deploy-overview"
+        }
+      ]
+    }
+  ]
+}

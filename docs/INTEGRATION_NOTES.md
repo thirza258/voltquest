@@ -1,11 +1,46 @@
 # Integration notes
 
+## C++ / WinUI desktop courses (2026-09-20)
+
+- `/winui` and its thirteen details are lazy routes. Static `WinuiPromo` links from Courses
+  and Tutorials; the footer and shared header also recognize the path. No WinUI sandbox
+  or browser runtime is added. The isolated WinUI verification sitemap has 417 URLs.
+- `winui-*` ids use the existing `vq.courses.v1` progress, reward transitions and shared
+  assessment component. The exam receives canonical `course` metadata. Certificate
+  grading includes `winui.json`; public course
+  discovery remains the 34-course API. Existing ids and versions are preserved.
+- `getWinuiFiles` is the single source for the viewer and file/ZIP downloads. The ZIP
+  contains template replacement files, not a standalone solution or executable. Keep
+  console `TaskRules.test.cpp` outside the WinUI project and use the exact namespace
+  and build instructions. Native source is React text and never evaluated by the app.
+- Preserve string length when crossing from hstring to portable validation: a c_str-only
+  conversion could truncate an embedded NUL and accept an invalid loaded title. The
+  shared rule rejects control characters; the capstone validates a complete temporary
+  collection before replacing accepted state.
+- Windows.Storage pickers need HWND initialization; ContentDialog needs a loaded XamlRoot.
+  Async samples separately manage implementation lifetime, window closure and stale-result
+  invalidation. The timer's Cancel does not cancel underlying work. The local JSON write
+  remains a documented teaching save path, not a crash-proof storage transaction.
+- Interface translations retain source selection, lab checks and assessment choices.
+  Native lab checks are learner observations for the visit. Narratives/questions/source
+  use a disclosed English fallback. See [WINUI.md](WINUI.md).
+- Production Chrome verifies all thirteen source ZIP downloads, persisted grading and
+  locale state, navigation and desktop/390 px layouts. A capstone certificate's original
+  PDF matches both its server hash and the public browser verifier. Native Windows build,
+  launch and deployment remain unverified. Portable C++ rules and local HTTP
+  companions execute here; the native WinUI client requires Windows verification.
+- `winui-api` adds native GET/POST with a bounded JSON helper and a loopback Python API.
+  The downloadable Node `fetch` comparison creates a task and checks it by GET readback;
+  twelve real-HTTP fixture regressions execute independently of the native client.
+  Timer/Cancel request cancellation, not server rollback. Remote HTTPS/sign-in and
+  idempotency are extension topics; there is no browser network lab or native runtime.
+
 ## Verifiable course certificates (2026-09-20)
 
 - Every exam host passes its canonical `course` to shared `Assessment`; robotics/vision use
   `StudyLesson`. The certificate form is a sibling of the exam form, avoiding nested forms.
   Practice never issues certificates. Local historical scores need a fresh submitted exam.
-- Backend grading reads all eight known catalogues, independently of the 34-course public
+- Backend grading reads all ten known catalogues, independently of the 34-course public
   discovery API. Never accept client percentages, answer keys, timestamps or PDF claims.
 - Persist the original PDF and SHA-256. Snapshot title/version, learner name and score. The
   unique player/course/version constraint makes retries idempotent. `PUBLIC_APP_URL` supplies

@@ -54,6 +54,12 @@ learning model. Do not imply a full Linux computer or arbitrary Python packages 
 
 ## Self-study courses
 
+The WinUI path uses the shared course shell, stages, URL filters, section checkpoints
+and exams. Guided Windows labs show expected observations and learner-only checkboxes.
+A labeled source-file selector, scrollable source, copy/file/ZIP actions and expandable
+build instructions distinguish native source from browser execution. Preserve working
+state across language changes and show the English curriculum fallback. See WINUI.md.
+
 After a passing exam, the certificate panel accepts a name and public-link consent, then offers
 a PDF and verifier link. Existing issuance is recoverable without repeating an exam. The public
 verifier distinguishes an issued record, missing code and unavailable server, and compares a

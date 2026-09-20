@@ -2,7 +2,13 @@
 
 ## Current build
 
-**Verifiable PDF certificates:** pass any of the 121 course exams with at least 80%, then issue
+**C++ / WinUI desktop courses:** open `/winui` for thirteen courses from a first XAML window
+to a task notebook, with 52 section checkpoints, exams and downloadable C++/WinRT source.
+Includes HTTP GET/POST, JSON, cancellation and a local API with a JavaScript `fetch` comparison.
+Native labs require Windows and Visual Studio; the browser provides lessons and assessments.
+See [docs/WINUI.md](docs/WINUI.md) for build instructions and verification limits.
+
+**Verifiable PDF certificates:** pass any of the 150 course exams with at least 80%, then issue
 a certificate with your name, course, score, date, QR code and verification link. `/certificates`
 recovers your certificates and checks public records or PDF fingerprints. These are unproctored
 self-study certificates. Set `PUBLIC_APP_URL` to your public frontend origin before issuing them;

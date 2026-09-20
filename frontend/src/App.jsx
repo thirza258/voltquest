@@ -14,6 +14,8 @@ const HpcPage = lazy(() => import('./features/hpc/HpcPage.jsx'))
 const MatlabPage = lazy(() => import('./features/matlab/MatlabPage.jsx'))
 const AgentsPage = lazy(() => import('./features/agents/AgentsPage.jsx'))
 const ComputerPage = lazy(() => import('./features/computer/ComputerPage.jsx'))
+const QtPage = lazy(() => import('./features/qt/QtPage.jsx'))
+const WinuiPage = lazy(() => import('./features/winui/WinuiPage.jsx'))
 const CybersecurityPage = lazy(() => import('./features/cybersecurity/CybersecurityPage.jsx'))
 const RoboticsPage = lazy(() => import('./features/robotics/RoboticsPage.jsx'))
 const CoursesPage = lazy(() => import('./features/courses/CoursesPage.jsx'))
@@ -62,6 +64,10 @@ export default function App() {
       <Route path="/certificates/:certificateId" element={<CertificatesPage />} />
       <Route path="/computer-architecture" element={<ComputerPage />} />
       <Route path="/computer-architecture/:lessonId" element={<ComputerPage />} />
+      <Route path="/qt" element={<QtPage />} />
+      <Route path="/qt/:lessonId" element={<QtPage />} />
+      <Route path="/winui" element={<WinuiPage />} />
+      <Route path="/winui/:lessonId" element={<WinuiPage />} />
       <Route path="/hpc" element={<HpcPage />} />
       <Route path="/hpc/:lessonId" element={<HpcPage />} />
       <Route path="/matlab" element={<MatlabPage />} />

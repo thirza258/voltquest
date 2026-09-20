@@ -605,7 +605,7 @@ leaderboards and certification; no backend schema or existing course progress ve
 `/certificates` and `/certificates/:certificateId` follow [CERTIFICATES.md](CERTIFICATES.md).
 The shared `Assessment` accepts optional `course` metadata and exposes certificate issuance only
 after a complete passing exam. Submitted answer ids are graded again by the backend across all
-121 courses. A learner-chosen name and explicit public-link consent precede issuance. Certificates
+150 courses. A learner-chosen name and explicit public-link consent precede issuance. Certificates
 describe an unproctored self-study pass, with a self-declared name, not accredited qualifications.
 
 Player-authenticated issuance/listing and public UUID verification/PDF download use the separate
@@ -613,3 +613,16 @@ Player-authenticated issuance/listing and public UUID verification/PDF download 
 one immutable record and exact PDF. SHA-256 supports local file comparison in the verifier;
 `PUBLIC_APP_URL` is the trusted link origin. Existing rewards, progress, public catalogue discovery,
 CircuitDoc, simulation and account XP contracts are unchanged. See API.md for request/response shapes.
+
+## 24. C++ / WinUI desktop app courses
+
+`/winui` and `/winui/:lessonId` follow [WINUI.md](WINUI.md). Thirteen lazy-loaded courses
+provide four sections/checkpoints, guided Windows labs, source packs and five-question
+80% exams. Existing course progress, rewards and certificates apply. The certificate
+catalogue adds `winui.json`; the standard public course discovery API stays unchanged.
+
+`features/winui/samples.js` exports `getWinuiFiles(course)`, returning exact filename-to-text
+entries for a packaged C++ WinUI template's MainWindow replacement files and supporting
+headers/instructions. Browser copying and downloads never execute that source. Native
+compilation and launch require the learner's Windows toolchain. No CircuitDoc, board,
+sandbox, project, simulation, assistant, MCP or showcase contract is extended.

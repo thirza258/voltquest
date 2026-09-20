@@ -1,5 +1,9 @@
 # Interactive tutorials
 
+The hub also links to `/winui`: thirteen C++/WinUI desktop courses with section questions,
+exams and downloadable native Windows lab files. These are separate from firmware
+tutorials and board simulations. See [WINUI.md](WINUI.md).
+
 The hub links to `/computer-architecture`: eighteen gate-first computer courses, including six
 assembly courses and editable logic/register/CPU experiments. Minecraft/redstone notes explain
 how the same module contracts transfer to other media. See COMPUTER_ARCHITECTURE.md. The shared

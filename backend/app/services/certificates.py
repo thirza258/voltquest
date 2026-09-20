@@ -21,6 +21,8 @@ CATALOGUES = (
     ("vision.json", "tutorials", "/vision"), ("hpc.json", "courses", "/hpc"),
     ("cybersecurity.json", "courses", "/cybersecurity"), ("matlab.json", "courses", "/matlab"),
     ("ai-agents.json", "courses", "/ai-agents"), ("computer-architecture.json", "courses", "/computer-architecture"),
+    ("winui.json", "courses", "/winui"),
+    ("qt.json", "courses", "/qt"),
 )
 
 

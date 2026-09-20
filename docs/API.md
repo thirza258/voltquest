@@ -95,7 +95,7 @@ expectation and the API never runs the code. Existing course ids, versions and g
 
 - `POST /api/certificates` (player auth, guests allowed):
   `{course_id,course_version,learner_name,answers:{questionId:optionId},share_consent:true}`.
-  Requires five valid current exam answers and at least 80%, across all 121 courses. Success
+  Requires five valid current exam answers and at least 80%, across all 150 courses. Success
   and replay return HTTP 200 with the same immutable certificate. Invalid/incomplete/failed
   answers or absent consent return 422; stale version 409; unknown course 404.
 - `GET /api/certificates/mine?course_id=` (player auth) → `{certificates:[Certificate]}`.

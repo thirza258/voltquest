@@ -1,0 +1,2 @@
+VoltQuest Qt desktop lesson resource.
+This text is embedded in the executable and does not depend on the current working directory.

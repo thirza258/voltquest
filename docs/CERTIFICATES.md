@@ -1,7 +1,7 @@
 # Course completion certificates
 
-All 121 self-study courses can issue a PDF after an 80% exam pass: 34 core, 5 robotics,
-6 vision, 10 HPC, 10 cybersecurity, 18 MATLAB, 20 AI agents and 18 computer/assembly.
+All 150 self-study courses can issue a PDF after an 80% exam pass: 34 core, 5 robotics,
+6 vision, 10 HPC, 10 cybersecurity, 18 MATLAB, 20 AI agents, 18 computer/assembly, 13 C++/WinUI and 16 Qt/C++.
 The shared exam presents the certificate form after a passing result. Existing records recover
 on course load and at `/certificates`; `/certificates/:certificateId` is the public verifier.
 
@@ -40,7 +40,7 @@ robots.txt; public API responses carry no-store/noindex headers.
 The additive `course_certificates` SQLAlchemy table stores these snapshots, a player foreign key
 and exact PDF binary. Startup `create_all()` adds the table without changing existing tables.
 Back it up with the database. Certificates have no expiry/revocation workflow. Campaign XP and
-`vq.courses.v1` remain unchanged. `services/certificates.py` caches eight known catalogues from
+`vq.courses.v1` remain unchanged. `services/certificates.py` caches ten known catalogues from
 `CONTENT_DIR`; restart after curriculum changes. `/api/courses` still exposes its 34-course catalogue.
 
 ## PDF and integrity
@@ -64,7 +64,7 @@ File checking needs HTTPS or localhost. The record and exact original remain dow
 
 ## Verification
 
-Backend tests issue/parse PDFs for all 121 courses, checking extracted names, titles, scores,
+Backend tests issue/parse PDFs for all 150 courses, checking extracted names, titles, scores,
 identifiers, clickable URLs and exact hashes. They cover rejected answers, version/auth/consent,
 immutable replay, ownership, account recovery, catalogue changes, codes and untrusted Host headers.
 Frontend tests cover form gating, submitted answers, downloads, locale/account changes, unavailable

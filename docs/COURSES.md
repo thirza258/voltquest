@@ -1,6 +1,15 @@
 # Self-study courses
 
-**PDF certificates** are available for each of the 121 courses across all paths. The shared exam
+**C++ / WinUI desktop apps** at `/winui` adds thirteen courses, 52 explanatory sections
+with independent checkpoints, thirteen Windows labs and thirteen five-question exams.
+Includes real native HTTP GET/POST source, JSON validation, cancellation/timeouts,
+a local Python API fixture and a runnable JavaScript `fetch` comparison.
+Download XAML/C++ source packs, build them with a packaged C++ WinUI template, and
+progress to a task notebook capstone. The browser provides lessons and assessments;
+native WinUI execution requires Windows. Shared rewards and certificates apply.
+See [WINUI.md](WINUI.md) for build steps and verification limits.
+
+**PDF certificates** are available for each of the 150 courses across all paths. The shared exam
 form accepts a learner name and consent after an 80% pass; the server independently checks the
 submitted answers and issues one immutable certificate per player/course/version. `/certificates`
 recovers certificates and looks up public verification codes. PDFs include a QR/link, and the

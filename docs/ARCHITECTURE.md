@@ -118,6 +118,11 @@ voltquest/
 
 ## Module ownership (implementation work packages)
 
+H2 owns the WinUI learning extension in `features/winui` and `content/winui.json`.
+Native source is displayed/downloaded as text; there is no browser/native execution
+bridge. Backend certificate ownership adds the catalogue to its existing allowlist.
+See [WINUI.md](WINUI.md) for source packs, course state and verification boundaries.
+
 Course certificate UI belongs to H2 in `features/courses`, using the shared assessment's optional
 `course` prop. Backend ownership covers `api/routes/certificates.py`, `schemas/certificates.py`,
 `services/{certificates,certificate_pdf}.py` and the additive `CourseCertificate` model. Services

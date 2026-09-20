@@ -1,5 +1,32 @@
 # PRD implementation verification
 
+### C++ / WinUI desktop courses (2026-09-20)
+
+`/winui` provides thirteen courses, 52 detailed sections with independent checkpoints,
+thirteen guided Windows labs and thirteen five-question exams. Courses progress from XAML
+and C++/WinRT through application state, async lifetimes, files, HTTP APIs and deployment to a local
+JSON task notebook. Each supplies exact source/file ZIP downloads and template setup
+instructions. Existing progress, rewards, localization and certificates are integrated;
+certificate grading includes all new WinUI exams. See [WINUI.md](WINUI.md) for native source scope.
+
+Isolated full `make check` passes **1,619 frontend tests in 93 files / 109 backend tests**, lint,
+the production build and **555.1 KiB** eager gzip budget. The WinUI route stays lazy, and
+the sitemap has **417 URLs**. An independent ZIP reader verifies all thirteen archives;
+the downloaded portable C++ rules compile and pass 18 behavioral checks. Twelve real
+HTTP regressions also execute the local API fixture and JavaScript `fetch` companion.
+Backend tests issue and parse original certificate PDFs for all 134 courses in that snapshot.
+Concurrent Qt work was still being authored in the shared tree; its partial files were
+excluded from this verification copy.
+
+Production Chrome with isolated SQLite verifies every course and source ZIP, exact C++
+downloads, hub filters, independent checkpoints, incomplete exam rejection, persisted 80%
+grading and English/Indonesian state retention. It also verifies capstone certificate
+issuance, the downloaded PDF hash and the public verifier's local file match, entry links
+from Courses/Tutorials/home, missing-course recovery and desktop/390 px layouts without
+page overflow or application/console errors. Native Windows build/launch, Narrator,
+MSIX installation/update and other browsers/devices remain unverified. VoltQuest does
+not compile or simulate WinUI, and source packs require a Windows Visual Studio template.
+
 ### AI agent learning extension (2026-09-19)
 
 `/ai-agents` provides twenty courses, twenty guided tutorials, eighty theory sections with

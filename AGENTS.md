@@ -1,6 +1,6 @@
 # VoltQuest — agent handoff log
 
-**Last verified: 2026-09-19.** This is the state document: what exists, what remains unfinished,
+**Last verified: 2026-09-20.** This is the state document: what exists, what remains unfinished,
 and what to do next. The specifications in `docs/` remain binding.
 
 | Read | When |
@@ -17,10 +17,19 @@ and what to do next. The specifications in `docs/` remain binding.
 | `docs/CYBERSECURITY.md` | Before editing web security courses, local request labs, defenses or investigation notebooks. |
 | `docs/MATLAB.md` | Before editing MATLAB courses, the numerical script interpreter, function reference or notebooks. |
 | `docs/AI_AGENTS.md` | Before editing AI agent courses, harness experiments, skills/MCP fixtures or companion CLIs. |
+| `docs/WINUI.md` | Before editing C++ / WinUI desktop courses, native source packs or their verification. |
 
 ## 1. Current build, not the target product
 
 The main entry points are **`/`** (32 campaign quests), **`/sandbox`** (freeform projects), and **`/tutorials`** (guided lessons).
+
+Courses, Tutorials and the home footer now link to **`/winui`**: thirteen C++/WinUI 3
+desktop courses, 52 section checkpoints and thirteen five-question exams. Each supplies
+a guided Windows lab, XAML/C++ source ZIP and an applied challenge, ending in a task
+notebook with local JSON save/load. Existing course progress, rewards and certificates
+apply through the shared certificate flow. Native labs require Windows; VoltQuest does not
+compile or simulate WinUI. Read `docs/WINUI.md` for source and verification boundaries.
+
 There are **41 firmware tutorials**, ordered Easy → Intermediate → Hard, with editable code,
 real simulation, explanations of program and hardware concepts, exact breadboard placement,
 cable endpoint tables and click-to-highlight wiring. The circuit is prepared/read-only, but
@@ -81,11 +90,13 @@ repository or commit without the user's explicit request.
 
 ## 2. Verification
 
-Latest full `make check`:
-- **1,496 frontend tests in 85 files pass.** A final input-validation refinement passes all
-  **88 targeted tests**, including one added regression, plus lint and the production rebuild.
-- **104 backend tests pass.**
-- Production build succeeds; initial JS payload is **545.8 KiB gzipped**, below the 1500 KiB budget.
+Latest WinUI verification used an isolated copy of the completed baseline plus this path;
+concurrent Qt files were still being authored in the shared tree. Full `make check`:
+
+- **1,619 frontend tests in 93 files pass.** Includes the WinUI curriculum/UI, actual ZIP
+  extraction and 18 compiled/executed portable C++ rule checks.
+- **109 backend tests pass.** Certificates are issued and their exact PDFs parsed for all 134 courses in that snapshot.
+- Production build succeeds; initial JS payload is **555.1 KiB gzipped**, below the 1500 KiB budget.
 - ESLint has no errors. Two existing exhaustive-deps warnings remain in
   `features/campaign/CampaignMap.jsx:84`; these are unrelated to the assistant/localization work.
 - Node prints the existing jsdom/localStorage warning; persistence tests use the memory-storage helper.
@@ -113,6 +124,44 @@ their explanation or timing is correct. `features/tutorials/programming.test.js`
 numeric output, command dispatch and LED state transitions on all four C++ boards.
 
 ## 3. Completed in this continuation
+
+### C++ / WinUI desktop app courses (2026-09-20)
+
+Open **`/winui`**, linked from Courses, Tutorials and the home footer. Thirteen courses
+cover WinUI 3 setup, XAML, C++ events and validation, binding/collections, navigation,
+dialogs, async lifetimes, files, HTTP API requests, accessibility/localization, testing,
+deployment and a task notebook capstone. Each includes four sections with independent checkpoints,
+a guided Windows lab, source files, an applied challenge and a five-question 80% exam:
+**52 sections, 52 checkpoints and 65 exam questions**. Existing progress, rewards and
+certificates apply; backend grading includes every new WinUI exam.
+Interface text supports Indonesian with a disclosed English curriculum/source fallback.
+
+Every course supplies an exact XAML/C++ ZIP with Visual Studio template instructions,
+portable validation tests and a release checklist. Native labs require Windows and a
+packaged C++ WinUI project; packs are replacement files, not standalone solutions. The
+capstone adds/removes tasks and explicitly saves/loads validated local JSON. Browser
+code does not compile, execute or simulate WinUI. Binding MVVM and Frame history are
+documented extension exercises. The API course includes real C++ GET/POST source, a
+local Python fixture and a runnable JavaScript `fetch` comparison; twelve regression cases
+exercise actual loopback HTTP, including creation/readback. Native cancellation and HTTP
+transport remain Windows verification work. Read `docs/WINUI.md` for execution and source boundaries.
+
+Isolated full `make check`: **1,619 frontend tests / 93 files, 109 backend tests**, lint and the
+production build pass, with **555.1 KiB** eager gzip. The WinUI route remains lazy; the
+sitemap contains **417 URLs**. Tests independently extract all thirteen ZIPs and compile/
+execute **18 portable C++ rule checks**. Certificate tests issue and parse PDFs for all
+134 courses in that snapshot. Existing CampaignMap hook warnings and the Node localStorage notice remain.
+
+Production Chrome with isolated SQLite verified all thirteen course routes and source ZIPs,
+exact displayed/downloaded C++, search/stage filtering, independent checkpoints, incomplete
+exam rejection, persisted 80% grading and retained learning/source state across Indonesian
+switching. Capstone certificate issuance, its exact PDF hash and browser PDF verification
+passed. The API course adds exact companion downloads, downloaded HTTP test execution,
+its own exam/certificate and a wider mobile file selector. Courses/Tutorials/home navigation
+and desktop/390 px layouts pass without page overflow. No browser application or console
+errors occurred. Native Windows compilation,
+launch, Narrator and MSIX install/update were not executed on this macOS host; source
+structure checks and portable tests do not establish those results.
 
 ### AI agent courses, guided tutorials and a JavaScript/Python CLI (2026-09-19)
 
