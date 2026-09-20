@@ -6,6 +6,7 @@ import { AppHeader } from '../workspace/AppHeader.jsx'
 import { readCourseProgress } from '../courses/progress.js'
 import HpcCourse, { hpcLinkClass } from './HpcCourse.jsx'
 import HpcLab, { fieldClass, panelClass } from './HpcLab.jsx'
+import SandboxBenchLayout from '../sandbox/SandboxBenchLayout.jsx'
 
 export const HPC_COURSES = content.courses
 
@@ -37,11 +38,24 @@ export default function HpcPage({ sandbox = false }) {
   const requested = sandbox ? search.get('lesson') : lessonId
   const course = HPC_COURSES.find(item => item.id === requested)
   const index = course ? HPC_COURSES.indexOf(course) : -1
+  if (requested && !course) return <div className="min-h-screen bg-surface-page"><AppHeader /><main className="mx-auto max-w-6xl px-4 py-8 sm:px-8"><h1 className="text-2xl font-semibold">{t('Course not found')}</h1><Link to="/hpc" className={`${hpcLinkClass} mt-4 inline-block`}>{t('All HPC courses')}</Link></main></div>
+  if (sandbox) {
+    return (
+      <SandboxBenchLayout
+        bench="hpc"
+        title={t('HPC sandbox')}
+        description={t('Explore performance models, test numerical behavior, edit native source and keep an experiment notebook. Choose a lab below or open its course for the full explanation.')}
+        courseLink={course ? `/hpc/${course.id}` : '/hpc'}
+        courseLinkLabel={t(course ? 'Back to the course' : 'All HPC courses')}
+        localeNotice={locale === 'id' ? t('HPC course narratives, questions and native source are currently in English. Interface controls support Indonesian.') : null}
+      >
+        <HpcLab key={course?.id ?? 'free'} initialLab={course?.lab ?? 'correctness'} free />
+      </SandboxBenchLayout>
+    )
+  }
   return <div className="min-h-screen bg-surface-page"><AppHeader /><main className="mx-auto max-w-6xl px-4 py-8 sm:px-8">
       <CourseRewards />
     {locale === 'id' && <p className="mb-5 text-sm text-slate-600">{t('HPC course narratives, questions and native source are currently in English. Interface controls support Indonesian.')}</p>}
-    {requested && !course ? <><h1 className="text-2xl font-semibold">{t('Course not found')}</h1><Link to="/hpc" className={`${hpcLinkClass} mt-4 inline-block`}>{t('All HPC courses')}</Link></>
-      : sandbox ? <><Link to={course ? `/hpc/${course.id}` : '/hpc'} className={hpcLinkClass}>{t(course ? 'Back to the course' : 'All HPC courses')}</Link><h1 className="mb-3 mt-6 text-3xl font-semibold">{t('HPC sandbox')}</h1><p className="mb-6 max-w-3xl text-sm leading-6 text-ink-secondary">{t('Explore performance models, test numerical behavior, edit native source and keep an experiment notebook. Choose a lab below or open its course for the full explanation.')}</p><HpcLab key={course?.id ?? 'free'} initialLab={course?.lab ?? 'correctness'} free /></>
-        : course ? <HpcCourse key={course.id} course={course} previous={HPC_COURSES[index - 1]} next={HPC_COURSES[index + 1]} /> : <HpcHub />}
+    {course ? <HpcCourse key={course.id} course={course} previous={HPC_COURSES[index - 1]} next={HPC_COURSES[index + 1]} /> : <HpcHub />}
   </main></div>
 }

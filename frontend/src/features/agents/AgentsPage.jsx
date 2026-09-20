@@ -4,6 +4,7 @@ import { useI18n } from '../../i18n/index.jsx'
 import { AppHeader } from '../workspace/AppHeader.jsx'
 import { readCourseProgress } from '../courses/progress.js'
 import { AGENT_COURSES } from './project.js'
+import SandboxBenchLayout from '../sandbox/SandboxBenchLayout.jsx'
 import AgentCourse, { GuidedSteps } from './AgentCourse.jsx'
 import AgentLab from './AgentLab.jsx'
 import { fieldClass, linkClass, panelClass } from './styles.js'
@@ -32,12 +33,25 @@ export default function AgentsPage({ sandbox = false, tutorial = false }) {
   const { t, locale } = useI18n(), { lessonId } = useParams(), [params] = useSearchParams()
   const requested = sandbox ? params.get('lesson') : lessonId
   const course = AGENT_COURSES.find(item => item.id === requested), index = course ? AGENT_COURSES.indexOf(course) : -1
+  if (requested && !course) return <div className="min-h-screen bg-surface-page"><AppHeader /><main className="mx-auto max-w-6xl px-4 py-8 sm:px-8"><h1 className="text-2xl font-semibold">{t('Course not found')}</h1><Link to="/ai-agents" className={`${linkClass} mt-4 inline-block`}>{t('All AI agent courses')}</Link></main></div>
+  if (sandbox) {
+    return (
+      <SandboxBenchLayout
+        bench="ai-agents"
+        title={t('AI agent sandbox')}
+        description={t('Build an inspectable agent loop, manage context and cost, write skills and test app integrations in a local notebook.')}
+        courseLink={course ? `/ai-agents/${course.id}` : '/ai-agents'}
+        courseLinkLabel={t(course ? 'Back to the course' : 'All AI agent courses')}
+        localeNotice={locale === 'id' ? t('AI agent narratives, questions and technical traces are currently in English. Interface controls support Indonesian.') : null}
+      >
+        <AgentLab key={course?.id ?? 'free'} initialLesson={course?.id} free />
+      </SandboxBenchLayout>
+    )
+  }
   return <div className="min-h-screen bg-surface-page"><AppHeader /><main className="mx-auto max-w-6xl px-4 py-8 sm:px-8">
       <CourseRewards />
     {locale === 'id' && <p className="mb-5 text-sm text-slate-600">{t('AI agent narratives, questions and technical traces are currently in English. Interface controls support Indonesian.')}</p>}
-    {requested && !course ? <><h1 className="text-2xl font-semibold">{t('Course not found')}</h1><Link to="/ai-agents" className={`${linkClass} mt-4 inline-block`}>{t('All AI agent courses')}</Link></>
-      : sandbox ? <><Link className={linkClass} to={course ? `/ai-agents/${course.id}` : '/ai-agents'}>{t(course ? 'Back to the course' : 'All AI agent courses')}</Link><h1 className="mb-3 mt-6 text-3xl font-semibold">{t('AI agent sandbox')}</h1><p className="mb-6 max-w-3xl text-sm leading-6 text-ink-secondary">{t('Build an inspectable agent loop, manage context and cost, write skills and test app integrations in a local notebook.')}</p><AgentLab key={course?.id ?? 'free'} initialLesson={course?.id} free /></>
-        : tutorial && course ? <><Link className={linkClass} to={`/ai-agents/${course.id}`}>{t('Back to the course')}</Link><header className="my-7"><p className="text-sm font-semibold text-brand-700">{t('Guided tutorial')}</p><h1 className="mt-3 text-3xl font-semibold">{course.title}</h1><p className="mt-3 leading-7 text-ink-secondary">{course.summary}</p></header><GuidedSteps key={`${course.id}-steps`} course={course} checkable /><AgentLab key={course.id} initialLesson={course.id} /><Link className={`${linkClass} mt-6 inline-block`} to={`/ai-agents/${course.id}#exam`}>{t('Continue to the course exam')}</Link></>
-          : course ? <AgentCourse key={course.id} course={course} previous={AGENT_COURSES[index - 1]} next={AGENT_COURSES[index + 1]} /> : <AgentHub />}
+    {tutorial && course ? <><Link className={linkClass} to={`/ai-agents/${course.id}`}>{t('Back to the course')}</Link><header className="my-7"><p className="text-sm font-semibold text-brand-700">{t('Guided tutorial')}</p><h1 className="mt-3 text-3xl font-semibold">{course.title}</h1><p className="mt-3 leading-7 text-ink-secondary">{course.summary}</p></header><GuidedSteps key={`${course.id}-steps`} course={course} checkable /><AgentLab key={course.id} initialLesson={course.id} /><Link className={`${linkClass} mt-6 inline-block`} to={`/ai-agents/${course.id}#exam`}>{t('Continue to the course exam')}</Link></>
+      : course ? <AgentCourse key={course.id} course={course} previous={AGENT_COURSES[index - 1]} next={AGENT_COURSES[index + 1]} /> : <AgentHub />}
   </main></div>
 }

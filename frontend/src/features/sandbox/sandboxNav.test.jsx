@@ -7,6 +7,7 @@ import { LocaleProvider } from '../../i18n/index.jsx'
 import { installMemoryStorage } from '../../test-utils/localStorage.js'
 import { ALL_SANDBOXES, getSandbox, getSandboxByBench } from './sandboxDirectory.js'
 import SandboxNavSidebar from './SandboxNavSidebar.jsx'
+import SandboxBenchLayout from './SandboxBenchLayout.jsx'
 import SandboxListPanel from './SandboxListPanel.jsx'
 import AllCoursesSection from '../courses/AllCoursesSection.jsx'
 import { ALL_COURSES } from '../courses/coursesDirectory.js'
@@ -139,4 +140,33 @@ describe('Sandbox sidebar navigation', () => {
     fireEvent.click(sandboxesTab)
     expect(screen.getByRole('region', { name: 'All available sandboxes' })).toBeTruthy()
   })
+
+  it('renders SandboxBenchLayout with sidebar, header, footer, and active bench', () => {
+    render(
+      <LocaleProvider>
+        <MemoryRouter initialEntries={['/sandbox?bench=computer']}>
+          <SandboxBenchLayout
+            bench="computer"
+            title="Computer Architecture Sandbox"
+            description="Test description for computer architecture sandbox."
+            courseLink="/computer-architecture"
+            courseLinkLabel="Back to the course"
+          >
+            <div data-testid="test-content">Bench Lab Content</div>
+          </SandboxBenchLayout>
+        </MemoryRouter>
+      </LocaleProvider>
+    )
+
+    // Sidebar rail is rendered with all sandboxes
+    expect(screen.getByRole('complementary', { name: 'All available sandboxes' })).toBeTruthy()
+    expect(screen.getByTestId('test-content')).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'Computer Architecture Sandbox' })).toBeTruthy()
+    expect(screen.getByText('Back to the course')).toBeTruthy()
+
+    // Workspace footer is rendered
+    expect(screen.getByText(/Level 1/)).toBeTruthy()
+    expect(screen.getByText(/Computer Architecture · Saved locally/)).toBeTruthy()
+  })
 })
+

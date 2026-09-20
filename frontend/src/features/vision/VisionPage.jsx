@@ -10,6 +10,8 @@ import VisionLab from './VisionLab.jsx'
 import { DEFAULT_VISION } from '../../engine/vision/model.js'
 import { VISION_EXAMPLES } from './examples.js'
 
+import SandboxBenchLayout from '../sandbox/SandboxBenchLayout.jsx'
+
 export const VISION_TUTORIALS = content.tutorials
 function Examples({ ids }) {
   const { t } = useI18n()
@@ -20,12 +22,26 @@ export default function VisionPage({ sandbox = false }) {
   const { lessonId } = useParams()
   const [search] = useSearchParams()
   const lesson = VISION_TUTORIALS.find(item => item.id === (sandbox ? search.get('lesson') : lessonId))
+
+  if (sandbox) {
+    return (
+      <SandboxBenchLayout
+        bench="vision"
+        title={t('Computer vision sandbox')}
+        description={t('Explore OpenCV, patch attention and device integration with editable scenes and local processing.')}
+        courseLink={lesson ? `/vision/${lesson.id}` : '/vision'}
+        courseLinkLabel={t(lesson ? 'Back to the course' : 'All computer vision courses')}
+      >
+        <VisionLab key={lesson?.id ?? 'free'} initialConfig={lesson?.config ?? DEFAULT_VISION} integrated={lesson?.integrated ?? false} />
+      </SandboxBenchLayout>
+    )
+  }
+
   return <div className="min-h-screen bg-surface-page"><AppHeader /><main className="mx-auto max-w-7xl px-4 py-8 sm:px-8">
       <CourseRewards />
-    <Link className="mb-6 inline-block text-sm text-brand-700 underline" to={lessonId || sandbox ? '/vision' : '/tutorials'}>{t(lessonId || sandbox ? 'All computer vision courses' : 'All tutorials')}</Link>
-    {sandbox ? <><h1 className="mb-3 text-3xl font-semibold">{t('Computer vision sandbox')}</h1><p className="mb-6 text-sm text-slate-600">{t('Explore OpenCV, patch attention and device integration with editable scenes and local processing.')}</p><VisionLab key={lesson?.id ?? 'free'} initialConfig={lesson?.config ?? DEFAULT_VISION} integrated={lesson?.integrated ?? false} /></>
-      : lesson ? <StudyLesson key={lesson.id} lesson={lesson} next={VISION_TUTORIALS[lesson.order]} basePath="/vision" sandboxLink={`/sandbox?bench=vision&lesson=${lesson.id}`}><VisionLab initialConfig={lesson.config} integrated={lesson.integrated} /><Examples ids={lesson.exampleIds} /></StudyLesson>
-        : lessonId ? <h1 className="text-xl font-semibold">{t('Lesson not found')}</h1>
-          : <><h1 className="text-3xl font-semibold">{t('Computer vision: OpenCV, transformers & integration')}</h1><p className="my-4 max-w-3xl leading-relaxed text-ink-secondary">{t('Six courses with guided tutorials, formulas, questions and exams. Learn image processing, drone markers, robot steering, vision transformer concepts, deployment interfaces and a capstone connecting all three device themes.')}</p><div className="flex flex-wrap gap-4"><Link className="my-3 inline-block rounded border border-brand-600 px-4 py-2 text-sm font-semibold text-brand-700" to="/sandbox?bench=vision">{t('Open computer vision sandbox')}</Link><Link className="my-3 inline-block rounded border border-brand-600 px-4 py-2 text-sm font-semibold text-brand-700" to="/vision/vision-integration">{t('Open the integration capstone')}</Link></div><div className="mt-5 grid gap-4 md:grid-cols-2">{VISION_TUTORIALS.map(item => <Link key={item.id} className="rounded-lg border border-line bg-white p-5 hover:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500" to={`/vision/${item.id}`}><p className="text-xs font-semibold text-brand-700">{t(item.difficulty)} · {item.minutes} {t('min')}</p><h2 className="mt-2 text-lg font-semibold">{t(item.title)}</h2><p className="mt-3 text-sm leading-relaxed text-ink-secondary">{t(item.summary)}</p><p className="mt-4 text-sm font-medium text-brand-700">{t('Open course and tutorial →')}</p></Link>)}</div></>}
+    <Link className="mb-6 inline-block text-sm text-brand-700 underline" to={lessonId ? '/vision' : '/tutorials'}>{t(lessonId ? 'All computer vision courses' : 'All tutorials')}</Link>
+    {lesson ? <StudyLesson key={lesson.id} lesson={lesson} next={VISION_TUTORIALS[lesson.order]} basePath="/vision" sandboxLink={`/sandbox?bench=vision&lesson=${lesson.id}`}><VisionLab initialConfig={lesson.config} integrated={lesson.integrated} /><Examples ids={lesson.exampleIds} /></StudyLesson>
+      : lessonId ? <h1 className="text-xl font-semibold">{t('Lesson not found')}</h1>
+        : <><h1 className="text-3xl font-semibold">{t('Computer vision: OpenCV, transformers & integration')}</h1><p className="my-4 max-w-3xl leading-relaxed text-ink-secondary">{t('Six courses with guided tutorials, formulas, questions and exams. Learn image processing, drone markers, robot steering, vision transformer concepts, deployment interfaces and a capstone connecting all three device themes.')}</p><div className="flex flex-wrap gap-4"><Link className="my-3 inline-block rounded border border-brand-600 px-4 py-2 text-sm font-semibold text-brand-700" to="/sandbox?bench=vision">{t('Open computer vision sandbox')}</Link><Link className="my-3 inline-block rounded border border-brand-600 px-4 py-2 text-sm font-semibold text-brand-700" to="/vision/vision-integration">{t('Open the integration capstone')}</Link></div><div className="mt-5 grid gap-4 md:grid-cols-2">{VISION_TUTORIALS.map(item => <Link key={item.id} className="rounded-lg border border-line bg-white p-5 hover:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500" to={`/vision/${item.id}`}><p className="text-xs font-semibold text-brand-700">{t(item.difficulty)} · {item.minutes} {t('min')}</p><h2 className="mt-2 text-lg font-semibold">{t(item.title)}</h2><p className="mt-3 text-sm leading-relaxed text-ink-secondary">{t(item.summary)}</p><p className="mt-4 text-sm font-medium text-brand-700">{t('Open course and tutorial →')}</p></Link>)}</div></>}
   </main></div>
 }

@@ -5,6 +5,7 @@ import content from '@content/cybersecurity.json'
 import { useI18n } from '../../i18n/index.jsx'
 import { AppHeader } from '../workspace/AppHeader.jsx'
 import { readCourseProgress } from '../courses/progress.js'
+import SandboxBenchLayout from '../sandbox/SandboxBenchLayout.jsx'
 import CyberCourse from './CyberCourse.jsx'
 import CyberLab from './CyberLab.jsx'
 import { fieldClass, linkClass, panelClass } from './styles.js'
@@ -43,11 +44,24 @@ export default function CybersecurityPage({ sandbox = false }) {
   const requested = sandbox ? search.get('lesson') : lessonId
   const course = CYBER_COURSES.find(item => item.id === requested)
   const index = course ? CYBER_COURSES.indexOf(course) : -1
+  if (requested && !course) return <div className="min-h-screen bg-surface-page"><AppHeader /><main className="mx-auto max-w-6xl px-4 py-8 sm:px-8"><h1 className="text-2xl font-semibold">{t('Course not found')}</h1><Link to="/cybersecurity" className={`${linkClass} mt-4 inline-block`}>{t('All cybersecurity courses')}</Link></main></div>
+  if (sandbox) {
+    return (
+      <SandboxBenchLayout
+        bench="cybersecurity"
+        title={t('Cybersecurity sandbox')}
+        description={t('Choose a web lab, build your own requests and keep an investigation notebook. Open its course for the explanation, guided tutorial and exam.')}
+        courseLink={course ? `/cybersecurity/${course.id}` : '/cybersecurity'}
+        courseLinkLabel={t(course ? 'Back to the course' : 'All cybersecurity courses')}
+        localeNotice={locale === 'id' ? t('Cybersecurity course narratives, questions and technical traces are currently in English. Interface controls support Indonesian.') : null}
+      >
+        <CyberLab key={course?.id ?? 'free'} initialLab={course?.lab ?? 'http'} free />
+      </SandboxBenchLayout>
+    )
+  }
   return <div className="min-h-screen bg-surface-page"><AppHeader /><main className="mx-auto max-w-6xl px-4 py-8 sm:px-8">
       <CourseRewards />
     {locale === 'id' && <p className="mb-5 text-sm leading-6 text-slate-600">{t('Cybersecurity course narratives, questions and technical traces are currently in English. Interface controls support Indonesian.')}</p>}
-    {requested && !course ? <><h1 className="text-2xl font-semibold">{t('Course not found')}</h1><Link to="/cybersecurity" className={`${linkClass} mt-4 inline-block`}>{t('All cybersecurity courses')}</Link></>
-      : sandbox ? <><Link to={course ? `/cybersecurity/${course.id}` : '/cybersecurity'} className={linkClass}>{t(course ? 'Back to the course' : 'All cybersecurity courses')}</Link><h1 className="mb-3 mt-6 text-3xl font-semibold">{t('Cybersecurity sandbox')}</h1><p className="mb-6 max-w-3xl text-sm leading-6 text-ink-secondary">{t('Choose a web lab, build your own requests and keep an investigation notebook. Open its course for the explanation, guided tutorial and exam.')}</p><CyberLab key={course?.id ?? 'free'} initialLab={course?.lab ?? 'http'} free /></>
-        : course ? <CyberCourse key={course.id} course={course} previous={CYBER_COURSES[index - 1]} next={CYBER_COURSES[index + 1]} /> : <CyberHub />}
+    {course ? <CyberCourse key={course.id} course={course} previous={CYBER_COURSES[index - 1]} next={CYBER_COURSES[index + 1]} /> : <CyberHub />}
   </main></div>
 }

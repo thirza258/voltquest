@@ -4,6 +4,7 @@ import { AppHeader } from '../workspace/AppHeader.jsx'
 import { readCourseProgress } from '../courses/progress.js'
 import CourseRewards from '../courses/CourseRewards.jsx'
 import { COMPUTER_COURSES, fieldClass, linkClass, panelClass } from './project.js'
+import SandboxBenchLayout from '../sandbox/SandboxBenchLayout.jsx'
 import ComputerCourse from './ComputerCourse.jsx'
 import ComputerLab from './ComputerLab.jsx'
 
@@ -26,10 +27,23 @@ function ComputerHub() {
 export default function ComputerPage({ sandbox = false }) {
   const { t, locale } = useI18n(), { lessonId } = useParams(), [params] = useSearchParams()
   const requested = sandbox ? params.get('lesson') : lessonId, course = COMPUTER_COURSES.find(item => item.id === requested), index = COMPUTER_COURSES.indexOf(course)
+  if (requested && !course) return <div className="min-h-screen bg-surface-page"><AppHeader /><main className="mx-auto max-w-6xl px-4 py-8 sm:px-8"><h1 className="text-2xl font-semibold">{t('Course not found')}</h1><Link to="/computer-architecture" className={`${linkClass} mt-4 inline-block`}>{t('All computer and assembly courses')}</Link></main></div>
+  if (sandbox) {
+    return (
+      <SandboxBenchLayout
+        bench="computer"
+        title={t('Computer sandbox')}
+        description={t('Experiment with gates and stored state, or write and step assembly programs. Save your designs and observations in a local notebook.')}
+        courseLink={course ? `/computer-architecture/${course.id}` : '/computer-architecture'}
+        courseLinkLabel={t(course ? 'Back to the course' : 'All computer and assembly courses')}
+        localeNotice={locale === 'id' ? t('Computer course narratives, questions and technical traces are currently in English. Interface controls and learning rewards support Indonesian.') : null}
+      >
+        <ComputerLab key={course?.id ?? 'free'} initialLesson={course?.id} free />
+      </SandboxBenchLayout>
+    )
+  }
   return <div className="min-h-screen bg-surface-page"><AppHeader /><main className="mx-auto max-w-6xl px-4 py-8 sm:px-8"><CourseRewards />
     {locale === 'id' && <p className="mb-5 text-sm text-slate-600">{t('Computer course narratives, questions and technical traces are currently in English. Interface controls and learning rewards support Indonesian.')}</p>}
-    {requested && !course ? <><h1 className="text-2xl font-semibold">{t('Course not found')}</h1><Link to="/computer-architecture" className={`${linkClass} mt-4 inline-block`}>{t('All computer and assembly courses')}</Link></>
-      : sandbox ? <><Link className={linkClass} to={course ? `/computer-architecture/${course.id}` : '/computer-architecture'}>{t(course ? 'Back to the course' : 'All computer and assembly courses')}</Link><h1 className="mb-3 mt-6 text-3xl font-semibold">{t('Computer sandbox')}</h1><p className="mb-6 max-w-3xl text-sm leading-6 text-ink-secondary">{t('Experiment with gates and stored state, or write and step assembly programs. Save your designs and observations in a local notebook.')}</p><ComputerLab key={course?.id ?? 'free'} initialLesson={course?.id} free /></>
-        : course ? <ComputerCourse key={course.id} course={course} previous={COMPUTER_COURSES[index - 1]} next={COMPUTER_COURSES[index + 1]} /> : <ComputerHub />}
+    {course ? <ComputerCourse key={course.id} course={course} previous={COMPUTER_COURSES[index - 1]} next={COMPUTER_COURSES[index + 1]} /> : <ComputerHub />}
   </main></div>
 }
