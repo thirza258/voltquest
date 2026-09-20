@@ -2,6 +2,7 @@
 # /sitemap.xml is generated from ../content during `vite build`; see ../vite-sitemap.js.
 
 User-agent: *
+Content-Signal: ai-train=yes, search=yes, ai-input=yes
 Allow: /
 
 # Per-player and user-generated pages: no stable content to index.

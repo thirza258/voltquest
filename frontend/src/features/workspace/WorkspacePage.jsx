@@ -24,6 +24,8 @@ import { placementForPart } from './placement.js'
 import CodePanel from '../code/CodePanel.jsx'
 import SerialMonitor from '../code/SerialMonitor.jsx'
 import AssistantPanel from '../assistant/AssistantPanel.jsx'
+import SandboxNavSidebar from '../sandbox/SandboxNavSidebar.jsx'
+import SandboxListPanel from '../sandbox/SandboxListPanel.jsx'
 import './workspace.css'
 
 const VirtualPhone = lazy(() => import('../iot/VirtualPhone.jsx'))
@@ -175,9 +177,13 @@ export default function WorkspacePage({ mode = 'campaign', seed = null, sessionI
     {workspace.draftRestored && <div className="border-b border-line p-2 text-xs text-slate-600">{t("Resumed your work · ")}<button className="underline" onClick={() => setRestartPrompt(true)}>{t("Start over")}</button></div>}
     {drone && <Tabs aria-label={t("Drone workspace panels")} className="shrink-0 xl:hidden" tabs={[{ id: "build", label: t("Build") }, { id: "bench", label: t("Bench / flight") }, { id: "code", label: t("Code / tune") }]} value={dronePanel} onChange={setDronePanel} />}
     <main className="vq-workbench flex min-h-0 flex-1 flex-col xl:flex-row">
+      {mode === 'sandbox' && (
+        <SandboxNavSidebar currentBench={drone ? 'drone' : 'circuit'} />
+      )}
       <aside className="vq-left flex min-h-0 flex-col border-b border-line bg-white xl:border-b-0 xl:border-r" style={{ '--panel-width': `${workspace.panels.left}px` }}>
-        <Tabs aria-label={t("Circuit panels")} size="sm" className="overflow-x-auto shrink-0" tabs={(campaign ? ['objectives', 'parts', 'inspect', 'learn', 'assistant'] : ['parts', 'inspect', 'learn', 'assistant']).map(id => ({ id, label: id === 'assistant' ? 'AI' : id[0].toUpperCase() + id.slice(1) }))} value={workspace.leftTab} onChange={workspace.setLeftTab} />
+        <Tabs aria-label={t("Circuit panels")} size="sm" className="overflow-x-auto shrink-0" tabs={(campaign ? ['objectives', 'parts', 'inspect', 'learn', 'assistant'] : mode === 'sandbox' ? ['parts', 'inspect', 'learn', 'sandboxes', 'assistant'] : ['parts', 'inspect', 'learn', 'assistant']).map(id => ({ id, label: id === 'assistant' ? 'AI' : id === 'sandboxes' ? t('Sandboxes') : id[0].toUpperCase() + id.slice(1) }))} value={workspace.leftTab} onChange={workspace.setLeftTab} />
         <div className="min-h-0 flex-1 overflow-auto">
+          {workspace.leftTab === 'sandboxes' && mode === 'sandbox' && <SandboxListPanel currentBench={drone ? 'drone' : 'circuit'} />}
           {workspace.leftTab === 'objectives' && campaign && <ObjectivesPanel level={level} report={objectives} hintTier={workspace.hintTier} smoke={smoke} onDismissSmoke={() => setSmoke(null)} onShowWhy={() => { useDocumentStore.getState().select(smoke?.componentIds ?? []); workspace.setLeftTab('inspect') }} onReplacePart={replaceDamaged} />}
           {workspace.leftTab === 'parts' && !drone && <PartsDrawer allowed={campaign ? level?.allowedComponents : null} onAdd={add} readOnly={readOnly} />}
           {workspace.leftTab === 'inspect' && !drone && <Inspector doc={doc} selectedIds={selectedIds} state={state} readOnly={readOnly} onProps={useDocumentStore.getState().setProps} onRotate={rotate} onRemove={remove} onWireColor={(id, color) => useDocumentStore.getState().updateWire(id, { color })} onControl={useSimStore.getState().setControl} />}
