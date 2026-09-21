@@ -1,0 +1,16 @@
+{
+  "serverInfo": {
+    "name": "voltquest-mcp",
+    "version": "1.0.0"
+  },
+  "endpoint": "https://pcb.nevatal.id/mcp",
+  "transport": {
+    "type": "streamable-http",
+    "url": "https://pcb.nevatal.id/mcp"
+  },
+  "capabilities": {
+    "tools": true,
+    "resources": true,
+    "prompts": true
+  }
+}

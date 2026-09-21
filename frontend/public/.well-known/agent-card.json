@@ -1,0 +1,40 @@
+{
+  "name": "VoltQuest Agent",
+  "version": "1.0.0",
+  "description": "Interactive electronics, circuit simulation, and PCB design assistant.",
+  "url": "https://pcb.nevatal.id",
+  "supportedInterfaces": [
+    {
+      "url": "https://pcb.nevatal.id/mcp",
+      "protocol": "mcp"
+    },
+    {
+      "url": "https://pcb.nevatal.id/api",
+      "protocol": "http"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "circuit-simulation",
+      "name": "Circuit Simulation",
+      "description": "Simulate and debug analog and digital electronics circuits"
+    },
+    {
+      "id": "pcb-design",
+      "name": "PCB Design",
+      "description": "Design and validate PCB schematics, footprints, and Gerber files"
+    }
+  ],
+  "skills": [
+    {
+      "id": "circuit-simulation",
+      "name": "Circuit Simulation",
+      "description": "Analyze schematic connections, component parameters, and run breadboard simulations."
+    },
+    {
+      "id": "pcb-layout",
+      "name": "PCB Layout Verification",
+      "description": "Check clearance rules, netlist connectivity, and trace geometry."
+    }
+  ]
+}

@@ -9,6 +9,38 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <script>
+      (() => {
+        function registerWebMcpTools() {
+          if (!('modelContext' in navigator) || !navigator.modelContext) return;
+          try {
+            const controller = new AbortController();
+            navigator.modelContext.registerTool({
+              name: 'search_voltquest',
+              title: 'Search VoltQuest',
+              description: 'Search VoltQuest electronics courses, tutorials, and circuit modules.',
+              inputSchema: {
+                type: 'object',
+                properties: {
+                  query: { type: 'string', description: 'Search term for electronics or PCB topics' }
+                },
+                required: ['query']
+              },
+              execute: async ({ query }) => {
+                return {
+                  content: [{ type: 'text', text: `Results for ${query}: Visit https://pcb.nevatal.id/courses or /tutorials` }]
+                };
+              }
+            }, { signal: controller.signal });
+          } catch (e) {}
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', registerWebMcpTools);
+        } else {
+          registerWebMcpTools();
+        }
+      })();
+    </script>
   </head>
   <body class="bg-surface-page text-ink antialiased">
     <div id="root"></div>

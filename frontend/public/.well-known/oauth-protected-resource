@@ -1,0 +1,16 @@
+{
+  "resource": "https://pcb.nevatal.id",
+  "authorization_servers": [
+    "https://pcb.nevatal.id"
+  ],
+  "scopes_supported": [
+    "read",
+    "write",
+    "simulation",
+    "mcp"
+  ],
+  "bearer_methods_supported": [
+    "header"
+  ],
+  "resource_documentation": "https://pcb.nevatal.id/api/docs"
+}

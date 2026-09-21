@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "circuit-simulation",
+      "type": "skill-md",
+      "description": "Design, simulate, and validate electronic circuits, PCB layouts, and embedded firmware in VoltQuest.",
+      "url": "https://pcb.nevatal.id/skills/circuit-simulation/SKILL.md",
+      "digest": "sha256:0a5afa40d6d4064ea574e17bbc1a1a2064c28d2ff5d49ef8b91a568acdec78b8"
+    }
+  ]
+}
