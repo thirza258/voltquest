@@ -1,5 +1,26 @@
 # PRD implementation verification
 
+### Community discussions (2026-09-21)
+
+A feature request beyond the PRD, not a PRD requirement. `/community` and `/community/:threadId` add
+a discussion board over two additive tables, with public reading, guest-token posting, six fixed
+sections, search/board/project filters, faceted section counts, three sort orders, pagination,
+author-only editing, author withdrawal that preserves other people's replies, and one accepted answer
+per question. Post bodies render as text, never markup.
+
+Twelve backend and eleven frontend tests cover the lifecycle, authorship (403, not 404), counter
+maintenance, accepted answers, withdrawal semantics, filters, facets, sorting, pagination, input
+rules, double submits, write budgets, the showcase project link, the untrusted-text renderer and
+the constant query cost of reading a discussion. Frontend tests total 1,637 in 95 files; backend 121.
+The production build is 556.9 KiB eager gzip and both pages are lazy chunks. The sitemap grows to
+435 URLs. The shared header's nav SegmentedControl moves from `sm:` to `md:` so a fifth item does
+not overflow a 640 px header; that affects every route and was decided by measurement, not a browser.
+
+Boundaries: rate limits are per process, not shared between workers, and are not moderation. There is
+no moderation queue, report flow, block list, notification, attachment or per-thread reply pagination.
+No browser session verified these pages. `npx eslint src` fails on pre-existing `no-undef` errors in
+`src/features/qt/samples.js` that predate this work. See COMMUNITY.md for the full contract.
+
 ### C++ / WinUI desktop courses (2026-09-20)
 
 `/winui` provides thirteen courses, 52 detailed sections with independent checkpoints,

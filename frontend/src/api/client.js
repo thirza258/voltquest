@@ -164,6 +164,20 @@ export const api = {
     remove: (id) => del(`/projects/${encodeURIComponent(id)}`),
     publish: (id, publish = true) => post(`/projects/${encodeURIComponent(id)}/publish`, { publish }),
   },
+  community: {
+    /** GET /api/community/threads?category=&board=&project=&q=&sort=&limit=&offset= */
+    list: (params = {}) => get('/community/threads', { query: params }),
+    get: (threadId) => get(`/community/threads/${encodeURIComponent(threadId)}`),
+    create: (body) => post('/community/threads', body),
+    update: (threadId, body) => patch(`/community/threads/${encodeURIComponent(threadId)}`, body),
+    remove: (threadId) => del(`/community/threads/${encodeURIComponent(threadId)}`),
+    reply: (threadId, body) => post(`/community/threads/${encodeURIComponent(threadId)}/replies`, { body }),
+    updateReply: (postId, body) => patch(`/community/replies/${encodeURIComponent(postId)}`, { body }),
+    removeReply: (postId) => del(`/community/replies/${encodeURIComponent(postId)}`),
+    /** POST .../answer — thread author only; `is_answer: false` un-accepts. */
+    markAnswer: (threadId, postId, isAnswer = true) =>
+      post(`/community/threads/${encodeURIComponent(threadId)}/replies/${encodeURIComponent(postId)}/answer`, { is_answer: isAnswer }),
+  },
   showcase: {
     /** GET /api/showcase?sort=&q=&board=&limit=&offset= */
     list: (params = {}) => get('/showcase', { query: params }),

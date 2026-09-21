@@ -20,6 +20,7 @@ describe('collectRoutes', () => {
     expect(routes).toContain('/hpc')
     expect(routes).toContain('/sandbox')
     expect(routes).toContain('/showcase')
+    expect(routes).toContain('/community')
     expect(routes).toContain('/leaderboard')
   })
 
@@ -43,10 +44,10 @@ describe('collectRoutes', () => {
   it('covers all course routes and tracks', () => {
     const courseData = readJson(path.join(contentDir, 'courses.json'))
     const expected = courseData.courses.map(course => `/courses/${course.id}`)
-    expect(expected).toHaveLength(34)
+    expect(expected).toHaveLength(44)
     expect(routes.filter(route => route.startsWith('/courses/'))).toEqual(expected)
     const expectedTracks = courseData.tracks.map(track => `/courses?track=${track.id}`)
-    expect(expectedTracks).toHaveLength(5)
+    expect(expectedTracks).toHaveLength(6)
     expect(routes.filter(route => route.startsWith('/courses?track='))).toEqual(expectedTracks)
   })
 
@@ -54,6 +55,7 @@ describe('collectRoutes', () => {
     expect(routes).not.toContain('/profile')
     expect(routes.some((route) => route.startsWith('/sandbox/'))).toBe(false)
     expect(routes.some((route) => route.startsWith('/showcase/'))).toBe(false)
+    expect(routes.some((route) => route.startsWith('/community/'))).toBe(false)
   })
 
   it('includes tutorial board and topic filters', () => {
@@ -167,6 +169,7 @@ describe('collectRoutes', () => {
         '/sandbox?bench=ai-agents&lesson=agents-cli',
         '/sandbox?bench=computer&lesson=computer-bits',
         '/showcase',
+        '/community',
         '/leaderboard',
       ])
     } finally {

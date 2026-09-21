@@ -24,6 +24,11 @@
       "id": "programming",
       "title": "C, C++ & Arduino / ESP32 programming",
       "summary": "Twelve courses from your first sketch to a connected controller: C foundations, Arduino C++, code experiments, guided labs and an exam in every course."
+    },
+    {
+      "id": "ethics",
+      "title": "Engineering ethics and professional practice",
+      "summary": "Ten courses on the duties that come with building things other people depend on: public safety, honest measurement, accountability, privacy, security, sustainability, automation and speaking up."
     }
   ],
   "courses": [
@@ -7411,6 +7416,2183 @@
           "esp32s3"
         ]
       }
+    },
+    {
+      "id": "ethics-foundations",
+      "version": 1,
+      "track": "ethics",
+      "order": 1,
+      "title": "Why engineering ethics exists",
+      "summary": "Read a code of ethics as an ordering rule for conflicting duties, not as a slogan.",
+      "difficulty": "Fundamental",
+      "minutes": 25,
+      "prerequisites": [],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "The public ranks above the client",
+          "text": "Every major engineering code opens the same way. The IEEE, the NSPE and the ACM all state that an engineer holds paramount the safety, health and welfare of the public. The word paramount is doing real work: it is not one value among several to be balanced, it is the value that wins when duties conflict. You will meet situations where your employer wants a shipment out, your client wants a lower price, and the safest design costs more time than either will happily pay. The code does not remove that pressure. What it gives you is a defensible ordering to reason from, and a profession that will back you when you apply it."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Competence is a boundary, not a badge",
+          "text": "The same codes ask you to perform work only in your areas of competence. This is the clause students most often read as an insult and professionals most often read as relief. It means that saying I have not done this before, I need a review is not a confession of weakness but a required professional act. Competence is also narrow: designing a battery charger does not qualify you to certify a medical device that contains one. The honest move when you reach your boundary is to name it, document it, and bring in someone whose competence covers the gap."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Working once is not evidence of safety",
+          "text": "A prototype that runs on your bench has been tested at one temperature, on one supply, with one operator who knows exactly how to hold it. Field conditions supply the rest: a flat battery, a reversed connector, a user who presses both buttons, four years of vibration. Ethics enters here long before any dramatic dilemma, because the claim this works is a claim about evidence. Stating the conditions you actually tested, and the ones you did not, is the difference between a report and a sales pitch."
+        }
+      ],
+      "workedExample": "A team ships a battery-powered sensor that passed a week of bench testing at room temperature. A reviewer asks what happens at minus ten degrees, where the cell's usable capacity falls sharply and the low-voltage cutoff may never trigger. Nobody tested it. The paramountcy rule does not say redesign everything; it says the honest deliverable is a stated operating range of zero to forty degrees plus a test plan for the cold case, not a datasheet that quietly implies the device works anywhere.",
+      "application": "Take something you have already built. Write down the three conditions you never tested it under, and for each one name the person who would be affected first if it failed there. Keep the list with the project.",
+      "lab": {
+        "tutorialId": "uno-first-light",
+        "task": "Run the tutorial, then list every condition it does not cover: a reversed LED, a missing resistor, a supply held at 3 V, a leg that works loose after a year. Mark which ones the code could detect and which only a person could."
+      },
+      "practice": [
+        {
+          "id": "practice-1",
+          "prompt": "Your client asks you to remove a fuse to cut cost. What does paramountcy require?",
+          "lessonId": "lesson-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "Remove it; the client accepts the risk in writing"
+            },
+            {
+              "id": "b",
+              "text": "Refuse to remove a protective part whose absence endangers users"
+            },
+            {
+              "id": "c",
+              "text": "Remove it but raise the price to compensate"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "A client cannot consent on behalf of the public. Public safety outranks client preference."
+        },
+        {
+          "id": "practice-2",
+          "prompt": "You are offered work on a device type you have never designed. What is the professional response?",
+          "lessonId": "lesson-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "Accept it and state that you need review by someone experienced in that area"
+            },
+            {
+              "id": "b",
+              "text": "Accept it quietly and learn as you go"
+            },
+            {
+              "id": "c",
+              "text": "Refuse all work outside your exact past projects"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Competence clauses do not forbid growth. They forbid unreviewed work beyond what you can currently judge."
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "exam-1",
+            "prompt": "In the IEEE and NSPE codes, what does holding public welfare paramount mean in practice?",
+            "lessonId": "lesson-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "It is the duty that wins when duties conflict"
+              },
+              {
+                "id": "b",
+                "text": "It is one of several duties to be averaged"
+              },
+              {
+                "id": "c",
+                "text": "It applies only to licensed engineers"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Paramount is an ordering rule: it decides conflicts rather than being traded off."
+          },
+          {
+            "id": "exam-2",
+            "prompt": "A device passed one week of bench testing. What may you honestly claim?",
+            "lessonId": "lesson-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "That it is safe for general use"
+              },
+              {
+                "id": "b",
+                "text": "That it behaved correctly under the conditions actually tested"
+              },
+              {
+                "id": "c",
+                "text": "That it is field-proven"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A claim may not exceed the evidence. State the tested conditions and their limits."
+          },
+          {
+            "id": "exam-3",
+            "prompt": "Which situation most clearly falls outside an engineer's area of competence?",
+            "lessonId": "lesson-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "Certifying a medical device because you designed its charger"
+              },
+              {
+                "id": "b",
+                "text": "Designing a second charger similar to your first"
+              },
+              {
+                "id": "c",
+                "text": "Asking a colleague to review your schematic"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Competence is narrow. Adjacent experience does not transfer to a regulated domain."
+          },
+          {
+            "id": "exam-4",
+            "prompt": "Why is a bench demonstration weak evidence about field behaviour?",
+            "lessonId": "lesson-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "Bench instruments are inaccurate"
+              },
+              {
+                "id": "b",
+                "text": "It samples one operator, one supply and one environment"
+              },
+              {
+                "id": "c",
+                "text": "Field use is always gentler than bench use"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A demonstration is a single sample of a much wider condition space."
+          },
+          {
+            "id": "exam-5",
+            "prompt": "Using the late-fix heuristic, how does the cost of correcting a defect in the field compare with design?",
+            "lessonId": "lesson-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "About 10 times higher"
+              },
+              {
+                "id": "b",
+                "text": "About 1,000 times higher"
+              },
+              {
+                "id": "c",
+                "text": "About the same"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Stage 4 gives 10^3, so roughly a thousandfold, before recall logistics are counted."
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "IEEE Code of Ethics",
+          "url": "https://www.ieee.org/about/corporate/governance/p7-8.html"
+        },
+        {
+          "title": "NSPE Code of Ethics for Engineers",
+          "url": "https://www.nspe.org/resources/ethics/code-ethics"
+        },
+        {
+          "title": "ACM Code of Ethics and Professional Conduct",
+          "url": "https://www.acm.org/code-of-ethics"
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Relative cost of a late fix",
+          "equation": "C(stage) = C_design x 10^(n - 1)",
+          "symbols": "C(stage): cost of correcting a defect found at stage n; C_design: cost of the same correction during design; n: lifecycle stage index, 1 = design, 2 = build, 3 = test, 4 = field.",
+          "assumptions": "An order-of-magnitude industry heuristic, not a measured law. It ignores recall logistics and reputational loss, so it understates the true cost of a field failure.",
+          "example": "A defect that costs 1 unit to fix in design costs about 10 in build, 100 in test and 1,000 once devices are in the field. This is why a review that delays you by a day is usually cheap."
+        }
+      ]
+    },
+    {
+      "id": "ethics-risk",
+      "version": 1,
+      "track": "ethics",
+      "order": 2,
+      "title": "Risk, safety factors and acceptable failure",
+      "summary": "Estimate risk with severity, likelihood and detectability, then design so the first failure is not the dangerous one.",
+      "difficulty": "Fundamental",
+      "minutes": 25,
+      "prerequisites": [
+        "ethics-foundations"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Risk is not the same as danger",
+          "text": "Danger is a property of a hazard; risk is what you get when you combine how bad the harm would be, how often the failure is likely, and how likely anyone is to notice before it matters. A mains-powered heater and a coin cell are both hazards, but the risk they carry differs by orders of magnitude. Teams that argue about whether something is dangerous usually cannot agree because they are each holding one of the three factors fixed. Separating severity, likelihood and detectability turns an argument about feelings into a comparison anyone can check."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Design the first failure",
+          "text": "Everything fails eventually, so the professional question is not whether it fails but what it does when it does. A fuse is a component designed to fail first, cheaply and predictably, so that wiring does not. A watchdog timer decides what a hung processor does next. A mechanical stop decides where a runaway actuator ends. When you choose none of these, you have not avoided the decision; you have delegated it to whatever happens to break first, which is rarely the cheapest or safest part."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Acceptable risk is a decision someone owns",
+          "text": "No design reaches zero risk, so at some point a person decides that the remaining risk is acceptable. Ethically, that decision must be explicit, recorded, and made by someone with the authority and information to make it. The failure mode to avoid is the residual risk that nobody ever decided about, because it was never written down. Saying we accept a one in ten thousand chance of this failure, and here is why is a defensible engineering act. Never raising the question is not."
+        }
+      ],
+      "workedExample": "A motor driver can stall and draw locked-rotor current indefinitely. Severity is 8 because the pack can overheat, occurrence is 4 because stalls happen when the mechanism jams, and detection is 7 because nothing measures current. That gives a risk priority number of 224. Adding a shunt and a firmware current limit moves detection to 2, giving 64, without touching severity at all. The lesson is that detectability is often the cheapest of the three factors to improve.",
+      "application": "List the three most likely failures of a project you have built. Score each for severity, occurrence and detection from one to ten, multiply them, and fix the highest scorer first.",
+      "lab": {
+        "tutorialId": "uno-debounce",
+        "task": "Run the toggle and then work out what happens if the switch contact welds closed. Decide what the firmware should do about a input that never changes again, and whether anything currently notices."
+      },
+      "practice": [
+        {
+          "id": "practice-1",
+          "prompt": "Two hazards have equal severity. What most changes their relative risk?",
+          "lessonId": "lesson-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "How likely each is and whether anyone would notice"
+            },
+            {
+              "id": "b",
+              "text": "Which one sounds more alarming"
+            },
+            {
+              "id": "c",
+              "text": "Which one is cheaper to fix"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Risk combines severity with likelihood and detectability; severity alone does not rank hazards."
+        },
+        {
+          "id": "practice-2",
+          "prompt": "What is the purpose of designing a part to fail first?",
+          "lessonId": "lesson-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "To make the product cheaper to manufacture"
+            },
+            {
+              "id": "b",
+              "text": "To choose the failure path instead of leaving it to chance"
+            },
+            {
+              "id": "c",
+              "text": "To shorten the warranty period"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "A fuse, watchdog or mechanical stop makes the first failure predictable and cheap."
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "exam-1",
+            "prompt": "A failure mode scores severity 6, occurrence 5 and detection 3. What is its RPN?",
+            "lessonId": "lesson-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "14"
+              },
+              {
+                "id": "b",
+                "text": "90"
+              },
+              {
+                "id": "c",
+                "text": "30"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "RPN multiplies the three factors: 6 x 5 x 3 = 90."
+          },
+          {
+            "id": "exam-2",
+            "prompt": "Which change usually costs least while lowering an RPN?",
+            "lessonId": "lesson-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "Reducing severity by redesigning the hazard away"
+              },
+              {
+                "id": "b",
+                "text": "Improving detection so the failure is noticed early"
+              },
+              {
+                "id": "c",
+                "text": "Lowering occurrence by buying rarer parts"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Adding sensing or a self-check is usually cheaper than eliminating the hazard or the failure rate."
+          },
+          {
+            "id": "exam-3",
+            "prompt": "A regulator rated 800 mA supplies a worst-case load of 400 mA. What is the safety factor?",
+            "lessonId": "lesson-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "2"
+              },
+              {
+                "id": "b",
+                "text": "0.5"
+              },
+              {
+                "id": "c",
+                "text": "400"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "SF = capacity divided by applied load = 800 / 400 = 2."
+          },
+          {
+            "id": "exam-4",
+            "prompt": "Residual risk remains after every mitigation. What does professional practice require?",
+            "lessonId": "lesson-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "That it be recorded and accepted by someone with authority"
+              },
+              {
+                "id": "b",
+                "text": "That it be removed before shipping"
+              },
+              {
+                "id": "c",
+                "text": "That it be left out of documents to avoid alarming users"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Zero risk is unreachable, so the duty is an explicit, owned and recorded acceptance."
+          },
+          {
+            "id": "exam-5",
+            "prompt": "Why is a safety factor computed against a typical load misleading?",
+            "lessonId": "lesson-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "Typical loads are hard to measure"
+              },
+              {
+                "id": "b",
+                "text": "The part fails under the worst case, not the average"
+              },
+              {
+                "id": "c",
+                "text": "Safety factors must always exceed ten"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Margin has to be measured against the worst case the part actually experiences."
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "NSPE Code of Ethics for Engineers",
+          "url": "https://www.nspe.org/resources/ethics/code-ethics"
+        },
+        {
+          "title": "IEEE Code of Ethics",
+          "url": "https://www.ieee.org/about/corporate/governance/p7-8.html"
+        },
+        {
+          "title": "NSPE Board of Ethical Review cases",
+          "url": "https://www.nspe.org/career-growth/ethics/board-ethical-review-cases"
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Risk priority number",
+          "equation": "RPN = S x O x D",
+          "symbols": "S: severity of the harm, 1 to 10; O: occurrence or likelihood, 1 to 10; D: detection difficulty, 1 to 10 where 10 means nothing would notice.",
+          "assumptions": "The scales are ordinal team judgements, not measured probabilities, so an RPN compares failure modes within one design and must not be read as an absolute safety figure.",
+          "example": "Severity 8, occurrence 4, detection 7 gives RPN = 8 x 4 x 7 = 224. Improving detection to 2 gives 64."
+        },
+        {
+          "title": "Safety factor",
+          "equation": "SF = Capacity / Applied load",
+          "symbols": "SF: safety factor, dimensionless; Capacity: the rated limit of the part in its own units; Applied load: the worst-case value the part actually sees.",
+          "assumptions": "Both figures must use the same units and the same worst case, including temperature derating. A safety factor computed against a typical load rather than a worst-case load is not a safety factor.",
+          "example": "A regulator rated 800 mA supplying a 250 mA worst-case load has SF = 800 / 250 = 3.2."
+        }
+      ]
+    },
+    {
+      "id": "ethics-evidence",
+      "version": 1,
+      "track": "ethics",
+      "order": 3,
+      "title": "Honest measurement and honest claims",
+      "summary": "Report what an instrument can actually resolve, keep the uncertainty attached to the number, and never let a chart outrun the data.",
+      "difficulty": "Fundamental",
+      "minutes": 25,
+      "prerequisites": [
+        "ethics-foundations"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "A reading is a claim about an instrument",
+          "text": "When your code prints 23.4718 degrees, almost all of those digits come from the arithmetic, not from the sensor. A ten-bit converter on a five-volt reference resolves about five millivolts, and the sensor in front of it may be specified to plus or minus two degrees. Printing four decimals implies a precision nobody has. Digits are a claim, and claiming more resolution than your hardware can deliver is a quiet form of dishonesty that is very easy to commit by accident."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Uncertainty travels with the number",
+          "text": "A measurement without a stated uncertainty cannot be checked, compared or reproduced, so it is not yet a result. Uncertainty comes from the sensor specification, the reference, the conversion and the sampling method, and it does not disappear when you average. Averaging reduces random noise but leaves systematic error untouched: a sensor reading two degrees high will still read two degrees high after a thousand samples. Reporting the method alongside the number is what lets a reader judge whether to believe it."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Presentation can mislead without a single false number",
+          "text": "A truncated y-axis, a chart that hides the failed runs, a headline figure taken from the best of twenty trials: none of these contain a false number, and all of them mislead. Professional codes treat statements that create a false impression the same way they treat outright falsehoods, because the harm is the same. The test to apply is simple. If a competent reader saw your raw data and your method, would they draw the same conclusion your summary invites?"
+        }
+      ],
+      "workedExample": "A twelve-bit converter on a 3.3 V reference has a least significant bit of 3.3 divided by 4096, about 0.8 mV. If the sensor in front of it is specified at plus or minus two per cent of reading, then at 1.0 V the sensor contributes 20 mV of uncertainty, twenty-five times the converter step. Reporting the voltage as 1.0003 V is therefore meaningless. The honest figure is 1.00 V plus or minus 0.02 V, and adding converter bits would not improve it.",
+      "application": "Take any sensor reading your code prints. Find the sensor's accuracy in its datasheet, and rewrite the print statement so the number of digits matches what the hardware can actually justify.",
+      "lab": {
+        "tutorialId": "esp32-adc",
+        "task": "Read the 12-bit ADC, then compute the least significant bit in millivolts and compare it with the accuracy quoted for the source. Report the reading with only the digits both can support."
+      },
+      "practice": [
+        {
+          "id": "practice-1",
+          "prompt": "Your code prints 23.4718 degrees from a sensor accurate to plus or minus two degrees. What is wrong?",
+          "lessonId": "lesson-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "The digits claim a precision the hardware cannot support"
+            },
+            {
+              "id": "b",
+              "text": "Nothing; more digits are always better"
+            },
+            {
+              "id": "c",
+              "text": "The units should be kelvin"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Printed digits are a claim about resolution and must not exceed the instrument's accuracy."
+        },
+        {
+          "id": "practice-2",
+          "prompt": "You average a thousand samples from a sensor that reads two degrees high. What happens?",
+          "lessonId": "lesson-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "The systematic two-degree error remains"
+            },
+            {
+              "id": "b",
+              "text": "The error averages away to zero"
+            },
+            {
+              "id": "c",
+              "text": "The error doubles"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Averaging reduces random noise only; a fixed offset survives any number of samples."
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "exam-1",
+            "prompt": "A 10-bit converter uses a 5 V reference. What voltage does one count represent?",
+            "lessonId": "lesson-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "About 4.9 mV"
+              },
+              {
+                "id": "b",
+                "text": "About 0.5 mV"
+              },
+              {
+                "id": "c",
+                "text": "About 49 mV"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "LSB = 5 / 1024 = 0.00488 V, about 4.9 mV per count."
+          },
+          {
+            "id": "exam-2",
+            "prompt": "A reading of 2.00 V carries an absolute uncertainty of 0.04 V. What is the relative uncertainty?",
+            "lessonId": "lesson-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "4%"
+              },
+              {
+                "id": "b",
+                "text": "2%"
+              },
+              {
+                "id": "c",
+                "text": "0.08%"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "u_rel = (0.04 / 2.00) x 100 = 2%."
+          },
+          {
+            "id": "exam-3",
+            "prompt": "Adding converter bits does not help when which factor dominates?",
+            "lessonId": "lesson-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "The accuracy of the sensor being measured"
+              },
+              {
+                "id": "b",
+                "text": "The clock speed of the processor"
+              },
+              {
+                "id": "c",
+                "text": "The length of the print statement"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Resolution cannot exceed the accuracy of the quantity at the converter input."
+          },
+          {
+            "id": "exam-4",
+            "prompt": "A chart uses a truncated y-axis and omits the failed runs. Every number in it is real. How do professional codes treat it?",
+            "lessonId": "lesson-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "As acceptable, because no number is false"
+              },
+              {
+                "id": "b",
+                "text": "As a misleading statement, treated like a falsehood"
+              },
+              {
+                "id": "c",
+                "text": "As a presentation preference outside ethics"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Creating a false impression causes the same harm as a false statement and is treated the same way."
+          },
+          {
+            "id": "exam-5",
+            "prompt": "Why must a near-zero reading be reported as an absolute uncertainty rather than a percentage?",
+            "lessonId": "lesson-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "Percentages are never used in engineering"
+              },
+              {
+                "id": "b",
+                "text": "The relative figure grows without bound as the value approaches zero"
+              },
+              {
+                "id": "c",
+                "text": "Absolute figures are easier to type"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Dividing by a value near zero makes the relative uncertainty meaningless."
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "NSPE Code of Ethics for Engineers",
+          "url": "https://www.nspe.org/resources/ethics/code-ethics"
+        },
+        {
+          "title": "IEEE Code of Ethics",
+          "url": "https://www.ieee.org/about/corporate/governance/p7-8.html"
+        },
+        {
+          "title": "ACM Code of Ethics and Professional Conduct",
+          "url": "https://www.acm.org/code-of-ethics"
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Converter resolution",
+          "equation": "LSB = V_ref / 2^n",
+          "symbols": "LSB: voltage represented by one count (V); V_ref: converter reference voltage (V); n: converter resolution in bits.",
+          "assumptions": "This is the ideal step size only. It says nothing about the converter's own linearity error, reference drift or the accuracy of whatever is being measured.",
+          "example": "For V_ref = 3.3 V and n = 12: LSB = 3.3 / 4096 = 0.00081 V, about 0.8 mV per count."
+        },
+        {
+          "title": "Relative uncertainty",
+          "equation": "u_rel = (u / x) x 100%",
+          "symbols": "u_rel: relative uncertainty (%); u: absolute uncertainty in the same units as x; x: the measured value.",
+          "assumptions": "Relative uncertainty grows without bound as the measured value approaches zero, so near-zero readings must be reported as an absolute figure instead.",
+          "example": "A reading of 1.00 V with an absolute uncertainty of 0.02 V gives u_rel = (0.02 / 1.00) x 100 = 2%."
+        }
+      ]
+    },
+    {
+      "id": "ethics-accountability",
+      "version": 1,
+      "track": "ethics",
+      "order": 4,
+      "title": "Responsibility, review and sign-off",
+      "summary": "Attach every requirement to a test and every decision to a name, so responsibility survives the people who leave.",
+      "difficulty": "Fundamental",
+      "minutes": 25,
+      "prerequisites": [
+        "ethics-risk"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Diffused responsibility is nobody's responsibility",
+          "text": "Large failures rarely have a villain. They have a chain of people who each assumed someone else had checked. The team that reviewed the circuit assumed the firmware team handled the fault case; the firmware team assumed the hardware had a limit. Ethically, the remedy is not more meetings but named ownership: for each significant risk, one person who can say I checked that, and here is the evidence. Naming an owner does not spread blame, it prevents the specific gap where everyone was slightly responsible and nobody was accountable."
+        },
+        {
+          "id": "lesson-2",
+          "title": "A requirement without a test is a wish",
+          "text": "Safety-related industries insist that every requirement trace to something that verifies it, because an unverified requirement quietly becomes an assumption. The device shall shut down above sixty degrees is a wish until a test exists that heats it, observes the shutdown and records the result. Traceability is the practice of keeping that mapping complete and visible. Its ethical value is that it makes gaps countable: you can state that ninety of a hundred requirements are verified, which is a far more honest position than believing all of them are."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Sign-off is a statement, not a formality",
+          "text": "When you approve a design, you are stating that you examined it and judged it fit for the stated purpose. Approving something you did not read, or that lies outside your competence, transfers real risk to people who trusted the signature. This is why professional codes treat sealing or signing work you did not review as a serious offence rather than a paperwork slip. If you are asked to approve something you cannot properly assess, the correct answers are to review it, to get help, or to decline."
+        }
+      ],
+      "workedExample": "A project lists forty requirements and forty tests, which sounds complete until someone maps them. Eight tests cover the same easy requirement, and six requirements have no test at all. Traceability is therefore thirty-four of forty, or eighty-five per cent, not a hundred. The valuable output is not the percentage but the named list of six unverified requirements, each of which now needs either a test or a recorded decision that it will not be verified and why.",
+      "application": "Write the requirements for something you built as a numbered list. Next to each, name the test that proves it. Circle every requirement with no test; that circle is your real risk register.",
+      "lab": {
+        "tutorialId": "drone-esc-basics",
+        "task": "Run the props-off motor test and write down which safety requirement each step verifies. Any step that verifies nothing, and any requirement with no step, belongs in your gap list."
+      },
+      "practice": [
+        {
+          "id": "practice-1",
+          "prompt": "A fault case was missed because each team assumed another had covered it. What is the remedy?",
+          "lessonId": "lesson-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "A named owner and recorded evidence for each significant risk"
+            },
+            {
+              "id": "b",
+              "text": "More frequent team meetings"
+            },
+            {
+              "id": "c",
+              "text": "A longer requirements document"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Named ownership closes the gap where everyone is slightly responsible and nobody is accountable."
+        },
+        {
+          "id": "practice-2",
+          "prompt": "You are asked to approve a design you have not read. What should you do?",
+          "lessonId": "lesson-3",
+          "options": [
+            {
+              "id": "a",
+              "text": "Approve it and note that you relied on the team"
+            },
+            {
+              "id": "b",
+              "text": "Review it, get help, or decline to approve"
+            },
+            {
+              "id": "c",
+              "text": "Approve it if the deadline is near"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "A signature states that you examined the work; approving unread work transfers risk to people trusting it."
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "exam-1",
+            "prompt": "Forty requirements have forty tests, but only thirty-four requirements are actually covered. What is traceability?",
+            "lessonId": "lesson-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "100%"
+              },
+              {
+                "id": "b",
+                "text": "85%"
+              },
+              {
+                "id": "c",
+                "text": "34%"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Traceability counts covered requirements, not tests: 34 of 40 is 85%."
+          },
+          {
+            "id": "exam-2",
+            "prompt": "Why can a traceability figure of 100% still leave a device unsafe?",
+            "lessonId": "lesson-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "The requirements themselves may omit a hazard"
+              },
+              {
+                "id": "b",
+                "text": "Tests always contain errors"
+              },
+              {
+                "id": "c",
+                "text": "Percentages above ninety are unreliable"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Coverage measures the requirements you wrote, never the hazards you failed to think of."
+          },
+          {
+            "id": "exam-3",
+            "prompt": "What does an unverified requirement quietly become?",
+            "lessonId": "lesson-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "An assumption"
+              },
+              {
+                "id": "b",
+                "text": "A test case"
+              },
+              {
+                "id": "c",
+                "text": "A defect report"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Without verification the requirement is believed rather than known, which is an assumption."
+          },
+          {
+            "id": "exam-4",
+            "prompt": "Why do professional codes treat signing unreviewed work as a serious offence?",
+            "lessonId": "lesson-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "It wastes administrative time"
+              },
+              {
+                "id": "b",
+                "text": "It transfers real risk to people relying on the signature"
+              },
+              {
+                "id": "c",
+                "text": "It duplicates the work of the reviewer"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The signature is the assurance others act on, so an empty one causes real harm."
+          },
+          {
+            "id": "exam-5",
+            "prompt": "What is the most useful output of a traceability review?",
+            "lessonId": "lesson-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "The named list of requirements with no verification"
+              },
+              {
+                "id": "b",
+                "text": "The total number of tests written"
+              },
+              {
+                "id": "c",
+                "text": "The coverage percentage on its own"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The percentage summarises; the named gap list is what someone can actually act on."
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "NSPE Code of Ethics for Engineers",
+          "url": "https://www.nspe.org/resources/ethics/code-ethics"
+        },
+        {
+          "title": "NSPE Board of Ethical Review cases",
+          "url": "https://www.nspe.org/career-growth/ethics/board-ethical-review-cases"
+        },
+        {
+          "title": "IEEE 7000-2021: Addressing Ethical Concerns During System Design",
+          "url": "https://standards.ieee.org/ieee/7000/6781/"
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Requirement traceability",
+          "equation": "T = (R_verified / R_total) x 100%",
+          "symbols": "T: traceability coverage (%); R_verified: requirements with at least one passing verification; R_total: total stated requirements.",
+          "assumptions": "Counts requirements, not tests, so several tests of one requirement add nothing. A high figure is meaningless if the requirements themselves omit a hazard.",
+          "example": "Thirty-four of forty requirements have a passing test: T = (34 / 40) x 100 = 85%, leaving six named gaps."
+        }
+      ]
+    },
+    {
+      "id": "ethics-users",
+      "version": 1,
+      "track": "ethics",
+      "order": 5,
+      "title": "Duty to users, bystanders and the public",
+      "summary": "Design for the people who never chose your device, including those who cannot see, hear or read the warning you relied on.",
+      "difficulty": "Fundamental",
+      "minutes": 25,
+      "prerequisites": [
+        "ethics-risk"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Bystanders never agreed to anything",
+          "text": "A user chooses your product and can read its manual. A bystander is simply nearby: the neighbour under a falling drone, the pedestrian beside an automatic gate, the child who picks up a discarded battery pack. They accepted no terms and received no instructions, so a risk you transferred to them by writing a warning has not actually been transferred. When you are deciding how much protection to design in, the bystander is the honest test, because they have none of the knowledge and none of the choice the user has."
+        },
+        {
+          "id": "lesson-2",
+          "title": "A warning is the weakest control",
+          "text": "Safety engineering ranks controls in a fixed order: remove the hazard, then guard it, then warn about it, then rely on training or procedure. The order reflects how reliably each one works when a real person is tired, rushed or unfamiliar. A warning label is near the bottom because it depends entirely on someone reading, understanding and then choosing to comply. Reaching for a warning first is usually a sign that a cheaper, more reliable control higher up the list was never seriously considered."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Accessibility is part of safety",
+          "text": "If your only alarm is a red light, you have excluded people with colour vision deficiency, which affects roughly one in twelve men. If it is only a beep, you have excluded deaf users. Published standards make some of this measurable: the WCAG contrast ratio gives a testable threshold rather than an opinion about whether text is readable enough. Treating accessibility as a separate wish-list item rather than part of the safety case is how devices end up with indicators that a substantial minority of people simply cannot perceive."
+        }
+      ],
+      "workedExample": "A machine signals a fault with a red LED and nothing else. Applying the hierarchy of controls, the team first asks whether the fault can be designed out, then whether a guard can stop the hazard reaching anyone, and only then how to indicate it. The chosen answer adds an interlock that removes power, plus an indicator that pairs colour with a distinct blink pattern and a printed word. Anyone who cannot distinguish red now still receives the signal through two other channels.",
+      "application": "Take any indicator in a project you built and make it work for someone who cannot see colour and someone who cannot hear. Then check whether a bystander would understand it at all.",
+      "lab": {
+        "tutorialId": "pi-traffic",
+        "task": "Run the three-signal sequence, then redesign its indication so that someone who cannot distinguish red from green can still use it correctly. Note which control level each change belongs to."
+      },
+      "practice": [
+        {
+          "id": "practice-1",
+          "prompt": "Which control in the hierarchy is the most reliable?",
+          "lessonId": "lesson-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "Removing the hazard from the design"
+            },
+            {
+              "id": "b",
+              "text": "Adding a warning label"
+            },
+            {
+              "id": "c",
+              "text": "Training the operator"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Elimination does not depend on anyone reading, remembering or complying."
+        },
+        {
+          "id": "practice-2",
+          "prompt": "Why does a warning label transfer less risk to a bystander than to a user?",
+          "lessonId": "lesson-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "Bystanders never received the instructions or made a choice"
+            },
+            {
+              "id": "b",
+              "text": "Bystanders are usually more careful"
+            },
+            {
+              "id": "c",
+              "text": "Labels are legally binding on users only"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "A risk cannot be transferred by a warning that its subject never sees or agrees to."
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "exam-1",
+            "prompt": "Place these in order of decreasing reliability: warning, elimination, guarding.",
+            "lessonId": "lesson-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "Elimination, guarding, warning"
+              },
+              {
+                "id": "b",
+                "text": "Warning, elimination, guarding"
+              },
+              {
+                "id": "c",
+                "text": "Guarding, warning, elimination"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The hierarchy of controls ranks elimination first and information-based controls last."
+          },
+          {
+            "id": "exam-2",
+            "prompt": "What contrast ratio does WCAG require for normal-size text?",
+            "lessonId": "lesson-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "At least 4.5 to 1"
+              },
+              {
+                "id": "b",
+                "text": "At least 2 to 1"
+              },
+              {
+                "id": "c",
+                "text": "At least 10 to 1"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "WCAG sets 4.5 to 1 for normal text and 3 to 1 for large text."
+          },
+          {
+            "id": "exam-3",
+            "prompt": "A fault is signalled only by a red LED. Who is most likely to miss it?",
+            "lessonId": "lesson-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "People with colour vision deficiency"
+              },
+              {
+                "id": "b",
+                "text": "People who read the manual"
+              },
+              {
+                "id": "c",
+                "text": "Trained operators only"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "A single colour channel excludes roughly one in twelve men; pair it with shape, pattern or text."
+          },
+          {
+            "id": "exam-4",
+            "prompt": "10,000 units fail once per million operating hours. Over 1,000 hours, how many failures are expected?",
+            "lessonId": "lesson-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "10"
+              },
+              {
+                "id": "b",
+                "text": "1"
+              },
+              {
+                "id": "c",
+                "text": "100"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "10,000 x 0.000001 x 1,000 = 10 expected failure events."
+          },
+          {
+            "id": "exam-5",
+            "prompt": "Why is the bystander the honest test when deciding how much protection to design in?",
+            "lessonId": "lesson-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "They have neither the knowledge nor the choice a user has"
+              },
+              {
+                "id": "b",
+                "text": "They are legally entitled to compensation"
+              },
+              {
+                "id": "c",
+                "text": "They are usually closer to the device"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Protection that only works for an informed, consenting user is not protection for the public."
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "W3C Web Content Accessibility Guidelines",
+          "url": "https://www.w3.org/WAI/standards-guidelines/wcag/"
+        },
+        {
+          "title": "IEEE Code of Ethics",
+          "url": "https://www.ieee.org/about/corporate/governance/p7-8.html"
+        },
+        {
+          "title": "NSPE Code of Ethics for Engineers",
+          "url": "https://www.nspe.org/resources/ethics/code-ethics"
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Contrast ratio",
+          "equation": "CR = (L1 + 0.05) / (L2 + 0.05)",
+          "symbols": "CR: contrast ratio; L1: relative luminance of the lighter colour, 0 to 1; L2: relative luminance of the darker colour, 0 to 1.",
+          "assumptions": "Relative luminance is not simple brightness; it is computed from gamma-corrected colour channels. WCAG asks for at least 4.5 to 1 for normal text and 3 to 1 for large text.",
+          "example": "Black on white gives CR = (1.0 + 0.05) / (0.0 + 0.05) = 21, the maximum possible ratio."
+        },
+        {
+          "title": "Population exposed to a failure",
+          "equation": "N_exposed = U x p_fail x t_exposure",
+          "symbols": "N_exposed: expected number of exposure events; U: units deployed; p_fail: probability of the failure per unit per hour; t_exposure: hours of operation considered.",
+          "assumptions": "Assumes independent failures and a constant rate. It counts exposure events, not injuries, so it bounds the problem rather than predicting harm.",
+          "example": "10,000 units at one failure per million hours over 1,000 hours gives 10,000 x 0.000001 x 1,000 = 10 expected events."
+        }
+      ]
+    },
+    {
+      "id": "ethics-privacy",
+      "version": 1,
+      "track": "ethics",
+      "order": 6,
+      "title": "Privacy and data minimisation in connected devices",
+      "summary": "Collect the fields a stated purpose needs, keep them only as long as it needs them, and treat sensor streams as personal data when they describe a person.",
+      "difficulty": "Intermediate",
+      "minutes": 25,
+      "prerequisites": [
+        "ethics-users"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Sensor data describes people",
+          "text": "A temperature and humidity log sounds impersonal until you notice it reveals when a flat is occupied. Power draw shows when someone cooks or sleeps; a motion sensor maps a routine; a device that reports its own uptime reports a household's. Data protection law recognises this by defining personal data by what can be linked to a person, not by whether a field is labelled name. The ethical consequence is that you cannot decide a stream is harmless by looking only at the units it is measured in."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Minimisation is a design constraint",
+          "text": "The principle that you collect only what a specific, stated purpose requires is not merely a legal formality; it is the cheapest security control available, because data you never collected cannot leak, be subpoenaed or be sold after an acquisition. In practice it means writing the purpose first and deriving the fields from it. A thermostat that needs to hold a room at twenty-two degrees does not need a device identifier, a location or a one-second sample interval, even though all three are easy to add."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Retention is a decision, not a default",
+          "text": "Storage is cheap enough that keeping everything forever feels like the neutral choice, but it is a decision with consequences: it grows the blast radius of every future breach and it outlives the purpose that justified collection. A stated retention period turns a vague intention into something testable, and deletion becomes a feature you can demonstrate rather than a promise. Anonymisation is harder than it looks, because high-resolution time series are often re-identifiable when combined with other sources."
+        }
+      ],
+      "workedExample": "A room sensor publishes temperature, humidity, a device identifier and a timestamp every second. The stated purpose is to keep a room comfortable, which needs temperature and a coarse time. Dropping the identifier and widening the interval to five minutes cuts the record rate by three hundred times and removes the field that linked readings to a household. The feature still works, and the data that would have been most sensitive in a breach was never collected.",
+      "application": "Write one sentence stating why your project collects data. List every field it transmits, and delete each one the sentence does not require. Then state how long the rest is kept.",
+      "lab": {
+        "tutorialId": "iot-telemetry",
+        "task": "Read the telemetry the lab publishes and mark each field as required by a stated purpose or merely convenient. Recalculate the daily record count after widening the publish interval."
+      },
+      "practice": [
+        {
+          "id": "practice-1",
+          "prompt": "Why can a humidity log count as personal data?",
+          "lessonId": "lesson-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "Because it can reveal when a home is occupied"
+            },
+            {
+              "id": "b",
+              "text": "Because humidity is always sensitive"
+            },
+            {
+              "id": "c",
+              "text": "Only if a name field is attached"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Personal data is defined by linkability to a person, not by the label on the field."
+        },
+        {
+          "id": "practice-2",
+          "prompt": "Why is not collecting a field described as the cheapest security control?",
+          "lessonId": "lesson-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "Data never collected cannot leak or be disclosed later"
+            },
+            {
+              "id": "b",
+              "text": "Fewer fields make the code run faster"
+            },
+            {
+              "id": "c",
+              "text": "Storage costs dominate every project"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Minimisation removes the asset entirely, which no access control can match."
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "exam-1",
+            "prompt": "One 40-byte record per second is kept for 30 days. Roughly how much data is that per device?",
+            "lessonId": "lesson-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "About 104 MB"
+              },
+              {
+                "id": "b",
+                "text": "About 1 MB"
+              },
+              {
+                "id": "c",
+                "text": "About 10 GB"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "1 x 40 x 30 x 86400 = 103,680,000 bytes, about 104 MB."
+          },
+          {
+            "id": "exam-2",
+            "prompt": "A device transmits five fields but its stated purpose needs two. What is the minimisation ratio?",
+            "lessonId": "lesson-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "0.4"
+              },
+              {
+                "id": "b",
+                "text": "2.5"
+              },
+              {
+                "id": "c",
+                "text": "1.0"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "M = required divided by transmitted = 2 / 5 = 0.4."
+          },
+          {
+            "id": "exam-3",
+            "prompt": "How does data protection law decide whether a field is personal data?",
+            "lessonId": "lesson-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "By whether it can be linked to an identifiable person"
+              },
+              {
+                "id": "b",
+                "text": "By whether the field is named"
+              },
+              {
+                "id": "c",
+                "text": "By whether it is stored in the cloud"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Linkability, not labelling, determines whether data is personal."
+          },
+          {
+            "id": "exam-4",
+            "prompt": "Why is keeping data indefinitely not a neutral default?",
+            "lessonId": "lesson-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "It enlarges the impact of every future breach"
+              },
+              {
+                "id": "b",
+                "text": "Storage costs rise faster than data volume"
+              },
+              {
+                "id": "c",
+                "text": "Old records become unreadable"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Retention decides how much is exposed when something eventually goes wrong."
+          },
+          {
+            "id": "exam-5",
+            "prompt": "Why is anonymising a high-resolution time series harder than it appears?",
+            "lessonId": "lesson-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "It can often be re-identified when combined with other sources"
+              },
+              {
+                "id": "b",
+                "text": "Timestamps cannot be removed"
+              },
+              {
+                "id": "c",
+                "text": "Anonymised data cannot be stored"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Fine-grained patterns act as a fingerprint once another dataset supplies context."
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Regulation (EU) 2016/679 (GDPR)",
+          "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
+        },
+        {
+          "title": "IEEE 7000-2021: Addressing Ethical Concerns During System Design",
+          "url": "https://standards.ieee.org/ieee/7000/6781/"
+        },
+        {
+          "title": "ACM Code of Ethics and Professional Conduct",
+          "url": "https://www.acm.org/code-of-ethics"
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Retained data volume",
+          "equation": "B = R x S x D x 86400",
+          "symbols": "B: retained bytes; R: records per second; S: bytes per record; D: retention period in days; 86400: seconds per day.",
+          "assumptions": "Ignores compression, indexes and replicas, so it is a lower bound. Backups often extend the true retention well past the stated period.",
+          "example": "One 40-byte record per second kept for 30 days is 1 x 40 x 30 x 86400 = 103,680,000 bytes, about 104 MB per device."
+        },
+        {
+          "title": "Data minimisation ratio",
+          "equation": "M = F_required / F_transmitted",
+          "symbols": "M: minimisation ratio, 0 to 1; F_required: fields the stated purpose needs; F_transmitted: fields the device actually sends.",
+          "assumptions": "Counts fields, not sensitivity, so one identifier can matter more than ten harmless readings. A ratio of 1 means nothing is collected beyond the purpose.",
+          "example": "A device sends four fields where the purpose needs two: M = 2 / 4 = 0.5, so half of what it transmits is unjustified."
+        }
+      ]
+    },
+    {
+      "id": "ethics-security",
+      "version": 1,
+      "track": "ethics",
+      "order": 7,
+      "title": "Security as a professional duty",
+      "summary": "Ship devices that are safe by default, updatable in the field, and backed by a disclosure process that does not depend on goodwill.",
+      "difficulty": "Intermediate",
+      "minutes": 25,
+      "prerequisites": [
+        "ethics-privacy"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Defaults are the security your users will actually have",
+          "text": "Most deployed devices run exactly as they left the factory, so a shared default password, an open debug port or a service enabled for convenience is not a starting point that someone will harden later. It is the configuration the device will have for its whole life. Secure-by-design guidance puts the burden on the manufacturer rather than the operator for this reason: expecting every buyer to perform hardening steps is a way of assigning responsibility to the party least equipped to carry it."
+        },
+        {
+          "id": "lesson-2",
+          "title": "A device you cannot update is a device you cannot fix",
+          "text": "Every non-trivial product ships with defects that are not yet known. The question is therefore not whether a vulnerability will be found but what you will be able to do on the day it is. Without a signed update path, the honest answer is nothing, and the exposure lasts for the service life of the hardware. Committing to a support period, and stating its end date plainly, is more ethical than an unbounded promise nobody intends to keep, because it lets an operator plan a replacement."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Disclosure is a process you owe the finder",
+          "text": "Someone will eventually report a flaw in your product. Coordinated vulnerability disclosure exists because the alternatives are worse: a finder who cannot reach you may publish immediately, and a vendor who threatens the finder guarantees that the next one stays silent. A published contact address, an acknowledged timeline and a commitment not to retaliate cost almost nothing and convert an adversarial moment into a repair. Treating the report as an attack rather than a gift is the failure mode to avoid."
+        }
+      ],
+      "workedExample": "A fleet of twenty thousand devices shares one default password. A researcher reports it and a fix is ready in fourteen days, but only sixty per cent of the fleet ever fetches updates. Exposure is therefore not fourteen days; it is fourteen days for the devices that update and the remaining service life for the other eight thousand. That second number, not the patch turnaround, is what an honest advisory has to state, and it is decided by the update design made years earlier.",
+      "application": "For a connected project you built, write down its default credentials, whether it can receive a signed update, and the address a stranger would use to report a flaw. Fix whichever is missing.",
+      "lab": {
+        "tutorialId": "esp32-wifi",
+        "task": "Join the virtual network, then list every credential and open service the device exposes on first boot. Decide which of them a buyer would ever change, and treat the rest as permanent."
+      },
+      "practice": [
+        {
+          "id": "practice-1",
+          "prompt": "Why is a shared factory default password treated as the device's permanent security?",
+          "lessonId": "lesson-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "Most deployed devices are never reconfigured"
+            },
+            {
+              "id": "b",
+              "text": "Default passwords cannot be changed"
+            },
+            {
+              "id": "c",
+              "text": "Attackers ignore default credentials"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Devices overwhelmingly run as shipped, so the default is the real configuration."
+        },
+        {
+          "id": "practice-2",
+          "prompt": "A researcher reports a flaw in your product. What does coordinated disclosure ask of you?",
+          "lessonId": "lesson-3",
+          "options": [
+            {
+              "id": "a",
+              "text": "A published contact, an acknowledged timeline and no retaliation"
+            },
+            {
+              "id": "b",
+              "text": "A legal notice to prevent publication"
+            },
+            {
+              "id": "c",
+              "text": "Silence until the next product launch"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "A reachable, non-retaliatory process is what keeps findings coming to you rather than to the public first."
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "exam-1",
+            "prompt": "Why does a patch turnaround time overstate how quickly a fleet is protected?",
+            "lessonId": "lesson-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "Devices that never fetch updates stay exposed for their service life"
+              },
+              {
+                "id": "b",
+                "text": "Patches always introduce new defects"
+              },
+              {
+                "id": "c",
+                "text": "Disclosure timelines are confidential"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Exposure is dominated by the fraction of the fleet that never updates."
+          },
+          {
+            "id": "exam-2",
+            "prompt": "Eight characters chosen uniformly from a 62-character set give roughly what entropy?",
+            "lessonId": "lesson-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "About 48 bits"
+              },
+              {
+                "id": "b",
+                "text": "About 8 bits"
+              },
+              {
+                "id": "c",
+                "text": "About 496 bits"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "H = 8 x log2(62) = 8 x 5.95, about 47.6 bits."
+          },
+          {
+            "id": "exam-3",
+            "prompt": "Why does secure-by-design guidance put hardening on the manufacturer rather than the buyer?",
+            "lessonId": "lesson-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "The buyer is the party least equipped to carry it"
+              },
+              {
+                "id": "b",
+                "text": "Manufacturers have more legal liability"
+              },
+              {
+                "id": "c",
+                "text": "Buyers are not allowed to change settings"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Assigning security work to the least equipped party is how insecure fleets happen."
+          },
+          {
+            "id": "exam-4",
+            "prompt": "Why is a stated support end date more ethical than an open-ended promise?",
+            "lessonId": "lesson-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "It lets an operator plan a replacement"
+              },
+              {
+                "id": "b",
+                "text": "It shortens the warranty obligation"
+              },
+              {
+                "id": "c",
+                "text": "It removes the need for updates"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "A date someone can plan around beats a promise nobody intends to keep."
+          },
+          {
+            "id": "exam-5",
+            "prompt": "What is the predictable result of threatening a security researcher?",
+            "lessonId": "lesson-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "The next finder does not report at all"
+              },
+              {
+                "id": "b",
+                "text": "Fewer vulnerabilities exist in the product"
+              },
+              {
+                "id": "c",
+                "text": "Disclosure timelines become longer"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Retaliation does not remove the flaw; it removes your warning of the next one."
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "CISA: Secure by Design",
+          "url": "https://www.cisa.gov/resources-tools/resources/secure-by-design"
+        },
+        {
+          "title": "CISA: Coordinated Vulnerability Disclosure Process",
+          "url": "https://www.cisa.gov/coordinated-vulnerability-disclosure-process"
+        },
+        {
+          "title": "NIST Cybersecurity Framework",
+          "url": "https://www.nist.gov/cyberframework"
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Fleet exposure window",
+          "equation": "E = U x (1 - a) x L + U x a x t_patch",
+          "symbols": "E: device-days of exposure; U: units deployed; a: fraction that actually applies updates, 0 to 1; L: remaining service life in days; t_patch: days from disclosure to patch.",
+          "assumptions": "Assumes updates are applied promptly by the fraction that applies them at all. Devices that never update dominate the total, which is the point of the calculation.",
+          "example": "20,000 units, 60% updating, 1,000 days of life left, 14-day patch: E = 20,000 x 0.4 x 1,000 + 20,000 x 0.6 x 14 = 8,168,000 device-days."
+        },
+        {
+          "title": "Credential entropy",
+          "equation": "H = L x log2(N)",
+          "symbols": "H: entropy in bits; L: number of characters; N: size of the character set each position is drawn from.",
+          "assumptions": "Only valid when every character is chosen uniformly at random. A human-chosen password of the same length has far less entropy, and a shared factory default has none at all.",
+          "example": "Eight random characters from a 62-character set: H = 8 x log2(62) = 8 x 5.95 = 47.6 bits."
+        }
+      ]
+    },
+    {
+      "id": "ethics-sustainability",
+      "version": 1,
+      "track": "ethics",
+      "order": 8,
+      "title": "Energy, materials and the product lifecycle",
+      "summary": "Count the energy a design spends and the waste it will become, and treat repairability as a design output rather than an afterthought.",
+      "difficulty": "Intermediate",
+      "minutes": 25,
+      "prerequisites": [
+        "ethics-users"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Average current decides the battery, and the battery decides the waste",
+          "text": "A node that wakes for fifty milliseconds every ten seconds spends almost all of its life asleep, so its sleep current dominates the average even though the active current is far larger. Getting this calculation right is what lets a device run for years on one cell instead of months on four. That is not only a cost decision: every replacement cell is a mining input at one end and hazardous waste at the other, and the choice was made in firmware long before anyone bought a battery."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Repairability is decided at design time",
+          "text": "Whether a device can be repaired is settled by choices nobody revisits: a glued enclosure instead of screws, a battery soldered rather than socketed, a proprietary connector, firmware that refuses a third-party part. Each is defensible in isolation and together they decide that the whole unit becomes waste when its cheapest component fails. Electronic waste regulation exists because this pattern repeated at scale, and the engineer who picked the fastener had more influence over the outcome than the recycler ever will."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Count the whole life, not the running cost",
+          "text": "A design that halves running power but doubles manufacturing impact may be worse overall, and you cannot tell without counting both. Lifecycle thinking asks for the materials, the energy to make them, the energy in use, and the fate of the device at end of life. Engineers rarely have complete figures for all four, which is why the honest move is to state which stages you counted and which you estimated rather than presenting a single confident number that hides the gap."
+        }
+      ],
+      "workedExample": "A sensor draws 80 mA awake for 0.05 s and 10 microamps asleep for 9.95 s. The average is (0.08 x 0.05 + 0.00001 x 9.95) divided by 10, which is about 0.41 mA. A 2000 mAh cell therefore lasts roughly 4,900 hours, about six months. Halving the awake time to 0.025 s drops the average to about 0.21 mA and roughly doubles the life, which halves the number of cells that will eventually be discarded.",
+      "application": "Compute the average current of a battery project from its active and sleep figures, then find the single change that most extends its life. Note how many cells that saves over five years.",
+      "lab": {
+        "tutorialId": "esp32-weather",
+        "task": "Read the sensor on a fixed interval, then work out the average current for a one-second and a five-minute interval. Decide which interval the stated purpose actually needs."
+      },
+      "practice": [
+        {
+          "id": "practice-1",
+          "prompt": "A node is awake 0.5% of the time. Which current usually dominates the average?",
+          "lessonId": "lesson-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "It depends on both, so the duty cycle must be calculated"
+            },
+            {
+              "id": "b",
+              "text": "Always the active current"
+            },
+            {
+              "id": "c",
+              "text": "Always the sleep current"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Neither dominates by default; the product of current and time decides it."
+        },
+        {
+          "id": "practice-2",
+          "prompt": "Which design choice most determines whether a device becomes waste when one part fails?",
+          "lessonId": "lesson-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "Whether the enclosure and battery can be opened and replaced"
+            },
+            {
+              "id": "b",
+              "text": "The colour of the enclosure"
+            },
+            {
+              "id": "c",
+              "text": "The size of the firmware image"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Glued cases and soldered cells decide repairability long before anything fails."
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "exam-1",
+            "prompt": "A node draws 100 mA for 0.1 s and 0 mA for 9.9 s. What is the average current?",
+            "lessonId": "lesson-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "1 mA"
+              },
+              {
+                "id": "b",
+                "text": "10 mA"
+              },
+              {
+                "id": "c",
+                "text": "0.1 mA"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "I_avg = (100 x 0.1 + 0 x 9.9) / 10 = 1 mA."
+          },
+          {
+            "id": "exam-2",
+            "prompt": "A 1000 mAh cell supplies an average of 0.5 mA. Roughly how long does it last?",
+            "lessonId": "lesson-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "2,000 hours"
+              },
+              {
+                "id": "b",
+                "text": "500 hours"
+              },
+              {
+                "id": "c",
+                "text": "5,000 hours"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Life = 1000 / 0.5 = 2,000 hours, before derating for temperature and self-discharge."
+          },
+          {
+            "id": "exam-3",
+            "prompt": "Why can a design with lower running power still be worse overall?",
+            "lessonId": "lesson-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "Its manufacturing impact may rise by more than the saving"
+              },
+              {
+                "id": "b",
+                "text": "Lower power always shortens life"
+              },
+              {
+                "id": "c",
+                "text": "Running power is never significant"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Lifecycle thinking counts materials and manufacture, not only the energy in use."
+          },
+          {
+            "id": "exam-4",
+            "prompt": "You lack figures for two of the four lifecycle stages. What is the honest report?",
+            "lessonId": "lesson-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "State which stages were counted and which were estimated"
+              },
+              {
+                "id": "b",
+                "text": "Publish a single combined figure"
+              },
+              {
+                "id": "c",
+                "text": "Omit the lifecycle section entirely"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Naming the gap is more useful and more honest than a confident total that hides it."
+          },
+          {
+            "id": "exam-5",
+            "prompt": "Why does a duty-cycle calculation ignore the cost of waking at its peril?",
+            "lessonId": "lesson-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "Wake-up and radio retries can dominate a connected node's budget"
+              },
+              {
+                "id": "b",
+                "text": "Waking uses no measurable energy"
+              },
+              {
+                "id": "c",
+                "text": "Sleep current is always zero"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Transitions and retries are real energy that the simple two-state formula leaves out."
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Directive 2012/19/EU on waste electrical and electronic equipment",
+          "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32012L0019"
+        },
+        {
+          "title": "IEEE Code of Ethics",
+          "url": "https://www.ieee.org/about/corporate/governance/p7-8.html"
+        },
+        {
+          "title": "IEEE 7000-2021: Addressing Ethical Concerns During System Design",
+          "url": "https://standards.ieee.org/ieee/7000/6781/"
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Duty-cycled average current",
+          "equation": "I_avg = (I_on x t_on + I_off x t_off) / (t_on + t_off)",
+          "symbols": "I_avg: average current (A); I_on, I_off: active and sleep currents (A); t_on, t_off: active and sleep durations in the same time unit.",
+          "assumptions": "Ignores the energy of waking and of radio retries, which can dominate on a connected node. Measure the real profile before trusting a datasheet sleep figure.",
+          "example": "80 mA for 0.05 s and 10 uA for 9.95 s gives I_avg = (0.08 x 0.05 + 0.00001 x 9.95) / 10 = 0.41 mA."
+        },
+        {
+          "title": "Battery life from average current",
+          "equation": "Life = C / I_avg",
+          "symbols": "Life: operating time (h); C: usable cell capacity (mAh); I_avg: average current (mA).",
+          "assumptions": "Usable capacity is below the printed rating, and falls further in cold conditions and at high pulse currents. Self-discharge matters on multi-year designs.",
+          "example": "A 2000 mAh cell at 0.41 mA gives Life = 2000 / 0.41 = 4,878 hours, about six months."
+        }
+      ]
+    },
+    {
+      "id": "ethics-automation",
+      "version": 1,
+      "track": "ethics",
+      "order": 9,
+      "title": "Automation, autonomy and human oversight",
+      "summary": "Give the person held responsible enough time and information to intervene, and design for the moment the automation is confidently wrong.",
+      "difficulty": "Intermediate",
+      "minutes": 25,
+      "prerequisites": [
+        "ethics-accountability"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Oversight needs time, not just a button",
+          "text": "A stop button is meaningless if the operator cannot detect the problem, decide and act before the harm occurs. Human perception, decision and movement each take real time, typically well over a second in total for an unexpected event. If your automation can cause harm in four hundred milliseconds, the human in the loop is decorative and the accountability you assigned to them is fictional. Meaningful human control is a timing requirement first and an interface question second."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Automation bias is a design problem",
+          "text": "People trust a system that has been right for months, which is exactly when it becomes dangerous to be wrong. An operator who has never seen the automation fail will tend to accept its output over their own contradicting evidence. You cannot fix this by telling operators to stay alert. You address it in design: show the inputs a decision rests on, surface confidence honestly, make disagreement easy to express, and avoid interfaces that present a guess with the same authority as a measurement."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Autonomy does not move responsibility",
+          "text": "When an automated system causes harm, the accountability does not transfer to the software. It stays with the people and organisations that specified, built, tested and deployed it. Emerging regulation for high-risk systems formalises this with duties for record-keeping, human oversight and transparency, but the underlying principle predates any statute. If your answer to who is responsible is the algorithm decided, you have described an accountability gap rather than resolved one."
+        }
+      ],
+      "workedExample": "An automatic gate closes in 1.2 seconds. An operator needs about 0.25 s to perceive an obstruction, 0.35 s to decide and 0.15 s to reach the button, leaving 0.45 s of real margin. That margin vanishes if the operator is looking elsewhere, so the control that actually protects a bystander is the obstruction sensor, not the button. The button remains useful for the cases a sensor cannot see, and the design should say which case each control covers.",
+      "application": "For an automated action in a project you built, measure how long it takes to cause its worst outcome. Subtract a realistic human response time and decide whether oversight is real.",
+      "lab": {
+        "tutorialId": "iot-web-control",
+        "task": "Send a command over HTTP and time how long the actuator takes to complete it. Compare that with a one-second human response and decide whether a person could intervene at all."
+      },
+      "practice": [
+        {
+          "id": "practice-1",
+          "prompt": "An automated action causes harm in 400 ms. What does that imply about a stop button?",
+          "lessonId": "lesson-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "A human cannot intervene in time, so it is not a real control"
+            },
+            {
+              "id": "b",
+              "text": "It is sufficient if clearly labelled"
+            },
+            {
+              "id": "c",
+              "text": "It is sufficient if the operator is trained"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Perception, decision and movement exceed 400 ms, so the button cannot protect anyone."
+        },
+        {
+          "id": "practice-2",
+          "prompt": "An autonomous system causes harm. Where does accountability sit?",
+          "lessonId": "lesson-3",
+          "options": [
+            {
+              "id": "a",
+              "text": "With those who specified, built, tested and deployed it"
+            },
+            {
+              "id": "b",
+              "text": "With the algorithm"
+            },
+            {
+              "id": "c",
+              "text": "With the operator alone"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Autonomy changes the mechanism of harm, never the ownership of responsibility."
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "exam-1",
+            "prompt": "Harm occurs 2.0 s after onset and human response totals 0.8 s. What is the intervention margin?",
+            "lessonId": "lesson-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "1.2 s"
+              },
+              {
+                "id": "b",
+                "text": "2.8 s"
+              },
+              {
+                "id": "c",
+                "text": "0.8 s"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "t_margin = 2.0 - 0.8 = 1.2 s."
+          },
+          {
+            "id": "exam-2",
+            "prompt": "What is the most effective response to automation bias?",
+            "lessonId": "lesson-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "Design that shows inputs, confidence and easy disagreement"
+              },
+              {
+                "id": "b",
+                "text": "Instructing operators to remain alert"
+              },
+              {
+                "id": "c",
+                "text": "Increasing the automation's accuracy only"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Bias is predictable human behaviour, so the remedy belongs in the interface, not in exhortation."
+          },
+          {
+            "id": "exam-3",
+            "prompt": "Why does an automation that has been correct for months become more dangerous?",
+            "lessonId": "lesson-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "Operators stop weighing their own contradicting evidence"
+              },
+              {
+                "id": "b",
+                "text": "Its failure rate rises with age"
+              },
+              {
+                "id": "c",
+                "text": "Its accuracy decays without retraining"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Sustained correctness builds the trust that suppresses the operator's independent check."
+          },
+          {
+            "id": "exam-4",
+            "prompt": "A system has MTBF 990 h and MTTR 10 h. What is its availability?",
+            "lessonId": "lesson-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "0.99"
+              },
+              {
+                "id": "b",
+                "text": "0.90"
+              },
+              {
+                "id": "c",
+                "text": "0.999"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "A = 990 / (990 + 10) = 0.99."
+          },
+          {
+            "id": "exam-5",
+            "prompt": "Why is high availability not the same as safety?",
+            "lessonId": "lesson-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "It says nothing about how the system behaves when it fails"
+              },
+              {
+                "id": "b",
+                "text": "Available systems fail more often"
+              },
+              {
+                "id": "c",
+                "text": "Availability cannot be measured"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "A rarely failing system with a dangerous failure mode is still unsafe."
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Regulation (EU) 2024/1689 (AI Act)",
+          "url": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj"
+        },
+        {
+          "title": "IEEE 7000-2021: Addressing Ethical Concerns During System Design",
+          "url": "https://standards.ieee.org/ieee/7000/6781/"
+        },
+        {
+          "title": "ACM Code of Ethics and Professional Conduct",
+          "url": "https://www.acm.org/code-of-ethics"
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Human intervention margin",
+          "equation": "t_margin = t_harm - (t_perceive + t_decide + t_act)",
+          "symbols": "t_margin: spare time before harm (s); t_harm: time from onset to harm (s); t_perceive, t_decide, t_act: human perception, decision and actuation times (s).",
+          "assumptions": "Uses times for an alert operator who is already watching. A distracted or surprised person is far slower, so a margin near zero means there is no real oversight.",
+          "example": "Harm at 1.2 s with 0.25 + 0.35 + 0.15 s of human response gives t_margin = 1.2 - 0.75 = 0.45 s."
+        },
+        {
+          "title": "Steady-state availability",
+          "equation": "A = MTBF / (MTBF + MTTR)",
+          "symbols": "A: availability, 0 to 1; MTBF: mean time between failures (h); MTTR: mean time to repair (h).",
+          "assumptions": "Availability says how often a system is up, never how badly it behaves when down. A highly available system with a dangerous failure mode is not a safe one.",
+          "example": "MTBF of 990 h and MTTR of 10 h give A = 990 / 1000 = 0.99, which still means about 88 hours down per year."
+        }
+      ]
+    },
+    {
+      "id": "ethics-speaking-up",
+      "version": 1,
+      "track": "ethics",
+      "order": 10,
+      "title": "Dissent, escalation and speaking up",
+      "summary": "Raise a concern so that it can be acted on: evidence first, the right forum next, and a written record throughout.",
+      "difficulty": "Intermediate",
+      "minutes": 25,
+      "prerequisites": [
+        "ethics-accountability"
+      ],
+      "lessons": [
+        {
+          "id": "lesson-1",
+          "title": "Estimate before you escalate",
+          "text": "A concern lands very differently when it arrives as a number. Expected harm, the product of how likely a failure is, how bad it would be, and how many units are exposed, turns I am worried about this into a figure a manager can weigh against a schedule. It also disciplines you, because working it through sometimes shows the concern is smaller than it felt. Either outcome is useful: you escalate with evidence, or you stop worrying for a reason you can state."
+        },
+        {
+          "id": "lesson-2",
+          "title": "Escalate through the structure before you go outside it",
+          "text": "Professional guidance is consistent that internal channels come first: your lead, then their manager, then whatever safety or compliance function exists. This is not deference for its own sake. Internal escalation is usually faster, it gives the organisation a chance to fix the problem, and a documented internal attempt is what distinguishes a responsible engineer from a disgruntled one if the matter later becomes public. Going outside is a step you take when the internal route has been tried and has failed, or when delay itself endangers people."
+        },
+        {
+          "id": "lesson-3",
+          "title": "Write it down as it happens",
+          "text": "Memory is contested after an incident and rarely in favour of the person with no notes. A contemporaneous record of what you observed, when you raised it, to whom, and what response you received protects everyone: it protects you, it protects colleagues from misremembered accusations, and it gives an investigation something factual to work with. Keep it factual and unemotional, keep it to the technical matter, and store it somewhere that survives your access to a particular system."
+        }
+      ],
+      "workedExample": "An engineer believes a connector can vibrate loose. Rather than asserting it, they estimate: a two per cent chance per unit per year, five thousand units, and a consequence of losing power to a safety output. That is a hundred expected events a year. Presented with the number, the method and the uncertainty, the schedule argument changes shape. If the response is still no, the engineer now has a dated record of a specific, quantified concern and a documented decision to escalate from.",
+      "application": "Write a one-page note about a real concern in your own work: what you observed, the expected harm with your method, what you recommend, and who you sent it to. Date it.",
+      "lab": {
+        "tutorialId": "esp32-mqtt",
+        "task": "Run the publisher, then write a short technical note describing one failure you can actually demonstrate, its expected harm, and the change you would recommend to a reviewer."
+      },
+      "practice": [
+        {
+          "id": "practice-1",
+          "prompt": "Why quantify a concern before raising it?",
+          "lessonId": "lesson-1",
+          "options": [
+            {
+              "id": "a",
+              "text": "It makes the concern comparable with the schedule it competes against"
+            },
+            {
+              "id": "b",
+              "text": "It guarantees the concern will be accepted"
+            },
+            {
+              "id": "c",
+              "text": "It removes the need to escalate"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "A number can be weighed against other numbers; an assertion of worry cannot."
+        },
+        {
+          "id": "practice-2",
+          "prompt": "What is the normal first step when you have a safety concern?",
+          "lessonId": "lesson-2",
+          "options": [
+            {
+              "id": "a",
+              "text": "Raise it internally and document that you did"
+            },
+            {
+              "id": "b",
+              "text": "Contact a journalist"
+            },
+            {
+              "id": "c",
+              "text": "Wait for someone else to notice"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Internal escalation is faster and a documented attempt is what makes later steps defensible."
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "exam-1",
+            "prompt": "With p = 0.01 per unit per year, one consequence per failure and 4,000 units, what is the expected annual harm?",
+            "lessonId": "lesson-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "40 events"
+              },
+              {
+                "id": "b",
+                "text": "400 events"
+              },
+              {
+                "id": "c",
+                "text": "4 events"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "E = 0.01 x 1 x 4,000 = 40 expected events per year."
+          },
+          {
+            "id": "exam-2",
+            "prompt": "When is going outside the organisation appropriate?",
+            "lessonId": "lesson-2",
+            "options": [
+              {
+                "id": "a",
+                "text": "When internal routes have failed or delay itself endangers people"
+              },
+              {
+                "id": "b",
+                "text": "As soon as a disagreement arises"
+              },
+              {
+                "id": "c",
+                "text": "Only after leaving the job"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "External steps follow a tried internal route, unless waiting would itself cause harm."
+          },
+          {
+            "id": "exam-3",
+            "prompt": "What makes a contemporaneous record valuable after an incident?",
+            "lessonId": "lesson-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "It gives an investigation dated facts instead of contested memory"
+              },
+              {
+                "id": "b",
+                "text": "It assigns blame to a named person"
+              },
+              {
+                "id": "c",
+                "text": "It replaces the need for a formal report"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Dated, factual notes protect the writer, their colleagues and the investigation alike."
+          },
+          {
+            "id": "exam-4",
+            "prompt": "Working through an expected-harm estimate shows the concern is small. What should you do?",
+            "lessonId": "lesson-1",
+            "options": [
+              {
+                "id": "a",
+                "text": "Record the estimate and the reason you are not escalating"
+              },
+              {
+                "id": "b",
+                "text": "Escalate anyway to be safe"
+              },
+              {
+                "id": "c",
+                "text": "Delete the analysis"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "A recorded reason is itself a professional output, and it can be revisited if inputs change."
+          },
+          {
+            "id": "exam-5",
+            "prompt": "How should a concern note be written?",
+            "lessonId": "lesson-3",
+            "options": [
+              {
+                "id": "a",
+                "text": "Factually, on the technical matter, and stored outside one system"
+              },
+              {
+                "id": "b",
+                "text": "Emotively, to convey urgency"
+              },
+              {
+                "id": "c",
+                "text": "Anonymously, with no date"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Facts, technical scope and durable storage are what let the note do its job later."
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "NSPE Board of Ethical Review cases",
+          "url": "https://www.nspe.org/career-growth/ethics/board-ethical-review-cases"
+        },
+        {
+          "title": "IEEE Code of Ethics",
+          "url": "https://www.ieee.org/about/corporate/governance/p7-8.html"
+        },
+        {
+          "title": "ACM Code of Ethics and Professional Conduct",
+          "url": "https://www.acm.org/code-of-ethics"
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Expected harm per year",
+          "equation": "E = p x C x U",
+          "symbols": "E: expected consequence events per year; p: probability of the failure per unit per year; C: consequence events per failure; U: units deployed.",
+          "assumptions": "An estimate whose inputs are judgements, so state your ranges. Its purpose is to make a concern comparable and discussable, not to predict a specific incident.",
+          "example": "p = 0.02 per unit per year, C = 1 and U = 5,000 gives E = 0.02 x 1 x 5,000 = 100 expected events per year."
+        }
+      ]
     }
   ]
 }

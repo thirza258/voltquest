@@ -50,6 +50,13 @@ class Player(Base):
     projects: Mapped[list["Project"]] = relationship(
         back_populates="owner", cascade="all, delete-orphan", lazy="selectin"
     )
+    # Lazily loaded on purpose: unlike progress/projects these are not needed on every auth'd call.
+    discussion_threads: Mapped[list["DiscussionThread"]] = relationship(
+        back_populates="author", cascade="all, delete-orphan"
+    )
+    discussion_posts: Mapped[list["DiscussionPost"]] = relationship(
+        back_populates="author", cascade="all, delete-orphan"
+    )
 
 
 class Progress(Base):
@@ -134,3 +141,62 @@ class CourseCertificate(Base):
     verification_url: Mapped[str] = mapped_column(String(300), nullable=False)
     pdf_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
     pdf: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)
+
+
+class DiscussionThread(Base):
+    """One community discussion, optionally attached to a published showcase project."""
+
+    __tablename__ = "discussion_threads"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    author_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("players.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    category: Mapped[str] = mapped_column(String(24), nullable=False, index=True)
+    title: Mapped[str] = mapped_column(String(120), nullable=False)
+    body: Mapped[str] = mapped_column(Text, nullable=False)
+    board: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    project_slug: Mapped[str | None] = mapped_column(String(16), nullable=True, index=True)
+    views: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    # Denormalized for the list query; maintained by every reply create/delete.
+    reply_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    is_solved: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    is_deleted: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    edited_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_activity_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utcnow, index=True
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utcnow, onupdate=utcnow
+    )
+
+    author: Mapped[Player] = relationship(back_populates="discussion_threads")
+    posts: Mapped[list["DiscussionPost"]] = relationship(
+        back_populates="thread", cascade="all, delete-orphan", order_by="DiscussionPost.created_at"
+    )
+
+
+class DiscussionPost(Base):
+    """A reply in a discussion. The opening post lives on the thread itself."""
+
+    __tablename__ = "discussion_posts"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    thread_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("discussion_threads.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    author_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("players.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    body: Mapped[str] = mapped_column(Text, nullable=False)
+    is_answer: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    is_deleted: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    edited_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utcnow, onupdate=utcnow
+    )
+
+    thread: Mapped[DiscussionThread] = relationship(back_populates="posts")
+    author: Mapped[Player] = relationship(back_populates="discussion_posts")

@@ -125,10 +125,11 @@ describe('LandingPage', () => {
     expect(specsGrid).toBeTruthy()
     expect(specsGrid.className).toContain('sm:grid-cols-4')
 
-    // Header mobile navigation select element includes Home option
+    // Header narrow-viewport navigation select element includes Home option. It hides at md:, not
+    // sm:, because five nav segments plus the logo and right cluster overflow a 640 px header.
     const mobileSelect = screen.getByRole('combobox', { name: /Section navigation/i })
     expect(mobileSelect).toBeTruthy()
-    expect(mobileSelect.className).toContain('sm:hidden')
+    expect(mobileSelect.className).toContain('md:hidden')
     expect(mobileSelect.className).toContain('max-w-[110px]')
     const homeOption = screen.getByRole('option', { name: /Home/i })
     expect(homeOption).toBeTruthy()
