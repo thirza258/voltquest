@@ -1,6 +1,6 @@
 # VoltQuest — agent handoff log
 
-**Last verified: 2026-09-20.** This is the state document: what exists, what remains unfinished,
+**Last verified: 2026-09-21.** This is the state document: what exists, what remains unfinished,
 and what to do next. The specifications in `docs/` remain binding.
 
 | Read | When |
@@ -18,10 +18,18 @@ and what to do next. The specifications in `docs/` remain binding.
 | `docs/MATLAB.md` | Before editing MATLAB courses, the numerical script interpreter, function reference or notebooks. |
 | `docs/AI_AGENTS.md` | Before editing AI agent courses, harness experiments, skills/MCP fixtures or companion CLIs. |
 | `docs/WINUI.md` | Before editing C++ / WinUI desktop courses, native source packs or their verification. |
+| `docs/COMMUNITY.md` | Before editing community discussions, their moderation limits or post rendering. |
 
 ## 1. Current build, not the target product
 
 The main entry points are **`/`** (32 campaign quests), **`/sandbox`** (freeform projects), and **`/tutorials`** (guided lessons).
+
+**`/community`** is a discussion board reachable from the header nav, the landing footer and every
+published showcase project. Reading is public; posting uses the player token the app already issues
+to guests. Six fixed sections, one accepted answer per question, author-only editing, and author
+withdrawal that preserves other people's replies. Post bodies are rendered as text, never as markup.
+Rate limits are per process and are not moderation — there is no moderation, report or notification
+path. Read `docs/COMMUNITY.md` before changing it.
 
 Courses, Tutorials and the home footer now link to **`/winui`**: thirteen C++/WinUI 3
 desktop courses, 52 section checkpoints and thirteen five-question exams. Each supplies
@@ -124,6 +132,48 @@ their explanation or timing is correct. `features/tutorials/programming.test.js`
 numeric output, command dispatch and LED state transitions on all four C++ boards.
 
 ## 3. Completed in this continuation
+
+### Community discussions (2026-09-21)
+
+Open **`/community`**, or `/community?project=<slug>` from a published showcase project's **Discuss**
+link. Additive `discussion_threads` / `discussion_posts` tables are created by the existing startup
+`create_all()`; no migration tool was introduced. New layers: `app/domain/community.py` (fixed
+sections, text limits, normalizers — framework independent), `app/schemas/community.py`,
+`app/services/community.py`, `app/api/routes/community.py`, and
+`frontend/src/features/community/{CommunityPage,ThreadPage,PostBody}.jsx` + `timeAgo.js`.
+`PermissionDenied` → 403 was added to the shared error taxonomy, because a public discussion must not
+answer a non-author write with 404.
+
+Reading is public; writing takes the player token the app already issues to guests — the rule
+certificates and the assistant use, and the identity that may already publish to the showcase.
+`is_deleted` means withdrawn by its author and is the only deletion: a withdrawn reply keeps its
+place without its text, a withdrawn question with no replies 404s, and one with replies stays
+readable with an empty body and takes no new replies. `reply_count` / `last_activity_at` are
+denormalized and maintained on every reply create and withdrawal. `PostBody.jsx` rebuilds posts as
+React elements — code fences, inline backticks and validated http(s) links — with no
+`dangerouslySetInnerHTML` and no Markdown engine.
+
+Individual verification (not one `make check` run, see below): **1,637 frontend tests in 95 files**
+and **121 backend tests** pass, the production build succeeds at **556.9 KiB** eager gzip against the
+1,500 KiB budget, and both community pages are lazy chunks. The sitemap now holds **435 URLs**;
+`/community` is indexed and `/community/:threadId` is not, with `Disallow: /community/` in robots.txt.
+Interface text is translated to Indonesian (65 new keys).
+
+**Pre-existing failures found, not caused by this work and not fixed:** `npx eslint src` reports 19
+`no-undef` errors in `src/features/qt/samples.js` (CMake snippets written as untagged template
+literals), confirmed on a clean stash of HEAD. `make check` therefore stops at the lint step, which
+is why the steps above were run individually. The checked-in `public/sitemap.xml` was also stale by
+seventeen `/qt` URLs and its test was already red on HEAD; regenerating it here fixed that too.
+
+The shared header changed for **every** route: a fifth nav segment does not fit in a 640 px header,
+so its `SegmentedControl` now starts at `md:` and 640–767 px falls back to the native section select
+that mobile already used. Reading a discussion costs a constant 9 SELECTs at any reply count.
+
+**Not verified:** no browser session exercised these pages, so layout, mobile width and the real
+network path are unconfirmed. The header breakpoint above was chosen from measured element widths,
+not observation — no headless browser exists in this workspace and jsdom has no layout engine.
+Check the header at 640/767/768 px in a real browser before release; it affects every route. The write budgets were exercised in one process only; a multi-worker
+deployment gets one budget per worker. No load or abuse testing was done.
 
 ### C++ / WinUI desktop app courses (2026-09-20)
 

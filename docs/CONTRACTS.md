@@ -373,7 +373,12 @@ Effects (`canvas/effects/index.js`, G2): `<SmokePuff x y onDone/>`, `<CrackOverl
 ## 11. Stores, routes & app glue (package H1) — `frontend/src/store/*.js`
 
 ### 11.1 Routes (react-router-dom, `App.jsx`)
-`/` campaign map · `/play/:levelId` · `/sandbox` (new; `?from=<levelId>` seeds from the level draft) · `/sandbox/:projectId` · `/showcase` · `/showcase/:slug` (public read-only interactive preview) · `/profile` · `/leaderboard` · `*` NotFound. All modes share the header shell: logo (→ `/`), nav SegmentedControl "Campaign · Sandbox · Showcase", mode-specific centre, right cluster, avatar chip menu (Profile, Claim account / Log in, Log out, Audio, Shortcuts `?`).
+`/` campaign map · `/play/:levelId` · `/sandbox` (new; `?from=<levelId>` seeds from the level draft) · `/sandbox/:projectId` · `/showcase` · `/showcase/:slug` (public read-only interactive preview) · `/community` · `/community/:threadId` · `/profile` · `/leaderboard` · `*` NotFound. All modes share the header shell: logo (→ `/`), nav SegmentedControl "Campaign · Sandbox · Showcase", mode-specific centre, right cluster, avatar chip menu (Profile, Claim account / Log in, Log out, Audio, Shortcuts `?`).
+Community extension: `/community` and `/community/:threadId` are lazy chunks sharing the header
+shell, which gains a fifth nav item "Community". That fifth segment does not fit in a 640 px header,
+so the header `SegmentedControl` starts at `md:` and 640–767 px uses the native section select.
+ Their data, deletion and rendering contracts are in
+[COMMUNITY.md](COMMUNITY.md). Discussions grant no campaign XP and touch no CircuitDoc.
 Tutorial extension: `/tutorials` and `/tutorials/:tutorialId?board=<boardId>` share the header shell.
 The header adds a Tutorials navigation item. The content, filters, difficulty progression, runnable
 examples and derived wiring-guide contract live in `TUTORIALS.md`. Tutorials do not grant campaign XP.
@@ -400,7 +405,7 @@ useWorkspaceStore: { mode:'campaign'|'sandbox'|'showcase', levelId, code, editor
 Drafts: `vq.draft.<levelId>` / `vq.draft.sandbox` (new) / `vq.draft.sandbox.<projectId>` (saved projects) = `{ doc, code, blocklyXml, editorMode, savedAt }` debounced 1 s; offered on open for explicit Resume / Start fresh, then shown with a Callout "Resumed your work · Start over". Header sim button is "Reset sim"; overflow menu "Restart level" restores starterCircuit/starterCode.
 Level gating: available if first in LEVEL_ORDER or `progress[prev].stars ≥ 1`; locked cards offer "Skip ahead". Briefing auto-opens on first open (`vq.player.seenLevels`); header ⓘ reopens. Success modal opens once per `runId` on the false→true `allPassed` transition; "Replay" = Restart level; last level → "Back to map". `ensureGuest()` is fire-and-forget.
 `lib/xp.js`: `xpForLevel(n) = 100·(n−1)·n/2` cumulative; `levelForXp(xp)`; `xpForCompletion(level, stars, prevStars) = round(level.xp · (1 + 0.25·(stars−1))) − round(level.xp · (1 + 0.25·(prevStars−1)))` (prevStars 0 → full). Backend `xp.py` mirrors both.
-`frontend/src/api/client.js`: `api.get/post/put/del`, `ApiError { status, detail }`, base `import.meta.env.VITE_API_URL ?? '/api'`, helpers `api.players.guest/me/update/claim`, `api.auth.login`, `api.quests.list/get`, `api.progress.list/complete/attempt`, `api.projects.list/create/get/update/remove/publish`, `api.showcase.list/get/fork`, `api.exports.bom/bomJson`, `api.leaderboard`, `api.health`.
+`frontend/src/api/client.js`: `api.get/post/put/del`, `ApiError { status, detail }`, base `import.meta.env.VITE_API_URL ?? '/api'`, helpers `api.players.guest/me/update/claim`, `api.auth.login`, `api.quests.list/get`, `api.progress.list/complete/attempt`, `api.projects.list/create/get/update/remove/publish`, `api.showcase.list/get/fork`, `api.community.list/get/create/update/remove/reply/updateReply/removeReply/markAnswer`, `api.exports.bom/bomJson`, `api.leaderboard`, `api.health`.
 `frontend/src/content/index.js`: `WORLDS, LEVELS, LEVEL_ORDER, CATALOG, COSMETICS, getLevel, getWorld, nextLevelId, prevLevelId`.
 Project file (`features/sandbox`): `{ format:'voltquest-project', version:1, name, board, boardMode, circuit, code, blocklyXml, editorMode, exportedAt }`.
 Blockly policy: in `blocks` mode every change regenerates `code` (Monaco read-only with banner "Generated from blocks"); text→blocks when `code !== generated` asks to confirm; blocks→text silent.
@@ -626,3 +631,31 @@ entries for a packaged C++ WinUI template's MainWindow replacement files and sup
 headers/instructions. Browser copying and downloads never execute that source. Native
 compilation and launch require the learner's Windows toolchain. No CircuitDoc, board,
 sandbox, project, simulation, assistant, MCP or showcase contract is extended.
+
+---------------------------------------------------------------------------------------------------------------
+## 25. Community discussions (2026-09-21)
+
+`/community` and `/community/:threadId` follow [COMMUNITY.md](COMMUNITY.md). Two additive tables,
+`discussion_threads` and `discussion_posts`, are created by the existing startup `create_all()`;
+no migration tool is introduced. Reading is public, writing needs the player token the app already
+issues to guests — the rule certificates and the assistant use, and the identity that may already
+publish to the showcase.
+
+Sections are fixed in `app/domain/community.py`, not authored content: `help`, `builds`, `hardware`,
+`firmware`, `courses`, `ideas`. `app/domain/community.py` also owns the text limits and the
+normalizers, and stays framework independent so schemas and services share one definition of an
+acceptable post. `PermissionDenied` is added to the shared error taxonomy and maps to **403**:
+discussions are publicly readable, so a non-author write must not be answered with 404.
+
+`is_deleted` means *withdrawn by its author* and is the only deletion. A withdrawn reply keeps its
+place without its text; a withdrawn question with no replies returns 404; one that already has
+replies stays readable with an empty body and takes no new replies. `reply_count` and
+`last_activity_at` are denormalized and maintained by every reply create and withdrawal.
+
+`features/community/PostBody.jsx` renders a post as React elements — code fences, inline backticks
+and validated `http(s)` links only. No `dangerouslySetInnerHTML` and no Markdown engine: a post body
+is untrusted text. `services/community.py` carries a per-process `WriteBudget` mirroring the
+assistant's limiter; it is not moderation, and there is no moderation, report or notification path.
+
+No CircuitDoc, board, simulation, sandbox, project, certificate, assistant, MCP or showcase contract
+is extended. The showcase detail page gains one link to `/community?project=<slug>`.

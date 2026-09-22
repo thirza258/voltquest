@@ -1010,6 +1010,7 @@ export function LandingPage() {
               <Link to="/winui" className="py-1 hover:text-brand-600">{t('C++ / WinUI desktop apps')}</Link>
               <Link to="/sandbox" className="py-1 hover:text-brand-600">{t("Sandbox")}</Link>
               <Link to="/showcase" className="py-1 hover:text-brand-600">{t("Showcase")}</Link>
+              <Link to="/community" className="py-1 hover:text-brand-600">{t("Community")}</Link>
               <Link to="/leaderboard" className="py-1 hover:text-brand-600">{t("Leaderboard")}</Link>
               <Link to="/profile" className="py-1 hover:text-brand-600">{t("Profile")}</Link>
             </nav>

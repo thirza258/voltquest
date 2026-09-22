@@ -34,9 +34,10 @@ const NAV_OPTIONS = [
   { value: 'tutorials', label: 'Tutorials' },
   { value: 'sandbox', label: 'Sandbox' },
   { value: 'showcase', label: 'Showcase' },
+  { value: 'community', label: 'Community' },
 ]
 
-const NAV_PATH = { campaign: '/campaign', tutorials: '/tutorials', sandbox: '/sandbox', showcase: '/showcase' }
+const NAV_PATH = { campaign: '/campaign', tutorials: '/tutorials', sandbox: '/sandbox', showcase: '/showcase', community: '/community' }
 
 /** Which nav segment a pathname belongs to. */
 export function navSectionFor(pathname = '/') {
@@ -44,6 +45,7 @@ export function navSectionFor(pathname = '/') {
   if (pathname.startsWith('/tutorials') || pathname.startsWith('/courses') || pathname.startsWith('/robotics') || pathname.startsWith('/vision') || pathname.startsWith('/hpc') || pathname.startsWith('/ai-agents') || pathname.startsWith('/matlab') || pathname.startsWith('/cybersecurity') || pathname.startsWith('/computer-architecture') || pathname.startsWith('/qt') || pathname.startsWith('/winui')) return 'tutorials'
   if (pathname.startsWith('/sandbox')) return 'sandbox'
   if (pathname.startsWith('/showcase')) return 'showcase'
+  if (pathname.startsWith('/community')) return 'community'
   if (pathname.startsWith('/campaign') || pathname.startsWith('/play')) return 'campaign'
   return ''
 }
@@ -158,7 +160,9 @@ export function AppHeader({
           <LogoMark />
           <span className="hidden sm:inline">{t("VoltQuest")}</span>
         </Link>
-        <div className="hidden sm:block">
+        {/* Five segments plus the logo and right cluster overflow a 640 px header, so the
+            row starts at md:; 640–767 px falls back to the select below, as mobile does. */}
+        <div className="hidden md:block">
           <SegmentedControl
             size="sm"
             options={NAV_OPTIONS}
@@ -171,7 +175,7 @@ export function AppHeader({
           aria-label={t("Section navigation")}
           value={section}
           onChange={(event) => navigate(NAV_PATH[event.target.value] ?? '/')}
-          className="h-8 max-w-[110px] rounded-md border border-line-strong bg-white px-2 text-xs text-ink focus:outline-none focus:ring-2 focus:ring-brand-500 sm:hidden"
+          className="h-8 max-w-[110px] rounded-md border border-line-strong bg-white px-2 text-xs text-ink focus:outline-none focus:ring-2 focus:ring-brand-500 md:hidden"
         >
           <option value="">{t("Home")}</option>
           {NAV_OPTIONS.map((option) => <option key={option.value} value={option.value}>{t(option.label)}</option>)}

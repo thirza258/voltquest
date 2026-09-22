@@ -70,7 +70,9 @@ ProjectSummary = Project without circuit/code/blockly_xml
 
 ## Models (SQLAlchemy)
 players(id, display_name, username unique null, password_hash null, xp int, settings json, created_at), progress(id, player_id fk, level_id, stars, xp_earned, attempts, hint_tier_max, best_code_lines, solution json null, completed_at null, unique(player_id, level_id)),
-projects(id, owner_id fk, name, description, board, board_mode, circuit json, code text, blockly_xml text null, editor_mode, thumbnail text, is_public bool, share_slug unique null, forked_from null, views, forks, created_at, updated_at).
+projects(id, owner_id fk, name, description, board, board_mode, circuit json, code text, blockly_xml text null, editor_mode, thumbnail text, is_public bool, share_slug unique null, forked_from null, views, forks, created_at, updated_at),
+discussion_threads(id, author_id fk, category, title, body, board null, project_slug null, views, reply_count, is_solved, is_deleted, edited_at null, last_activity_at, created_at, updated_at),
+discussion_posts(id, thread_id fk, author_id fk, body, is_answer, is_deleted, edited_at null, created_at, updated_at).
 JSON columns: use `sqlalchemy.JSON` (works on SQLite and Postgres).
 Env: `DATABASE_URL` (default `sqlite:///./voltquest.db`), `JWT_SECRET` (default dev secret + startup warning), `CONTENT_DIR` (default `../content`), `CORS_ORIGINS`.
 
@@ -165,6 +167,52 @@ metadata is generated as `content/mcp-catalog.json` (see `ASSISTANT.md`). The en
 against `MCP_ALLOWED_HOSTS` and browser Origin against configured CORS origins, the deployed origin,
 and standard loopback dev origins. Add deployment domains explicitly. No tool runs firmware,
 executes shell commands, publishes, deletes projects, or changes the browser's unsaved document.
+
+## Community discussions (2026-09-21)
+
+Public read, player auth (guests allowed) to write — the same rule as certificates and the assistant,
+and the same identity that may already publish a project to the showcase.
+Sections are fixed: `help`, `builds`, `hardware`, `firmware`, `courses`, `ideas`.
+
+- `GET /api/community/threads?category=&board=&project=&q=&sort=active|recent|popular&limit=20&offset=0`
+  → `{ items: [ThreadSummary], total, categories: [{ id, label, threads }] }`. `categories` is a
+  facet: it honours every filter *except* the selected category. Unknown category/sort/board → 422.
+- `POST /api/community/threads` `{ title, body, category, board?, project_slug? }` → 201 `Thread`.
+- `GET /api/community/threads/{id}` → `Thread` (increments `views`); 404 if unknown.
+- `PATCH /api/community/threads/{id}` `{ title?, body?, category? }` → `Thread` (author only).
+- `DELETE /api/community/threads/{id}` → 204 (author only).
+- `POST /api/community/threads/{id}/replies` `{ body }` → 201 `Post`.
+- `PATCH /api/community/replies/{post_id}` `{ body }` → `Post` (author only).
+- `DELETE /api/community/replies/{post_id}` → 204 (author only).
+- `POST /api/community/threads/{id}/replies/{post_id}/answer` `{ is_answer }` → `Thread`
+  (thread author only; at most one accepted answer, so accepting a second reply moves the mark).
+
+```
+Author  { id, display_name, level }                    // never the username
+Post    { id, thread_id, author, body, is_answer, is_deleted, edited_at, created_at }
+ThreadSummary { id, author, category, title, excerpt, board, project_slug, views, reply_count,
+                is_solved, last_activity_at, created_at }
+Thread = ThreadSummary + { body, is_deleted, edited_at, posts: [Post] }   // all replies, unpaginated
+```
+
+Validation: title 4–120 characters collapsed to one line; body 2–8,000 characters keeping line
+breaks and indentation but not control characters; `board` one of the six supported ids;
+`project_slug` must match a project **currently published** to the showcase (else 422).
+Extra top-level fields are rejected. `board` and `project_slug` are fixed once posted.
+
+`is_deleted` means *withdrawn by its author* and is the only deletion: a withdrawn reply keeps its
+place without its text, a withdrawn question with no replies returns 404, and one with replies stays
+readable with an empty body and accepts no new replies (422). No endpoint removes another player's
+post. Non-authors editing or deleting get **403**, not 404, because the discussion is public.
+
+Errors: 401 unauthenticated write, 403 not the author, 404 unknown thread/reply, 409 an identical
+title+body or identical reply within ten minutes (double submit), 422 validation,
+429 `community_rate_limited`. Per-process write budgets are 5 threads and 30 replies per player per
+10 minutes, and 120/600 overall — per process, not shared between workers, and not moderation.
+There is no moderation queue, report flow, notification or attachment path.
+`api.community.list/get/create/update/remove/reply/updateReply/removeReply/markAnswer` expose these
+in the frontend client. See [COMMUNITY.md](COMMUNITY.md) for the full contract and boundaries.
+
 
 ## Drone projects (additive)
 

@@ -306,6 +306,23 @@
   <url><loc>https://pcb.nevatal.id/computer-architecture/assembly-loops</loc></url>
   <url><loc>https://pcb.nevatal.id/computer-architecture/assembly-real-isas</loc></url>
   <url><loc>https://pcb.nevatal.id/computer-architecture/computer-capstone</loc></url>
+  <url><loc>https://pcb.nevatal.id/qt</loc></url>
+  <url><loc>https://pcb.nevatal.id/qt/qt-start</loc></url>
+  <url><loc>https://pcb.nevatal.id/qt/qt-cpp</loc></url>
+  <url><loc>https://pcb.nevatal.id/qt/qt-layout</loc></url>
+  <url><loc>https://pcb.nevatal.id/qt/qt-events</loc></url>
+  <url><loc>https://pcb.nevatal.id/qt/qt-mainwindow</loc></url>
+  <url><loc>https://pcb.nevatal.id/qt/qt-models</loc></url>
+  <url><loc>https://pcb.nevatal.id/qt/qt-files</loc></url>
+  <url><loc>https://pcb.nevatal.id/qt/qt-sql</loc></url>
+  <url><loc>https://pcb.nevatal.id/qt/qt-network</loc></url>
+  <url><loc>https://pcb.nevatal.id/qt/qt-async</loc></url>
+  <url><loc>https://pcb.nevatal.id/qt/qt-graphics</loc></url>
+  <url><loc>https://pcb.nevatal.id/qt/qt-qml</loc></url>
+  <url><loc>https://pcb.nevatal.id/qt/qt-localization</loc></url>
+  <url><loc>https://pcb.nevatal.id/qt/qt-testing</loc></url>
+  <url><loc>https://pcb.nevatal.id/qt/qt-deployment</loc></url>
+  <url><loc>https://pcb.nevatal.id/qt/qt-capstone</loc></url>
   <url><loc>https://pcb.nevatal.id/winui</loc></url>
   <url><loc>https://pcb.nevatal.id/winui/winui-start</loc></url>
   <url><loc>https://pcb.nevatal.id/winui/winui-layout</loc></url>
@@ -416,5 +433,6 @@
   <url><loc>https://pcb.nevatal.id/sandbox?bench=computer&amp;lesson=assembly-real-isas</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=computer&amp;lesson=computer-capstone</loc></url>
   <url><loc>https://pcb.nevatal.id/showcase</loc></url>
+  <url><loc>https://pcb.nevatal.id/community</loc></url>
   <url><loc>https://pcb.nevatal.id/leaderboard</loc></url>
 </urlset>

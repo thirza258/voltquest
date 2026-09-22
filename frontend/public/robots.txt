@@ -10,6 +10,7 @@ Disallow: /profile
 Disallow: /certificates/
 Disallow: /sandbox/
 Disallow: /showcase/
+Disallow: /community/
 
 # The JSON API serves data, not pages.
 Disallow: /api/

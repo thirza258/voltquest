@@ -13,6 +13,7 @@ from app.domain.errors import (
     InvalidInput,
     InvalidOperation,
     NotFound,
+    PermissionDenied,
     ServiceError,
 )
 
@@ -23,6 +24,7 @@ STATUS_CODES = {
     TooManyRequests: 429,
     InvalidOperation: 400,
     AuthenticationFailed: 401,
+    PermissionDenied: 403,
     NotFound: 404,
     Conflict: 409,
     InvalidInput: 422,

@@ -6,8 +6,8 @@
  * that would silently go stale. Level order mirrors `src/content/index.js`: worlds.json `levelIds`
  * in world order, filtered to the quests that actually exist on disk.
  *
- * Per-player (`/profile`) and user-generated (`/sandbox/:projectId`, `/showcase/:slug`) routes are
- * deliberately absent — they are not enumerable from content — and are disallowed in
+ * Per-player (`/profile`) and user-generated (`/sandbox/:projectId`, `/showcase/:slug`,
+ * `/community/:threadId`) routes are deliberately absent — they are not enumerable from content — and are disallowed in
  * `public/robots.txt`, whose `Sitemap:` line must keep pointing at SITE_ORIGIN below.
  */
 import fs from 'node:fs'
@@ -134,6 +134,7 @@ export function collectRoutes(contentDir) {
     ...sandboxBenches,
     ...sandboxPresets,
     '/showcase',
+    '/community',
     '/leaderboard',
   ]
 }

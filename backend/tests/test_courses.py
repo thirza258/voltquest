@@ -16,8 +16,8 @@ def course_content(client, monkeypatch):
 def test_public_courses_and_formula_content(client, course_content):
     response = client.get("/api/courses")
     assert response.status_code == 200
-    assert response.json()["total"] == 34
-    assert len(response.json()["tracks"]) == 5
+    assert response.json()["total"] == 44
+    assert len(response.json()["tracks"]) == 6
     for track in ("electrical", "iot-parts"):
         entries = client.get("/api/courses", params={"track": track}).json()["courses"]
         assert [entry["order"] for entry in entries] == list(range(1, 11))
@@ -44,7 +44,7 @@ def test_course_loader_and_absent_content(client, tmp_path):
     from app.services import content
     try:
         content.load_content(Path(__file__).resolve().parents[2] / "content")
-        assert len(content.get_courses()) == 34
+        assert len(content.get_courses()) == 44
         content.load_content(tmp_path)
         assert client.get("/api/courses").json() == {"tracks": [], "courses": [], "total": 0}
         (tmp_path / "courses.json").write_text('{"tracks": null, "courses": "invalid"}')

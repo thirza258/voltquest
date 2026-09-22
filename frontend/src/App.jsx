@@ -23,6 +23,8 @@ const CoursePage = lazy(() => import('./features/courses/CoursePage.jsx'))
 const CertificatesPage = lazy(() => import('./features/courses/CertificatesPage.jsx'))
 const WorkspacePage = lazy(() => import('./features/workspace/WorkspacePage.jsx'))
 const SandboxPage = lazy(() => import('./features/sandbox/SandboxPage.jsx'))
+const CommunityPage = lazy(() => import('./features/community/CommunityPage.jsx'))
+const ThreadPage = lazy(() => import('./features/community/ThreadPage.jsx'))
 const ShowcasePage = lazy(() => import('./features/showcase/ShowcasePage.jsx'))
 const ShowcaseProjectPage = lazy(() => import('./features/showcase/ShowcaseProjectPage.jsx'))
 const ProfilePage = lazy(() => import('./features/profile/ProfilePage.jsx'))
@@ -86,6 +88,8 @@ export default function App() {
       <Route path="/sandbox/:projectId" element={<SandboxPage />} />
       <Route path="/showcase" element={<ShowcasePage />} />
       <Route path="/showcase/:slug" element={<ShowcaseProjectPage />} />
+      <Route path="/community" element={<CommunityPage />} />
+      <Route path="/community/:threadId" element={<ThreadPage />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/leaderboard" element={<LeaderboardPage />} />
       <Route path="*" element={<div><AppHeader /><main className="p-8"><h1 className="text-xl font-semibold">{t("Page not found")}</h1><Link className="mt-4 inline-block text-brand-700 underline" to="/">{t("Back to the campaign")}</Link></main></div>} />

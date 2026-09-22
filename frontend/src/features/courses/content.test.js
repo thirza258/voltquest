@@ -8,10 +8,10 @@ const narratives = course => [course.title, course.summary, course.workedExample
   ...(course.codeExample ? [course.codeExample.title, course.codeExample.explanation, course.codeExample.exercise] : []),
   ...[...course.practice, ...course.exam.questions].flatMap(question => [question.prompt, question.explanation, ...question.options.map(option => option.text)])]
 
-it('ships electrical, IoT, drone and the twelve-course programming path', () => {
-  expect(COURSE_TRACKS.map(track => track.id)).toEqual(['electrical', 'iot-parts', 'iot-foundations', 'drone-foundations', 'programming'])
-  expect(COURSES).toHaveLength(34)
-  expect(new Set(COURSES.map(course => course.id)).size).toBe(34)
+it('ships electrical, IoT, drone, programming and the ten-course engineering ethics path', () => {
+  expect(COURSE_TRACKS.map(track => track.id)).toEqual(['electrical', 'iot-parts', 'iot-foundations', 'drone-foundations', 'programming', 'ethics'])
+  expect(COURSES).toHaveLength(44)
+  expect(new Set(COURSES.map(course => course.id)).size).toBe(44)
   for (const track of COURSE_TRACKS) {
     const courses = COURSES.filter(course => course.track === track.id)
     const count = track.id === 'programming' ? 12 : track.id.endsWith('foundations') ? 1 : 10

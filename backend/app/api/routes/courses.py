@@ -9,7 +9,9 @@ router = APIRouter(prefix="/courses", tags=["courses"])
 
 @router.get("")
 def list_courses(
-    track: Literal["electrical", "iot-parts", "iot-foundations", "drone-foundations", "programming"] | None = None,
+    track: Literal[
+        "electrical", "iot-parts", "iot-foundations", "drone-foundations", "programming", "ethics"
+    ] | None = None,
     difficulty: Literal["Fundamental", "Intermediate"] | None = None,
     q: str = Query(default="", max_length=200),
 ) -> dict:

@@ -21,6 +21,10 @@ class NotFound(ServiceError):
     """The requested resource is missing or inaccessible to the caller."""
 
 
+class PermissionDenied(ServiceError):
+    """The caller may read the resource but not perform this operation on it."""
+
+
 class Conflict(ServiceError):
     """An operation conflicts with an existing resource."""
 
