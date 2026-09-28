@@ -2,46 +2,18 @@ import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useI18n } from '../../i18n/index.jsx'
 import { ALL_SANDBOXES } from './sandboxDirectory.js'
-import {
-  Activity,
-  Binary,
-  Bot,
-  Boxes,
-  ChevronLeft,
-  ChevronRight,
-  Compass,
-  Cpu,
-  Eye,
-  Plane,
-  Shield,
-  Zap,
-} from 'lucide-react'
+import { unsavedBenchWork } from './benchGuard.js'
+import { Activity, Binary, Bot, Boxes, ChevronDown, ChevronLeft, ChevronRight, Compass, Cpu, Eye, Plane, Shield, Zap } from 'lucide-react'
 import { useWorkspaceStore } from '../../store/workspaceStore.js'
+import { Button, Modal } from '../../ui/index.js'
 
-const ICONS = {
-  Cpu,
-  Plane,
-  Binary,
-  Bot,
-  Activity,
-  Shield,
-  Zap,
-  Eye,
-  Compass,
-}
+const ICONS = { Cpu, Plane, Binary, Bot, Activity, Shield, Zap, Eye, Compass }
 
-const TONE_CLASSES = {
-  teal: 'bg-teal-50 text-teal-700 border-teal-200',
-  sky: 'bg-sky-50 text-sky-700 border-sky-200',
-  indigo: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-  purple: 'bg-purple-50 text-purple-700 border-purple-200',
-  orange: 'bg-orange-50 text-orange-700 border-orange-200',
-  rose: 'bg-rose-50 text-rose-700 border-rose-200',
-  amber: 'bg-amber-50 text-amber-700 border-amber-200',
-  blue: 'bg-blue-50 text-blue-700 border-blue-200',
-  cyan: 'bg-cyan-50 text-cyan-700 border-cyan-200',
-}
-
+/**
+ * The one navigation rail between sandbox benches (desktop rail at xl, a disclosure list below).
+ * Leaving the circuit or drone workspace saves its draft; leaving a bench with unsaved explicit-save
+ * work asks first, because that work is not stored until its Save action runs.
+ */
 export default function SandboxNavSidebar({ currentBench = 'circuit', className = '' }) {
   const { t } = useI18n()
   const navigate = useNavigate()
@@ -49,166 +21,107 @@ export default function SandboxNavSidebar({ currentBench = 'circuit', className 
   const activeBench = searchParams.get('bench') || currentBench || 'circuit'
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [leaving, setLeaving] = useState(null)
+  const active = ALL_SANDBOXES.find((s) => (s.bench || 'circuit') === activeBench) ?? ALL_SANDBOXES[0]
 
+  function go(sandbox) {
+    // Only the circuit/drone workspace owns the draft slot; other benches must not overwrite it.
+    if (['circuit', 'drone'].includes(currentBench)) {
+      try { useWorkspaceStore.getState().saveDraft() } catch { /* The workspace may already be unmounted. */ }
+    }
+    setLeaving(null)
+    setMobileOpen(false)
+    navigate(sandbox.path)
+  }
   function handleSelect(sandbox, event) {
     event.preventDefault()
-    // Save draft if in workspace
-    try {
-      useWorkspaceStore.getState().saveDraft()
-    } catch {
-      // Ignore if not in workspace context
-    }
-    navigate(sandbox.path)
-    setMobileOpen(false)
+    if ((sandbox.bench || 'circuit') === activeBench) { setMobileOpen(false); return }
+    if (unsavedBenchWork()) setLeaving(sandbox)
+    else go(sandbox)
+  }
+
+  const item = (sandbox, compact) => {
+    const isActive = sandbox === active
+    const Icon = ICONS[sandbox.icon] ?? Cpu
+    return <a
+      key={sandbox.id}
+      href={sandbox.path}
+      onClick={(e) => handleSelect(sandbox, e)}
+      aria-current={isActive ? 'page' : undefined}
+      title={compact ? `${t(sandbox.name)} — ${t(sandbox.description, sandbox.values)}` : t(sandbox.description, sandbox.values)}
+      className={`flex items-start gap-2.5 rounded-lg border p-2 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 ${compact ? 'justify-center' : ''} ${isActive ? 'border-brand-300 bg-brand-50 text-brand-900' : 'border-transparent text-ink-secondary hover:bg-surface-sunken hover:text-ink'}`}
+    >
+      <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${isActive ? 'bg-brand-600 text-white' : 'bg-surface-sunken text-slate-600'}`}>
+        <Icon size={15} aria-hidden="true" />
+      </span>
+      {!compact && <span className="min-w-0 flex-1">
+        <span className={`block text-[13px] leading-5 ${isActive ? 'font-semibold' : 'font-medium text-ink'}`}>{t(sandbox.name)}</span>
+        <span className="line-clamp-2 text-xxs leading-4 text-slate-600">{t(sandbox.description, sandbox.values)}</span>
+      </span>}
+    </a>
   }
 
   return (
     <>
-      {/* Mobile Drawer Trigger (screens below xl) */}
-      <div className="xl:hidden flex items-center justify-between border-b border-line bg-surface-subtle px-3 py-2 text-xs">
+      <div className="xl:hidden border-b border-line bg-surface-sunken px-3 py-2">
         <button
-          onClick={() => setMobileOpen((prev) => !prev)}
-          className="inline-flex items-center gap-1.5 font-medium text-brand-700 hover:text-brand-800"
+          type="button"
+          onClick={() => setMobileOpen((open) => !open)}
+          className="inline-flex items-center gap-1.5 rounded text-xs font-semibold text-brand-700 hover:text-brand-800 focus:outline-none focus:ring-2 focus:ring-brand-500"
           aria-expanded={mobileOpen}
         >
-          <Boxes size={14} />
-          <span>{t("All Sandboxes")} ({ALL_SANDBOXES.length})</span>
-          <span className="rounded bg-brand-100 px-1.5 py-0.5 text-[10px] text-brand-800">
-            {ALL_SANDBOXES.find((s) => (s.bench || 'circuit') === activeBench)?.name ?? t('Sandbox')}
-          </span>
+          <Boxes size={14} aria-hidden="true" />
+          <span>{t('Sandboxes')} ({ALL_SANDBOXES.length})</span>
+          <span className="rounded bg-brand-100 px-1.5 py-0.5 text-xxs text-brand-800">{t(active.name)}</span>
+          <ChevronDown size={14} aria-hidden="true" className={mobileOpen ? 'rotate-180' : ''} />
         </button>
       </div>
 
-      {/* Mobile Drawer Menu */}
       {mobileOpen && (
-        <div className="xl:hidden border-b border-line bg-white p-3 space-y-1 max-h-64 overflow-y-auto z-20">
-          <p className="px-2 py-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-            {t("Switch Sandbox Bench")}
-          </p>
-          {ALL_SANDBOXES.map((item) => {
-            const isActive = (item.bench || 'circuit') === activeBench
-            const Icon = ICONS[item.icon] ?? Cpu
-            return (
-              <button
-                key={item.id}
-                onClick={(e) => handleSelect(item, e)}
-                className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-xs transition-colors ${
-                  isActive
-                    ? 'bg-brand-50 text-brand-900 font-semibold border border-brand-200'
-                    : 'text-ink-secondary hover:bg-slate-50 hover:text-ink'
-                }`}
-              >
-                <Icon size={16} className={isActive ? 'text-brand-700' : 'text-slate-500'} />
-                <span className="flex-1 truncate">{t(item.name)}</span>
-                {isActive && (
-                  <span className="rounded bg-brand-600 px-1.5 py-0.5 text-[10px] text-white">
-                    {t("Active")}
-                  </span>
-                )}
-              </button>
-            )
-          })}
-        </div>
+        <nav aria-label={t('All available sandboxes')} className="xl:hidden max-h-80 space-y-1 overflow-y-auto border-b border-line bg-white p-2">
+          {ALL_SANDBOXES.map((sandbox) => item(sandbox, false))}
+        </nav>
       )}
 
-      {/* Desktop Sidebar (screens xl and above) */}
       <aside
-        aria-label={t("All available sandboxes")}
-        className={`hidden xl:flex flex-col border-r border-line bg-white transition-all duration-200 flex-shrink-0 z-10 ${
-          collapsed ? 'w-14' : 'w-60'
-        } ${className}`}
+        aria-label={t('All available sandboxes')}
+        className={`hidden xl:flex flex-shrink-0 flex-col border-r border-line bg-white transition-[width] duration-150 ${collapsed ? 'w-14' : 'w-64'} ${className}`}
       >
-        {/* Sidebar Header */}
-        <div className="flex h-10 items-center justify-between border-b border-line px-3 bg-surface-subtle">
-          {!collapsed ? (
-            <div className="flex items-center gap-2">
-              <Boxes size={16} className="text-brand-700" />
-              <span className="text-xs font-semibold uppercase tracking-wider text-ink">
-                {t("Sandboxes")}
-              </span>
-              <span className="rounded-full bg-slate-200 px-1.5 py-0.2 text-[10px] font-medium text-slate-700">
-                {ALL_SANDBOXES.length}
-              </span>
-            </div>
-          ) : (
-            <div className="mx-auto">
-              <Boxes size={16} className="text-brand-700" />
-            </div>
+        <div className="flex h-10 items-center justify-between border-b border-line bg-surface-sunken px-3">
+          {!collapsed && (
+            <p className="flex items-center gap-2 text-xxs font-semibold uppercase tracking-wide text-slate-600">
+              <Boxes size={15} className="text-brand-700" aria-hidden="true" />
+              {t('Sandboxes')}
+              <span className="rounded-full bg-slate-200 px-1.5 py-0.5 text-xxs font-medium text-slate-700">{ALL_SANDBOXES.length}</span>
+            </p>
           )}
           <button
+            type="button"
             onClick={() => setCollapsed((c) => !c)}
-            title={collapsed ? t("Expand sandboxes sidebar") : t("Collapse sandboxes sidebar")}
-            aria-label={collapsed ? t("Expand sandboxes sidebar") : t("Collapse sandboxes sidebar")}
-            className="rounded p-1 text-slate-500 hover:bg-slate-200 hover:text-ink focus:outline-none focus:ring-1 focus:ring-brand-500"
+            title={collapsed ? t('Expand sandboxes sidebar') : t('Collapse sandboxes sidebar')}
+            aria-label={collapsed ? t('Expand sandboxes sidebar') : t('Collapse sandboxes sidebar')}
+            className={`rounded p-1 text-slate-600 hover:bg-slate-200 hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand-500 ${collapsed ? 'mx-auto' : ''}`}
           >
             {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
           </button>
         </div>
-
-        {/* Sandboxes List */}
-        <div className="flex-1 overflow-y-auto p-2 space-y-1">
-          {ALL_SANDBOXES.map((item) => {
-            const isActive = (item.bench || 'circuit') === activeBench
-            const Icon = ICONS[item.icon] ?? Cpu
-            const toneClass = TONE_CLASSES[item.color] ?? 'bg-slate-50 text-slate-700 border-slate-200'
-
-            return (
-              <a
-                key={item.id}
-                href={item.path}
-                onClick={(e) => handleSelect(item, e)}
-                title={collapsed ? `${t(item.name)} — ${t(item.description)}` : undefined}
-                className={`group relative flex items-center gap-2.5 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-brand-500 ${
-                  collapsed ? 'justify-center p-2' : 'p-2'
-                } ${
-                  isActive
-                    ? 'bg-brand-50/90 text-brand-900 border border-brand-300 shadow-xs'
-                    : 'text-ink-secondary hover:bg-slate-50 hover:text-ink border border-transparent'
-                }`}
-              >
-                {/* Icon */}
-                <span
-                  className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md border text-xs transition-colors ${
-                    isActive ? 'bg-brand-600 text-white border-brand-700' : toneClass
-                  }`}
-                >
-                  <Icon size={14} />
-                </span>
-
-                {/* Title & Tag */}
-                {!collapsed && (
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center justify-between gap-1">
-                      <p className={`truncate text-xs font-medium ${isActive ? 'text-brand-900 font-semibold' : 'text-ink'}`}>
-                        {t(item.name)}
-                      </p>
-                      {isActive ? (
-                        <span className="rounded bg-brand-600 px-1 py-0.2 text-[9px] font-semibold text-white">
-                          {t("Active")}
-                        </span>
-                      ) : (
-                        <span className="text-[10px] text-slate-600 font-mono">
-                          {t(item.tag)}
-                        </span>
-                      )}
-                    </div>
-                    <p className="truncate text-[10px] text-slate-600">
-                      {t(item.description)}
-                    </p>
-                  </div>
-                )}
-              </a>
-            )
-          })}
-        </div>
-
-        {/* Sidebar Footer info when expanded */}
+        <nav aria-label={t('Sandbox benches')} className="flex-1 space-y-1 overflow-y-auto p-2">
+          {ALL_SANDBOXES.map((sandbox) => item(sandbox, collapsed))}
+        </nav>
         {!collapsed && (
-          <div className="border-t border-line p-2 text-[10px] text-slate-600 text-center">
-            {t("Switch benches anytime. Local work is saved.")}
-          </div>
+          <p className="border-t border-line p-3 text-xxs leading-4 text-slate-600">
+            {t('Circuit and drone drafts save automatically. Other benches store work only when you save; this rail asks before leaving unsaved changes.')}
+          </p>
         )}
       </aside>
+
+      <Modal
+        open={Boolean(leaving)}
+        onClose={() => setLeaving(null)}
+        title={t('Leave with unsaved changes?')}
+        description={t('{what} has changes that are not saved in this browser. Save or export them first to keep them.', { what: t(unsavedBenchWork()?.what ?? active.name) })}
+        footer={<><Button variant="secondary" onClick={() => setLeaving(null)}>{t('Stay on this bench')}</Button><Button variant="danger" onClick={() => go(leaving)}>{t('Leave without saving')}</Button></>}
+      />
     </>
   )
 }

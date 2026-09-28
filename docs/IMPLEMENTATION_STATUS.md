@@ -1,5 +1,20 @@
 # PRD implementation verification
 
+### Sandbox IDE benches and shell consistency (2026-09-28)
+
+This is a feature request beyond the PRD. The MATLAB, AI agent and HPC sandbox benches become IDEs
+modelled on their real tools:
+- a MATLAB-style desktop;
+- an Antigravity-style Editor + Agent Manager;
+- a VS Code-style C/C++ workbench.
+
+They run over shared notebook hooks, so course labs and IDEs behave identically. The nine-bench
+shell now uses one directory for names, descriptions and save behaviour. Its descriptions are
+accurate, with counts pinned by tests, and it guards unsaved work before switching benches.
+**1,697 frontend / 121 backend** tests pass. The eager build is 602.9 KiB gzip. Browser checks used
+Chromium at 390–1440 px. Other browsers, touch devices and screen readers remain release checks.
+See AGENTS.md §3.
+
 ### Community discussions (2026-09-21)
 
 A feature request beyond the PRD, not a PRD requirement. `/community` and `/community/:threadId` add

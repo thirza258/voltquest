@@ -8,9 +8,10 @@ import { installMemoryStorage } from '../../test-utils/localStorage.js'
 import HpcPage, { HPC_COURSES } from './HpcPage.jsx'
 import { HPC_STORAGE_PREFIX, createHpcProject } from './project.js'
 import { readCourseProgress, COURSE_PROGRESS_KEY } from '../courses/progress.js'
-import { downloadJson, downloadText } from '../../lib/download.js'
+import { downloadBlob, downloadJson, downloadText } from '../../lib/download.js'
+import { nativeInstructions } from './examples.js'
 
-vi.mock('../../lib/download.js', () => ({ downloadJson: vi.fn(), downloadText: vi.fn() }))
+vi.mock('../../lib/download.js', () => ({ downloadJson: vi.fn(), downloadText: vi.fn(), downloadBlob: vi.fn() }))
 beforeEach(() => { installMemoryStorage(); vi.clearAllMocks() })
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals() })
 function page(path = '/hpc') {
@@ -201,4 +202,53 @@ it('ignores late worker output after parameters change and terminates on disposa
   view.unmount()
   expect(workers[1].terminate).toHaveBeenCalled()
   await waitFor(() => expect(workers).toHaveLength(2))
+})
+
+it('works like a C/C++ workbench: drafts, generated build files, diffs, run log and a project archive', async () => {
+  page('/sandbox?bench=hpc&lesson=hpc-openmp')
+  const commands = nativeInstructions('reduction', 'cpp')
+  fireEvent.click(screen.getByRole('button', { name: /^reduction\.c\b/ }))
+  expect(screen.getByLabelText('Source language').value).toBe('c')
+  change('Editable native source', '/* my C draft */')
+  fireEvent.click(screen.getByRole('button', { name: /^reduction\.cpp/ }))
+  expect(screen.getByLabelText('Editable native source').value).toContain('C++17 native companion')
+  fireEvent.click(screen.getByRole('button', { name: /^BUILD\.md/ }))
+  const guide = screen.getByRole('textbox', { name: 'BUILD.md' })
+  expect(guide.value).toContain(commands.build)
+  expect(guide.value).toContain('does not compile or time this source')
+  fireEvent.click(screen.getByRole('tab', { name: /^Build/ }))
+  expect(screen.getAllByText(commands.build).length).toBeGreaterThan(0)
+  click('Download build.sh')
+  expect(downloadText).toHaveBeenLastCalledWith(expect.stringContaining(commands.run), 'build.sh')
+  fireEvent.click(screen.getByRole('button', { name: /^reduction\.c\b/ }))
+  fireEvent.click(screen.getByRole('tab', { name: /^reduction\.c\b/ }))
+  click('Compare with example')
+  expect(screen.getByLabelText('Changes to reduction.c').textContent).toContain('+ /* my C draft */')
+  click('Run experiment'); await screen.findByText('FAIL: Reduction matches reference')
+  change('Update strategy', 'private-reduction'); click('Run experiment'); await screen.findByText('PASS: Reduction matches reference')
+  fireEvent.click(screen.getByRole('tab', { name: /^Output/ }))
+  const log = screen.getByLabelText('Run log')
+  expect(log.textContent).toContain('Run #1 · reduction · workers=4, updates=10, method=unsafe-shared')
+  expect(log.textContent).toContain('0/1 checks passed')
+  expect(log.textContent).toContain('1/1 checks passed')
+  click('Download project (.zip)')
+  const [archive, name] = downloadBlob.mock.calls.at(-1)
+  expect(name).toBe('hpc-reduction.zip')
+  const bytes = await new Promise(resolve => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.readAsText(archive) })
+  for (const file of ['reduction.c', 'reduction.cpp', 'build.sh', 'README.md', '/* my C draft */']) expect(bytes).toContain(file)
+})
+
+it('reports a saved copy that matches the editors and keeps IDE state across a language change', async () => {
+  page('/sandbox?bench=hpc&lesson=hpc-simd')
+  const explorer = screen.getByRole('complementary', { name: 'Side bar' })
+  expect(explorer.textContent).toContain('Saved copy in this browser: None')
+  change('Editable native source', '// saved draft')
+  click('Save experiment')
+  expect(explorer.textContent).toContain('Saved copy in this browser: Matches the editors')
+  change('Experiment notes', 'unsaved change')
+  expect(explorer.textContent).toContain('Differs from the editors')
+  click('Run experiment'); await screen.findByText('PASS: All outputs match')
+  change('Language / Bahasa', 'id')
+  expect(screen.getByLabelText('Kode native yang dapat diedit').value).toBe('// saved draft')
+  expect(screen.getByLabelText('Hasil eksperimen')).toBeTruthy()
 })

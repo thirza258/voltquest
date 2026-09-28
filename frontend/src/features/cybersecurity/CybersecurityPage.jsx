@@ -7,7 +7,7 @@ import { AppHeader } from '../workspace/AppHeader.jsx'
 import { readCourseProgress } from '../courses/progress.js'
 import SandboxBenchLayout from '../sandbox/SandboxBenchLayout.jsx'
 import CyberCourse from './CyberCourse.jsx'
-import CyberLab from './CyberLab.jsx'
+import CyberConsole from './CyberConsole.jsx'
 import { fieldClass, linkClass, panelClass } from './styles.js'
 
 export const CYBER_COURSES = content.courses
@@ -49,13 +49,13 @@ export default function CybersecurityPage({ sandbox = false }) {
     return (
       <SandboxBenchLayout
         bench="cybersecurity"
-        title={t('Cybersecurity sandbox')}
-        description={t('Choose a web lab, build your own requests and keep an investigation notebook. Open its course for the explanation, guided tutorial and exam.')}
+        variant="app"
+        description={t('A security workbench: a network topology, a curl terminal and a DevTools-style inspector over a fictional local shop. Toggle defenses and rerun. All accounts, files and destinations are local fixtures; no request leaves the browser.')}
         courseLink={course ? `/cybersecurity/${course.id}` : '/cybersecurity'}
         courseLinkLabel={t(course ? 'Back to the course' : 'All cybersecurity courses')}
         localeNotice={locale === 'id' ? t('Cybersecurity course narratives, questions and technical traces are currently in English. Interface controls support Indonesian.') : null}
       >
-        <CyberLab key={course?.id ?? 'free'} initialLab={course?.lab ?? 'http'} free />
+        <CyberConsole key={course?.id ?? 'free'} initialLab={course?.lab ?? 'http'} />
       </SandboxBenchLayout>
     )
   }

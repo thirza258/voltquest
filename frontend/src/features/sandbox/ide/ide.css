@@ -1,0 +1,86 @@
+/*
+ * Shared sandbox IDE surfaces. Each IDE sets its palette with CSS variables on its root
+ * (see features/matlab/matlab-ide.css and features/agents/agent-ide.css); these rules only use them.
+ */
+.vq-code {
+  --code-font: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--code-bg, #ffffff);
+  color: var(--code-fg, #0f172a);
+  font-family: var(--code-font);
+  font-size: 13px;
+  line-height: 20px;
+  font-variant-ligatures: none;
+}
+.vq-code-gutter {
+  position: relative;
+  min-width: 3.5em;
+  overflow: hidden;
+  border-right: 1px solid var(--code-gutter-border, #e2e8f0);
+  background: var(--code-gutter-bg, #f8fafc);
+  color: var(--code-gutter-fg, #64748b);
+  text-align: right;
+  user-select: none;
+  font-variant-numeric: tabular-nums;
+}
+.vq-code-gutter > div > div { height: 20px; padding: 0 10px 0 14px; }
+.vq-code-gutter .is-current { color: var(--code-gutter-current, #0f172a); }
+.vq-code-gutter .is-error { background: var(--code-error-bg, #fee2e2); color: var(--code-error, #b91c1c); font-weight: 600; }
+.vq-code-gutter .is-warning { background: var(--code-warning-bg, #fef3c7); color: var(--code-warning, #92400e); font-weight: 600; }
+.vq-code-body { position: relative; min-width: 0; overflow: hidden; }
+.vq-code-band {
+  position: absolute; top: 8px; left: 0; right: 0; height: 20px;
+  background: var(--code-current-line, rgba(15, 23, 42, 0.04));
+  pointer-events: none;
+}
+.vq-code-layer, .vq-code textarea {
+  margin: 0;
+  padding: 8px 14px;
+  border: 0;
+  font: inherit;
+  line-height: inherit;
+  letter-spacing: normal;
+  word-spacing: normal;
+  tab-size: 4;
+  white-space: pre;
+  text-transform: none;
+}
+.vq-code-layer {
+  position: absolute; top: 0; left: 0;
+  min-width: 100%;
+  color: var(--code-fg, #0f172a);
+  pointer-events: none;
+}
+.vq-code textarea {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  resize: none;
+  overflow: auto;
+  outline: none;
+  background: transparent;
+  color: transparent;
+  caret-color: var(--code-caret, #0f172a);
+}
+.vq-code textarea::selection { background: var(--code-selection, rgba(59, 130, 246, 0.28)); color: transparent; }
+.vq-code:focus-within { box-shadow: inset 0 0 0 2px var(--code-focus, #14b8a6); }
+.vq-code[data-readonly] textarea { cursor: default; }
+.vq-code .tok-keyword { color: var(--tok-keyword, #1d4ed8); }
+.vq-code .tok-unsupported { color: var(--tok-keyword, #1d4ed8); text-decoration: underline wavy var(--code-warning, #d97706); text-underline-offset: 3px; }
+.vq-code .tok-comment { color: var(--tok-comment, #15803d); }
+.vq-code .tok-section { color: var(--tok-comment, #15803d); font-weight: 700; }
+.vq-code .tok-string { color: var(--tok-string, #7e22ce); }
+.vq-code .tok-string-open { color: var(--tok-string-open, #b91c1c); }
+.vq-code .tok-number { color: var(--tok-number, inherit); }
+.vq-code .tok-invalid { color: var(--code-error, #b91c1c); text-decoration: underline wavy var(--code-error, #b91c1c); }
+.vq-code .tok-key { color: var(--tok-key, #0369a1); }
+.vq-code .tok-literal { color: var(--tok-literal, #1d4ed8); }
+.vq-code .tok-heading { color: var(--tok-heading, #1d4ed8); font-weight: 700; }
+.vq-code .tok-punct { color: var(--tok-punct, inherit); }
+@media (prefers-reduced-motion: no-preference) {
+  .vq-ide-fade { transition: background-color 150ms ease, color 150ms ease; }
+}

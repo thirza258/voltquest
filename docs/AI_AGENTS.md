@@ -67,3 +67,21 @@ incomplete-exam rejection, an 80% score restored after reload, reading progress,
 locale retention and 390 px layouts passed. Both native offline demos completed using
 terminal input, explicit write approval and artifact readback. Paid inference and real
 GitHub account access were not exercised; transport tests use controlled fixtures.
+
+## Sandbox IDE (2026-09-28)
+
+`/sandbox?bench=ai-agents` renders `AgentIde.jsx`, an agent-first IDE in the layout of VS Code-derived
+agent tools such as Google Antigravity (Editor + Agent Manager, Ctrl/Cmd+E). Course and tutorial pages
+keep `AgentLab.jsx`; both use `useAgentNotebook.js`. The model is still the scripted fixture: the
+title bar says "Model: scripted fixture" where a model selector would be, and nothing is inferred.
+
+- **Editor view.** Explorer with the notebook files (`harness.json`, `SKILL.md`, `agent.mjs`, `agent.py`,
+  `NOTES.md`), the read-only virtual workspace and fictional issue tracker, editor tabs with JSON,
+  Markdown, JavaScript and Python highlighting, a panel (Problems from `parseConfig`/`lintSkill`,
+  raw Trace, request Ledger, regression Checks, Run locally) and an agent side panel.
+- **Agent panel / Agent Manager.** The thread shows the task, each scripted proposal with its ledger
+  tokens and hypothetical cost, the real tool result or error, approvals (exact arguments, approve or
+  deny), questions and the final fixture answer. The Plan artifact is the scripted turn list with
+  the state each turn reached; Changes is a line diff of files the run wrote plus created issues.
+  Proceed runs the plan until the next pause. Only artifacts with content are counted.
+- **Theme.** Dark by default with a light theme (`vq.workbench.theme`, shared with the HPC IDE).

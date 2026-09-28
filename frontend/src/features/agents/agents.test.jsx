@@ -87,6 +87,7 @@ it('changes budget controls on blur, stops before spending, and clears old evide
 })
 it('executes regression checks and clears results on edits to execution inputs', () => {
   page('/sandbox?bench=ai-agents&lesson=agents-harness')
+  fireEvent.click(screen.getByRole('tab', { name: /^Checks/ }))
   click('Run regression checks')
   expect(screen.getByRole('region', { name: 'Regression results' }).textContent).toContain('6/6 checks passed')
   change('Editable SKILL.md', '---\nname: different\ndescription: Another focused workflow\n---\nRead and report.')
@@ -106,6 +107,7 @@ it('rejects an invalid quick control without corrupting the runnable JSON', () =
 it('saves exact unfinished drafts and both editable companions, then confirms replacement', () => {
   page('/sandbox?bench=ai-agents&lesson=agents-cli')
   change('Harness JSON', '{ draft'); change('Editable SKILL.md', '# unfinished skill')
+  fireEvent.click(screen.getByRole('tab', { name: /^agent\.mjs/ }))
   change('Editable CLI source', '// exact JS draft')
   change('Companion language', 'python'); change('Editable CLI source', '# exact Python draft')
   change('Experiment notes', 'Compare languages'); click('Save notebook')
@@ -116,9 +118,11 @@ it('saves exact unfinished drafts and both editable companions, then confirms re
   click('Load saved notebook'); click('Replace notebook')
   expect(screen.getByLabelText('Experiment notes').value).toBe('Compare languages')
   click('Export notebook'); expect(downloadJson).toHaveBeenLastCalledWith(saved, 'agents-cli.json')
+  fireEvent.click(screen.getByRole('tab', { name: /^agent\.py/ }))
   click('Download CLI source'); expect(downloadText).toHaveBeenLastCalledWith('# exact Python draft', 'agent.py')
   change('Companion language', 'javascript'); click('Download CLI source')
   expect(downloadText).toHaveBeenLastCalledWith('// exact JS draft', 'agent.mjs')
+  fireEvent.click(screen.getByRole('tab', { name: /^SKILL\.md/ }))
   click('Download SKILL.md'); expect(downloadText).toHaveBeenLastCalledWith('# unfinished skill', 'SKILL.md')
 })
 it('protects current drafts when selecting presets or resetting', () => {
@@ -208,4 +212,16 @@ it('provides navigation-only course, tutorial and sandbox entry points', () => {
   expect(screen.getByRole('link', { name: 'Explore AI agent courses' }).getAttribute('href')).toBe('/ai-agents')
   expect(screen.getByRole('link', { name: 'Guided tutorials' }).getAttribute('href')).toBe('/ai-agents?view=tutorials')
   expect(screen.getByRole('link', { name: 'Open AI agent sandbox' }).getAttribute('href')).toBe('/sandbox?bench=ai-agents')
+})
+
+it('keeps the IDE source, run, open editor and view across a language change', () => {
+  page('/sandbox?bench=ai-agents&lesson=agents-codex')
+  fireEvent.click(screen.getByRole('tab', { name: /^SKILL\.md/ }))
+  click('Run until pause')
+  fireEvent.click(screen.getByRole('tab', { name: 'Agent Manager' }))
+  change('Language / Bahasa', 'id')
+  expect(screen.getByRole('tab', { name: translate('id', 'Agent Manager') }).getAttribute('aria-selected')).toBe('true')
+  expect(screen.getByRole('region', { name: 'Hasil eksekusi agen' })).toBeTruthy()
+  fireEvent.click(screen.getByRole('tab', { name: translate('id', 'Editor') }))
+  expect(screen.getByRole('tab', { name: /^SKILL\.md/ }).getAttribute('aria-selected')).toBe('true')
 })

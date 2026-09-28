@@ -156,6 +156,7 @@
   <url><loc>https://pcb.nevatal.id/courses?track=iot-foundations</loc></url>
   <url><loc>https://pcb.nevatal.id/courses?track=drone-foundations</loc></url>
   <url><loc>https://pcb.nevatal.id/courses?track=programming</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses?track=ethics</loc></url>
   <url><loc>https://pcb.nevatal.id/courses/ee-circuits</loc></url>
   <url><loc>https://pcb.nevatal.id/courses/ee-ohms-law</loc></url>
   <url><loc>https://pcb.nevatal.id/courses/ee-networks</loc></url>
@@ -190,6 +191,16 @@
   <url><loc>https://pcb.nevatal.id/courses/programming-state</loc></url>
   <url><loc>https://pcb.nevatal.id/courses/programming-esp32</loc></url>
   <url><loc>https://pcb.nevatal.id/courses/programming-mqtt</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses/ethics-foundations</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses/ethics-risk</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses/ethics-evidence</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses/ethics-accountability</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses/ethics-users</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses/ethics-privacy</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses/ethics-security</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses/ethics-sustainability</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses/ethics-automation</loc></url>
+  <url><loc>https://pcb.nevatal.id/courses/ethics-speaking-up</loc></url>
   <url><loc>https://pcb.nevatal.id/vision</loc></url>
   <url><loc>https://pcb.nevatal.id/vision/opencv-foundations</loc></url>
   <url><loc>https://pcb.nevatal.id/vision/opencv-drone</loc></url>

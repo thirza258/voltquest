@@ -17,7 +17,7 @@ const SETTINGS_KEY = 'vq.workspace'
 const DRAFT_PREFIX = 'vq.draft.'
 const DRAFT_DEBOUNCE_MS = 1000
 
-export const LEFT_TABS = ['objectives', 'parts', 'inspect', 'learn', 'sandboxes', 'assistant']
+export const LEFT_TABS = ['objectives', 'parts', 'inspect', 'learn', 'assistant']
 export const RIGHT_TABS = ['code', 'phone', 'iot']
 
 const DEFAULT_PANELS = { left: 300, right: 420, serial: 180 }

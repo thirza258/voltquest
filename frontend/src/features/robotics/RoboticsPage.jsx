@@ -20,7 +20,6 @@ export default function RoboticsPage({ sandbox = false }) {
     return (
       <SandboxBenchLayout
         bench="robotics"
-        title={t('Robotics sandbox')}
         description={t('Experiment freely with a mobile robot and ROS 2 concepts. Load a saved robot or edit the world below.')}
         courseLink={lesson ? `/robotics/${lesson.id}` : '/robotics'}
         courseLinkLabel={t(lesson ? 'Back to the tutorial' : 'All robotics tutorials')}

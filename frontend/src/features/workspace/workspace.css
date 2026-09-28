@@ -17,6 +17,13 @@
   .vq-workspace-header > div:last-child { flex: 1; justify-content: flex-end; }
 }
 
+/* App-mode sandbox benches (SandboxBenchLayout variant="app"): the IDE body gets a usable
+   fixed height when the page scrolls, and the remaining viewport height at desktop widths. */
+.vq-bench-app .vq-bench-app-body { flex: none; height: max(640px, calc(100dvh - 150px)); }
+@media (min-width: 1280px) {
+  .vq-bench-app .vq-bench-app-body { flex: 1 1 0%; height: auto; }
+}
+
 .vq-workspace .vq-sandbox-sidebar {
   border-color: var(--color-line, #e2e8f0);
 }

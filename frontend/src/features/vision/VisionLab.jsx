@@ -7,6 +7,7 @@ import { DEFAULT_VISION, VISION_THEMES, VISION_MODES, makeScene, parseVision, va
 import { processOpenCv } from '../../engine/vision/opencv.js'
 import { loadOpenCv } from './opencvLoader.js'
 import { observationFromResult } from './integration.js'
+import { useUnsavedBenchWork } from '../sandbox/benchGuard.js'
 const VisionIntegration = lazy(() => import('./VisionIntegration.jsx'))
 export const VISION_STORAGE_KEY = 'vq.vision.project.v1'
 const fieldClass = 'mt-1 block w-full min-w-0 rounded border border-line-strong bg-white p-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500'
@@ -32,8 +33,10 @@ export default function VisionLab({ initialConfig = DEFAULT_VISION, integrated =
   const [notice, setNotice] = useState('')
   const [pending, setPending] = useState(null)
   const [showIntegration, setShowIntegration] = useState(integrated)
+  const [baseline, setBaseline] = useState(() => JSON.stringify(config))
   const fileInput = useRef(null)
   const key = JSON.stringify(config)
+  useUnsavedBenchWork(key !== baseline, 'Vision settings')
   const scene = useMemo(() => makeScene(config), [config])
   const attention = useMemo(() => config.mode === 'attention' ? patchAttention(scene, config) : null, [scene, config])
   useEffect(() => {
@@ -93,7 +96,7 @@ export default function VisionLab({ initialConfig = DEFAULT_VISION, integrated =
       </div>
     </div>
     <div className="flex flex-wrap gap-2">
-      <Button size="sm" onClick={() => attempt(() => { if (!writeJson(VISION_STORAGE_KEY, config)) throw new Error('Browser storage is unavailable. Export the project to keep it.'); setNotice('Vision settings saved in this browser.') })}>{t('Save vision settings')}</Button>
+      <Button size="sm" onClick={() => attempt(() => { if (!writeJson(VISION_STORAGE_KEY, config)) throw new Error('Browser storage is unavailable. Export the project to keep it.'); setBaseline(key); setNotice('Vision settings saved in this browser.') })}>{t('Save vision settings')}</Button>
       <Button size="sm" variant="secondary" onClick={() => attempt(() => setPending(validateVision(readJson(VISION_STORAGE_KEY))))}>{t('Load vision settings')}</Button>
       <Button size="sm" variant="secondary" onClick={() => downloadJson(config, 'voltquest-vision.json')}>{t('Export vision settings')}</Button>
       <Button size="sm" variant="secondary" onClick={() => fileInput.current?.click()}>{t('Import vision settings')}</Button>
@@ -104,6 +107,6 @@ export default function VisionLab({ initialConfig = DEFAULT_VISION, integrated =
     {!showIntegration ? <Button variant="secondary" onClick={() => setShowIntegration(true)}>{t('Connect vision to IoT, drone and robot')}</Button> : <Suspense fallback={<p role="status">{t('Loading connected devices…')}</p>}><VisionIntegration observation={observation} /></Suspense>}
     {error && <p role="alert" className="rounded bg-rose-50 p-3 text-sm text-rose-800">{t(error)}</p>}
     <p role="status" className="text-sm text-teal-800">{t(notice)}</p>
-    <Modal open={Boolean(pending)} onClose={() => setPending(null)} title={t('Replace vision settings?')} description={t('The current scene and pipeline will be replaced. Save or export the current settings first to keep them.')} footer={<><Button variant="secondary" onClick={() => setPending(null)}>{t('Cancel')}</Button><Button onClick={() => { setConfig(pending); setPending(null); setNotice('Vision settings loaded.'); setError('') }}>{t('Apply vision settings')}</Button></>} />
+    <Modal open={Boolean(pending)} onClose={() => setPending(null)} title={t('Replace vision settings?')} description={t('The current scene and pipeline will be replaced. Save or export the current settings first to keep them.')} footer={<><Button variant="secondary" onClick={() => setPending(null)}>{t('Cancel')}</Button><Button onClick={() => { setConfig(pending); setBaseline(JSON.stringify(pending)); setPending(null); setNotice('Vision settings loaded.'); setError('') }}>{t('Apply vision settings')}</Button></>} />
   </section>
 }

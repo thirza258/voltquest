@@ -4,6 +4,7 @@ import { readJson, writeJson } from '../../lib/storage.js'
 import { downloadJson } from '../../lib/download.js'
 import { Button, Modal } from '../../ui/index.js'
 import { useI18n } from '../../i18n/index.jsx'
+import { useUnsavedBenchWork } from '../sandbox/benchGuard.js'
 
 export const ROBOT_PROJECT_KEY = 'vq.robotics.project.v1'
 const fieldClass = 'mt-1 block w-full min-w-0 rounded border border-line-strong bg-white p-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500'
@@ -26,10 +27,13 @@ export default function RoboticsLab({ initialProject = DEFAULT_PROJECT }) {
   const [pending, setPending] = useState(null)
   const [notice, setNotice] = useState('')
   const [error, setError] = useState('')
+  const [baseline, setBaseline] = useState(() => JSON.stringify(simulation.current.project))
   const fileInput = useRef(null)
   const controls = useRef({ streaming, forward, yawRate })
   controls.current = { streaming, forward, yawRate }
   const sim = simulation.current
+  // Applied changes (graph, parameters, JSON) or unapplied JSON edits are lost when the bench unmounts.
+  useUnsavedBenchWork(JSON.stringify(sim.project) !== baseline || editor !== JSON.stringify(sim.project, null, 2), 'Robot project')
   function attempt(fn) {
     try { fn(); setError(''); refresh() } catch (e) { setError(e.message) }
   }
@@ -55,7 +59,7 @@ export default function RoboticsLab({ initialProject = DEFAULT_PROJECT }) {
   function applyProject(project) {
     simulation.current = createSimulation(project)
     setRunning(false); setStreaming(false); updateTopics(project.topics); updateParameters(project.parameters)
-    setEditor(JSON.stringify(project, null, 2)); setPending(null); setNotice('Project loaded. Simulation reset.'); setError(''); refresh()
+    setEditor(JSON.stringify(project, null, 2)); setBaseline(JSON.stringify(simulation.current.project)); setPending(null); setNotice('Project loaded. Simulation reset.'); setError(''); refresh()
   }
   async function importFile(event) {
     const file = event.target.files?.[0]; event.target.value = ''
@@ -135,7 +139,7 @@ export default function RoboticsLab({ initialProject = DEFAULT_PROJECT }) {
       <textarea aria-label={t('Robotics project JSON')} className={`${fieldClass} h-72 font-mono text-xs`} spellCheck="false" value={editor} onChange={e => setEditor(e.target.value)} />
       <div className="flex flex-wrap gap-2">
         <Button size="sm" onClick={() => attempt(() => { const project = parseProject(editor); setRunning(false); setPending(project) })}>{t('Review project changes')}</Button>
-        <Button size="sm" variant="secondary" onClick={() => attempt(() => { if (!writeJson(ROBOT_PROJECT_KEY, validateProject(sim.project))) throw new Error('Browser storage is unavailable. Export the project to keep it.'); setNotice('Robot project saved in this browser.') })}>{t('Save robot project')}</Button>
+        <Button size="sm" variant="secondary" onClick={() => attempt(() => { if (!writeJson(ROBOT_PROJECT_KEY, validateProject(sim.project))) throw new Error('Browser storage is unavailable. Export the project to keep it.'); setBaseline(JSON.stringify(sim.project)); setNotice('Robot project saved in this browser.') })}>{t('Save robot project')}</Button>
         <Button size="sm" variant="secondary" onClick={() => attempt(() => { const project = validateProject(readJson(ROBOT_PROJECT_KEY)); setRunning(false); setPending(project) })}>{t('Load saved robot')}</Button>
         <Button size="sm" variant="secondary" onClick={() => attempt(() => { downloadJson(validateProject(sim.project), 'voltquest-robotics.json') })}>{t('Export robot JSON')}</Button>
         <Button size="sm" variant="secondary" onClick={() => fileInput.current?.click()}>{t('Import robot JSON')}</Button>

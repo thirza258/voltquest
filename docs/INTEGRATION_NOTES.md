@@ -1,5 +1,27 @@
 # Integration notes
 
+## Sandbox shell and IDE benches (2026-09-28)
+
+- `workspace.css` holds the shell's viewport-height (`.vq-workspace` at ≥1280 px), header-wrap and rail
+  rules, but only `WorkspacePage` imported it. A directly opened non-circuit bench therefore laid
+  out differently from the same bench reached through the circuit sandbox, and an IDE could grow
+  the page past the viewport. `SandboxBenchLayout` now imports it too, so the page-variant benches
+  scroll inside the viewport at desktop widths, as the circuit bench does.
+- The rail used to call `saveDraft()` on every switch. From a non-circuit bench that wrote the
+  workspace store's current draft slot: a stale circuit draft, or `campaign/null` on a fresh load.
+  It now saves only when leaving circuit or drone.
+- Explicit-save benches register unsaved work with `useUnsavedBenchWork`. Cybersecurity, vision and
+  robotics compare against the version last opened or saved, since the cybersecurity badge alone
+  starts as "Unsaved".
+- IDE layouts measure their own width with `useElementSize`; with no ResizeObserver (jsdom) they
+  assume the wide layout, so tests see every pane. Hidden panes and documents stay mounted with
+  `hidden` (the `.ml-ide`/`.wb-ide [hidden]` rules win over their `display` rules), so labelled
+  editors remain reachable, while buttons in inactive tabs are not.
+- `getByLabelText` also matches a `tabpanel` labelled by its tab. Query read-only editors by role
+  (`getByRole('textbox', { name })`) when a tab carries the same name.
+- `public/sitemap.xml` is not rewritten by `vite build` (only `dist/sitemap.xml` is). It had drifted by
+  the eleven ethics course URLs and was regenerated from `renderSitemap(collectRoutes(content))`.
+
 ## C++ / WinUI desktop courses (2026-09-20)
 
 - `/winui` and its thirteen details are lazy routes. Static `WinuiPromo` links from Courses

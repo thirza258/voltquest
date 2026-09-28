@@ -5,7 +5,8 @@ import { useI18n } from '../../i18n/index.jsx'
 import { AppHeader } from '../workspace/AppHeader.jsx'
 import { readCourseProgress } from '../courses/progress.js'
 import HpcCourse, { hpcLinkClass } from './HpcCourse.jsx'
-import HpcLab, { fieldClass, panelClass } from './HpcLab.jsx'
+import { fieldClass, panelClass } from './HpcLab.jsx'
+import HpcIde from './HpcIde.jsx'
 import SandboxBenchLayout from '../sandbox/SandboxBenchLayout.jsx'
 
 export const HPC_COURSES = content.courses
@@ -43,13 +44,13 @@ export default function HpcPage({ sandbox = false }) {
     return (
       <SandboxBenchLayout
         bench="hpc"
-        title={t('HPC sandbox')}
-        description={t('Explore performance models, test numerical behavior, edit native source and keep an experiment notebook. Choose a lab below or open its course for the full explanation.')}
+        variant="app"
+        description={t('A C/C++ workbench: edit C17 and C++17 sources, run the lab’s bounded browser model with your settings, and build natively with the generated commands. Browser results are models — CPU, GPU and cluster timings must be measured on your own system.')}
         courseLink={course ? `/hpc/${course.id}` : '/hpc'}
         courseLinkLabel={t(course ? 'Back to the course' : 'All HPC courses')}
         localeNotice={locale === 'id' ? t('HPC course narratives, questions and native source are currently in English. Interface controls support Indonesian.') : null}
       >
-        <HpcLab key={course?.id ?? 'free'} initialLab={course?.lab ?? 'correctness'} free />
+        <HpcIde key={course?.id ?? 'free'} initialLab={course?.lab ?? 'correctness'} />
       </SandboxBenchLayout>
     )
   }
