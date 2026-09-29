@@ -1,0 +1,52 @@
+/*
+ * Cybersecurity console specifics on top of the shared workbench (features/sandbox/ide/workbench.css):
+ * the Packet Tracer-style topology, the terminal and the DevTools tree. Colours come from the wb-*
+ * variables so the light/dark toggle applies. Flat only; no gradients (DESIGN.md).
+ */
+.cy-topology { display: flex; min-height: 0; flex: 1; flex-direction: column; padding: 8px; background: var(--wb-editor); }
+.cy-topology svg { width: 100%; height: 100%; min-height: 0; flex: 1; }
+.cy-node rect { fill: var(--wb-elevated); stroke: var(--wb-border-strong); stroke-width: 1; }
+.cy-node.is-reached rect { stroke: var(--wb-accent); stroke-width: 1.5; }
+.cy-node.is-finding rect { fill: var(--wb-danger-soft); stroke: var(--wb-danger); stroke-width: 1.5; }
+.cy-node text { fill: var(--wb-text); font-size: 9px; }
+.cy-node .cy-role { fill: var(--wb-muted); font-size: 7px; }
+.cy-edge { stroke: var(--wb-border-strong); stroke-width: 1.4; fill: none; }
+.cy-edge.is-active { stroke: var(--wb-accent); stroke-width: 2.4; }
+.cy-edge.is-blocked { stroke: var(--wb-danger); stroke-width: 2; stroke-dasharray: 5 4; }
+.cy-packet { fill: var(--wb-accent); }
+.cy-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; padding: 4px 2px 0; color: var(--wb-muted); font-size: 11px; }
+.cy-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.cy-legend i { display: inline-block; height: 9px; width: 9px; border-radius: 2px; }
+
+.cy-term { display: flex; min-height: 0; flex: 1; flex-direction: column; background: var(--wb-window); font-family: var(--code-font, "JetBrains Mono", ui-monospace, monospace); font-size: 12.5px; }
+.cy-term-log { min-height: 0; flex: 1; overflow: auto; padding: 8px 10px 2px; }
+.cy-term-line { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.55; }
+.cy-term-line.is-input { color: var(--wb-text); }
+.cy-term-line.is-input::before { content: "$ "; color: var(--wb-success); }
+.cy-term-line.is-status { color: var(--wb-accent); }
+.cy-term-line.is-body { color: var(--wb-muted); }
+.cy-term-line.is-error { color: var(--wb-danger); }
+.cy-term-line.is-finding { color: var(--wb-warning); }
+.cy-term-line.is-info { color: var(--wb-faint); font-style: italic; }
+.cy-term-prompt { display: flex; flex-shrink: 0; align-items: center; gap: 6px; border-top: 1px solid var(--wb-border); padding: 6px 10px; }
+.cy-term-prompt span { color: var(--wb-success); }
+.cy-term-prompt input { min-width: 0; flex: 1; border: 0; background: transparent; color: var(--wb-text); font: inherit; outline: none; }
+
+.cy-net-row { display: flex; width: 100%; align-items: center; gap: 8px; padding: 4px 10px; border: 0; border-bottom: 1px solid var(--wb-border); background: transparent; color: var(--wb-text); text-align: left; font-family: var(--code-font, ui-monospace, monospace); font-size: 12px; }
+.cy-net-row:hover { background: var(--wb-hover); }
+.cy-net-row[aria-current="true"] { background: var(--wb-active); }
+.cy-net-row .cy-method { flex-shrink: 0; width: 44px; font-weight: 700; color: var(--wb-accent); }
+.cy-net-row .cy-path { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cy-net-row .cy-status { flex-shrink: 0; }
+.cy-status-ok { color: var(--wb-success); }
+.cy-status-warn { color: var(--wb-warning); }
+.cy-status-bad { color: var(--wb-danger); }
+
+.cy-tree { margin: 0; padding: 0; list-style: none; font-family: var(--code-font, ui-monospace, monospace); font-size: 12px; line-height: 1.6; }
+.cy-tree ul { margin: 0; padding-left: 14px; list-style: none; border-left: 1px dotted var(--wb-border); }
+.cy-tag { color: var(--tok-keyword); }
+.cy-attr-name { color: var(--tok-key); }
+.cy-attr-value { color: var(--tok-string); }
+.cy-attr-event { color: var(--wb-danger); }
+.cy-tree-text { color: var(--wb-text); }
+.cy-tree-comment { color: var(--tok-comment); }

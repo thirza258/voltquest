@@ -7,6 +7,7 @@ import { AGENT_COURSES } from './project.js'
 import SandboxBenchLayout from '../sandbox/SandboxBenchLayout.jsx'
 import AgentCourse, { GuidedSteps } from './AgentCourse.jsx'
 import AgentLab from './AgentLab.jsx'
+import AgentIde from './AgentIde.jsx'
 import { fieldClass, linkClass, panelClass } from './styles.js'
 
 function AgentHub() {
@@ -38,13 +39,13 @@ export default function AgentsPage({ sandbox = false, tutorial = false }) {
     return (
       <SandboxBenchLayout
         bench="ai-agents"
-        title={t('AI agent sandbox')}
-        description={t('Build an inspectable agent loop, manage context and cost, write skills and test app integrations in a local notebook.')}
+        variant="app"
+        description={t('An agent-first IDE in the style of tools such as Google Antigravity: an Editor with an agent side panel and an Agent Manager with plans, changes and ledgers. The model is a scripted fixture acting on fictional local tools — no live model, network or shell.')}
         courseLink={course ? `/ai-agents/${course.id}` : '/ai-agents'}
         courseLinkLabel={t(course ? 'Back to the course' : 'All AI agent courses')}
         localeNotice={locale === 'id' ? t('AI agent narratives, questions and technical traces are currently in English. Interface controls support Indonesian.') : null}
       >
-        <AgentLab key={course?.id ?? 'free'} initialLesson={course?.id} free />
+        <AgentIde key={course?.id ?? 'free'} initialLesson={course?.id} />
       </SandboxBenchLayout>
     )
   }

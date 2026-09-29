@@ -1,6 +1,6 @@
 # VoltQuest — agent handoff log
 
-**Last verified: 2026-09-21.** This is the state document: what exists, what remains unfinished,
+**Last verified: 2026-09-28.** This is the state document: what exists, what remains unfinished,
 and what to do next. The specifications in `docs/` remain binding.
 
 | Read | When |
@@ -23,6 +23,21 @@ and what to do next. The specifications in `docs/` remain binding.
 ## 1. Current build, not the target product
 
 The main entry points are **`/`** (32 campaign quests), **`/sandbox`** (freeform projects), and **`/tutorials`** (guided lessons).
+
+The sandbox has nine benches with one shell: header, bench rail, body and footer.
+- **Names and descriptions:** each bench's name, title, description and save mode live in
+  `features/sandbox/sandboxDirectory.js`. Descriptions state only what the bench executes.
+- **Unsaved work:** the rail asks before leaving explicit-save work; only circuit and drone autosave
+  drafts.
+- **IDE benches:** MATLAB, AI agents, HPC and cybersecurity look like the tools they teach:
+  - MATLAB is a MATLAB-style desktop.
+  - AI agents is an Antigravity-style agent IDE (Editor + Agent Manager).
+  - HPC is a VS Code-style C/C++ workbench.
+  - Cybersecurity is a security console: a Packet Tracer-style topology, a curl terminal and a
+    DevTools-style inspector.
+- **Scrolling benches:** computer, vision and robotics keep their page layout.
+- **Rules:** read `docs/DESIGN.md`, "Sandbox benches and IDE shells", and `CONTRACTS.md` §26 before
+  changing the shell.
 
 **`/community`** is a discussion board reachable from the header nav, the landing footer and every
 published showcase project. Reading is public; posting uses the player token the app already issues
@@ -132,6 +147,100 @@ their explanation or timing is correct. `features/tutorials/programming.test.js`
 numeric output, command dispatch and LED state transitions on all four C++ boards.
 
 ## 3. Completed in this continuation
+
+### Cybersecurity security console (2026-09-28)
+
+The cybersecurity sandbox (`/sandbox?bench=cybersecurity`) is now a security workbench combining the
+three tools the user named: a **Packet Tracer-style network topology** (`CyberTopology.jsx` +
+`topology.js`), a **curl terminal** (`curl.js` parse/format) and a **browser DevTools-style inspector**
+(Network list, Headers/Response/Preview/Elements/Security/Trace, plus the fixture account state).
+The Elements tab renders an **inert DOM tree** (`inspectHtml.js`) so the XSS lesson shows injected
+markup as element nodes with a flagged `onerror` handler, without ever creating a real element or
+running a script. It sits on the shared VS Code-style workbench (dark/light) used by AI agents and HPC.
+
+Course pages keep the form-based `CyberLab`; both it and `CyberConsole` share `useCyberNotebook.js`,
+so requests, defenses, verification, save/load/import and reports behave identically and every
+existing boundary holds: fictional local fixtures, inert HTML, no network and no code execution. The
+terminal is ephemeral scrollback and does not change the saved notebook (lab, defenses, notes). New
+pure modules have unit tests (`console.test.js`); the sandbox UI tests were rewritten to drive the
+terminal and DevTools. Full suite **1,760 frontend / 121 backend**; eager payload 604.3 KiB gzip.
+
+### Sandbox IDE benches and shell consistency (2026-09-28)
+
+The request was a more consistent, truer and more detailed sandbox. "Truer" turned out to mean the
+software look: MATLAB like the MATLAB IDE, AI agents like an IDE such as Antigravity, HPC as a
+full-featured IDE.
+
+**Shared pieces.** Three notebook hooks (`useMatlabNotebook`, `useAgentNotebook`, `useHpcNotebook`)
+now own state for both the course labs, whose markup is unchanged, and the new IDE views.
+`features/sandbox/ide/` holds:
+- `CodeEditor` (labelled textarea, highlighted copy, gutter);
+- tokenizers for MATLAB (from the real lexer rules), C/C++, JSON, Markdown, JS and Python;
+- line edits and a line diff;
+- `useElementSize`;
+- the shared dark/light VS Code-style workbench (`Workbench.jsx`, `workbench.css`).
+
+**MATLAB** (`MatlabIde`):
+- Toolstrip, address bar and Current Folder with Details.
+- Editor with a parser-backed code check.
+- Command Window that replays the session. The rule is disclosed on the pane and in README.txt.
+- Workspace table, PLOTS › plot, a real-pixel figure with data tips, Help search and Command
+  History.
+
+**AI agents** (`AgentIde`):
+- Editor view: explorer, editors, panel (Problems, Trace, Ledger, Checks, Run locally) and an agent
+  thread with approvals and questions.
+- Agent Manager: conversations, the thread, and Plan/Changes/Ledger/Context artifacts.
+- The model stays a scripted fixture, and the title bar says so.
+
+**HPC** (`HpcIde`):
+- Explorer with both drafts, BUILD.md and the run configuration.
+- C/C++ editor with compare-to-example.
+- Run configuration pane.
+- Results, Output (a run log with no wall times) and Build (exact commands) panels.
+- Project ZIP: sources, `build.sh`, README.
+
+**Shell fixes:**
+- Removed false copy: "Local work is saved", "Saved locally", FFT, ArUco, laser scans and "OpenMP
+  multithreading".
+- Directory counts are pinned to the registry and content by tests.
+- One canonical name per bench.
+- The rail is the only bench switcher: the circuit bench's Sandboxes tab and seven menu items are
+  gone, `SandboxListPanel` is deleted, and `LEFT_TABS` drops `sandboxes`.
+- Rail text is at least 11 px; invalid `py-0.2`/`shadow-xs`/`surface-subtle` classes are fixed.
+- An unsaved-work guard covers seven benches.
+- `saveDraft()` runs only when leaving circuit or drone.
+- `SandboxBenchLayout` imports `workspace.css`. Before, a directly opened bench skipped the shell's
+  viewport rules.
+
+**Filenames:** MATLAB downloads use valid names (`matlab_start.m`, `matlab_ode_desktop.m`) on the
+course page too. The Indonesian UI gets 273 new strings. Product panel names (Command Window,
+Workspace, Explorer, Agent Manager) stay English, as in those tools.
+
+**Verification:**
+- `npx vitest run`: **1,697 tests in 98 files** pass (including a guard test that mounts all seven explicit-save benches and presets clean).
+- `pytest`: **121** pass.
+- `vite build` succeeds. Eager payload is **602.9 KiB** gzip against the 1,500 KiB budget; a clean
+  HEAD build measures 595.0, the difference being the new strings. The IDEs are lazy chunks.
+- `npx eslint src` has only the pre-existing 19 `qt/samples.js` errors and 2 CampaignMap warnings.
+  `make check` would still stop there, so the steps were run individually.
+- Chromium via Playwright (en-US), at 1440, 1024, 768/767/640 and 390 px, with no page-level
+  horizontal overflow and no console errors:
+  - MATLAB Run, commands, plots and workspace;
+  - agent approve/deny, Agent Manager and themes;
+  - HPC run, results and build;
+  - the unsaved prompt, with no draft written.
+- The stale `public/sitemap.xml` was missing eleven ethics URLs. It was regenerated, and its test,
+  red on HEAD, now passes.
+
+**Not verified or not done:**
+- Safari, Firefox and real touch devices.
+- Screen-reader passes.
+- The other benches (circuit art, drone, computer, cybersecurity, vision, robotics) keep their
+  existing look.
+- Course pages still embed the classic labs rather than the IDEs.
+- `coursesDirectory.js` repeats the false ArUco claim, and course/tutorial files still use
+  `surface-subtle`/`shadow-xs`; both are outside the sandbox and untouched.
 
 ### Community discussions (2026-09-21)
 

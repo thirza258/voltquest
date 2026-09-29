@@ -9,12 +9,14 @@ import { PRESETS } from '../../engine/computer/presets.js'
 import { COMPUTER_COURSES, createProject, validateProject, parseProject, MAX_NOTEBOOK_BYTES, STORAGE_PREFIX, panelClass, fieldClass, codeClass } from './project.js'
 import LogicDiagram from './LogicDiagram.jsx'
 import CpuView from './CpuView.jsx'
+import { useUnsavedBenchWork } from '../sandbox/benchGuard.js'
 
 export default function ComputerLab({ initialLesson, free = false }) {
   const { t } = useI18n()
   const [project, setProject] = useState(() => createProject(initialLesson)), [run, setRun] = useState(null)
   const [error, setError] = useState(''), [message, setMessage] = useState(''), [pending, setPending] = useState(null), [dirty, setDirty] = useState(false)
   const generation = useRef(0), fileInput = useRef(null)
+  useUnsavedBenchWork(dirty, 'Computer notebook')
   useEffect(() => () => { generation.current++ }, [])
   const mode = PRESETS[project.lesson].mode
   const course = COMPUTER_COURSES.find(item => item.id === project.lesson)

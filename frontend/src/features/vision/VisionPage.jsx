@@ -27,7 +27,6 @@ export default function VisionPage({ sandbox = false }) {
     return (
       <SandboxBenchLayout
         bench="vision"
-        title={t('Computer vision sandbox')}
         description={t('Explore OpenCV, patch attention and device integration with editable scenes and local processing.')}
         courseLink={lesson ? `/vision/${lesson.id}` : '/vision'}
         courseLinkLabel={t(lesson ? 'Back to the course' : 'All computer vision courses')}

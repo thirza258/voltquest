@@ -1,9 +1,9 @@
 // @vitest-environment jsdom
 // @vitest-environment-options { "url": "http://localhost:5173" }
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
-import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
-import { LocaleProvider } from '../../i18n/index.jsx'
+import { LocaleProvider, translate } from '../../i18n/index.jsx'
 import { installMemoryStorage } from '../../test-utils/localStorage.js'
 import { downloadJson, downloadText } from '../../lib/download.js'
 import { readCourseProgress } from '../courses/progress.js'
@@ -38,21 +38,88 @@ it('offers searchable course stages and a reference with explicit browser and de
   expect(region.textContent).toContain('Runs in this sandbox')
 })
 
-it('executes exact edited source, replaces results and offers real numeric exports', async () => {
+it('executes exact edited source in the desktop, fills the workspace and figure and exports real results', async () => {
   page('/sandbox?bench=matlab')
   const code = 't=0:2;\ny=t.^2;\nplot(t,y);\ndisp(sum(y));'
   change('Editable MATLAB script', code); click('Run script')
-  const result = await screen.findByRole('region', { name: 'MATLAB results' })
-  expect(result.textContent).toContain('5')
+  const log = screen.getByRole('log', { name: 'Command Window output' })
+  await waitFor(() => expect(log.textContent).toContain('>> matlab_start'))
+  await waitFor(() => expect(within(log).getByText('5')).toBeTruthy())
+  const variables = screen.getByRole('region', { name: 'Workspace variables' })
+  expect(within(variables).getByText('[0,1,4]')).toBeTruthy()
+  expect(screen.getByRole('img', { name: 'Script plot' })).toBeTruthy()
   click('Export computed results')
   expect(downloadJson.mock.calls.at(-1)[0].result).toMatchObject({ source: code, output: ['5'], plots: [{ x: [0, 1, 2], y: [0, 1, 4] }] })
   click('Download .m script')
-  expect(downloadText).toHaveBeenLastCalledWith(code, 'matlab-start.m')
+  expect(downloadText).toHaveBeenLastCalledWith(code, 'matlab_start.m')
   change('Editable MATLAB script', 'disp(9);')
-  expect(screen.queryByRole('region', { name: 'MATLAB results' })).toBeNull()
-  click('Run script'); await screen.findByRole('region', { name: 'MATLAB results' })
+  expect(within(variables).queryByText('[0,1,4]')).toBeNull()
+  expect(screen.getByRole('button', { name: 'Export computed results' }).disabled).toBe(true)
+  expect(log.textContent).toContain('Workspace cleared: the script changed')
+  click('Run script'); await waitFor(() => expect(screen.getByRole('button', { name: 'Export computed results' }).disabled).toBe(false))
   click('Export computed results')
   expect(downloadJson.mock.calls.at(-1)[0].result.output).toEqual(['9'])
+})
+
+it('runs Command Window entries against the last run by replaying only successful commands', async () => {
+  page('/sandbox?bench=matlab')
+  const log = screen.getByRole('log', { name: 'Command Window output' })
+  const enter = async text => { change('MATLAB command', text); fireEvent.submit(screen.getByLabelText('MATLAB command').closest('form')); await waitFor(() => expect(screen.getByLabelText('MATLAB command').disabled).toBe(false)) }
+  change('Editable MATLAB script', 'a = 2;'); click('Run script')
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Export computed results' }).disabled).toBe(false))
+  await enter('b = a * 3')
+  expect(log.textContent).toContain('b =')
+  expect(within(log).getByText(/^b =/).textContent).toContain('6')
+  await enter('missing + 1')
+  const failure = within(log).getByText(/Unknown variable missing/)
+  expect(failure.textContent).not.toMatch(/^Line \d+/)
+  await enter('disp(a + b)')
+  expect(within(log).getByText('8')).toBeTruthy()
+  click('Export computed results')
+  expect(downloadJson.mock.calls.at(-1)[0].result.source).toBe('a = 2;\nb = a * 3\ndisp(a + b)')
+  const input = screen.getByLabelText('MATLAB command')
+  fireEvent.keyDown(input, { key: 'ArrowUp' })
+  expect(input.value).toBe('disp(a + b)')
+  await enter('clc')
+  expect(log.textContent).toBe('')
+})
+
+it('plots selected workspace vectors through the Command Window and explains other files in the folder', async () => {
+  page('/sandbox?bench=matlab&lesson=matlab-ode')
+  click('Run script')
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Export computed results' }).disabled).toBe(false))
+  fireEvent.click(screen.getByRole('tab', { name: 'Plots' }))
+  expect(screen.getByRole('button', { name: 'Plot selected variables' }).disabled).toBe(true)
+  fireEvent.click(screen.getByLabelText('Select t')); fireEvent.click(screen.getByLabelText('Select reference'))
+  click('Plot selected variables')
+  const log = screen.getByRole('log', { name: 'Command Window output' })
+  await waitFor(() => expect(log.textContent).toContain('>> plot(t,reference)'))
+  // The preset leaves hold("on") set, so the replayed session adds a third series, as MATLAB would.
+  await waitFor(() => expect(within(screen.getByLabelText('Plot series')).getAllByRole('option')).toHaveLength(3))
+  fireEvent.keyDown(screen.getByRole('button', { name: /matlab_ode_desktop\.m/ }), { key: 'Enter' })
+  expect(screen.getByLabelText('Desktop MATLAB companion source').value).toContain('ode45')
+  click('Download desktop example')
+  expect(downloadText).toHaveBeenLastCalledWith(expect.stringContaining('ode45'), 'matlab_ode_desktop.m')
+  fireEvent.click(screen.getByRole('button', { name: /12_control/ }))
+  expect(screen.getByRole('dialog')).toBeTruthy(); click('Cancel')
+  expect(screen.getByLabelText('Choose a MATLAB experiment').value).toBe('matlab-ode')
+})
+
+it('checks code with the browser parser, marks desktop-only calls and edits selected lines', () => {
+  page('/sandbox?bench=matlab')
+  change('Editable MATLAB script', 'x = (1;')
+  expect(screen.getByRole('button', { name: /Code check: 1 error$/ })).toBeTruthy()
+  change('Editable MATLAB script', 'y = fft(1:4);\nz = 1;')
+  expect(screen.getByRole('button', { name: /Code check: 1 warning$/ }).title).toContain('fft needs desktop MATLAB')
+  const editor = screen.getByLabelText('Editable MATLAB script')
+  editor.setSelectionRange(0, editor.value.length)
+  click('Comment selected lines')
+  expect(editor.value).toBe('% y = fft(1:4);\n% z = 1;')
+  editor.setSelectionRange(0, editor.value.length)
+  click('Uncomment selected lines')
+  editor.setSelectionRange(0, 3)
+  click('Indent selected lines')
+  expect(editor.value).toBe('    y = fft(1:4);\nz = 1;')
 })
 
 it('exposes code errors without reusing results or losing the editor', async () => {
@@ -191,4 +258,17 @@ it('resets transient state on course changes and rejects unknown presets', () =>
   expect(screen.getByLabelText('Mark lesson 1 as read').checked).toBe(false)
   view.unmount(); page('/sandbox?bench=matlab&lesson=unknown')
   expect(screen.getByRole('heading', { name: 'Course not found' })).toBeTruthy()
+})
+
+it('keeps the desktop script, Command Window session and open documents across a language change', async () => {
+  page('/sandbox?bench=matlab')
+  change('Editable MATLAB script', 'k = 6;'); click('Run script')
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Export computed results' }).disabled).toBe(false))
+  change('MATLAB command', 'k * 7'); fireEvent.submit(screen.getByLabelText('MATLAB command').closest('form'))
+  await waitFor(() => expect(screen.getByRole('log', { name: 'Command Window output' }).textContent).toContain('42'))
+  fireEvent.click(screen.getByRole('tab', { name: 'notes.txt' }))
+  change('Language / Bahasa', 'id')
+  expect(screen.getByLabelText('Skrip MATLAB yang dapat diedit').value).toBe('k = 6;')
+  expect(screen.getByRole('log', { name: translate('id', 'Command Window output') }).textContent).toContain('42')
+  expect(screen.getByRole('tab', { name: 'notes.txt' }).getAttribute('aria-selected')).toBe('true')
 })

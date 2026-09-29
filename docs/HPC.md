@@ -147,3 +147,19 @@ ten real Worker experiments, state invalidation, stale-halo failure, exact edite
 work/reload/import, 80% exam persistence, locale preservation, navigation and desktop/390 px fit.
 No application errors were reported. The generated sitemap includes all eleven HPC routes (137
 total). Cross-browser/touch testing and multi-node performance remain release verification work.
+
+## Sandbox IDE (2026-09-28)
+
+`/sandbox?bench=hpc` renders `HpcIde.jsx`, a VS Code-style C/C++ workbench on the shared workbench
+(`features/sandbox/ide/`). The course page keeps `HpcLab.jsx`; both use `useHpcNotebook.js`.
+
+- Explorer with both native drafts (`<lab>.cpp`, `<lab>.c`), `NOTES.md`, a generated read-only
+  `BUILD.md` and `run-configuration.json`; an Experiments view lists the ten labs.
+- The C/C++ editor highlights directives, OpenMP pragmas and include targets; "Compare with example"
+  diffs the draft against the generated source. Browser Run never compiles or times it.
+- The title-bar Run executes the selected lab's bounded model with the Run configuration pane's
+  settings. Results show metrics, PASS/FAIL checks, bars and data; Output lists each run's settings
+  and check counts (no wall-clock times, which could be misread as native timings); Build shows the
+  exact generated commands with copy buttons.
+- Download project (.zip) packs both sources, `build.sh` (current language) and `README.md`
+  (requirements, commands, settings, notes and scope) with the existing stored-ZIP writer.

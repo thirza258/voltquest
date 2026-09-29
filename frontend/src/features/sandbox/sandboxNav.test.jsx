@@ -1,14 +1,18 @@
 // @vitest-environment jsdom
 // @vitest-environment-options { "url": "http://localhost:5173" }
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
-import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { LocaleProvider } from '../../i18n/index.jsx'
 import { installMemoryStorage } from '../../test-utils/localStorage.js'
-import { ALL_SANDBOXES, getSandbox, getSandboxByBench } from './sandboxDirectory.js'
+import matlabReference from '@content/matlab-functions.json'
+import { ALL_SANDBOXES, CIRCUIT_PART_TYPES, CYBER_DEFENSES, getSandbox, getSandboxByBench, HPC_LABS, MATLAB_BROWSER_FUNCTIONS } from './sandboxDirectory.js'
+import { unsavedBenchWork, useUnsavedBenchWork } from './benchGuard.js'
+import { listDefs } from '../../engine/components/registry.js'
+import { CONTROLS } from '../../engine/cybersecurity/model.js'
+import { LABS as HPC_MODEL_LABS } from '../../engine/hpc/model.js'
 import SandboxNavSidebar from './SandboxNavSidebar.jsx'
 import SandboxBenchLayout from './SandboxBenchLayout.jsx'
-import SandboxListPanel from './SandboxListPanel.jsx'
 import AllCoursesSection from '../courses/AllCoursesSection.jsx'
 import { ALL_COURSES } from '../courses/coursesDirectory.js'
 import WorkspacePage from '../workspace/WorkspacePage.jsx'
@@ -71,102 +75,67 @@ describe('Course catalog consistency', () => {
 })
 
 describe('Sandbox sidebar navigation', () => {
-  it('contains all 9 available sandboxes with valid paths', () => {
+  it('lists nine benches with canonical names and counts checked against the real content', () => {
     expect(ALL_SANDBOXES).toHaveLength(9)
-    expect(getSandbox('circuit').name).toBe('Circuit & Breadboard')
-    expect(getSandboxByBench('matlab').name).toBe('MATLAB Numerical Lab')
-    expect(getSandboxByBench('cybersecurity').name).toBe('Web Security Sandbox')
-    expect(getSandboxByBench('hpc').name).toBe('HPC & Parallel Bench')
-    expect(getSandboxByBench('ai-agents').name).toBe('AI Agent Workbench')
-    expect(getSandboxByBench('computer').name).toBe('Computer Architecture')
+    expect(getSandbox('circuit').name).toBe('Circuit & breadboard')
+    expect(getSandboxByBench('matlab')).toMatchObject({ name: 'MATLAB', title: 'MATLAB sandbox', saving: 'manual' })
+    expect(getSandboxByBench('drone').saving).toBe('draft')
+    expect(new Set(ALL_SANDBOXES.map(item => item.title)).size).toBe(9)
+    expect(CIRCUIT_PART_TYPES).toBe(listDefs().length)
+    expect(MATLAB_BROWSER_FUNCTIONS).toBe(matlabReference.functions.filter(item => item.scope === 'browser').length)
+    expect(CYBER_DEFENSES).toBe(Object.keys(CONTROLS).length)
+    expect(HPC_LABS).toBe(Object.keys(HPC_MODEL_LABS).length)
   })
 
-  it('renders SandboxNavSidebar with all available sandboxes', () => {
-    render(
-      <LocaleProvider>
-        <MemoryRouter initialEntries={['/sandbox']}>
-          <SandboxNavSidebar currentBench="circuit" />
-        </MemoryRouter>
-      </LocaleProvider>
-    )
+  it('describes only what each bench executes', () => {
+    const text = ALL_SANDBOXES.map(item => item.description).join(' ')
+    // Claims the engines do not back: no FFT or ODE solver in the MATLAB subset, no ArUco, no
+    // scanning LiDAR and no real threads, processes or trained vision models in the browser.
+    for (const claim of [/\bFFT\b/, /ArUco/i, /laser|lidar/i, /multithread/i, /vision transformers?/i, /ODE simulation/i]) expect(text).not.toMatch(claim)
+    expect(getSandboxByBench('robotics').description).toContain('one forward range ray')
+    expect(getSandboxByBench('ai-agents').description).toContain('scripted model')
+  })
 
-    // Verify all sandboxes are displayed in the sidebar
+  it('renders every bench once, marks the current one and states how work is kept', () => {
+    render(<LocaleProvider><MemoryRouter initialEntries={['/sandbox']}><SandboxNavSidebar currentBench="circuit" /></MemoryRouter></LocaleProvider>)
+    const rail = screen.getByRole('complementary', { name: 'All available sandboxes' })
+    for (const sandbox of ALL_SANDBOXES) expect(within(rail).getByText(sandbox.name)).toBeTruthy()
+    expect(within(rail).getByRole('link', { current: 'page' }).textContent).toContain('Circuit & breadboard')
+    expect(rail.textContent).toContain('Circuit and drone drafts save automatically')
+    expect(rail.textContent).not.toContain('Local work is saved')
+  })
+
+  it('keeps one bench navigation in the circuit workspace', () => {
+    render(<LocaleProvider><MemoryRouter initialEntries={['/sandbox']}><Routes><Route path="/sandbox" element={<WorkspacePage mode="sandbox" sessionId="test" seed={{ board: 'uno', starterCode: 'void setup() {}' }} />} /></Routes></MemoryRouter></LocaleProvider>)
     expect(screen.getByRole('complementary', { name: 'All available sandboxes' })).toBeTruthy()
-    for (const sandbox of ALL_SANDBOXES) {
-      expect(screen.getAllByText(sandbox.name).length).toBeGreaterThan(0)
-    }
-
-    // Circuit is active
-    expect(screen.getAllByText('Active').length).toBeGreaterThan(0)
+    expect(screen.queryByRole('tab', { name: 'Sandboxes' })).toBeNull()
   })
 
-  it('renders SandboxListPanel and switches benches', () => {
-    render(
-      <LocaleProvider>
-        <MemoryRouter initialEntries={['/sandbox']}>
-          <SandboxListPanel currentBench="circuit" />
-        </MemoryRouter>
-      </LocaleProvider>
-    )
-
-    expect(screen.getByText('All Available Sandboxes')).toBeTruthy()
-    expect(screen.getByText('Current')).toBeTruthy()
-    const openButtons = screen.getAllByRole('button', { name: 'Open' })
-    expect(openButtons.length).toBe(8) // 9 - 1 current
-  })
-
-  it('integrates SandboxNavSidebar and sandboxes tab in WorkspacePage sandbox mode', () => {
-    render(
-      <LocaleProvider>
-        <MemoryRouter initialEntries={['/sandbox']}>
-          <Routes>
-            <Route
-              path="/sandbox"
-              element={<WorkspacePage mode="sandbox" sessionId="test" seed={{ board: 'uno', starterCode: 'void setup() {}' }} />}
-            />
-          </Routes>
-        </MemoryRouter>
-      </LocaleProvider>
-    )
-
-    // Dedicated sandboxes sidebar rail is rendered
-    expect(screen.getByRole('complementary', { name: 'All available sandboxes' })).toBeTruthy()
-
-    // Sandboxes tab is available in circuit panel tabs
-    const sandboxesTab = screen.getByRole('tab', { name: 'Sandboxes' })
-    expect(sandboxesTab).toBeTruthy()
-
-    // Clicking the tab opens the panel
-    fireEvent.click(sandboxesTab)
-    expect(screen.getByRole('region', { name: 'All available sandboxes' })).toBeTruthy()
-  })
-
-  it('renders SandboxBenchLayout with sidebar, header, footer, and active bench', () => {
-    render(
-      <LocaleProvider>
-        <MemoryRouter initialEntries={['/sandbox?bench=computer']}>
-          <SandboxBenchLayout
-            bench="computer"
-            title="Computer Architecture Sandbox"
-            description="Test description for computer architecture sandbox."
-            courseLink="/computer-architecture"
-            courseLinkLabel="Back to the course"
-          >
-            <div data-testid="test-content">Bench Lab Content</div>
-          </SandboxBenchLayout>
-        </MemoryRouter>
-      </LocaleProvider>
-    )
-
-    // Sidebar rail is rendered with all sandboxes
+  it('titles bench pages from the directory and reports the real save behaviour', () => {
+    render(<LocaleProvider><MemoryRouter initialEntries={['/sandbox?bench=computer']}><SandboxBenchLayout bench="computer" description="Test description." courseLink="/computer-architecture" courseLinkLabel="Back to the course"><div data-testid="test-content">Bench Lab Content</div></SandboxBenchLayout></MemoryRouter></LocaleProvider>)
     expect(screen.getByRole('complementary', { name: 'All available sandboxes' })).toBeTruthy()
     expect(screen.getByTestId('test-content')).toBeTruthy()
-    expect(screen.getByRole('heading', { name: 'Computer Architecture Sandbox' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'Computer architecture sandbox' })).toBeTruthy()
     expect(screen.getByText('Back to the course')).toBeTruthy()
-
-    // Workspace footer is rendered
     expect(screen.getByText(/Level 1/)).toBeTruthy()
-    expect(screen.getByText(/Computer Architecture · Saved locally/)).toBeTruthy()
+    expect(screen.getByText('Computer architecture · Stored in this browser only when you save')).toBeTruthy()
+  })
+
+  it('asks before leaving unsaved bench work and never writes a circuit draft from another bench', () => {
+    const saveDraft = vi.spyOn(useWorkspaceStore.getState(), 'saveDraft')
+    function Dirty() { useUnsavedBenchWork(true, 'MATLAB notebook'); return null }
+    function Where() { const location = useLocation(); return <p data-testid="where">{location.pathname}{location.search}</p> }
+    const view = render(<LocaleProvider><MemoryRouter initialEntries={['/sandbox?bench=matlab']}><SandboxNavSidebar currentBench="matlab" /><Dirty /><Where /></MemoryRouter></LocaleProvider>)
+    const rail = screen.getByRole('complementary', { name: 'All available sandboxes' })
+    fireEvent.click(within(rail).getByText('HPC (C/C++)'))
+    expect(screen.getByRole('dialog').textContent).toContain('MATLAB notebook has changes that are not saved in this browser')
+    fireEvent.click(screen.getByRole('button', { name: 'Stay on this bench' }))
+    expect(screen.getByTestId('where').textContent).toBe('/sandbox?bench=matlab')
+    fireEvent.click(within(rail).getByText('HPC (C/C++)'))
+    fireEvent.click(screen.getByRole('button', { name: 'Leave without saving' }))
+    expect(screen.getByTestId('where').textContent).toBe('/sandbox?bench=hpc')
+    expect(saveDraft).not.toHaveBeenCalled()
+    view.unmount()
+    expect(unsavedBenchWork()).toBeNull()
   })
 })
-

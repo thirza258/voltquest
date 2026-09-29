@@ -7,7 +7,7 @@ import { readCourseProgress } from '../courses/progress.js'
 import { MATLAB_COURSES } from './project.js'
 import SandboxBenchLayout from '../sandbox/SandboxBenchLayout.jsx'
 import MatlabCourse from './MatlabCourse.jsx'
-import MatlabLab from './MatlabLab.jsx'
+import MatlabIde from './MatlabIde.jsx'
 import FunctionReference from './FunctionReference.jsx'
 import { fieldClass, linkClass, panelClass } from './styles.js'
 
@@ -43,13 +43,13 @@ export default function MatlabPage({ sandbox = false }) {
     return (
       <SandboxBenchLayout
         bench="matlab"
-        title={t('MATLAB sandbox')}
-        description={t('Compute with editable scripts, inspect arrays, plot results and keep a numerical notebook. Choose a preset to explore another topic.')}
+        variant="app"
+        description={t('A MATLAB-style desktop for the browser numerical subset: edit scripts, run commands against the last run’s workspace, inspect variables and plot results. It is not MATLAB; desktop-only functions and toolboxes need your own MATLAB installation.')}
         courseLink={course ? `/matlab/${course.id}` : '/matlab'}
         courseLinkLabel={t(course ? 'Back to the course' : 'All MATLAB courses')}
         localeNotice={locale === 'id' ? t('MATLAB narratives, questions and function descriptions are currently in English. Interface controls support Indonesian.') : null}
       >
-        <MatlabLab key={course?.id ?? 'free'} initialLesson={course?.id} free />
+        <MatlabIde key={course?.id ?? 'free'} initialLesson={course?.id} />
       </SandboxBenchLayout>
     )
   }

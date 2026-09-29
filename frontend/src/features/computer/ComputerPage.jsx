@@ -32,7 +32,6 @@ export default function ComputerPage({ sandbox = false }) {
     return (
       <SandboxBenchLayout
         bench="computer"
-        title={t('Computer sandbox')}
         description={t('Experiment with gates and stored state, or write and step assembly programs. Save your designs and observations in a local notebook.')}
         courseLink={course ? `/computer-architecture/${course.id}` : '/computer-architecture'}
         courseLinkLabel={t(course ? 'Back to the course' : 'All computer and assembly courses')}

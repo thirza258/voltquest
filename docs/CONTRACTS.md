@@ -556,6 +556,9 @@ The separate function directory also describes desktop-only MATLAB/toolbox capab
 `voltquest-matlab` notebooks store versioned course id, source and notes under `vq.matlab.v1.*`.
 Imports discard claimed results and confirm replacement. No CircuitDoc, board, backend project,
 public course API, assistant, MCP or showcase contract changes. See MATLAB.md for all limits.
+Script downloads use valid MATLAB names (`scriptFileName`: `matlab-start` → `matlab_start.m`, companions
+`desktopFileName` → `matlab_ode_desktop.m`). The sandbox desktop's Command Window replays the last-run
+source plus earlier successful commands through `runMatlab`; the engine contract is unchanged.
 
 ## 20. AI agent learning path
 
@@ -659,3 +662,27 @@ assistant's limiter; it is not moderation, and there is no moderation, report or
 
 No CircuitDoc, board, simulation, sandbox, project, certificate, assistant, MCP or showcase contract
 is extended. The showcase detail page gains one link to `/community?project=<slug>`.
+
+## 26. Sandbox bench shell (2026-09-28)
+
+`features/sandbox/sandboxDirectory.js` is the single list of benches. Each entry has an `id`, a short
+`name` for the rail and footer, a page `title`, a `description` of only what the bench executes, a
+`path`, a `bench` query value, an `icon` and a `saving` mode. `saving` is `'draft'` for the circuit
+and drone workspaces, which autosave, and `'manual'` for everything else. The exported counts
+(`CIRCUIT_PART_TYPES`, `MATLAB_BROWSER_FUNCTIONS`, `CYBER_DEFENSES`, `HPC_LABS`) are asserted against the
+registry and content in `sandboxNav.test.jsx`.
+
+`SandboxBenchLayout({ bench, description, courseLink, courseLinkLabel, localeNotice, actions, variant })`
+renders the shared shell. Its title always comes from the directory. `variant` is `'page'` (default)
+or `'app'`, the viewport-height body used by IDE benches. It imports `workspace.css`.
+
+`benchGuard.js` exports `useUnsavedBenchWork(unsaved, what)` and `unsavedBenchWork()`. A bench registers
+its unsaved explicit-save work, and `SandboxNavSidebar` confirms before navigating away.
+`useWorkspaceStore().saveDraft()` is called only when leaving the circuit or drone bench.
+`LEFT_TABS` no longer contains `sandboxes`.
+
+The notebook hooks `useMatlabNotebook`, `useAgentNotebook` and `useHpcNotebook` own each notebook's
+state and actions for both the course lab and the sandbox IDE. Each hook also exposes the `baseline`
+last opened or saved, which drives per-file modified markers and the unsaved-work guard. The shared
+editor is `features/sandbox/ide/CodeEditor.jsx`: a labelled native textarea over a highlighted copy,
+with the tokenizers in `tokenizers.js` and `matlabSyntax.js`.

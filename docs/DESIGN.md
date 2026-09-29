@@ -191,3 +191,39 @@ have keyboard buttons plus a full-sized query-index select for touch users. Nati
 change the generated scene and pipeline. Do not label attention weights as detection confidence.
 Current device response panels display measured HTTP, ESC and robot state, not just constructed payloads.
 Keep the model and transport boundaries visible where they affect an experiment or hardware interpretation.
+
+## Sandbox benches and IDE shells (2026-09-28)
+
+Every bench shares one shell: the header, the bench rail (desktop) or its disclosure list (below
+xl), a body and the 32 px footer. `SandboxBenchLayout` takes the bench title from
+`sandboxDirectory.js`; the rail, header, heading and footer use that one name. The rail shows each
+bench's name and a two-line description (full text in the tooltip), neutral icons and a teal
+current item with `aria-current="page"`. Text is at least 11 px. It is the only bench switcher; the
+circuit workspace no longer repeats it as a tab or menu items. The footer states how work is kept
+("Drafts save automatically" or "Stored in this browser only when you save"). The rail asks before
+leaving a bench with unsaved explicit-save work.
+
+`variant="page"` scrolls a readable column (computer, cybersecurity, vision, robotics).
+`variant="app"` gives an IDE the remaining viewport height at ≥1280 px and a fixed usable height
+below; its heading is visually hidden and a compact bar shows the description and course link.
+
+The IDE benches look like the software they teach, but every control works. There are no
+decorative menus or unimplemented tools. A panel or view name that exists in the real product stays
+in English in both locales (Command Window, Workspace, Explorer, Agent Manager); descriptive text
+and actions are translated. Each IDE switches between wide, medium and narrow layouts by its own
+width, not the viewport; narrow layouts use pane tabs, and IDEs never cause page-level horizontal
+scroll.
+
+- **MATLAB** uses the classic desktop palette with flat colours: a blue toolstrip tab band, a light
+  ribbon with section labels, grey pane title bars that turn blue on focus, and a white editor with
+  MATLAB's default keyword (#0E00FF), comment (#228B22) and string (#A709F5) colours. Figures use the
+  default grey figure colour and MATLAB's line colour order. The status bar says it is a subset and
+  not MATLAB.
+- **AI agents and HPC** share the VS Code-style workbench (`features/sandbox/ide/workbench.css`):
+  title bar, activity bar, side bar, editor tabs, panel, a side pane (agent thread or run
+  configuration) and a status bar.
+  - It is **dark by default with a light theme toggle**. This is a deliberate exception to the
+    light notebook theme, because the tools it imitates default to dark. The light theme follows
+    VS Code Light.
+  - Informational text uses `--wb-muted`; `--wb-faint` is for icons.
+  - Flat surfaces only, with no gradients or glass.
