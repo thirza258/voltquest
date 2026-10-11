@@ -219,7 +219,7 @@ scroll.
   MATLAB's default keyword (#0E00FF), comment (#228B22) and string (#A709F5) colours. Figures use the
   default grey figure colour and MATLAB's line colour order. The status bar says it is a subset and
   not MATLAB.
-- **AI agents and HPC** share the VS Code-style workbench (`features/sandbox/ide/workbench.css`):
+- **AI agents, HPC and cybersecurity** share the VS Code-style workbench (`features/sandbox/ide/workbench.css`). Cybersecurity adds a Packet Tracer-style topology, a curl terminal and a DevTools-style inspector whose Elements tab renders an inert DOM tree (never real elements):
   title bar, activity bar, side bar, editor tabs, panel, a side pane (agent thread or run
   configuration) and a status bar.
   - It is **dark by default with a light theme toggle**. This is a deliberate exception to the

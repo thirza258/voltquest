@@ -82,8 +82,11 @@ export function collectRoutes(contentDir) {
 
   const agentCourses = (readJson(path.join(contentDir, 'ai-agents.json')).courses ?? []).map(item => item.id)
   const computerCourses = (readJson(path.join(contentDir, 'computer-architecture.json')).courses ?? []).map(item => item.id)
+  const avrCourses = (fs.existsSync(path.join(contentDir, 'avr.json')) ? readJson(path.join(contentDir, 'avr.json')).courses ?? [] : []).map(item => item.id)
   const qtCourses = (readJson(path.join(contentDir, 'qt.json')).courses ?? []).map(item => item.id)
   const winuiCourses = (readJson(path.join(contentDir, 'winui.json')).courses ?? []).map(item => item.id)
+  const cudaCourses = (fs.existsSync(path.join(contentDir, 'cuda.json')) ? readJson(path.join(contentDir, 'cuda.json')).courses ?? [] : []).map(item => item.id)
+  const pytorchCourses = (fs.existsSync(path.join(contentDir, 'pytorch.json')) ? readJson(path.join(contentDir, 'pytorch.json')).courses ?? [] : []).map(item => item.id)
 
   const sandboxBenches = ['matlab', 'cybersecurity', 'hpc', 'vision', 'robotics', 'ai-agents', 'computer'].map(bench => `/sandbox?bench=${bench}`)
   const sandboxPresets = [
@@ -126,10 +129,13 @@ export function collectRoutes(contentDir) {
     '/computer-architecture',
     '/computer-architecture?stage=assembly',
     ...computerCourses.map(id => `/computer-architecture/${id}`),
+    ...(avrCourses.length ? ['/avr', ...avrCourses.map(id => `/avr/${id}`)] : []),
     '/qt',
     ...qtCourses.map(id => `/qt/${id}`),
     '/winui',
     ...winuiCourses.map(id => `/winui/${id}`),
+    ...(cudaCourses.length ? ['/cuda', ...cudaCourses.map(id => `/cuda/${id}`)] : []),
+    ...(pytorchCourses.length ? ['/pytorch', ...pytorchCourses.map(id => `/pytorch/${id}`)] : []),
     '/sandbox',
     ...sandboxBenches,
     ...sandboxPresets,

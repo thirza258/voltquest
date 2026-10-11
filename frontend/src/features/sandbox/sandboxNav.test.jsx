@@ -36,8 +36,8 @@ afterEach(() => {
 })
 
 describe('Course catalog consistency', () => {
-  it('contains all 10 specialized courses with consistent metadata', () => {
-    expect(ALL_COURSES).toHaveLength(10)
+  it('contains all 13 specialized courses with consistent metadata', () => {
+    expect(ALL_COURSES).toHaveLength(13)
     for (const course of ALL_COURSES) {
       expect(course.id).toBeTruthy()
       expect(course.title).toBeTruthy()
@@ -59,9 +59,9 @@ describe('Course catalog consistency', () => {
     )
 
     expect(screen.getByRole('heading', { level: 2, name: 'All Courses & Learning Tracks' })).toBeTruthy()
-    // All 10 courses rendered as h4 titles
+    // All 13 courses rendered as h4 titles
     const courseHeadings = screen.getAllByRole('heading', { level: 4 })
-    expect(courseHeadings.length).toBe(10)
+    expect(courseHeadings.length).toBe(13)
 
     // Filter by domain button: Desktop & Systems (2 tracks: Qt & WinUI)
     fireEvent.click(screen.getByRole('button', { name: /Desktop & Systems/ }))

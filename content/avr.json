@@ -1,0 +1,2237 @@
+{
+  "courses": [
+    {
+      "id": "avr-registers",
+      "version": 1,
+      "order": 1,
+      "title": "19. AVR registers and your first instructions",
+      "summary": "Meet the AVR8 register file and load, copy and observe 8-bit values with LDI and MOV.",
+      "stage": "avr",
+      "mode": "avr",
+      "difficulty": "Fundamental",
+      "minutes": 22,
+      "asm": "; Load three registers and copy one\nldi r16, 0x2A   ; 42\nldi r17, 0b1010 ; 10\nmov r18, r16    ; copy r16 into r18\nout PORTB, r18  ; observe 0x2A on PORTB",
+      "lessons": [
+        {
+          "id": "avr-reg-file",
+          "title": "32 general-purpose registers",
+          "paragraphs": [
+            "The AVR8 CPU has 32 one-byte registers, R0–R31, wired directly to the ALU. Nearly every instruction reads and writes these registers in a single clock cycle.",
+            "Registers R16–R31 are the 'high' half: only they accept the immediate instructions such as LDI, ANDI and SUBI. Keep working values in R16–R31 to avoid 'needs a high register' errors."
+          ],
+          "example": "ldi r16, 200   ; ok\nldi r2, 200    ; error: LDI needs R16-R31",
+          "pitfall": "LDI, SUBI, ANDI, ORI, CPI and SER only work on R16–R31; the low registers R0–R15 cannot take an immediate.",
+          "question": {
+            "id": "avr-reg-q",
+            "prompt": "Which register can receive an LDI immediate?",
+            "options": [
+              {
+                "id": "a",
+                "text": "r2"
+              },
+              {
+                "id": "b",
+                "text": "r15"
+              },
+              {
+                "id": "c",
+                "text": "r20"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "LDI targets the high registers R16–R31; r20 qualifies.",
+            "lessonId": "avr-reg-file"
+          }
+        },
+        {
+          "id": "avr-ldi",
+          "title": "LDI: load an immediate",
+          "paragraphs": [
+            "LDI Rd, K places the constant K (0–255) into a high register in one cycle. Constants may be decimal (42), hex (0x2A) or binary (0b00101010).",
+            "LDI is how every program seeds its working values before arithmetic begins."
+          ],
+          "example": "ldi r16, 0x2A  ; r16 = 42\nldi r17, 0b1010 ; r17 = 10",
+          "pitfall": "An immediate must fit in a byte (0–255). ldi r16, 300 is an assembly error.",
+          "question": {
+            "id": "avr-ldi-q",
+            "prompt": "After `ldi r17, 0b1010`, what is r17 in decimal?",
+            "options": [
+              {
+                "id": "a",
+                "text": "10"
+              },
+              {
+                "id": "b",
+                "text": "1010"
+              },
+              {
+                "id": "c",
+                "text": "20"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "0b1010 is binary ten.",
+            "lessonId": "avr-ldi"
+          }
+        },
+        {
+          "id": "avr-mov",
+          "title": "MOV and observing values",
+          "paragraphs": [
+            "MOV Rd, Rr copies one register into another without changing flags. It is the register-to-register move; use it to duplicate a value before you destroy it.",
+            "This lab observes a byte by writing it to PORTB with OUT; the simulator records each PORTB write so you can see your result."
+          ],
+          "example": "mov r18, r16  ; r18 now equals r16\nout PORTB, r18",
+          "pitfall": "MOV does not touch the SREG flags, so you cannot branch on a MOV; compare first.",
+          "question": {
+            "id": "avr-mov-q",
+            "prompt": "What does MOV change besides the destination register?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The carry flag"
+              },
+              {
+                "id": "b",
+                "text": "Nothing else — no flags"
+              },
+              {
+                "id": "c",
+                "text": "The stack pointer"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "MOV affects no flags.",
+            "lessonId": "avr-mov"
+          }
+        },
+        {
+          "id": "avr-hex",
+          "title": "Decimal, hex and binary",
+          "paragraphs": [
+            "AVR tools show bytes in hex because each hex digit is exactly four bits. 0x2A is 0010 1010, which is 42 decimal.",
+            "Reading registers in hex makes bit patterns obvious, which matters once you start masking and shifting bits."
+          ],
+          "example": "0x2A = 0b0010_1010 = 42",
+          "pitfall": "A leading zero does not make a number octal here; 010 is ten, not eight.",
+          "question": {
+            "id": "avr-hex-q",
+            "prompt": "0xFF as decimal is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "127"
+              },
+              {
+                "id": "b",
+                "text": "255"
+              },
+              {
+                "id": "c",
+                "text": "256"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "0xFF = 255, the largest unsigned byte.",
+            "lessonId": "avr-hex"
+          }
+        }
+      ],
+      "steps": [
+        "Assemble the preset and read the opcode listing beside each line.",
+        "Run it and confirm r16, r17 and r18 in the register panel.",
+        "Change the LDI value and re-run; watch PORTB and the listing update.",
+        "Add a MOV that duplicates r17 into r19 and verify it."
+      ],
+      "expected": "r16=0x2A, r17=0x0A, r18=0x2A; PORTB shows 0x2A (42).",
+      "bridge": {
+        "principle": "Registers are the CPU's fastest storage; everything flows through them.",
+        "minecraft": "Think of each register as a labelled chest the ALU can reach in one tick.",
+        "other": "The same program runs on a real ATmega with avr-gcc/avra and avrdude, or under simulavr; the mnemonics and flags are identical to this subset."
+      },
+      "challenge": {
+        "task": "Load your age into r20 and copy it to r21 and PORTB.",
+        "acceptance": [
+          "Use only LDI and MOV",
+          "r20, r21 and PORTB all hold the same value",
+          "No assembly errors in the listing"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "avr-reg-e1",
+            "prompt": "How many general-purpose registers does the AVR8 have?",
+            "options": [
+              {
+                "id": "a",
+                "text": "8"
+              },
+              {
+                "id": "b",
+                "text": "16"
+              },
+              {
+                "id": "c",
+                "text": "32"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "R0–R31 is 32 registers.",
+            "lessonId": "avr-reg-file"
+          },
+          {
+            "id": "avr-reg-e2",
+            "prompt": "LDI can target which registers?",
+            "options": [
+              {
+                "id": "a",
+                "text": "R0–R31"
+              },
+              {
+                "id": "b",
+                "text": "R16–R31"
+              },
+              {
+                "id": "c",
+                "text": "R0–R15"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Immediates require the high half.",
+            "lessonId": "avr-ldi"
+          },
+          {
+            "id": "avr-reg-e3",
+            "prompt": "`ldi r16, 0x10` leaves r16 =",
+            "options": [
+              {
+                "id": "a",
+                "text": "1"
+              },
+              {
+                "id": "b",
+                "text": "16"
+              },
+              {
+                "id": "c",
+                "text": "160"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "0x10 = 16.",
+            "lessonId": "avr-ldi"
+          },
+          {
+            "id": "avr-reg-e4",
+            "prompt": "Which instruction copies r5 into r6?",
+            "options": [
+              {
+                "id": "a",
+                "text": "mov r6, r5"
+              },
+              {
+                "id": "b",
+                "text": "ldi r6, r5"
+              },
+              {
+                "id": "c",
+                "text": "out r6, r5"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "MOV Rd,Rr copies Rr into Rd.",
+            "lessonId": "avr-mov"
+          },
+          {
+            "id": "avr-reg-e5",
+            "prompt": "A single AVR register holds how many bits?",
+            "options": [
+              {
+                "id": "a",
+                "text": "4"
+              },
+              {
+                "id": "b",
+                "text": "8"
+              },
+              {
+                "id": "c",
+                "text": "16"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "AVR8 registers are 8-bit.",
+            "lessonId": "avr-hex"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "AVR Instruction Set Manual (Microchip)",
+          "url": "https://ww1.microchip.com/downloads/en/devicedoc/atmel-0856-avr-instruction-set-manual.pdf"
+        },
+        {
+          "title": "AVR Assembler user guide (Microchip)",
+          "url": "https://onlinedocs.microchip.com/"
+        }
+      ],
+      "reviewedAt": "2026-10-05"
+    },
+    {
+      "id": "avr-arithmetic",
+      "version": 1,
+      "order": 2,
+      "title": "20. AVR arithmetic and the status register",
+      "summary": "Add and subtract bytes with ADD, SUB, INC and DEC and read the carry, zero, negative and overflow flags.",
+      "stage": "avr",
+      "mode": "avr",
+      "difficulty": "Fundamental",
+      "minutes": 24,
+      "asm": "; Add two bytes and watch the flags\nldi r16, 0x80\nldi r17, 0x80\nadd r16, r17   ; 0x80+0x80 = 0x00 with carry, zero and overflow set\nout PORTB, r16",
+      "lessons": [
+        {
+          "id": "avr-add",
+          "title": "ADD and ADC",
+          "paragraphs": [
+            "ADD Rd, Rr adds two registers and stores the sum in Rd, updating the flags. ADC adds with the carry flag, which is how you chain bytes into 16-bit sums.",
+            "After ADD, the carry flag C is set when the unsigned result exceeded 255."
+          ],
+          "example": "add r16, r17  ; r16 = r16 + r17\nadc r18, r19  ; r18 = r18 + r19 + C",
+          "pitfall": "ADD overwrites Rd. Copy the operand with MOV first if you still need the original.",
+          "question": {
+            "id": "avr-add-q",
+            "prompt": "Which instruction continues a multi-byte addition using the carry?",
+            "options": [
+              {
+                "id": "a",
+                "text": "ADD"
+              },
+              {
+                "id": "b",
+                "text": "ADC"
+              },
+              {
+                "id": "c",
+                "text": "AND"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "ADC adds the carry in.",
+            "lessonId": "avr-add"
+          }
+        },
+        {
+          "id": "avr-sub",
+          "title": "SUB, SUBI and compare",
+          "paragraphs": [
+            "SUB Rd, Rr subtracts; SUBI Rd, K subtracts an immediate (high registers only). The carry flag after a subtraction means a borrow occurred (the unsigned result went negative).",
+            "CP and CPI subtract but store nothing — they exist purely to set flags before a branch."
+          ],
+          "example": "subi r16, 1   ; r16 = r16 - 1\ncp r16, r17   ; set flags for r16 - r17, discard result",
+          "pitfall": "After subtraction C=1 means 'borrow', i.e. the first operand was smaller.",
+          "question": {
+            "id": "avr-sub-q",
+            "prompt": "What does CP store?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The difference in Rd"
+              },
+              {
+                "id": "b",
+                "text": "Nothing — only flags"
+              },
+              {
+                "id": "c",
+                "text": "The carry in Rr"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "CP only updates flags.",
+            "lessonId": "avr-sub"
+          }
+        },
+        {
+          "id": "avr-flags",
+          "title": "The SREG flags",
+          "paragraphs": [
+            "The status register SREG holds C (carry), Z (zero), N (negative, bit 7 of the result), V (two's-complement overflow) and S (sign = N xor V), among others.",
+            "Zero means the result byte was 0. Overflow means a signed result wrapped past +127 or −128."
+          ],
+          "example": "ldi r16,0x80\nldi r17,0x80\nadd r16,r17  ; Z=1, C=1, V=1",
+          "pitfall": "C is for unsigned overflow; V is for signed overflow. They are different flags for different interpretations.",
+          "question": {
+            "id": "avr-flags-q",
+            "prompt": "Which flag signals a signed overflow?",
+            "options": [
+              {
+                "id": "a",
+                "text": "C"
+              },
+              {
+                "id": "b",
+                "text": "V"
+              },
+              {
+                "id": "c",
+                "text": "Z"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "V is the two's-complement overflow flag.",
+            "lessonId": "avr-flags"
+          }
+        },
+        {
+          "id": "avr-incdec",
+          "title": "INC and DEC",
+          "paragraphs": [
+            "INC and DEC add or subtract one and update Z, N, V and S — but deliberately leave the carry flag C unchanged, so you can count inside a carry-sensitive loop.",
+            "DEC reaching zero sets Z, which is the classic way to end a countdown loop with BRNE."
+          ],
+          "example": "ldi r16, 3\ndec r16   ; 2, Z=0\ndec r16   ; 1\ndec r16   ; 0, Z=1",
+          "pitfall": "INC/DEC do NOT affect carry; do not rely on C after them.",
+          "question": {
+            "id": "avr-incdec-q",
+            "prompt": "Which flag does DEC leave unchanged?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Z"
+              },
+              {
+                "id": "b",
+                "text": "N"
+              },
+              {
+                "id": "c",
+                "text": "C"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "INC and DEC do not touch the carry flag.",
+            "lessonId": "avr-incdec"
+          }
+        }
+      ],
+      "steps": [
+        "Run the preset and read every SREG flag after the ADD.",
+        "Change r17 to 0x01 and predict C, Z and V before re-running.",
+        "Replace ADD with SUB and explain the new carry meaning.",
+        "Build a three-step countdown with DEC and watch Z."
+      ],
+      "expected": "r16 = 0x00; SREG shows C=1, Z=1, V=1, N=0, S=1; PORTB = 0.",
+      "bridge": {
+        "principle": "Flags are the CPU's memory of the last result; branches read them.",
+        "minecraft": "A redstone comparator reacts to a signal the way a branch reacts to a flag.",
+        "other": "The same program runs on a real ATmega with avr-gcc/avra and avrdude, or under simulavr; the mnemonics and flags are identical to this subset."
+      },
+      "challenge": {
+        "task": "Compute 200 + 100 across the carry into a second register.",
+        "acceptance": [
+          "Use ADD then ADC",
+          "The high byte becomes 1",
+          "Explain why the low byte is 44"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "avr-ari-e1",
+            "prompt": "`ldi r16,0xFF` then `ldi r17,1` then `add r16,r17` sets which flags?",
+            "options": [
+              {
+                "id": "a",
+                "text": "C=1, Z=1"
+              },
+              {
+                "id": "b",
+                "text": "C=0, Z=0"
+              },
+              {
+                "id": "c",
+                "text": "only N"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "255+1 wraps to 0 with a carry out.",
+            "lessonId": "avr-add"
+          },
+          {
+            "id": "avr-ari-e2",
+            "prompt": "After SUB, C=1 means:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the result is zero"
+              },
+              {
+                "id": "b",
+                "text": "a borrow occurred"
+              },
+              {
+                "id": "c",
+                "text": "overflow"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Carry is borrow after subtraction.",
+            "lessonId": "avr-sub"
+          },
+          {
+            "id": "avr-ari-e3",
+            "prompt": "The S flag equals:",
+            "options": [
+              {
+                "id": "a",
+                "text": "N xor V"
+              },
+              {
+                "id": "b",
+                "text": "C and Z"
+              },
+              {
+                "id": "c",
+                "text": "bit 0"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "S = N ⊕ V, the signed comparison result.",
+            "lessonId": "avr-flags"
+          },
+          {
+            "id": "avr-ari-e4",
+            "prompt": "DEC is most often paired with:",
+            "options": [
+              {
+                "id": "a",
+                "text": "BRNE"
+              },
+              {
+                "id": "b",
+                "text": "OUT"
+              },
+              {
+                "id": "c",
+                "text": "MOV"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "DEC then BRNE forms a countdown loop.",
+            "lessonId": "avr-incdec"
+          },
+          {
+            "id": "avr-ari-e5",
+            "prompt": "To add a with-carry high byte you use:",
+            "options": [
+              {
+                "id": "a",
+                "text": "ADD"
+              },
+              {
+                "id": "b",
+                "text": "ADC"
+              },
+              {
+                "id": "c",
+                "text": "ADIW only"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "ADC chains the carry into the next byte.",
+            "lessonId": "avr-add"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "AVR Instruction Set Manual (Microchip)",
+          "url": "https://ww1.microchip.com/downloads/en/devicedoc/atmel-0856-avr-instruction-set-manual.pdf"
+        },
+        {
+          "title": "AVR Assembler user guide (Microchip)",
+          "url": "https://onlinedocs.microchip.com/"
+        }
+      ],
+      "reviewedAt": "2026-10-05"
+    },
+    {
+      "id": "avr-logic-bits",
+      "version": 1,
+      "order": 3,
+      "title": "21. AVR logic, masking and shifts",
+      "summary": "Use AND, OR, EOR, COM and the shift/rotate instructions to set, clear, test and move bits.",
+      "stage": "avr",
+      "mode": "avr",
+      "difficulty": "Intermediate",
+      "minutes": 24,
+      "asm": "; Mask, set and shift bits\nldi r16, 0b1100\nandi r16, 0b1010  ; keep common bits -> 0b1000\nori  r16, 0b0001  ; set bit0 -> 0b1001\nlsl  r16          ; shift left -> 0b10010\nout PORTB, r16",
+      "lessons": [
+        {
+          "id": "avr-mask",
+          "title": "AND/OR/EOR masking",
+          "paragraphs": [
+            "ANDI clears the bits that are 0 in the mask (keep only selected bits); ORI sets the bits that are 1 in the mask; EOR toggles bits. Logic instructions clear the V flag and set N, Z and S.",
+            "Masking is how firmware changes one pin without disturbing the others in a port."
+          ],
+          "example": "andi r16, 0b00001111  ; keep low nibble\nori  r16, 0b10000000  ; set bit 7",
+          "pitfall": "AND with a mask of 0 clears everything; that is CLR (or EOR Rd,Rd), not a mistake to make by accident.",
+          "question": {
+            "id": "avr-mask-q",
+            "prompt": "To force bit 3 high without changing other bits you use:",
+            "options": [
+              {
+                "id": "a",
+                "text": "ANDI"
+              },
+              {
+                "id": "b",
+                "text": "ORI with 0b00001000"
+              },
+              {
+                "id": "c",
+                "text": "EOR with 0xFF"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "OR sets the masked bits.",
+            "lessonId": "avr-mask"
+          }
+        },
+        {
+          "id": "avr-com",
+          "title": "COM, NEG and CLR/SER",
+          "paragraphs": [
+            "COM forms the one's complement (flip every bit) and sets carry; NEG forms the two's complement (arithmetic negation). CLR zeroes a register, SER sets it to 0xFF.",
+            "These are the quickest ways to invert or preset a byte."
+          ],
+          "example": "ldi r16, 0x0F\ncom r16   ; 0xF0\nneg r16   ; 0x10",
+          "pitfall": "COM is bitwise NOT; NEG is arithmetic −x. They differ by one (COM x = NEG x − 1).",
+          "question": {
+            "id": "avr-com-q",
+            "prompt": "COM r16 turns 0x0F into:",
+            "options": [
+              {
+                "id": "a",
+                "text": "0xF0"
+              },
+              {
+                "id": "b",
+                "text": "0x10"
+              },
+              {
+                "id": "c",
+                "text": "0x0E"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "One's complement flips all bits.",
+            "lessonId": "avr-com"
+          }
+        },
+        {
+          "id": "avr-shift",
+          "title": "LSL, LSR, ROL, ROR, ASR",
+          "paragraphs": [
+            "LSL shifts left (×2) pushing bit 7 into carry; LSR shifts right (÷2 unsigned) pushing bit 0 into carry. ROL/ROR rotate through the carry, and ASR shifts right keeping the sign bit.",
+            "Shifting is cheap multiplication and division by powers of two."
+          ],
+          "example": "lsl r16  ; r16 = r16*2, C = old bit7\nlsr r16  ; r16 = r16/2, C = old bit0",
+          "pitfall": "LSR is an unsigned divide; use ASR to divide a signed value by two.",
+          "question": {
+            "id": "avr-shift-q",
+            "prompt": "LSL r16 is equivalent to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "r16 / 2"
+              },
+              {
+                "id": "b",
+                "text": "r16 * 2"
+              },
+              {
+                "id": "c",
+                "text": "NOT r16"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A left shift multiplies by two.",
+            "lessonId": "avr-shift"
+          }
+        },
+        {
+          "id": "avr-swap",
+          "title": "SWAP and nibbles",
+          "paragraphs": [
+            "SWAP exchanges the high and low nibbles of a register in one cycle, which is handy for packing two 4-bit values or formatting hex output.",
+            "Combined with ANDI it extracts either nibble."
+          ],
+          "example": "ldi r16, 0x4C\nswap r16  ; 0xC4",
+          "pitfall": "SWAP changes no flags; it is a pure nibble exchange.",
+          "question": {
+            "id": "avr-swap-q",
+            "prompt": "SWAP of 0x4C is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "0xC4"
+              },
+              {
+                "id": "b",
+                "text": "0x4C"
+              },
+              {
+                "id": "c",
+                "text": "0x44"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The nibbles trade places.",
+            "lessonId": "avr-swap"
+          }
+        }
+      ],
+      "steps": [
+        "Run the preset and watch r16 after each logic step.",
+        "Change the AND mask and predict which bits survive.",
+        "Replace LSL with LSR and read the carry it produces.",
+        "Use SWAP then ANDI to isolate the high nibble of 0x4C."
+      ],
+      "expected": "r16 ends 0b00010010 (0x12); AND then OR then LSL applied in order.",
+      "bridge": {
+        "principle": "Boolean masks let one instruction edit chosen bits.",
+        "minecraft": "An AND mask is a row of redstone AND gates selecting lines.",
+        "other": "The same program runs on a real ATmega with avr-gcc/avra and avrdude, or under simulavr; the mnemonics and flags are identical to this subset."
+      },
+      "challenge": {
+        "task": "Clear the low nibble of a byte while keeping the high nibble.",
+        "acceptance": [
+          "Use a single ANDI",
+          "Mask value is 0xF0",
+          "Show the before and after in PORTB"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "avr-log-e1",
+            "prompt": "ANDI with 0x0F keeps:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the high nibble"
+              },
+              {
+                "id": "b",
+                "text": "the low nibble"
+              },
+              {
+                "id": "c",
+                "text": "nothing"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Bits set in the mask are kept.",
+            "lessonId": "avr-mask"
+          },
+          {
+            "id": "avr-log-e2",
+            "prompt": "EOR r16,r16 leaves r16 =",
+            "options": [
+              {
+                "id": "a",
+                "text": "0"
+              },
+              {
+                "id": "b",
+                "text": "0xFF"
+              },
+              {
+                "id": "c",
+                "text": "unchanged"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "XOR with itself is zero (that is CLR).",
+            "lessonId": "avr-mask"
+          },
+          {
+            "id": "avr-log-e3",
+            "prompt": "Which instruction divides an unsigned byte by two?",
+            "options": [
+              {
+                "id": "a",
+                "text": "LSL"
+              },
+              {
+                "id": "b",
+                "text": "LSR"
+              },
+              {
+                "id": "c",
+                "text": "ROL"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "LSR shifts right, dividing by two.",
+            "lessonId": "avr-shift"
+          },
+          {
+            "id": "avr-log-e4",
+            "prompt": "NEG computes:",
+            "options": [
+              {
+                "id": "a",
+                "text": "one's complement"
+              },
+              {
+                "id": "b",
+                "text": "two's complement"
+              },
+              {
+                "id": "c",
+                "text": "a left shift"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "NEG is arithmetic negation.",
+            "lessonId": "avr-com"
+          },
+          {
+            "id": "avr-log-e5",
+            "prompt": "LSL pushes which bit into carry?",
+            "options": [
+              {
+                "id": "a",
+                "text": "bit 0"
+              },
+              {
+                "id": "b",
+                "text": "bit 7"
+              },
+              {
+                "id": "c",
+                "text": "bit 3"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The top bit shifts out into C.",
+            "lessonId": "avr-shift"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "AVR Instruction Set Manual (Microchip)",
+          "url": "https://ww1.microchip.com/downloads/en/devicedoc/atmel-0856-avr-instruction-set-manual.pdf"
+        },
+        {
+          "title": "AVR Assembler user guide (Microchip)",
+          "url": "https://onlinedocs.microchip.com/"
+        }
+      ],
+      "reviewedAt": "2026-10-05"
+    },
+    {
+      "id": "avr-branches",
+      "version": 1,
+      "order": 4,
+      "title": "22. AVR comparisons, branches and loops",
+      "summary": "Turn flags into control flow with CP/CPI and the conditional branches, and build counted and conditional loops.",
+      "stage": "avr",
+      "mode": "avr",
+      "difficulty": "Intermediate",
+      "minutes": 26,
+      "asm": "; Sum 1..5 with a counted loop\nldi r16, 0    ; accumulator\nldi r17, 1    ; value\nldi r18, 5    ; counter\nloop:\n  add r16, r17\n  inc r17\n  dec r18\n  brne loop   ; repeat until counter hits zero\nout PORTB, r16  ; 15",
+      "lessons": [
+        {
+          "id": "avr-cp",
+          "title": "CP, CPI and the comparison flags",
+          "paragraphs": [
+            "CP Rd, Rr and CPI Rd, K subtract to set flags without storing a result. The branches then read those flags: Z for equality, C for unsigned ordering, and S for signed ordering.",
+            "Always compare immediately before the branch; any flag-changing instruction in between invalidates the test."
+          ],
+          "example": "cpi r16, 10\nbrlo lower   ; branch if r16 < 10 (unsigned)",
+          "pitfall": "An INC, ADD or LDI between the CP and the branch rewrites the flags you meant to test.",
+          "question": {
+            "id": "avr-cp-q",
+            "prompt": "Which flag does BREQ test?",
+            "options": [
+              {
+                "id": "a",
+                "text": "C"
+              },
+              {
+                "id": "b",
+                "text": "Z"
+              },
+              {
+                "id": "c",
+                "text": "N"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "BREQ branches when Z=1 (equal).",
+            "lessonId": "avr-cp"
+          }
+        },
+        {
+          "id": "avr-cond",
+          "title": "Conditional branches",
+          "paragraphs": [
+            "BREQ/BRNE test zero; BRCS/BRCC (also BRLO/BRSH) test carry for unsigned <, ≥; BRLT/BRGE test the S flag for signed <, ≥; BRMI/BRPL test the sign bit.",
+            "A branch is a short relative jump: it is taken only when its flag condition holds, otherwise execution falls through."
+          ],
+          "example": "brne loop   ; if Z=0, jump back to loop\nbrsh big    ; if unsigned >= , jump",
+          "pitfall": "Use BRLO/BRSH for unsigned values and BRLT/BRGE for signed; mixing them gives wrong results near 0x80.",
+          "question": {
+            "id": "avr-cond-q",
+            "prompt": "For unsigned 'less than', branch with:",
+            "options": [
+              {
+                "id": "a",
+                "text": "BRLT"
+              },
+              {
+                "id": "b",
+                "text": "BRLO"
+              },
+              {
+                "id": "c",
+                "text": "BRMI"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "BRLO (=BRCS) is the unsigned less-than branch.",
+            "lessonId": "avr-cond"
+          }
+        },
+        {
+          "id": "avr-loop",
+          "title": "Counted loops",
+          "paragraphs": [
+            "The idiomatic AVR loop loads a counter, does work, DECs the counter and uses BRNE to repeat until it reaches zero. DEC sets Z without touching carry, so carry-based work inside the loop still behaves.",
+            "RJMP provides the unconditional jump for the top of a while-style loop."
+          ],
+          "example": "ldi r18, 5\nloop:\n  dec r18\n  brne loop",
+          "pitfall": "Forgetting to DEC (or DECing the wrong register) makes an infinite loop; the simulator stops at its step limit.",
+          "question": {
+            "id": "avr-loop-q",
+            "prompt": "What ends a `dec`/`brne` countdown?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Carry set"
+              },
+              {
+                "id": "b",
+                "text": "Z set when the counter hits 0"
+              },
+              {
+                "id": "c",
+                "text": "Overflow"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "BRNE falls through when DEC makes the counter zero.",
+            "lessonId": "avr-loop"
+          }
+        },
+        {
+          "id": "avr-rjmp",
+          "title": "RJMP and structure",
+          "paragraphs": [
+            "RJMP label is an unconditional relative jump. Combined with a comparison and a conditional branch it builds if/else and while structures out of flat instructions.",
+            "Labels are resolved by the assembler to a signed offset; the listing shows the encoded branch word."
+          ],
+          "example": "rjmp done\n...\ndone:\n  nop",
+          "pitfall": "A relative branch only reaches ±64 words; a far target needs RJMP (±2k) or a restructure.",
+          "question": {
+            "id": "avr-rjmp-q",
+            "prompt": "RJMP is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "conditional"
+              },
+              {
+                "id": "b",
+                "text": "unconditional"
+              },
+              {
+                "id": "c",
+                "text": "a compare"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "RJMP always jumps.",
+            "lessonId": "avr-rjmp"
+          }
+        }
+      ],
+      "steps": [
+        "Run the 1..5 sum and confirm r16 = 15.",
+        "Step the loop and watch r18 fall to zero and Z flip.",
+        "Change the counter to 10 and predict the new sum.",
+        "Rewrite the loop to stop with CPI r17, 6 and BRSH."
+      ],
+      "expected": "r16 = 15 (1+2+3+4+5); the loop runs five times and ends with Z set.",
+      "bridge": {
+        "principle": "Compare-then-branch turns data into decisions.",
+        "minecraft": "A comparator plus a repeater is a flag plus a branch.",
+        "other": "The same program runs on a real ATmega with avr-gcc/avra and avrdude, or under simulavr; the mnemonics and flags are identical to this subset."
+      },
+      "challenge": {
+        "task": "Count how many of eight bytes are non-zero using a loop and a branch.",
+        "acceptance": [
+          "Use a DEC/BRNE loop",
+          "Use CPI or TST with a conditional branch",
+          "Return the count in a register"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "avr-br-e1",
+            "prompt": "CPI is only valid on:",
+            "options": [
+              {
+                "id": "a",
+                "text": "R0–R15"
+              },
+              {
+                "id": "b",
+                "text": "R16–R31"
+              },
+              {
+                "id": "c",
+                "text": "the stack"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Immediate compares need a high register.",
+            "lessonId": "avr-cp"
+          },
+          {
+            "id": "avr-br-e2",
+            "prompt": "BRNE is taken when:",
+            "options": [
+              {
+                "id": "a",
+                "text": "Z=1"
+              },
+              {
+                "id": "b",
+                "text": "Z=0"
+              },
+              {
+                "id": "c",
+                "text": "C=1"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "BRNE branches while the zero flag is clear.",
+            "lessonId": "avr-cond"
+          },
+          {
+            "id": "avr-br-e3",
+            "prompt": "Signed 'less than' uses:",
+            "options": [
+              {
+                "id": "a",
+                "text": "BRLO"
+              },
+              {
+                "id": "b",
+                "text": "BRLT"
+              },
+              {
+                "id": "c",
+                "text": "BRCC"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "BRLT reads the S flag.",
+            "lessonId": "avr-cond"
+          },
+          {
+            "id": "avr-br-e4",
+            "prompt": "A counted loop typically uses:",
+            "options": [
+              {
+                "id": "a",
+                "text": "DEC + BRNE"
+              },
+              {
+                "id": "b",
+                "text": "INC + BREQ only"
+              },
+              {
+                "id": "c",
+                "text": "MOV + RET"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "DEC to the counter, BRNE to repeat.",
+            "lessonId": "avr-loop"
+          },
+          {
+            "id": "avr-br-e5",
+            "prompt": "RJMP resolves a label into:",
+            "options": [
+              {
+                "id": "a",
+                "text": "an absolute byte address"
+              },
+              {
+                "id": "b",
+                "text": "a signed relative offset"
+              },
+              {
+                "id": "c",
+                "text": "a register"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Relative jumps store a signed offset.",
+            "lessonId": "avr-rjmp"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "AVR Instruction Set Manual (Microchip)",
+          "url": "https://ww1.microchip.com/downloads/en/devicedoc/atmel-0856-avr-instruction-set-manual.pdf"
+        },
+        {
+          "title": "AVR Assembler user guide (Microchip)",
+          "url": "https://onlinedocs.microchip.com/"
+        }
+      ],
+      "reviewedAt": "2026-10-05"
+    },
+    {
+      "id": "avr-memory",
+      "version": 1,
+      "order": 5,
+      "title": "23. AVR data memory, pointers and the stack",
+      "summary": "Move bytes to and from SRAM with LDS/STS and the X/Y/Z pointers, and use PUSH/POP with the stack.",
+      "stage": "avr",
+      "mode": "avr",
+      "difficulty": "Intermediate",
+      "minutes": 26,
+      "asm": "; Store a byte in SRAM and read it back through X\nldi r26, 0x60   ; XL -> SRAM start\nldi r27, 0x00   ; XH\nldi r16, 0x37\nst  X, r16      ; mem[0x60] = 0x37\nld  r18, X      ; r18 = mem[0x60]\nout PORTB, r18",
+      "lessons": [
+        {
+          "id": "avr-dataspace",
+          "title": "The data space map",
+          "paragraphs": [
+            "AVR data memory is one flat address space: 0x00–0x1F are the registers, 0x20–0x5F are I/O registers, and SRAM begins at 0x60. LDS Rd, addr and STS addr, Rr move a byte directly to or from a data address.",
+            "This lab's SRAM runs from 0x60 upward; writing there does not disturb the registers."
+          ],
+          "example": "ldi r16, 9\nsts 0x60, r16   ; mem[0x60] = 9\nlds r17, 0x60   ; r17 = 9",
+          "pitfall": "Addresses below 0x60 alias the registers and I/O; store your data at 0x60 and above.",
+          "question": {
+            "id": "avr-ds-q",
+            "prompt": "Where does SRAM start in this model?",
+            "options": [
+              {
+                "id": "a",
+                "text": "0x00"
+              },
+              {
+                "id": "b",
+                "text": "0x20"
+              },
+              {
+                "id": "c",
+                "text": "0x60"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "0x60 follows the register and I/O regions.",
+            "lessonId": "avr-dataspace"
+          }
+        },
+        {
+          "id": "avr-pointers",
+          "title": "The X, Y and Z pointers",
+          "paragraphs": [
+            "X (r27:r26), Y (r29:r28) and Z (r31:r30) are 16-bit pointers made of register pairs. LD Rd, X reads the byte they point at; ST X, Rr writes it. X+ post-increments and -X pre-decrements the pointer.",
+            "Pointers let one short loop walk an array in SRAM."
+          ],
+          "example": "ld r16, X+   ; read, then advance X\nst -Y, r17   ; move Y back, then write",
+          "pitfall": "Load the pointer's low and high bytes (e.g. r26 and r27 for X) before using it, or it points at address 0.",
+          "question": {
+            "id": "avr-ptr-q",
+            "prompt": "Which register pair is the Z pointer?",
+            "options": [
+              {
+                "id": "a",
+                "text": "r27:r26"
+              },
+              {
+                "id": "b",
+                "text": "r29:r28"
+              },
+              {
+                "id": "c",
+                "text": "r31:r30"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Z is r31:r30.",
+            "lessonId": "avr-pointers"
+          }
+        },
+        {
+          "id": "avr-array",
+          "title": "Walking an array",
+          "paragraphs": [
+            "Combining a pointer with post-increment and a DEC/BRNE counter is the standard way to sum or scan an array: load through X+, accumulate, decrement the count, repeat.",
+            "The pointer advances automatically, so the loop body stays tiny."
+          ],
+          "example": "loop:\n  ld r0, X+\n  add r16, r0\n  dec r18\n  brne loop",
+          "pitfall": "Post-increment changes the pointer even on the last iteration; that is fine as long as you do not read past your data.",
+          "question": {
+            "id": "avr-arr-q",
+            "prompt": "`ld r0, X+` does what to X?",
+            "options": [
+              {
+                "id": "a",
+                "text": "leaves it"
+              },
+              {
+                "id": "b",
+                "text": "advances it by one after the read"
+              },
+              {
+                "id": "c",
+                "text": "clears it"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "X+ post-increments the pointer.",
+            "lessonId": "avr-array"
+          }
+        },
+        {
+          "id": "avr-stack",
+          "title": "The stack: PUSH and POP",
+          "paragraphs": [
+            "The stack pointer SP starts at the top of data memory and grows downward. PUSH Rr stores a register and moves SP down; POP Rd moves SP up and restores a register.",
+            "Push the registers a routine will clobber, then pop them in reverse order before returning."
+          ],
+          "example": "push r16\n...\npop r16   ; restores the pushed value",
+          "pitfall": "POP in the wrong order returns the wrong values; stacks are last-in, first-out.",
+          "question": {
+            "id": "avr-stk-q",
+            "prompt": "The AVR stack grows:",
+            "options": [
+              {
+                "id": "a",
+                "text": "upward"
+              },
+              {
+                "id": "b",
+                "text": "downward from the top of RAM"
+              },
+              {
+                "id": "c",
+                "text": "it does not move"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "SP decreases on PUSH.",
+            "lessonId": "avr-stack"
+          }
+        }
+      ],
+      "steps": [
+        "Run the preset and find 0x37 at address 0x60 in the memory panel.",
+        "Change the stored value and the X pointer and re-run.",
+        "Write a loop that fills mem[0x60..0x64] with 1..5 using X+.",
+        "PUSH two registers, clobber them, and POP them back."
+      ],
+      "expected": "mem[0x60] = 0x37 and r18 = 0x37; the X pointer addresses SRAM.",
+      "bridge": {
+        "principle": "Pointers plus a counter is how assembly walks arrays.",
+        "minecraft": "A pointer is a minecart address that moves one block per load.",
+        "other": "The same program runs on a real ATmega with avr-gcc/avra and avrdude, or under simulavr; the mnemonics and flags are identical to this subset."
+      },
+      "challenge": {
+        "task": "Sum five bytes stored in SRAM using the X pointer.",
+        "acceptance": [
+          "Preload the five bytes with ST X+",
+          "Loop with LD X+ and ADD",
+          "Return the sum in r16"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "avr-mem-e1",
+            "prompt": "STS writes a register to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a program address"
+              },
+              {
+                "id": "b",
+                "text": "a data memory address"
+              },
+              {
+                "id": "c",
+                "text": "the carry flag"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "STS targets data memory.",
+            "lessonId": "avr-dataspace"
+          },
+          {
+            "id": "avr-mem-e2",
+            "prompt": "X is formed from:",
+            "options": [
+              {
+                "id": "a",
+                "text": "r31:r30"
+              },
+              {
+                "id": "b",
+                "text": "r27:r26"
+              },
+              {
+                "id": "c",
+                "text": "r1:r0"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "X = r27:r26.",
+            "lessonId": "avr-pointers"
+          },
+          {
+            "id": "avr-mem-e3",
+            "prompt": "Post-increment is written:",
+            "options": [
+              {
+                "id": "a",
+                "text": "X+"
+              },
+              {
+                "id": "b",
+                "text": "+X"
+              },
+              {
+                "id": "c",
+                "text": "X-"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "LD Rd, X+ reads then advances.",
+            "lessonId": "avr-array"
+          },
+          {
+            "id": "avr-mem-e4",
+            "prompt": "PUSH moves the stack pointer:",
+            "options": [
+              {
+                "id": "a",
+                "text": "up"
+              },
+              {
+                "id": "b",
+                "text": "down"
+              },
+              {
+                "id": "c",
+                "text": "not at all"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "PUSH decrements SP.",
+            "lessonId": "avr-stack"
+          },
+          {
+            "id": "avr-mem-e5",
+            "prompt": "Registers are popped:",
+            "options": [
+              {
+                "id": "a",
+                "text": "in the same order pushed"
+              },
+              {
+                "id": "b",
+                "text": "in reverse order"
+              },
+              {
+                "id": "c",
+                "text": "any order"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "LIFO means reverse order.",
+            "lessonId": "avr-stack"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "AVR Instruction Set Manual (Microchip)",
+          "url": "https://ww1.microchip.com/downloads/en/devicedoc/atmel-0856-avr-instruction-set-manual.pdf"
+        },
+        {
+          "title": "AVR Assembler user guide (Microchip)",
+          "url": "https://onlinedocs.microchip.com/"
+        }
+      ],
+      "reviewedAt": "2026-10-05"
+    },
+    {
+      "id": "avr-io",
+      "version": 1,
+      "order": 6,
+      "title": "24. AVR I/O ports: driving pins",
+      "summary": "Configure a port with DDRB, write pins with PORTB and set or clear single bits with SBI and CBI.",
+      "stage": "avr",
+      "mode": "avr",
+      "difficulty": "Intermediate",
+      "minutes": 24,
+      "asm": "; Make PB0 an output and drive it high\nsbi DDRB, 0    ; PB0 is an output\nsbi PORTB, 0   ; PB0 high\nin  r16, PORTB ; read the port back\nldi r17, 0xFF\nout DDRB, r17  ; all of port B outputs",
+      "lessons": [
+        {
+          "id": "avr-ddr",
+          "title": "Data direction with DDRB",
+          "paragraphs": [
+            "Each port has a direction register (DDRB) and a data register (PORTB). A 1 in DDRB makes that pin an output; a 0 makes it an input. OUT writes a whole byte to an I/O register; IN reads one back.",
+            "Set direction first, then drive the data."
+          ],
+          "example": "ldi r16, 0xFF\nout DDRB, r16  ; all PORTB pins are outputs",
+          "pitfall": "Driving PORTB before setting DDRB changes nothing visible; configure direction first.",
+          "question": {
+            "id": "avr-ddr-q",
+            "prompt": "A 1 bit in DDRB makes that pin:",
+            "options": [
+              {
+                "id": "a",
+                "text": "an input"
+              },
+              {
+                "id": "b",
+                "text": "an output"
+              },
+              {
+                "id": "c",
+                "text": "floating"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "DDR bit 1 = output.",
+            "lessonId": "avr-ddr"
+          }
+        },
+        {
+          "id": "avr-sbicbi",
+          "title": "SBI and CBI",
+          "paragraphs": [
+            "SBI io, b sets bit b of a low I/O register; CBI io, b clears it — a single-instruction read-modify-write that leaves the other pins alone. They work on the lower I/O registers (addresses 0x00–0x1F), which include DDRB and PORTB.",
+            "This is how you toggle one LED without disturbing the rest of the port."
+          ],
+          "example": "sbi PORTB, 3   ; PB3 high\ncbi PORTB, 3   ; PB3 low",
+          "pitfall": "SBI/CBI only reach low I/O addresses; a high I/O register needs IN, ORI/ANDI, then OUT.",
+          "question": {
+            "id": "avr-sbi-q",
+            "prompt": "SBI PORTB, 2 affects:",
+            "options": [
+              {
+                "id": "a",
+                "text": "only bit 2"
+              },
+              {
+                "id": "b",
+                "text": "the whole port"
+              },
+              {
+                "id": "c",
+                "text": "the carry flag"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "SBI changes a single bit.",
+            "lessonId": "avr-sbicbi"
+          }
+        },
+        {
+          "id": "avr-inout",
+          "title": "IN and OUT",
+          "paragraphs": [
+            "OUT io, Rr copies a register to an I/O register; IN Rd, io copies an I/O register into a register. Named ports (PORTB, DDRB, PINB) assemble to their addresses.",
+            "To change several bits of a high port at once, read with IN, modify with ANDI/ORI, and write back with OUT."
+          ],
+          "example": "in  r16, PINB\nori r16, 0b0001\nout PORTB, r16",
+          "pitfall": "PINB reads the pins; writing PORTB sets the output latch. Reading and writing use different registers on real hardware.",
+          "question": {
+            "id": "avr-io-q",
+            "prompt": "OUT copies:",
+            "options": [
+              {
+                "id": "a",
+                "text": "an I/O register into a register"
+              },
+              {
+                "id": "b",
+                "text": "a register into an I/O register"
+              },
+              {
+                "id": "c",
+                "text": "two registers"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "OUT writes a register to an I/O port.",
+            "lessonId": "avr-inout"
+          }
+        },
+        {
+          "id": "avr-blink",
+          "title": "A blink pattern",
+          "paragraphs": [
+            "Firmware blinks an LED by setting the pin's direction once, then alternately setting and clearing the pin inside a loop. In this simulator each PORTB write is recorded as output so you can see the pattern.",
+            "On real hardware a delay loop sets the blink rate; here you simply watch the sequence of port values."
+          ],
+          "example": "sbi DDRB, 0\nloop:\n  sbi PORTB, 0\n  cbi PORTB, 0\n  rjmp loop",
+          "pitfall": "Without a delay a real LED would blink too fast to see; the concept and the port writes are what matter here.",
+          "question": {
+            "id": "avr-blink-q",
+            "prompt": "To blink PB0 you alternately use:",
+            "options": [
+              {
+                "id": "a",
+                "text": "SBI and CBI on PORTB,0"
+              },
+              {
+                "id": "b",
+                "text": "ADD and SUB"
+              },
+              {
+                "id": "c",
+                "text": "PUSH and POP"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Set then clear the pin bit.",
+            "lessonId": "avr-blink"
+          }
+        }
+      ],
+      "steps": [
+        "Run the preset and read DDRB and PORTB in the I/O view.",
+        "Add CBI PORTB,0 and watch the recorded output change.",
+        "Set all of port B as outputs and drive 0b10101010.",
+        "Build a two-step blink loop and read the output list."
+      ],
+      "expected": "DDRB bit0 then all bits set; PORTB bit0 high; r16 reads the PORTB value.",
+      "bridge": {
+        "principle": "A direction register and a data register together control a pin.",
+        "minecraft": "DDR is whether a lever is wired to drive a lamp; PORT is the lever.",
+        "other": "The same program runs on a real ATmega with avr-gcc/avra and avrdude, or under simulavr; the mnemonics and flags are identical to this subset."
+      },
+      "challenge": {
+        "task": "Light PB1 and PB3 only, leaving the other pins low.",
+        "acceptance": [
+          "Set DDRB bits 1 and 3 as outputs",
+          "Use SBI for PB1 and PB3",
+          "PORTB reads 0b00001010"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "avr-io-e1",
+            "prompt": "Which register sets pin direction?",
+            "options": [
+              {
+                "id": "a",
+                "text": "PORTB"
+              },
+              {
+                "id": "b",
+                "text": "DDRB"
+              },
+              {
+                "id": "c",
+                "text": "PINB"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "DDRB is the data direction register.",
+            "lessonId": "avr-ddr"
+          },
+          {
+            "id": "avr-io-e2",
+            "prompt": "CBI clears:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the whole register"
+              },
+              {
+                "id": "b",
+                "text": "one bit"
+              },
+              {
+                "id": "c",
+                "text": "the carry"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "CBI clears a single bit.",
+            "lessonId": "avr-sbicbi"
+          },
+          {
+            "id": "avr-io-e3",
+            "prompt": "IN reads from:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a register into an I/O register"
+              },
+              {
+                "id": "b",
+                "text": "an I/O register into a register"
+              },
+              {
+                "id": "c",
+                "text": "SRAM"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "IN copies an I/O register to a register.",
+            "lessonId": "avr-inout"
+          },
+          {
+            "id": "avr-io-e4",
+            "prompt": "You configure direction:",
+            "options": [
+              {
+                "id": "a",
+                "text": "after driving data"
+              },
+              {
+                "id": "b",
+                "text": "before driving data"
+              },
+              {
+                "id": "c",
+                "text": "it does not matter"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Set DDR, then write PORT.",
+            "lessonId": "avr-ddr"
+          },
+          {
+            "id": "avr-io-e5",
+            "prompt": "Each PORTB write in this sim is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "ignored"
+              },
+              {
+                "id": "b",
+                "text": "recorded as output"
+              },
+              {
+                "id": "c",
+                "text": "sent to the network"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The simulator records PORTB writes.",
+            "lessonId": "avr-blink"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "AVR Instruction Set Manual (Microchip)",
+          "url": "https://ww1.microchip.com/downloads/en/devicedoc/atmel-0856-avr-instruction-set-manual.pdf"
+        },
+        {
+          "title": "AVR Assembler user guide (Microchip)",
+          "url": "https://onlinedocs.microchip.com/"
+        }
+      ],
+      "reviewedAt": "2026-10-05"
+    },
+    {
+      "id": "avr-subroutines",
+      "version": 1,
+      "order": 7,
+      "title": "25. AVR subroutines and the call stack",
+      "summary": "Factor code into subroutines with RCALL and RET, and preserve registers across calls with PUSH/POP.",
+      "stage": "avr",
+      "mode": "avr",
+      "difficulty": "Advanced",
+      "minutes": 24,
+      "asm": "; Call a routine that doubles r16\n  ldi r16, 21\n  rcall double\n  out PORTB, r16   ; 42\n  rjmp end\ndouble:\n  lsl r16          ; r16 = r16 * 2\n  ret\nend:\n  nop",
+      "lessons": [
+        {
+          "id": "avr-rcall",
+          "title": "RCALL and RET",
+          "paragraphs": [
+            "RCALL label pushes the address of the next instruction onto the stack and jumps to the routine; RET pops that address back into the program counter. This is how one routine can be reused from many places.",
+            "A routine ends with RET so control returns to wherever it was called from."
+          ],
+          "example": "rcall double\n...\ndouble:\n  lsl r16\n  ret",
+          "pitfall": "A routine that falls off the end without RET keeps executing whatever follows; always finish with RET.",
+          "question": {
+            "id": "avr-rcall-q",
+            "prompt": "RET restores the PC from:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a register"
+              },
+              {
+                "id": "b",
+                "text": "the stack"
+              },
+              {
+                "id": "c",
+                "text": "PORTB"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The return address was pushed on the stack.",
+            "lessonId": "avr-rcall"
+          }
+        },
+        {
+          "id": "avr-preserve",
+          "title": "Preserving registers",
+          "paragraphs": [
+            "A subroutine often needs scratch registers. Push the ones it will modify at entry and pop them in reverse before RET, so the caller's values survive the call.",
+            "This simple convention keeps routines composable."
+          ],
+          "example": "work:\n  push r16\n  ...\n  pop r16\n  ret",
+          "pitfall": "Pop in the exact reverse of the push order, or registers come back swapped.",
+          "question": {
+            "id": "avr-pres-q",
+            "prompt": "To protect r16 inside a routine you:",
+            "options": [
+              {
+                "id": "a",
+                "text": "PUSH on entry, POP before RET"
+              },
+              {
+                "id": "b",
+                "text": "CLR it"
+              },
+              {
+                "id": "c",
+                "text": "MOV it to PORTB"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Save and restore via the stack.",
+            "lessonId": "avr-preserve"
+          }
+        },
+        {
+          "id": "avr-args",
+          "title": "Passing values",
+          "paragraphs": [
+            "AVR has no built-in argument mechanism; by convention callers pass values in registers (often r24/r25 or r16) and receive results the same way. Agreeing on which registers carry what is a calling convention.",
+            "Keeping the convention consistent lets routines call each other reliably."
+          ],
+          "example": "ldi r16, 21   ; argument in r16\nrcall double  ; result left in r16",
+          "pitfall": "If the caller and routine disagree on which register holds the argument, the routine reads garbage.",
+          "question": {
+            "id": "avr-args-q",
+            "prompt": "AVR passes subroutine arguments:",
+            "options": [
+              {
+                "id": "a",
+                "text": "automatically"
+              },
+              {
+                "id": "b",
+                "text": "by convention in registers"
+              },
+              {
+                "id": "c",
+                "text": "only through SRAM"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "There is no built-in arg passing; use registers by convention.",
+            "lessonId": "avr-args"
+          }
+        },
+        {
+          "id": "avr-nest",
+          "title": "Nested calls",
+          "paragraphs": [
+            "Because return addresses live on the stack, routines can call other routines; each RCALL pushes and each RET pops, unwinding correctly as long as the stack is balanced.",
+            "Deep nesting simply uses more stack."
+          ],
+          "example": "a:\n  rcall b\n  ret\nb:\n  ret",
+          "pitfall": "Unbalanced PUSH/POP inside a routine corrupts the return address and RET jumps somewhere wrong.",
+          "question": {
+            "id": "avr-nest-q",
+            "prompt": "Nested calls work because return addresses are:",
+            "options": [
+              {
+                "id": "a",
+                "text": "in one register"
+              },
+              {
+                "id": "b",
+                "text": "stacked LIFO"
+              },
+              {
+                "id": "c",
+                "text": "in PORTB"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The stack unwinds last-in first-out.",
+            "lessonId": "avr-nest"
+          }
+        }
+      ],
+      "steps": [
+        "Run the preset and confirm r16 = 42 after the call.",
+        "Step into the routine and watch SP change on RCALL and RET.",
+        "Add a second routine and call it from the first.",
+        "Give the routine a PUSH/POP pair and verify the caller's register survives."
+      ],
+      "expected": "r16 becomes 42; RCALL pushes the return address, RET pops it.",
+      "bridge": {
+        "principle": "The stack turns flat instructions into reusable routines.",
+        "minecraft": "RCALL/RET is a minecart that remembers the station it left.",
+        "other": "The same program runs on a real ATmega with avr-gcc/avra and avrdude, or under simulavr; the mnemonics and flags are identical to this subset."
+      },
+      "challenge": {
+        "task": "Write a `square_small` routine that multiplies r16 by itself via repeated addition.",
+        "acceptance": [
+          "Use RCALL and RET",
+          "Preserve any scratch registers",
+          "Return the result in r16 for small inputs"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "avr-sub-e1",
+            "prompt": "RCALL pushes:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the return address"
+              },
+              {
+                "id": "b",
+                "text": "r0"
+              },
+              {
+                "id": "c",
+                "text": "the carry"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The address after RCALL is saved.",
+            "lessonId": "avr-rcall"
+          },
+          {
+            "id": "avr-sub-e2",
+            "prompt": "A subroutine ends with:",
+            "options": [
+              {
+                "id": "a",
+                "text": "RJMP"
+              },
+              {
+                "id": "b",
+                "text": "RET"
+              },
+              {
+                "id": "c",
+                "text": "NOP"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "RET returns to the caller.",
+            "lessonId": "avr-rcall"
+          },
+          {
+            "id": "avr-sub-e3",
+            "prompt": "Registers are restored by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "POP in reverse order"
+              },
+              {
+                "id": "b",
+                "text": "CLR"
+              },
+              {
+                "id": "c",
+                "text": "SER"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Pop in reverse of push.",
+            "lessonId": "avr-preserve"
+          },
+          {
+            "id": "avr-sub-e4",
+            "prompt": "Arguments are passed:",
+            "options": [
+              {
+                "id": "a",
+                "text": "in registers by convention"
+              },
+              {
+                "id": "b",
+                "text": "by the assembler"
+              },
+              {
+                "id": "c",
+                "text": "on PORTB"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Callers agree on registers.",
+            "lessonId": "avr-args"
+          },
+          {
+            "id": "avr-sub-e5",
+            "prompt": "Nested calls need the stack to be:",
+            "options": [
+              {
+                "id": "a",
+                "text": "empty"
+              },
+              {
+                "id": "b",
+                "text": "balanced"
+              },
+              {
+                "id": "c",
+                "text": "in flash"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Balanced push/pop keeps returns correct.",
+            "lessonId": "avr-nest"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "AVR Instruction Set Manual (Microchip)",
+          "url": "https://ww1.microchip.com/downloads/en/devicedoc/atmel-0856-avr-instruction-set-manual.pdf"
+        },
+        {
+          "title": "AVR Assembler user guide (Microchip)",
+          "url": "https://onlinedocs.microchip.com/"
+        }
+      ],
+      "reviewedAt": "2026-10-05"
+    },
+    {
+      "id": "avr-capstone",
+      "version": 1,
+      "order": 8,
+      "title": "26. AVR capstone: a counting LED driver",
+      "summary": "Combine registers, loops, memory, I/O and a subroutine into a small, tested AVR program.",
+      "stage": "avr",
+      "mode": "avr",
+      "difficulty": "Advanced",
+      "minutes": 30,
+      "asm": "; Count 0..3 and show each value on PORTB via a subroutine\n  ldi r17, 0xFF\n  out DDRB, r17    ; port B all outputs\n  ldi r16, 0       ; counter\n  ldi r18, 4       ; how many values\nloop:\n  rcall show\n  inc r16\n  dec r18\n  brne loop\n  rjmp end\nshow:\n  out PORTB, r16   ; display the current count\n  ret\nend:\n  nop",
+      "lessons": [
+        {
+          "id": "avr-cap-plan",
+          "title": "Plan the program",
+          "paragraphs": [
+            "Real firmware is built from the pieces you have practiced: set up I/O, keep state in registers, loop a fixed number of times, and factor repeated work into a subroutine.",
+            "Decide which register holds the counter, which holds the limit, and what the routine does before you write a line."
+          ],
+          "example": "r16 = counter, r18 = remaining, show: OUT PORTB, r16",
+          "pitfall": "Plan your register use up front; running out of high registers mid-program forces awkward rewrites.",
+          "question": {
+            "id": "avr-cap-q1",
+            "prompt": "A good first step in an assembly program is to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "assign registers to roles"
+              },
+              {
+                "id": "b",
+                "text": "write RET first"
+              },
+              {
+                "id": "c",
+                "text": "fill SRAM"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Decide register roles before coding.",
+            "lessonId": "avr-cap-plan"
+          }
+        },
+        {
+          "id": "avr-cap-io",
+          "title": "Set up the port",
+          "paragraphs": [
+            "The driver makes port B all outputs with OUT DDRB before writing any values, so the pins actually drive. The counter then appears on PORTB each pass.",
+            "Configuring direction once at the start is the usual pattern."
+          ],
+          "example": "ldi r17, 0xFF\nout DDRB, r17",
+          "pitfall": "Skipping the DDRB setup means the data writes have no visible effect on hardware.",
+          "question": {
+            "id": "avr-cap-q2",
+            "prompt": "The driver sets DDRB to 0xFF to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "clear PORTB"
+              },
+              {
+                "id": "b",
+                "text": "make all port B pins outputs"
+              },
+              {
+                "id": "c",
+                "text": "reset the stack"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "0xFF direction = all outputs.",
+            "lessonId": "avr-cap-io"
+          }
+        },
+        {
+          "id": "avr-cap-loop",
+          "title": "Loop and display",
+          "paragraphs": [
+            "A DEC/BRNE loop runs the body a fixed number of times; each pass calls the show routine and increments the counter. The subroutine keeps the display logic in one place.",
+            "Because DEC leaves carry alone, the counter in r16 is unaffected by the loop control in r18."
+          ],
+          "example": "loop:\n  rcall show\n  inc r16\n  dec r18\n  brne loop",
+          "pitfall": "Using the same register for the counter and the loop count would corrupt one of them; keep them separate.",
+          "question": {
+            "id": "avr-cap-q3",
+            "prompt": "The routine is called with:",
+            "options": [
+              {
+                "id": "a",
+                "text": "RJMP"
+              },
+              {
+                "id": "b",
+                "text": "RCALL"
+              },
+              {
+                "id": "c",
+                "text": "BREQ"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "RCALL invokes the subroutine each pass.",
+            "lessonId": "avr-cap-loop"
+          }
+        },
+        {
+          "id": "avr-cap-verify",
+          "title": "Verify the result",
+          "paragraphs": [
+            "Run the program and read the recorded PORTB output: it should be 0,1,2,3. The listing shows each instruction's address and opcode, and the registers confirm the final state.",
+            "Verifying against an expected sequence is how you know the program is correct, not just that it ran."
+          ],
+          "example": "expected PORTB writes: 0, 1, 2, 3",
+          "pitfall": "A program that 'runs' is not necessarily correct; check the output against what you expected.",
+          "question": {
+            "id": "avr-cap-q4",
+            "prompt": "You confirm the driver works by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "checking the recorded PORTB sequence"
+              },
+              {
+                "id": "b",
+                "text": "counting lines"
+              },
+              {
+                "id": "c",
+                "text": "reading the comments"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Compare the output to the expected sequence.",
+            "lessonId": "avr-cap-verify"
+          }
+        }
+      ],
+      "steps": [
+        "Assemble the capstone and read the full listing.",
+        "Run it and confirm the PORTB output is 0,1,2,3.",
+        "Change the limit to 8 and predict the new output.",
+        "Add a second routine that clears PORTB after the count."
+      ],
+      "expected": "PORTB is driven with 0,1,2,3 in turn; the recorded output is [0,1,2,3] and the loop ends with Z set.",
+      "bridge": {
+        "principle": "Whole programs are small, tested compositions of the basics.",
+        "minecraft": "The finished driver is a redstone contraption assembled from tested modules.",
+        "other": "The same program runs on a real ATmega with avr-gcc/avra and avrdude, or under simulavr; the mnemonics and flags are identical to this subset."
+      },
+      "challenge": {
+        "task": "Extend the driver to count down from 3 to 0 after counting up.",
+        "acceptance": [
+          "Reuse the show subroutine",
+          "Use a second loop with DEC",
+          "The recorded output is 0,1,2,3,3,2,1,0"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "avr-cap-e1",
+            "prompt": "OUT DDRB, 0xFF makes port B:",
+            "options": [
+              {
+                "id": "a",
+                "text": "all inputs"
+              },
+              {
+                "id": "b",
+                "text": "all outputs"
+              },
+              {
+                "id": "c",
+                "text": "floating"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A 0xFF direction is all outputs.",
+            "lessonId": "avr-cap-io"
+          },
+          {
+            "id": "avr-cap-e2",
+            "prompt": "The loop repeats using:",
+            "options": [
+              {
+                "id": "a",
+                "text": "DEC + BRNE"
+              },
+              {
+                "id": "b",
+                "text": "RET"
+              },
+              {
+                "id": "c",
+                "text": "SWAP"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "DEC the counter, BRNE to repeat.",
+            "lessonId": "avr-cap-loop"
+          },
+          {
+            "id": "avr-cap-e3",
+            "prompt": "`show` is reused each pass via:",
+            "options": [
+              {
+                "id": "a",
+                "text": "RCALL"
+              },
+              {
+                "id": "b",
+                "text": "LDI"
+              },
+              {
+                "id": "c",
+                "text": "CBI"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "RCALL calls the display routine.",
+            "lessonId": "avr-cap-loop"
+          },
+          {
+            "id": "avr-cap-e4",
+            "prompt": "The capstone's PORTB output is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "0,1,2,3"
+              },
+              {
+                "id": "b",
+                "text": "3,3,3,3"
+              },
+              {
+                "id": "c",
+                "text": "nothing"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "It displays the counter 0..3.",
+            "lessonId": "avr-cap-verify"
+          },
+          {
+            "id": "avr-cap-e5",
+            "prompt": "Before coding you should:",
+            "options": [
+              {
+                "id": "a",
+                "text": "assign register roles"
+              },
+              {
+                "id": "b",
+                "text": "erase SRAM"
+              },
+              {
+                "id": "c",
+                "text": "write random LDIs"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Plan register use first.",
+            "lessonId": "avr-cap-plan"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "AVR Instruction Set Manual (Microchip)",
+          "url": "https://ww1.microchip.com/downloads/en/devicedoc/atmel-0856-avr-instruction-set-manual.pdf"
+        },
+        {
+          "title": "AVR Assembler user guide (Microchip)",
+          "url": "https://onlinedocs.microchip.com/"
+        }
+      ],
+      "reviewedAt": "2026-10-05"
+    }
+  ],
+  "reviewedAt": "2026-10-11"
+}

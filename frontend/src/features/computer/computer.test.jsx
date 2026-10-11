@@ -141,3 +141,16 @@ it('offers navigation-only promo links and handles unknown courses',()=>{
   rendered.unmount();page('/computer-architecture/missing')
   expect(screen.getByRole('heading',{name:'Course not found'})).toBeTruthy()
 })
+
+it('retrofits the computer bench with a working AVR assembler IDE',()=>{
+  page('/sandbox?bench=computer&asm=1')
+  expect(screen.getByLabelText('Editable AVR source').value.length).toBeGreaterThan(0)
+  change('Editable AVR source','ldi r16, 0x2A\nout PORTB, r16')
+  click('Assemble & run')
+  fireEvent.click(screen.getByRole('tab',{name:'PORTB output'}))
+  expect(screen.getByRole('region',{name:'PORTB output'}).textContent).toContain('0x2A')
+  expect(screen.getByRole('table',{name:'Assembler listing'})).toBeTruthy()
+  change('Editable AVR source','ldi r1, 5')
+  fireEvent.click(screen.getByRole('tab',{name:/Problems/}))
+  expect(screen.getByRole('alert').textContent).toContain('high register')
+})

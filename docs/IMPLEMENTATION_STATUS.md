@@ -1,5 +1,47 @@
 # PRD implementation verification
 
+### AVR assembly track and CUDA / PyTorch reading tracks (2026-10-11)
+
+Feature requests beyond the PRD. Three new learning tracks:
+- **`/avr`** — eight 8-bit AVR assembly courses on an in-browser teaching-subset assembler and a
+  deterministic ATmega simulator (`engine/avr/`), with the Computer Architecture sandbox retrofitted to
+  the same assembler IDE at `/sandbox?bench=computer&asm=1`. See [AVR.md](AVR.md).
+- **`/cuda`** — eight reading-only CUDA C++ GPU courses. See [CUDA.md](CUDA.md).
+- **`/pytorch`** — ten reading-only PyTorch deep-learning courses, from basics to a full ML pipeline. See
+  [PYTORCH.md](PYTORCH.md).
+
+CUDA and PyTorch share one content-driven `features/courses/ReadingTrack.jsx` hub/course shell. Every
+course has four checkpointed sections, a guided lab, a complete self-contained program (copied or
+downloaded, never run in the browser; torch and `nvcc` are unavailable here, so nothing is executed or
+compiled — each PyTorch program is parsed and checked for undefined names by
+`backend/tests/test_pytorch_content.py`, and each CUDA program is a complete `nvcc` unit reviewed by hand),
+an applied challenge and a five-question 80% exam. Progress, rewards,
+localization and certificates reuse the existing systems; the certificate catalogue adds `avr.json`,
+`cuda.json` and `pytorch.json`, and backend grading issues and parses original PDFs for all 186 courses.
+All three tracks appear in the `/courses` directory and the sitemap.
+
+Honesty: there is no GPU, Python or AVR hardware in the browser. CUDA and PyTorch are never compiled or
+run in VoltQuest — the courses provide the source and the expected output, and lab checkboxes record the
+learner's own observations. The AVR simulator is a documented subset (~45 instructions; no LPM, interrupts,
+timers, EEPROM, 16-bit ADIW or MUL), and the same programs assemble with avr-gcc/avra.
+
+**1,787 frontend tests in 104 files / 122 backend tests pass** (the new backend test parses every PyTorch
+program), `eslint src` is clean apart from the pre-existing `qt/samples.js` errors, the production build is
+**613.0 KiB** eager gzip (the CUDA, PyTorch and AVR routes stay lazy) and the sitemap has **475 URLs**. Chromium at 1280 px verified the CUDA and
+PyTorch hubs and course pages (sections, guided lab, source copy/download, exam and certificate). Other
+browsers, touch and screen readers remain release checks. See AGENTS.md §3, CONTRACTS.md §27.
+
+### Cybersecurity security console (2026-10-05)
+
+A feature request beyond the PRD. The cybersecurity sandbox becomes a security workbench combining a
+Packet Tracer-style network topology, a curl terminal and a browser DevTools-style inspector (with an
+inert Elements tree for the XSS lesson), over the same fixtures, defenses and verification as the
+course lab via a shared `useCyberNotebook` hook. Boundaries are unchanged: local fictional fixtures,
+inert HTML, no network, no code execution. **1,760 frontend / 121 backend** tests pass; the
+CybersecurityPage chunk stays lazy and the eager payload is 604.3 KiB gzip. Browser checks used
+Chromium at 390–1440 px (light and dark). Other browsers, touch and screen readers remain release
+checks. See CYBERSECURITY.md and AGENTS.md §3.
+
 ### Sandbox IDE benches and shell consistency (2026-09-28)
 
 This is a feature request beyond the PRD. The MATLAB, AI agent and HPC sandbox benches become IDEs

@@ -317,6 +317,15 @@
   <url><loc>https://pcb.nevatal.id/computer-architecture/assembly-loops</loc></url>
   <url><loc>https://pcb.nevatal.id/computer-architecture/assembly-real-isas</loc></url>
   <url><loc>https://pcb.nevatal.id/computer-architecture/computer-capstone</loc></url>
+  <url><loc>https://pcb.nevatal.id/avr</loc></url>
+  <url><loc>https://pcb.nevatal.id/avr/avr-registers</loc></url>
+  <url><loc>https://pcb.nevatal.id/avr/avr-arithmetic</loc></url>
+  <url><loc>https://pcb.nevatal.id/avr/avr-logic-bits</loc></url>
+  <url><loc>https://pcb.nevatal.id/avr/avr-branches</loc></url>
+  <url><loc>https://pcb.nevatal.id/avr/avr-memory</loc></url>
+  <url><loc>https://pcb.nevatal.id/avr/avr-io</loc></url>
+  <url><loc>https://pcb.nevatal.id/avr/avr-subroutines</loc></url>
+  <url><loc>https://pcb.nevatal.id/avr/avr-capstone</loc></url>
   <url><loc>https://pcb.nevatal.id/qt</loc></url>
   <url><loc>https://pcb.nevatal.id/qt/qt-start</loc></url>
   <url><loc>https://pcb.nevatal.id/qt/qt-cpp</loc></url>
@@ -348,6 +357,26 @@
   <url><loc>https://pcb.nevatal.id/winui/winui-testing</loc></url>
   <url><loc>https://pcb.nevatal.id/winui/winui-packaging</loc></url>
   <url><loc>https://pcb.nevatal.id/winui/winui-capstone</loc></url>
+  <url><loc>https://pcb.nevatal.id/cuda</loc></url>
+  <url><loc>https://pcb.nevatal.id/cuda/cuda-intro</loc></url>
+  <url><loc>https://pcb.nevatal.id/cuda/cuda-threads</loc></url>
+  <url><loc>https://pcb.nevatal.id/cuda/cuda-memory</loc></url>
+  <url><loc>https://pcb.nevatal.id/cuda/cuda-vectoradd</loc></url>
+  <url><loc>https://pcb.nevatal.id/cuda/cuda-shared</loc></url>
+  <url><loc>https://pcb.nevatal.id/cuda/cuda-reduction</loc></url>
+  <url><loc>https://pcb.nevatal.id/cuda/cuda-streams</loc></url>
+  <url><loc>https://pcb.nevatal.id/cuda/cuda-capstone</loc></url>
+  <url><loc>https://pcb.nevatal.id/pytorch</loc></url>
+  <url><loc>https://pcb.nevatal.id/pytorch/torch-tensors</loc></url>
+  <url><loc>https://pcb.nevatal.id/pytorch/torch-autograd</loc></url>
+  <url><loc>https://pcb.nevatal.id/pytorch/torch-nn</loc></url>
+  <url><loc>https://pcb.nevatal.id/pytorch/torch-training</loc></url>
+  <url><loc>https://pcb.nevatal.id/pytorch/torch-data</loc></url>
+  <url><loc>https://pcb.nevatal.id/pytorch/torch-linreg</loc></url>
+  <url><loc>https://pcb.nevatal.id/pytorch/torch-classification</loc></url>
+  <url><loc>https://pcb.nevatal.id/pytorch/torch-cnn</loc></url>
+  <url><loc>https://pcb.nevatal.id/pytorch/torch-eval</loc></url>
+  <url><loc>https://pcb.nevatal.id/pytorch/torch-capstone</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=cybersecurity</loc></url>

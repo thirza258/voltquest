@@ -537,6 +537,13 @@ and progress. `engine/cybersecurity/{model,scenarios}.js` implements bounded loc
 fictional account state, defenses and isolated regression cases. No request causes network access,
 host filesystem operations, backend execution or HTML/script execution. The independent notebook
 format saves drafts/controls/notes, while separate evidence reports capture executed exchanges.
+The sandbox bench renders `CyberConsole` (a security workbench: Packet Tracer-style topology, a curl
+terminal and a DevTools inspector); the course page keeps `CyberLab`. Both share `useCyberNotebook`,
+so defenses, verification, save/load/import, reports and all boundaries are identical. `curl.js`,
+`topology.js` and `inspectHtml.js` are pure and tested; the Elements view is an inert DOM tree that
+never creates real elements or runs scripts, and the terminal is ephemeral scrollback that does not
+change the saved notebook. See CYBERSECURITY.md.
+
 Confirmed replacements start fresh fixtures. No CircuitDoc, board id, account project, public
 course API, MCP or showcase contract changes. Model and curriculum chunks load lazily.
 
@@ -686,3 +693,22 @@ state and actions for both the course lab and the sandbox IDE. Each hook also ex
 last opened or saved, which drives per-file modified markers and the unsaved-work guard. The shared
 editor is `features/sandbox/ide/CodeEditor.jsx`: a labelled native textarea over a highlighted copy,
 with the tokenizers in `tokenizers.js` and `matlabSyntax.js`.
+
+## 27. AVR assembly and reading-only CUDA / PyTorch tracks
+
+The AVR assembly track (`/avr`, in-browser assembler + ATmega simulator and a retrofit of the Computer
+Architecture sandbox at `/sandbox?bench=computer&asm=1`) follows [AVR.md](AVR.md). The CUDA C++
+(`/cuda`) and PyTorch (`/pytorch`) tracks follow [CUDA.md](CUDA.md) and [PYTORCH.md](PYTORCH.md): eight
+and ten reading-only courses in `content/cuda.json` and `content/pytorch.json`.
+
+`features/courses/ReadingTrack.jsx` is a shared, content-driven hub/course shell for reading-only tracks.
+A `track` config object carries the route `base`, the `courses` array, a `tag`, a `codeExt`, the search
+`haystack`, the `difficulties`, and the translated hub chrome (`eyebrow`, `title`, `intro`, `metrics`,
+`continueLabel`, `capstoneId`, `capstoneLabel`, `allLabel`, `searchLabel`, `disclosure`, `langNote`,
+`reviewedNote`). Each course supplies four `lessons` (each with a `question`), guided `steps`, an
+`expected` result, a single self-contained `code` program (copied or downloaded as `<id>.<codeExt>`, never
+executed in the browser), a `challenge` and a five-question 80% `exam`. Progress, rewards and certificates
+reuse the existing `vq.courses.v1` system; the certificate catalogue adds `cuda.json` and `pytorch.json`
+(and `avr.json`). `CudaPage.jsx` and `PytorchPage.jsx` are thin wrappers that import their JSON and render
+`ReadingTrack`. No board, simulation, sandbox, assistant, MCP or showcase contract is extended; the course
+discovery API is unchanged.

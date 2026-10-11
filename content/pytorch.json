@@ -1,0 +1,2725 @@
+{
+  "courses": [
+    {
+      "id": "torch-tensors",
+      "version": 1,
+      "order": 1,
+      "title": "1. Tensors: the core data structure",
+      "summary": "Create tensors, choose dtypes and devices, do element-wise and matrix ops, and bridge NumPy.",
+      "difficulty": "Fundamental",
+      "minutes": 24,
+      "code": "import torch\n\ntorch.manual_seed(0)\nx = torch.tensor([[1., 2.], [3., 4.]])\ny = torch.ones(2, 2)\nprint(x + y)                 # element-wise sum\nprint(x @ y)                 # matrix multiply\ndevice = \"cuda\" if torch.cuda.is_available() else \"cpu\"\nprint(x.to(device).device)   # cuda:0 when a GPU is present, else cpu",
+      "expected": "Prints the element-wise sum and the matrix product; moves x to the GPU when CUDA is available.",
+      "lessons": [
+        {
+          "id": "torch-create",
+          "title": "Creating tensors",
+          "paragraphs": [
+            "A tensor is a multi-dimensional array with a dtype and a device, the fundamental object in PyTorch. You create them with `torch.tensor`, `torch.zeros/ones/arange/randn`, and inspect `.shape`, `.dtype` and `.device`.",
+            "Tensors behave like NumPy arrays but can live on a GPU and track gradients."
+          ],
+          "example": "x = torch.randn(3, 4)   # shape (3,4), float32, cpu",
+          "pitfall": "torch.tensor(data) copies; torch.as_tensor shares memory when possible. Know which you want.",
+          "question": {
+            "id": "torch-create-q",
+            "prompt": "A PyTorch tensor always has a:",
+            "options": [
+              {
+                "id": "a",
+                "text": "filename"
+              },
+              {
+                "id": "b",
+                "text": "dtype and device"
+              },
+              {
+                "id": "c",
+                "text": "gradient"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Every tensor has a dtype and a device.",
+            "lessonId": "torch-create"
+          }
+        },
+        {
+          "id": "torch-dtype",
+          "title": "Dtypes and devices",
+          "paragraphs": [
+            "Most models use `float32`; integer labels use `int64` (long). Operations generally require matching dtypes and the same device, and `.to(dtype)` / `.to(device)` convert.",
+            "Moving a tensor to `cuda` runs its ops on the GPU."
+          ],
+          "example": "x = x.to(torch.float32).to(\"cuda\")",
+          "pitfall": "Mixing a cuda tensor with a cpu tensor raises a device mismatch error; move both to the same device.",
+          "question": {
+            "id": "torch-dtype-q",
+            "prompt": "Integer class labels are typically:",
+            "options": [
+              {
+                "id": "a",
+                "text": "float32"
+              },
+              {
+                "id": "b",
+                "text": "int64 (long)"
+              },
+              {
+                "id": "c",
+                "text": "bool"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Loss functions expect int64 labels.",
+            "lessonId": "torch-dtype"
+          }
+        },
+        {
+          "id": "torch-ops",
+          "title": "Operations and broadcasting",
+          "paragraphs": [
+            "Tensors support element-wise math, reductions (`sum`, `mean`), matrix multiply (`@`/`matmul`) and broadcasting, which stretches smaller shapes to match. Shapes must be compatible for the operation.",
+            "`reshape`, `view`, `permute` and `unsqueeze` rearrange dimensions without copying data where possible."
+          ],
+          "example": "a = torch.randn(4,1); b = torch.randn(1,3); (a + b).shape  # (4,3) via broadcasting",
+          "pitfall": "A shape mismatch is the most common error; print .shape liberally while building models.",
+          "question": {
+            "id": "torch-ops-q",
+            "prompt": "Broadcasting lets you combine tensors with:",
+            "options": [
+              {
+                "id": "a",
+                "text": "identical shapes only"
+              },
+              {
+                "id": "b",
+                "text": "compatible shapes"
+              },
+              {
+                "id": "c",
+                "text": "any shapes"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Compatible dims stretch to match.",
+            "lessonId": "torch-ops"
+          }
+        },
+        {
+          "id": "torch-numpy",
+          "title": "The NumPy bridge",
+          "paragraphs": [
+            "`tensor.numpy()` and `torch.from_numpy(array)` convert between PyTorch and NumPy, sharing memory on the CPU so a change to one affects the other. This makes data prep and plotting easy.",
+            "Move to CPU and detach from autograd before converting a tensor that requires grad."
+          ],
+          "example": "import numpy as np; t = torch.from_numpy(np.arange(5))",
+          "pitfall": "Calling .numpy() on a cuda tensor or one that requires grad errors; .detach().cpu().numpy() first.",
+          "question": {
+            "id": "torch-numpy-q",
+            "prompt": "torch.from_numpy on the CPU:",
+            "options": [
+              {
+                "id": "a",
+                "text": "copies the data"
+              },
+              {
+                "id": "b",
+                "text": "shares memory"
+              },
+              {
+                "id": "c",
+                "text": "moves to GPU"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It shares the underlying buffer.",
+            "lessonId": "torch-numpy"
+          }
+        }
+      ],
+      "steps": [
+        "Create a (3,4) tensor and print its shape, dtype and device.",
+        "Add a (3,1) and a (1,4) tensor using broadcasting.",
+        "Move a tensor to cuda if available and back.",
+        "Convert a tensor to NumPy and back."
+      ],
+      "challenge": {
+        "task": "Build two tensors and compute both their element-wise and matrix products.",
+        "acceptance": [
+          "Show the shapes",
+          "Use @ for matmul",
+          "Handle the CUDA-available case"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "torch-t-e1",
+            "prompt": "`.shape` returns a tensor's:",
+            "options": [
+              {
+                "id": "a",
+                "text": "dtype"
+              },
+              {
+                "id": "b",
+                "text": "dimensions"
+              },
+              {
+                "id": "c",
+                "text": "device"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Shape is the size of each dimension.",
+            "lessonId": "torch-create"
+          },
+          {
+            "id": "torch-t-e2",
+            "prompt": "Default float dtype is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "float16"
+              },
+              {
+                "id": "b",
+                "text": "float32"
+              },
+              {
+                "id": "c",
+                "text": "float64"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "float32 is the default.",
+            "lessonId": "torch-dtype"
+          },
+          {
+            "id": "torch-t-e3",
+            "prompt": "`@` between tensors is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "element-wise add"
+              },
+              {
+                "id": "b",
+                "text": "matrix multiply"
+              },
+              {
+                "id": "c",
+                "text": "concatenate"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "@ is matmul.",
+            "lessonId": "torch-ops"
+          },
+          {
+            "id": "torch-t-e4",
+            "prompt": "Before .numpy() on a grad tensor you call:",
+            "options": [
+              {
+                "id": "a",
+                "text": ".detach().cpu()"
+              },
+              {
+                "id": "b",
+                "text": ".backward()"
+              },
+              {
+                "id": "c",
+                "text": ".cuda()"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Detach and move to CPU first.",
+            "lessonId": "torch-numpy"
+          },
+          {
+            "id": "torch-t-e5",
+            "prompt": "A device mismatch error means tensors are on:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the same device"
+              },
+              {
+                "id": "b",
+                "text": "different devices"
+              },
+              {
+                "id": "c",
+                "text": "the same dtype"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Move both to one device.",
+            "lessonId": "torch-dtype"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "PyTorch documentation",
+          "url": "https://docs.pytorch.org/docs/stable/index.html"
+        },
+        {
+          "title": "PyTorch tutorials — Learn the Basics",
+          "url": "https://docs.pytorch.org/tutorials/beginner/basics/intro.html"
+        }
+      ],
+      "reviewedAt": "2026-10-11"
+    },
+    {
+      "id": "torch-autograd",
+      "version": 1,
+      "order": 2,
+      "title": "2. Autograd: automatic differentiation",
+      "summary": "Track gradients with requires_grad, call backward, read .grad and manage the graph.",
+      "difficulty": "Fundamental",
+      "minutes": 24,
+      "code": "import torch\n\nx = torch.tensor(3.0, requires_grad=True)\ny = x**2 + 2*x\ny.backward()\nprint(x.grad)                # dy/dx = 2x + 2 = tensor(8.)",
+      "expected": "y.backward() populates x.grad with 8.0, the derivative of x^2+2x at x=3.",
+      "lessons": [
+        {
+          "id": "torch-requires",
+          "title": "requires_grad and the graph",
+          "paragraphs": [
+            "Setting `requires_grad=True` tells PyTorch to record operations on a tensor into a dynamic computation graph. The graph is built on the fly as you run the forward pass.",
+            "Model parameters have requires_grad True by default."
+          ],
+          "example": "x = torch.tensor(1.0, requires_grad=True)",
+          "pitfall": "Only floating-point tensors can require grad; integer tensors cannot be differentiated.",
+          "question": {
+            "id": "torch-req-q",
+            "prompt": "requires_grad=True causes PyTorch to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "move to GPU"
+              },
+              {
+                "id": "b",
+                "text": "record ops for differentiation"
+              },
+              {
+                "id": "c",
+                "text": "change dtype"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It records the op graph.",
+            "lessonId": "torch-requires"
+          }
+        },
+        {
+          "id": "torch-backward",
+          "title": "backward and .grad",
+          "paragraphs": [
+            "Calling `.backward()` on a scalar loss walks the graph in reverse, accumulating gradients into each leaf tensor's `.grad`. For non-scalar outputs you pass a gradient argument.",
+            "Gradients accumulate, so you zero them between steps."
+          ],
+          "example": "loss.backward(); print(w.grad)",
+          "pitfall": "Gradients add up across backward calls; call optimizer.zero_grad() (or w.grad=None) each iteration.",
+          "question": {
+            "id": "torch-bw-q",
+            "prompt": "Between training steps you must:",
+            "options": [
+              {
+                "id": "a",
+                "text": "call backward twice"
+              },
+              {
+                "id": "b",
+                "text": "zero the gradients"
+              },
+              {
+                "id": "c",
+                "text": "detach the model"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Otherwise gradients accumulate.",
+            "lessonId": "torch-backward"
+          }
+        },
+        {
+          "id": "torch-nograd",
+          "title": "no_grad and detach",
+          "paragraphs": [
+            "Wrap evaluation and parameter updates in `torch.no_grad()` so PyTorch does not build a graph, saving memory and time. `.detach()` returns a tensor cut from the graph.",
+            "Inference should always run under no_grad."
+          ],
+          "example": "with torch.no_grad():\n    preds = model(x)",
+          "pitfall": "Running inference without no_grad wastes memory building a graph you never use.",
+          "question": {
+            "id": "torch-ng-q",
+            "prompt": "torch.no_grad() is used for:",
+            "options": [
+              {
+                "id": "a",
+                "text": "training only"
+              },
+              {
+                "id": "b",
+                "text": "inference/updates without tracking"
+              },
+              {
+                "id": "c",
+                "text": "moving to GPU"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It disables graph building.",
+            "lessonId": "torch-nograd"
+          }
+        },
+        {
+          "id": "torch-chain",
+          "title": "The chain rule in practice",
+          "paragraphs": [
+            "Autograd applies the chain rule automatically, so composing differentiable ops yields correct gradients without manual derivation. This is what makes training deep networks practical.",
+            "You write the forward pass; PyTorch derives the backward pass."
+          ],
+          "example": "z = (x*w + b).relu().sum(); z.backward()",
+          "pitfall": "A detached tensor stops gradient flow; detaching inside the forward path silently kills learning.",
+          "question": {
+            "id": "torch-ch-q",
+            "prompt": "Autograd computes gradients using:",
+            "options": [
+              {
+                "id": "a",
+                "text": "finite differences"
+              },
+              {
+                "id": "b",
+                "text": "the chain rule over the graph"
+              },
+              {
+                "id": "c",
+                "text": "random search"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Reverse-mode chain rule.",
+            "lessonId": "torch-chain"
+          }
+        }
+      ],
+      "steps": [
+        "Differentiate y=x^2+2x at x=3 by hand, then with autograd.",
+        "Show that gradients accumulate without zeroing.",
+        "Wrap an inference call in torch.no_grad.",
+        "Detach a tensor and confirm its grad is None."
+      ],
+      "challenge": {
+        "task": "Compute the gradient of a two-variable function and verify it by hand.",
+        "acceptance": [
+          "Use requires_grad and backward",
+          "Zero grads between runs",
+          "Match the analytical derivative"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "torch-ag-e1",
+            "prompt": "The computation graph is built:",
+            "options": [
+              {
+                "id": "a",
+                "text": "ahead of time"
+              },
+              {
+                "id": "b",
+                "text": "dynamically during the forward pass"
+              },
+              {
+                "id": "c",
+                "text": "by the optimizer"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "PyTorch is define-by-run.",
+            "lessonId": "torch-requires"
+          },
+          {
+            "id": "torch-ag-e2",
+            "prompt": ".backward() fills each leaf's:",
+            "options": [
+              {
+                "id": "a",
+                "text": ".data"
+              },
+              {
+                "id": "b",
+                "text": ".grad"
+              },
+              {
+                "id": "c",
+                "text": ".shape"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Gradients land in .grad.",
+            "lessonId": "torch-backward"
+          },
+          {
+            "id": "torch-ag-e3",
+            "prompt": "Gradients across steps:",
+            "options": [
+              {
+                "id": "a",
+                "text": "reset automatically"
+              },
+              {
+                "id": "b",
+                "text": "accumulate"
+              },
+              {
+                "id": "c",
+                "text": "disappear"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Zero them each step.",
+            "lessonId": "torch-backward"
+          },
+          {
+            "id": "torch-ag-e4",
+            "prompt": "Inference should run under:",
+            "options": [
+              {
+                "id": "a",
+                "text": "torch.no_grad()"
+              },
+              {
+                "id": "b",
+                "text": "backward()"
+              },
+              {
+                "id": "c",
+                "text": "requires_grad"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "No graph needed for inference.",
+            "lessonId": "torch-nograd"
+          },
+          {
+            "id": "torch-ag-e5",
+            "prompt": "Detaching a tensor mid-forward:",
+            "options": [
+              {
+                "id": "a",
+                "text": "speeds learning"
+              },
+              {
+                "id": "b",
+                "text": "stops gradient flow there"
+              },
+              {
+                "id": "c",
+                "text": "changes dtype"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "No gradient passes a detach.",
+            "lessonId": "torch-chain"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "PyTorch documentation",
+          "url": "https://docs.pytorch.org/docs/stable/index.html"
+        },
+        {
+          "title": "PyTorch tutorials — Learn the Basics",
+          "url": "https://docs.pytorch.org/tutorials/beginner/basics/intro.html"
+        }
+      ],
+      "reviewedAt": "2026-10-11"
+    },
+    {
+      "id": "torch-nn",
+      "version": 1,
+      "order": 3,
+      "title": "3. Building models with nn.Module",
+      "summary": "Define layers and models by subclassing nn.Module and composing nn layers.",
+      "difficulty": "Fundamental",
+      "minutes": 24,
+      "code": "import torch\nimport torch.nn as nn\n\nclass Net(nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.fc1 = nn.Linear(4, 16)\n        self.fc2 = nn.Linear(16, 3)\n\n    def forward(self, x):\n        return self.fc2(torch.relu(self.fc1(x)))\n\nmodel = Net()\nprint(sum(p.numel() for p in model.parameters()))   # 131",
+      "expected": "Defines a 4→16→3 MLP and prints its parameter count (16*4+16 + 3*16+3 = 131).",
+      "lessons": [
+        {
+          "id": "torch-module",
+          "title": "nn.Module",
+          "paragraphs": [
+            "Models subclass `nn.Module`, register sub-layers in `__init__`, and implement `forward`. PyTorch then tracks all parameters and handles moving them with `.to(device)` and switching train/eval modes.",
+            "Calling the model (`model(x)`) invokes forward."
+          ],
+          "example": "class Net(nn.Module):\n    def __init__(self): super().__init__(); self.fc = nn.Linear(4,3)\n    def forward(self,x): return self.fc(x)",
+          "pitfall": "Forgetting super().__init__() breaks parameter registration; always call it first.",
+          "question": {
+            "id": "torch-mod-q",
+            "prompt": "You run a model's forward pass by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "model.forward only"
+              },
+              {
+                "id": "b",
+                "text": "calling model(x)"
+              },
+              {
+                "id": "c",
+                "text": "model.run(x)"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Calling the module invokes forward.",
+            "lessonId": "torch-module"
+          }
+        },
+        {
+          "id": "torch-layers",
+          "title": "Common layers",
+          "paragraphs": [
+            "`nn.Linear` is a fully connected layer; `nn.Conv2d` convolves images; activations like `nn.ReLU` add nonlinearity; `nn.Sequential` chains layers. Each layer owns learnable parameters.",
+            "Stacking linear layers without activations collapses to one linear layer, so nonlinearity matters."
+          ],
+          "example": "net = nn.Sequential(nn.Linear(4,16), nn.ReLU(), nn.Linear(16,3))",
+          "pitfall": "Two Linear layers with no activation between them are mathematically one Linear layer.",
+          "question": {
+            "id": "torch-lay-q",
+            "prompt": "Nonlinearity between linear layers is provided by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "nn.Linear"
+              },
+              {
+                "id": "b",
+                "text": "an activation like ReLU"
+              },
+              {
+                "id": "c",
+                "text": "the optimizer"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Activations add nonlinearity.",
+            "lessonId": "torch-layers"
+          }
+        },
+        {
+          "id": "torch-params",
+          "title": "Parameters and initialization",
+          "paragraphs": [
+            "`model.parameters()` yields the learnable tensors the optimizer updates; `named_parameters()` adds their names. PyTorch initializes weights sensibly by default, and you can customize it.",
+            "Parameter count and shapes are a quick sanity check on a model."
+          ],
+          "example": "for name, p in model.named_parameters(): print(name, p.shape)",
+          "pitfall": "Passing the wrong parameter iterator (or a copy) to the optimizer means weights never update.",
+          "question": {
+            "id": "torch-par-q",
+            "prompt": "The optimizer updates:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the inputs"
+              },
+              {
+                "id": "b",
+                "text": "model.parameters()"
+              },
+              {
+                "id": "c",
+                "text": "the loss"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Optimizers step the parameters.",
+            "lessonId": "torch-params"
+          }
+        },
+        {
+          "id": "torch-traineval",
+          "title": "train() and eval() modes",
+          "paragraphs": [
+            "`model.train()` and `model.eval()` switch behavior of layers like dropout and batch norm, which act differently during training and inference. Always set eval mode before validating.",
+            "These modes do not disable gradients; pair eval() with no_grad()."
+          ],
+          "example": "model.eval()\nwith torch.no_grad(): out = model(x)",
+          "pitfall": "Leaving dropout/batchnorm in train mode during evaluation gives noisy, wrong metrics.",
+          "question": {
+            "id": "torch-te-q",
+            "prompt": "model.eval() changes the behavior of:",
+            "options": [
+              {
+                "id": "a",
+                "text": "Linear layers"
+              },
+              {
+                "id": "b",
+                "text": "dropout and batch norm"
+              },
+              {
+                "id": "c",
+                "text": "the optimizer"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Those layers differ between train and eval.",
+            "lessonId": "torch-traineval"
+          }
+        }
+      ],
+      "steps": [
+        "Define a 4→16→3 MLP and count its parameters.",
+        "Rewrite it with nn.Sequential.",
+        "List named parameters and their shapes.",
+        "Explain why eval mode matters for dropout."
+      ],
+      "challenge": {
+        "task": "Build an MLP with two hidden layers and print its parameter count.",
+        "acceptance": [
+          "Subclass nn.Module with forward",
+          "Include activations",
+          "Report total parameters"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "torch-nn-e1",
+            "prompt": "Layers are registered in:",
+            "options": [
+              {
+                "id": "a",
+                "text": "forward"
+              },
+              {
+                "id": "b",
+                "text": "__init__"
+              },
+              {
+                "id": "c",
+                "text": "backward"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Define sub-layers in __init__.",
+            "lessonId": "torch-module"
+          },
+          {
+            "id": "torch-nn-e2",
+            "prompt": "nn.Linear(4,3) maps:",
+            "options": [
+              {
+                "id": "a",
+                "text": "3→4"
+              },
+              {
+                "id": "b",
+                "text": "4→3"
+              },
+              {
+                "id": "c",
+                "text": "4→4"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "in_features 4, out_features 3.",
+            "lessonId": "torch-layers"
+          },
+          {
+            "id": "torch-nn-e3",
+            "prompt": "model.parameters() yields:",
+            "options": [
+              {
+                "id": "a",
+                "text": "inputs"
+              },
+              {
+                "id": "b",
+                "text": "learnable tensors"
+              },
+              {
+                "id": "c",
+                "text": "gradients only"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The trainable parameters.",
+            "lessonId": "torch-params"
+          },
+          {
+            "id": "torch-nn-e4",
+            "prompt": "Before validation call:",
+            "options": [
+              {
+                "id": "a",
+                "text": "model.train()"
+              },
+              {
+                "id": "b",
+                "text": "model.eval()"
+              },
+              {
+                "id": "c",
+                "text": "backward()"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Switch to eval mode.",
+            "lessonId": "torch-traineval"
+          },
+          {
+            "id": "torch-nn-e5",
+            "prompt": "Omitting super().__init__():",
+            "options": [
+              {
+                "id": "a",
+                "text": "is fine"
+              },
+              {
+                "id": "b",
+                "text": "breaks parameter registration"
+              },
+              {
+                "id": "c",
+                "text": "speeds training"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "nn.Module must initialize.",
+            "lessonId": "torch-module"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "PyTorch documentation",
+          "url": "https://docs.pytorch.org/docs/stable/index.html"
+        },
+        {
+          "title": "PyTorch tutorials — Learn the Basics",
+          "url": "https://docs.pytorch.org/tutorials/beginner/basics/intro.html"
+        }
+      ],
+      "reviewedAt": "2026-10-11"
+    },
+    {
+      "id": "torch-training",
+      "version": 1,
+      "order": 4,
+      "title": "4. The training loop: loss and optimizer",
+      "summary": "Put together forward, loss, backward and an optimizer step into a working training loop.",
+      "difficulty": "Intermediate",
+      "minutes": 26,
+      "code": "import torch\nimport torch.nn as nn\n\ntorch.manual_seed(0)\nX = torch.randn(200, 4)\ny = (X.sum(dim=1) > 0).long()                 # two classes from a simple rule\nmodel = nn.Sequential(nn.Linear(4, 16), nn.ReLU(), nn.Linear(16, 2))\nopt = torch.optim.SGD(model.parameters(), lr=0.1)\nloss_fn = nn.CrossEntropyLoss()\nfor epoch in range(20):\n    opt.zero_grad()\n    loss = loss_fn(model(X), y)\n    loss.backward()\n    opt.step()\nprint(f\"final loss {loss.item():.3f}\")        # the loss falls each run",
+      "expected": "Each epoch zeros grads, computes the loss, backpropagates and updates parameters; the loss should fall.",
+      "lessons": [
+        {
+          "id": "torch-loss",
+          "title": "Loss functions",
+          "paragraphs": [
+            "A loss measures how wrong predictions are: `CrossEntropyLoss` for classification (it expects raw logits and int64 labels), `MSELoss` for regression. Minimizing the loss is the training objective.",
+            "CrossEntropyLoss applies softmax internally, so the model outputs logits, not probabilities."
+          ],
+          "example": "loss = nn.CrossEntropyLoss()(logits, labels)",
+          "pitfall": "Applying softmax yourself before CrossEntropyLoss double-counts it and hurts training.",
+          "question": {
+            "id": "torch-loss-q",
+            "prompt": "CrossEntropyLoss expects the model to output:",
+            "options": [
+              {
+                "id": "a",
+                "text": "probabilities"
+              },
+              {
+                "id": "b",
+                "text": "raw logits"
+              },
+              {
+                "id": "c",
+                "text": "one class id"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It applies softmax internally.",
+            "lessonId": "torch-loss"
+          }
+        },
+        {
+          "id": "torch-optim",
+          "title": "Optimizers",
+          "paragraphs": [
+            "An optimizer such as `SGD` or `Adam` updates parameters from their gradients using a learning rate. `opt.step()` applies the update and `opt.zero_grad()` clears old gradients.",
+            "Adam often trains faster out of the box; SGD with momentum can generalize better."
+          ],
+          "example": "opt = torch.optim.Adam(model.parameters(), lr=1e-3)",
+          "pitfall": "A learning rate too high diverges (loss explodes); too low barely learns. Tune it.",
+          "question": {
+            "id": "torch-opt-q",
+            "prompt": "opt.step() does what?",
+            "options": [
+              {
+                "id": "a",
+                "text": "computes the loss"
+              },
+              {
+                "id": "b",
+                "text": "updates parameters from gradients"
+              },
+              {
+                "id": "c",
+                "text": "zeros gradients"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It applies the gradient update.",
+            "lessonId": "torch-optim"
+          }
+        },
+        {
+          "id": "torch-loop",
+          "title": "The loop, in order",
+          "paragraphs": [
+            "Each iteration: zero gradients, forward pass, compute loss, backward pass, optimizer step. Getting this order wrong — especially forgetting zero_grad or step — silently breaks learning.",
+            "Track the loss per epoch to confirm it decreases."
+          ],
+          "example": "opt.zero_grad(); loss = loss_fn(model(X), y); loss.backward(); opt.step()",
+          "pitfall": "Calling opt.step() before loss.backward() applies stale or zero gradients.",
+          "question": {
+            "id": "torch-loop-q",
+            "prompt": "The correct order is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "step, backward, zero_grad"
+              },
+              {
+                "id": "b",
+                "text": "zero_grad, forward, loss, backward, step"
+              },
+              {
+                "id": "c",
+                "text": "forward, step, backward"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Zero, forward, loss, backward, step.",
+            "lessonId": "torch-loop"
+          }
+        },
+        {
+          "id": "torch-overfit-small",
+          "title": "Sanity-check by overfitting",
+          "paragraphs": [
+            "Before scaling up, confirm the loop can drive the loss near zero on a tiny batch. If it cannot overfit a handful of examples, there is a bug in the model, loss or loop.",
+            "This quick test catches most setup mistakes."
+          ],
+          "example": "# train on 8 examples; loss should approach 0",
+          "pitfall": "A loop that will not overfit 8 samples has a bug; fix it before training on real data.",
+          "question": {
+            "id": "torch-of-q",
+            "prompt": "Overfitting a tiny batch checks that:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the GPU is fast"
+              },
+              {
+                "id": "b",
+                "text": "the loop and model can learn"
+              },
+              {
+                "id": "c",
+                "text": "the data is big"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It validates the training setup.",
+            "lessonId": "torch-overfit-small"
+          }
+        }
+      ],
+      "steps": [
+        "Write the five loop steps in order from memory.",
+        "Explain why zero_grad is required.",
+        "Pick a loss for classification and one for regression.",
+        "Overfit a tiny batch to confirm the loop learns."
+      ],
+      "challenge": {
+        "task": "Train a model for a few epochs and show the loss decreasing.",
+        "acceptance": [
+          "Correct zero/forward/loss/backward/step order",
+          "Report loss per epoch",
+          "Use an appropriate loss function"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "torch-tr-e1",
+            "prompt": "For regression use:",
+            "options": [
+              {
+                "id": "a",
+                "text": "CrossEntropyLoss"
+              },
+              {
+                "id": "b",
+                "text": "MSELoss"
+              },
+              {
+                "id": "c",
+                "text": "NLLLoss"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "MSE for continuous targets.",
+            "lessonId": "torch-loss"
+          },
+          {
+            "id": "torch-tr-e2",
+            "prompt": "The learning rate controls:",
+            "options": [
+              {
+                "id": "a",
+                "text": "batch size"
+              },
+              {
+                "id": "b",
+                "text": "update step size"
+              },
+              {
+                "id": "c",
+                "text": "model depth"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It scales each parameter update.",
+            "lessonId": "torch-optim"
+          },
+          {
+            "id": "torch-tr-e3",
+            "prompt": "zero_grad is called:",
+            "options": [
+              {
+                "id": "a",
+                "text": "once at the end"
+              },
+              {
+                "id": "b",
+                "text": "each iteration before backward"
+              },
+              {
+                "id": "c",
+                "text": "never"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Clear grads each step.",
+            "lessonId": "torch-loop"
+          },
+          {
+            "id": "torch-tr-e4",
+            "prompt": "CrossEntropyLoss labels are:",
+            "options": [
+              {
+                "id": "a",
+                "text": "one-hot floats"
+              },
+              {
+                "id": "b",
+                "text": "int64 class indices"
+              },
+              {
+                "id": "c",
+                "text": "probabilities"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Integer class indices.",
+            "lessonId": "torch-loss"
+          },
+          {
+            "id": "torch-tr-e5",
+            "prompt": "If the loop can't overfit 8 samples:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the data is too small"
+              },
+              {
+                "id": "b",
+                "text": "there is a bug"
+              },
+              {
+                "id": "c",
+                "text": "it is normal"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Something is wrong in the setup.",
+            "lessonId": "torch-overfit-small"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "PyTorch documentation",
+          "url": "https://docs.pytorch.org/docs/stable/index.html"
+        },
+        {
+          "title": "PyTorch tutorials — Learn the Basics",
+          "url": "https://docs.pytorch.org/tutorials/beginner/basics/intro.html"
+        }
+      ],
+      "reviewedAt": "2026-10-11"
+    },
+    {
+      "id": "torch-data",
+      "version": 1,
+      "order": 5,
+      "title": "5. Data: Datasets, DataLoaders and transforms",
+      "summary": "Feed data efficiently with Dataset, DataLoader, batching, shuffling and transforms.",
+      "difficulty": "Intermediate",
+      "minutes": 24,
+      "code": "import torch\nimport torch.nn as nn\nfrom torch.utils.data import TensorDataset, DataLoader\n\ntorch.manual_seed(0)\nX = torch.randn(256, 4)\ny = (X.sum(dim=1) > 0).long()\nds = TensorDataset(X, y)\nloader = DataLoader(ds, batch_size=32, shuffle=True)\nmodel = nn.Linear(4, 2)\nfor xb, yb in loader:\n    out = model(xb)                           # one forward pass per batch\nprint(f\"{len(loader)} batches of up to 32\")   # 8 batches",
+      "expected": "The DataLoader yields shuffled 32-sample batches of (features, labels) for the training loop.",
+      "lessons": [
+        {
+          "id": "torch-dataset",
+          "title": "Dataset",
+          "paragraphs": [
+            "A `Dataset` exposes `__len__` and `__getitem__(i)` returning one example. `TensorDataset` wraps tensors; custom datasets load from disk or apply transforms per item.",
+            "Keeping data access behind a Dataset separates it from the model and loop."
+          ],
+          "example": "class DS(Dataset):\n    def __len__(self): return len(self.x)\n    def __getitem__(self,i): return self.x[i], self.y[i]",
+          "pitfall": "Returning the whole array from __getitem__ instead of one item breaks batching.",
+          "question": {
+            "id": "torch-ds-q",
+            "prompt": "__getitem__(i) returns:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the whole dataset"
+              },
+              {
+                "id": "b",
+                "text": "one example"
+              },
+              {
+                "id": "c",
+                "text": "a batch"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A single sample.",
+            "lessonId": "torch-dataset"
+          }
+        },
+        {
+          "id": "torch-loader",
+          "title": "DataLoader and batching",
+          "paragraphs": [
+            "A `DataLoader` wraps a Dataset to yield mini-batches, optionally shuffled, with parallel workers. Batching makes training efficient and gives smoother gradient estimates.",
+            "Shuffle the training data each epoch; keep validation order fixed."
+          ],
+          "example": "DataLoader(ds, batch_size=64, shuffle=True, num_workers=2)",
+          "pitfall": "Shuffling the validation set is harmless but shuffling across epochs with a fixed seed can hide data issues.",
+          "question": {
+            "id": "torch-ld-q",
+            "prompt": "batch_size controls:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the learning rate"
+              },
+              {
+                "id": "b",
+                "text": "samples per iteration"
+              },
+              {
+                "id": "c",
+                "text": "the number of epochs"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "How many examples per step.",
+            "lessonId": "torch-loader"
+          }
+        },
+        {
+          "id": "torch-transform",
+          "title": "Transforms and normalization",
+          "paragraphs": [
+            "Transforms preprocess inputs: scaling, normalization, and for images cropping/flipping for augmentation. Normalizing features to a common scale helps optimization converge.",
+            "Apply the same normalization statistics to train and validation data."
+          ],
+          "example": "from torchvision import transforms\nt = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,),(0.5,))])",
+          "pitfall": "Computing normalization stats on the test set leaks information; use training statistics.",
+          "question": {
+            "id": "torch-tf-q",
+            "prompt": "Normalization statistics should come from:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the test set"
+              },
+              {
+                "id": "b",
+                "text": "the training set"
+              },
+              {
+                "id": "c",
+                "text": "random noise"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Fit on train, apply everywhere.",
+            "lessonId": "torch-transform"
+          }
+        },
+        {
+          "id": "torch-split",
+          "title": "Train/validation split",
+          "paragraphs": [
+            "Hold out a validation set to estimate generalization and detect overfitting; `random_split` divides a dataset. Never tune on the test set — keep it for the final check.",
+            "Report both training and validation metrics."
+          ],
+          "example": "from torch.utils.data import random_split\ntr, va = random_split(ds, [0.8, 0.2])",
+          "pitfall": "Evaluating on training data overstates performance; always judge on held-out data.",
+          "question": {
+            "id": "torch-sp-q",
+            "prompt": "A validation set is used to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "train the model"
+              },
+              {
+                "id": "b",
+                "text": "estimate generalization"
+              },
+              {
+                "id": "c",
+                "text": "increase data"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It measures held-out performance.",
+            "lessonId": "torch-split"
+          }
+        }
+      ],
+      "steps": [
+        "Wrap tensors in a TensorDataset and DataLoader.",
+        "Iterate one epoch of 32-sample batches.",
+        "Add a normalization transform using train statistics.",
+        "Split data 80/20 into train and validation."
+      ],
+      "challenge": {
+        "task": "Build a DataLoader and run one epoch over shuffled batches.",
+        "acceptance": [
+          "Use Dataset + DataLoader",
+          "Shuffle training data",
+          "Report the number of batches"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "torch-da-e1",
+            "prompt": "A Dataset must implement:",
+            "options": [
+              {
+                "id": "a",
+                "text": "forward"
+              },
+              {
+                "id": "b",
+                "text": "__len__ and __getitem__"
+              },
+              {
+                "id": "c",
+                "text": "backward"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Length and item access.",
+            "lessonId": "torch-dataset"
+          },
+          {
+            "id": "torch-da-e2",
+            "prompt": "DataLoader yields:",
+            "options": [
+              {
+                "id": "a",
+                "text": "single items"
+              },
+              {
+                "id": "b",
+                "text": "mini-batches"
+              },
+              {
+                "id": "c",
+                "text": "the model"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Batches of examples.",
+            "lessonId": "torch-loader"
+          },
+          {
+            "id": "torch-da-e3",
+            "prompt": "Augmentation (flips/crops) applies to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the test set"
+              },
+              {
+                "id": "b",
+                "text": "the training set"
+              },
+              {
+                "id": "c",
+                "text": "the optimizer"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Augment training data.",
+            "lessonId": "torch-transform"
+          },
+          {
+            "id": "torch-da-e4",
+            "prompt": "The test set is used:",
+            "options": [
+              {
+                "id": "a",
+                "text": "to tune hyperparameters"
+              },
+              {
+                "id": "b",
+                "text": "for the final evaluation only"
+              },
+              {
+                "id": "c",
+                "text": "for training"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Keep it untouched until the end.",
+            "lessonId": "torch-split"
+          },
+          {
+            "id": "torch-da-e5",
+            "prompt": "Shuffling the training data:",
+            "options": [
+              {
+                "id": "a",
+                "text": "each epoch"
+              },
+              {
+                "id": "b",
+                "text": "never"
+              },
+              {
+                "id": "c",
+                "text": "only once ever"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Shuffle every epoch.",
+            "lessonId": "torch-loader"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "PyTorch documentation",
+          "url": "https://docs.pytorch.org/docs/stable/index.html"
+        },
+        {
+          "title": "PyTorch tutorials — Learn the Basics",
+          "url": "https://docs.pytorch.org/tutorials/beginner/basics/intro.html"
+        }
+      ],
+      "reviewedAt": "2026-10-11"
+    },
+    {
+      "id": "torch-linreg",
+      "version": 1,
+      "order": 6,
+      "title": "6. Your first simple model: linear regression",
+      "summary": "Train an end-to-end linear regression model and interpret its learned parameters.",
+      "difficulty": "Intermediate",
+      "minutes": 24,
+      "code": "import torch\nimport torch.nn as nn\n\ntorch.manual_seed(0)\nX = torch.randn(100, 1)\ny = 2 * X + 1 + 0.1 * torch.randn(100, 1)      # true slope 2, intercept 1\nmodel = nn.Linear(1, 1)\nopt = torch.optim.SGD(model.parameters(), lr=0.05)\nloss_fn = nn.MSELoss()\nfor _ in range(400):\n    opt.zero_grad()\n    loss = loss_fn(model(X), y)\n    loss.backward()\n    opt.step()\nprint(model.weight.item(), model.bias.item())  # approaches 2.0, 1.0",
+      "expected": "The model fits y≈wx+b; after training weight and bias approach the data's true slope and intercept.",
+      "lessons": [
+        {
+          "id": "torch-linmodel",
+          "title": "A one-layer model",
+          "paragraphs": [
+            "Linear regression is a single `nn.Linear(1,1)` trained with MSE loss — the smallest complete model. It shows the full pipeline: data, model, loss, optimizer, loop, and interpretation.",
+            "The learned weight and bias are the slope and intercept of the best-fit line."
+          ],
+          "example": "model = nn.Linear(1, 1)",
+          "pitfall": "Features and targets must be shaped (N,1), not (N,); a wrong shape silently broadcasts.",
+          "question": {
+            "id": "torch-lm-q",
+            "prompt": "Linear regression uses which loss?",
+            "options": [
+              {
+                "id": "a",
+                "text": "CrossEntropyLoss"
+              },
+              {
+                "id": "b",
+                "text": "MSELoss"
+              },
+              {
+                "id": "c",
+                "text": "BCELoss"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Mean squared error for regression.",
+            "lessonId": "torch-linmodel"
+          }
+        },
+        {
+          "id": "torch-fit",
+          "title": "Fitting the line",
+          "paragraphs": [
+            "Training minimizes the mean squared error between predictions and targets, nudging weight and bias each step toward the best fit. Watching the loss fall confirms learning.",
+            "Standardizing the input often speeds convergence."
+          ],
+          "example": "loss = nn.MSELoss()(model(X), y)",
+          "pitfall": "A learning rate too high makes the loss oscillate or explode; lower it if the fit diverges.",
+          "question": {
+            "id": "torch-fit-q",
+            "prompt": "Training adjusts weight and bias to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "maximize loss"
+              },
+              {
+                "id": "b",
+                "text": "minimize the MSE"
+              },
+              {
+                "id": "c",
+                "text": "match the batch size"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Minimize the error.",
+            "lessonId": "torch-fit"
+          }
+        },
+        {
+          "id": "torch-interpret",
+          "title": "Interpreting parameters",
+          "paragraphs": [
+            "After training, `model.weight` and `model.bias` are the learned slope and intercept; comparing them to the data-generating values validates the fit. Predictions on new x use the same forward pass.",
+            "This interpretability is a strength of linear models."
+          ],
+          "example": "print(model.weight.item(), model.bias.item())",
+          "pitfall": "Reading .weight without .item()/.detach() for logging can accidentally keep graph references.",
+          "question": {
+            "id": "torch-int-q",
+            "prompt": "model.weight after training is the:",
+            "options": [
+              {
+                "id": "a",
+                "text": "loss"
+              },
+              {
+                "id": "b",
+                "text": "learned slope"
+              },
+              {
+                "id": "c",
+                "text": "learning rate"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The slope of the fit.",
+            "lessonId": "torch-interpret"
+          }
+        },
+        {
+          "id": "torch-predict",
+          "title": "Predicting and evaluating",
+          "paragraphs": [
+            "Evaluate the trained model under `no_grad` on held-out inputs and report an error metric. A good fit has low validation error and parameters near the true values.",
+            "Plotting predictions against data is a quick visual check."
+          ],
+          "example": "with torch.no_grad(): preds = model(X_val)",
+          "pitfall": "Judging the fit only on training data hides overfitting; check validation error.",
+          "question": {
+            "id": "torch-pr-q",
+            "prompt": "Evaluation runs under:",
+            "options": [
+              {
+                "id": "a",
+                "text": "no_grad"
+              },
+              {
+                "id": "b",
+                "text": "backward"
+              },
+              {
+                "id": "c",
+                "text": "train mode"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "No gradients needed for evaluation.",
+            "lessonId": "torch-predict"
+          }
+        }
+      ],
+      "steps": [
+        "Shape X and y as (N,1).",
+        "Train nn.Linear(1,1) with MSE and SGD.",
+        "Print the learned weight and bias.",
+        "Evaluate on held-out points under no_grad."
+      ],
+      "challenge": {
+        "task": "Fit y = 2x + 1 (plus noise) and recover the slope and intercept.",
+        "acceptance": [
+          "Train with MSE",
+          "Report weight≈2, bias≈1",
+          "Evaluate on validation points"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "torch-lr-e1",
+            "prompt": "Linear regression is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "nn.Conv2d"
+              },
+              {
+                "id": "b",
+                "text": "nn.Linear with MSE"
+              },
+              {
+                "id": "c",
+                "text": "a decision tree"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "One Linear layer, MSE loss.",
+            "lessonId": "torch-linmodel"
+          },
+          {
+            "id": "torch-lr-e2",
+            "prompt": "Falling loss indicates:",
+            "options": [
+              {
+                "id": "a",
+                "text": "divergence"
+              },
+              {
+                "id": "b",
+                "text": "the model is learning"
+              },
+              {
+                "id": "c",
+                "text": "wrong dtype"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The fit is improving.",
+            "lessonId": "torch-fit"
+          },
+          {
+            "id": "torch-lr-e3",
+            "prompt": "The learned bias is the:",
+            "options": [
+              {
+                "id": "a",
+                "text": "slope"
+              },
+              {
+                "id": "b",
+                "text": "intercept"
+              },
+              {
+                "id": "c",
+                "text": "learning rate"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Bias is the intercept.",
+            "lessonId": "torch-interpret"
+          },
+          {
+            "id": "torch-lr-e4",
+            "prompt": "Evaluate the model with:",
+            "options": [
+              {
+                "id": "a",
+                "text": "model.train()"
+              },
+              {
+                "id": "b",
+                "text": "no_grad and a metric"
+              },
+              {
+                "id": "c",
+                "text": "backward()"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "no_grad plus an error metric.",
+            "lessonId": "torch-predict"
+          },
+          {
+            "id": "torch-lr-e5",
+            "prompt": "Inputs for Linear(1,1) are shaped:",
+            "options": [
+              {
+                "id": "a",
+                "text": "(N,)"
+              },
+              {
+                "id": "b",
+                "text": "(N,1)"
+              },
+              {
+                "id": "c",
+                "text": "(1,N)"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "(N,1) features.",
+            "lessonId": "torch-linmodel"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "PyTorch documentation",
+          "url": "https://docs.pytorch.org/docs/stable/index.html"
+        },
+        {
+          "title": "PyTorch tutorials — Learn the Basics",
+          "url": "https://docs.pytorch.org/tutorials/beginner/basics/intro.html"
+        }
+      ],
+      "reviewedAt": "2026-10-11"
+    },
+    {
+      "id": "torch-classification",
+      "version": 1,
+      "order": 7,
+      "title": "7. A classifier: multilayer perceptron",
+      "summary": "Train an MLP classifier with CrossEntropyLoss and measure accuracy.",
+      "difficulty": "Intermediate",
+      "minutes": 26,
+      "code": "import torch\nimport torch.nn as nn\n\ntorch.manual_seed(0)\ncenters = torch.tensor([[0., 0.], [3., 3.], [0., 3.]])\ny = torch.arange(3).repeat_interleave(100)         # 100 points per class\nX = centers[y] + 0.4 * torch.randn(300, 2)\nmodel = nn.Sequential(nn.Linear(2, 32), nn.ReLU(), nn.Linear(32, 3))\nopt = torch.optim.Adam(model.parameters(), lr=1e-2)\nloss_fn = nn.CrossEntropyLoss()\nfor epoch in range(100):\n    opt.zero_grad()\n    loss = loss_fn(model(X), y)\n    loss.backward()\n    opt.step()\nacc = (model(X).argmax(1) == y).float().mean()\nprint(f\"accuracy {acc.item():.2f}\")                # near 1.00",
+      "expected": "The MLP learns to classify into three classes; accuracy rises as the cross-entropy loss falls.",
+      "lessons": [
+        {
+          "id": "torch-mlp",
+          "title": "Multilayer perceptrons",
+          "paragraphs": [
+            "An MLP stacks linear layers with nonlinear activations, letting it learn non-linear decision boundaries. For a 4-feature, 3-class problem it maps 4→hidden→3 logits.",
+            "Depth and width are hyperparameters you tune."
+          ],
+          "example": "nn.Sequential(nn.Linear(4,32), nn.ReLU(), nn.Linear(32,3))",
+          "pitfall": "The final layer outputs one logit per class (3 here), not a single number.",
+          "question": {
+            "id": "torch-mlp-q",
+            "prompt": "For 3 classes the output layer has:",
+            "options": [
+              {
+                "id": "a",
+                "text": "1 unit"
+              },
+              {
+                "id": "b",
+                "text": "3 units"
+              },
+              {
+                "id": "c",
+                "text": "32 units"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "One logit per class.",
+            "lessonId": "torch-mlp"
+          }
+        },
+        {
+          "id": "torch-logits",
+          "title": "Logits, softmax and argmax",
+          "paragraphs": [
+            "The model outputs raw logits; CrossEntropyLoss applies softmax during training, and at inference you take `argmax` over the logits to get the predicted class. You rarely apply softmax yourself.",
+            "Probabilities (softmax) are only needed when you want confidence scores."
+          ],
+          "example": "pred = logits.argmax(dim=1)",
+          "pitfall": "Feeding softmax outputs to CrossEntropyLoss applies softmax twice and degrades accuracy.",
+          "question": {
+            "id": "torch-lg-q",
+            "prompt": "The predicted class is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the min logit"
+              },
+              {
+                "id": "b",
+                "text": "argmax of the logits"
+              },
+              {
+                "id": "c",
+                "text": "the loss"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Argmax over class logits.",
+            "lessonId": "torch-logits"
+          }
+        },
+        {
+          "id": "torch-accuracy",
+          "title": "Measuring accuracy",
+          "paragraphs": [
+            "Accuracy is the fraction of correct predictions: compare `argmax` to the labels and take the mean. Track it on validation data alongside the loss.",
+            "For imbalanced data, also consider precision/recall."
+          ],
+          "example": "acc = (pred == y).float().mean().item()",
+          "pitfall": "Reporting training accuracy only can hide overfitting; measure on held-out data.",
+          "question": {
+            "id": "torch-acc-q",
+            "prompt": "Accuracy compares argmax predictions to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the logits"
+              },
+              {
+                "id": "b",
+                "text": "the true labels"
+              },
+              {
+                "id": "c",
+                "text": "the loss"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The ground-truth labels.",
+            "lessonId": "torch-accuracy"
+          }
+        },
+        {
+          "id": "torch-regularize",
+          "title": "Overfitting and regularization",
+          "paragraphs": [
+            "When validation accuracy lags training accuracy, the model overfits. Dropout, weight decay, more data or a smaller model help it generalize.",
+            "Early stopping on validation loss is a simple, effective guard."
+          ],
+          "example": "opt = torch.optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-4)",
+          "pitfall": "Adding capacity to a model that already overfits makes it worse; regularize or get more data.",
+          "question": {
+            "id": "torch-reg-q",
+            "prompt": "A sign of overfitting is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "train and val accuracy equal"
+              },
+              {
+                "id": "b",
+                "text": "high train, low val accuracy"
+              },
+              {
+                "id": "c",
+                "text": "loss not changing"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Train far above validation.",
+            "lessonId": "torch-regularize"
+          }
+        }
+      ],
+      "steps": [
+        "Define a 4→32→3 MLP classifier.",
+        "Train it with CrossEntropyLoss and Adam.",
+        "Compute accuracy with argmax.",
+        "Add weight decay and compare validation accuracy."
+      ],
+      "challenge": {
+        "task": "Train an MLP on a small labeled dataset and report validation accuracy.",
+        "acceptance": [
+          "Use CrossEntropyLoss on logits",
+          "Report accuracy via argmax",
+          "Compare train vs validation"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "torch-cl-e1",
+            "prompt": "An MLP learns non-linear boundaries because of:",
+            "options": [
+              {
+                "id": "a",
+                "text": "more linear layers"
+              },
+              {
+                "id": "b",
+                "text": "activations between layers"
+              },
+              {
+                "id": "c",
+                "text": "the optimizer"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Nonlinear activations.",
+            "lessonId": "torch-mlp"
+          },
+          {
+            "id": "torch-cl-e2",
+            "prompt": "Softmax during training is applied by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "you, manually"
+              },
+              {
+                "id": "b",
+                "text": "CrossEntropyLoss"
+              },
+              {
+                "id": "c",
+                "text": "the DataLoader"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The loss applies it.",
+            "lessonId": "torch-logits"
+          },
+          {
+            "id": "torch-cl-e3",
+            "prompt": "Accuracy is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the loss value"
+              },
+              {
+                "id": "b",
+                "text": "fraction of correct predictions"
+              },
+              {
+                "id": "c",
+                "text": "the learning rate"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Correct / total.",
+            "lessonId": "torch-accuracy"
+          },
+          {
+            "id": "torch-cl-e4",
+            "prompt": "weight_decay adds:",
+            "options": [
+              {
+                "id": "a",
+                "text": "more layers"
+              },
+              {
+                "id": "b",
+                "text": "L2 regularization"
+              },
+              {
+                "id": "c",
+                "text": "dropout"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It is L2 weight penalty.",
+            "lessonId": "torch-regularize"
+          },
+          {
+            "id": "torch-cl-e5",
+            "prompt": "The output layer size equals:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the hidden size"
+              },
+              {
+                "id": "b",
+                "text": "the number of classes"
+              },
+              {
+                "id": "c",
+                "text": "the batch size"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "One logit per class.",
+            "lessonId": "torch-mlp"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "PyTorch documentation",
+          "url": "https://docs.pytorch.org/docs/stable/index.html"
+        },
+        {
+          "title": "PyTorch tutorials — Learn the Basics",
+          "url": "https://docs.pytorch.org/tutorials/beginner/basics/intro.html"
+        }
+      ],
+      "reviewedAt": "2026-10-11"
+    },
+    {
+      "id": "torch-cnn",
+      "version": 1,
+      "order": 8,
+      "title": "8. A convolutional network for images",
+      "summary": "Build a small CNN with conv, pooling and linear layers for image classification.",
+      "difficulty": "Advanced",
+      "minutes": 28,
+      "code": "import torch\nimport torch.nn as nn\n\ntorch.manual_seed(0)\n\nclass CNN(nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.c1 = nn.Conv2d(1, 16, 3, padding=1)\n        self.c2 = nn.Conv2d(16, 32, 3, padding=1)\n        self.fc = nn.Linear(32 * 7 * 7, 10)\n\n    def forward(self, x):\n        x = torch.max_pool2d(torch.relu(self.c1(x)), 2)\n        x = torch.max_pool2d(torch.relu(self.c2(x)), 2)\n        return self.fc(x.flatten(1))\n\nmodel = CNN()\nimages = torch.randn(8, 1, 28, 28)     # a batch of 8 fake 28x28 images\nlogits = model(images)\nprint(logits.shape)                    # torch.Size([8, 10])",
+      "expected": "A 1×28×28 image passes two conv+pool stages to 32×7×7, flattens, and maps to 10 class logits.",
+      "lessons": [
+        {
+          "id": "torch-conv",
+          "title": "Convolution layers",
+          "paragraphs": [
+            "`nn.Conv2d(in, out, k)` slides learnable filters over an image, detecting local patterns while sharing weights across positions. Convolutions are far more parameter-efficient than linear layers on images.",
+            "Padding keeps the spatial size; stride and pooling reduce it."
+          ],
+          "example": "nn.Conv2d(1, 16, kernel_size=3, padding=1)",
+          "pitfall": "Convolutions expect a (N, C, H, W) tensor; forgetting the channel dimension errors.",
+          "question": {
+            "id": "torch-cv-q",
+            "prompt": "Conv2d input is shaped:",
+            "options": [
+              {
+                "id": "a",
+                "text": "(N, features)"
+              },
+              {
+                "id": "b",
+                "text": "(N, C, H, W)"
+              },
+              {
+                "id": "c",
+                "text": "(H, W)"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Batch, channels, height, width.",
+            "lessonId": "torch-conv"
+          }
+        },
+        {
+          "id": "torch-pool",
+          "title": "Pooling and downsampling",
+          "paragraphs": [
+            "Max pooling takes the maximum over small windows, shrinking spatial dimensions and adding translation tolerance. Alternating conv and pool builds a hierarchy from edges to shapes.",
+            "After the conv stack you flatten to feed a linear classifier."
+          ],
+          "example": "x = torch.max_pool2d(x, 2)   # halves H and W",
+          "pitfall": "Miscomputing the flattened size (C*H*W) into the first Linear layer is a frequent shape bug.",
+          "question": {
+            "id": "torch-pl-q",
+            "prompt": "2×2 max pooling changes a 28×28 map to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "28×28"
+              },
+              {
+                "id": "b",
+                "text": "14×14"
+              },
+              {
+                "id": "c",
+                "text": "56×56"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Pooling halves each spatial dim.",
+            "lessonId": "torch-pool"
+          }
+        },
+        {
+          "id": "torch-cnn-train",
+          "title": "Training a CNN",
+          "paragraphs": [
+            "A CNN trains with the same loop as any classifier: CrossEntropyLoss on logits, an optimizer, batches from a DataLoader. On a GPU it is much faster, so move model and data to cuda.",
+            "Normalization and augmentation noticeably help image models."
+          ],
+          "example": "model.to(device); xb, yb = xb.to(device), yb.to(device)",
+          "pitfall": "Leaving data on the CPU while the model is on the GPU raises a device mismatch every batch.",
+          "question": {
+            "id": "torch-ct-q",
+            "prompt": "A CNN classifier trains with:",
+            "options": [
+              {
+                "id": "a",
+                "text": "MSELoss"
+              },
+              {
+                "id": "b",
+                "text": "CrossEntropyLoss on logits"
+              },
+              {
+                "id": "c",
+                "text": "no loss"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Same classification loss and loop.",
+            "lessonId": "torch-cnn-train"
+          }
+        },
+        {
+          "id": "torch-cnn-why",
+          "title": "Why convolutions win on images",
+          "paragraphs": [
+            "Weight sharing and locality give CNNs translation equivariance and far fewer parameters than a dense net on the same image, so they generalize better. This is why they dominate vision baselines.",
+            "Deeper stacks and residual connections scale this idea."
+          ],
+          "example": "# 3x3 conv: 9*in*out weights, independent of image size",
+          "pitfall": "Flattening pixels into one giant Linear layer ignores spatial structure and overfits.",
+          "question": {
+            "id": "torch-cw-q",
+            "prompt": "CNNs use fewer parameters than dense nets because of:",
+            "options": [
+              {
+                "id": "a",
+                "text": "bigger batches"
+              },
+              {
+                "id": "b",
+                "text": "weight sharing across positions"
+              },
+              {
+                "id": "c",
+                "text": "the optimizer"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Filters are reused everywhere.",
+            "lessonId": "torch-cnn-why"
+          }
+        }
+      ],
+      "steps": [
+        "Trace the tensor shape through each conv and pool stage.",
+        "Compute the flattened size feeding the linear layer.",
+        "Move the model and a batch to the GPU.",
+        "Explain why conv beats dense layers on images."
+      ],
+      "challenge": {
+        "task": "Build and train a small CNN on an image dataset (e.g. MNIST) and report accuracy.",
+        "acceptance": [
+          "Conv+pool+linear architecture",
+          "Correct flattened size",
+          "Validation accuracy reported"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "torch-cn-e1",
+            "prompt": "Conv2d shares weights across:",
+            "options": [
+              {
+                "id": "a",
+                "text": "classes"
+              },
+              {
+                "id": "b",
+                "text": "spatial positions"
+              },
+              {
+                "id": "c",
+                "text": "epochs"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The filter slides everywhere.",
+            "lessonId": "torch-conv"
+          },
+          {
+            "id": "torch-cn-e2",
+            "prompt": "Max pooling mainly:",
+            "options": [
+              {
+                "id": "a",
+                "text": "adds parameters"
+              },
+              {
+                "id": "b",
+                "text": "downsamples spatially"
+              },
+              {
+                "id": "c",
+                "text": "changes the loss"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It reduces H and W.",
+            "lessonId": "torch-pool"
+          },
+          {
+            "id": "torch-cn-e3",
+            "prompt": "Before the first Linear layer a CNN must:",
+            "options": [
+              {
+                "id": "a",
+                "text": "flatten the feature maps"
+              },
+              {
+                "id": "b",
+                "text": "apply softmax"
+              },
+              {
+                "id": "c",
+                "text": "transpose"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Flatten (N, C*H*W).",
+            "lessonId": "torch-cnn-train"
+          },
+          {
+            "id": "torch-cn-e4",
+            "prompt": "Model and data must share:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the same dtype only"
+              },
+              {
+                "id": "b",
+                "text": "the same device"
+              },
+              {
+                "id": "c",
+                "text": "the same filename"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Both on cuda or both on cpu.",
+            "lessonId": "torch-cnn-train"
+          },
+          {
+            "id": "torch-cn-e5",
+            "prompt": "CNNs generalize on images because of:",
+            "options": [
+              {
+                "id": "a",
+                "text": "locality and weight sharing"
+              },
+              {
+                "id": "b",
+                "text": "larger learning rates"
+              },
+              {
+                "id": "c",
+                "text": "more classes"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Locality + shared weights.",
+            "lessonId": "torch-cnn-why"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "PyTorch documentation",
+          "url": "https://docs.pytorch.org/docs/stable/index.html"
+        },
+        {
+          "title": "PyTorch tutorials — Learn the Basics",
+          "url": "https://docs.pytorch.org/tutorials/beginner/basics/intro.html"
+        }
+      ],
+      "reviewedAt": "2026-10-11"
+    },
+    {
+      "id": "torch-eval",
+      "version": 1,
+      "order": 9,
+      "title": "9. Evaluation, saving and inference",
+      "summary": "Evaluate properly, detect overfitting, and save and reload a trained model for inference.",
+      "difficulty": "Advanced",
+      "minutes": 24,
+      "code": "import torch\nimport torch.nn as nn\n\ntorch.manual_seed(0)\nmodel = nn.Sequential(nn.Linear(4, 16), nn.ReLU(), nn.Linear(16, 3))\ntorch.save(model.state_dict(), \"model.pt\")\n\nreloaded = nn.Sequential(nn.Linear(4, 16), nn.ReLU(), nn.Linear(16, 3))\nreloaded.load_state_dict(torch.load(\"model.pt\"))\nreloaded.eval()\nwith torch.no_grad():\n    x_new = torch.randn(5, 4)\n    pred = reloaded(x_new).argmax(1)\nprint(pred)                            # 5 predicted class indices",
+      "expected": "Saves the learned weights, reloads them into the same architecture, and runs inference in eval mode.",
+      "lessons": [
+        {
+          "id": "torch-metrics",
+          "title": "Metrics beyond accuracy",
+          "paragraphs": [
+            "Accuracy can mislead on imbalanced data; precision, recall and a confusion matrix give a fuller picture. Choose metrics that match the problem's costs.",
+            "Report validation metrics, not training ones, to judge a model."
+          ],
+          "example": "# confusion matrix compares predicted vs true classes",
+          "pitfall": "A 95%-accurate model on 95%-one-class data may be useless; check per-class recall.",
+          "question": {
+            "id": "torch-me-q",
+            "prompt": "Accuracy can mislead when classes are:",
+            "options": [
+              {
+                "id": "a",
+                "text": "balanced"
+              },
+              {
+                "id": "b",
+                "text": "imbalanced"
+              },
+              {
+                "id": "c",
+                "text": "numeric"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Imbalance inflates accuracy.",
+            "lessonId": "torch-metrics"
+          }
+        },
+        {
+          "id": "torch-save",
+          "title": "Saving state_dict",
+          "paragraphs": [
+            "The recommended way to persist a model is `torch.save(model.state_dict(), path)`, storing only the learned tensors. You reload into an identical architecture with `load_state_dict`.",
+            "Saving the whole model object is fragile across code changes; prefer the state dict."
+          ],
+          "example": "torch.save(model.state_dict(), \"model.pt\")",
+          "pitfall": "Loading a state_dict into a differently-shaped model raises key/size mismatches; keep the architecture in code.",
+          "question": {
+            "id": "torch-sv-q",
+            "prompt": "The portable way to save a model is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "pickle the object"
+              },
+              {
+                "id": "b",
+                "text": "save the state_dict"
+              },
+              {
+                "id": "c",
+                "text": "save the optimizer"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Persist the state_dict.",
+            "lessonId": "torch-save"
+          }
+        },
+        {
+          "id": "torch-infer",
+          "title": "Inference mode",
+          "paragraphs": [
+            "For inference, set `model.eval()` and wrap the forward pass in `torch.no_grad()` (or `inference_mode`). This disables dropout/batchnorm training behavior and skips graph building.",
+            "Move inputs to the model's device before calling it."
+          ],
+          "example": "model.eval()\nwith torch.no_grad(): y = model(x)",
+          "pitfall": "Forgetting eval() leaves dropout active at inference, giving inconsistent predictions.",
+          "question": {
+            "id": "torch-inf-q",
+            "prompt": "Inference should set:",
+            "options": [
+              {
+                "id": "a",
+                "text": "model.train()"
+              },
+              {
+                "id": "b",
+                "text": "model.eval() and no_grad"
+              },
+              {
+                "id": "c",
+                "text": "requires_grad"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "eval() plus no_grad.",
+            "lessonId": "torch-infer"
+          }
+        },
+        {
+          "id": "torch-generalize",
+          "title": "Diagnosing generalization",
+          "paragraphs": [
+            "Compare training and validation curves: a large gap means overfitting, both high means underfitting. Use the diagnosis to decide between more capacity, more data or more regularization.",
+            "The test set is touched once, at the very end."
+          ],
+          "example": "# gap between train and val loss -> overfitting",
+          "pitfall": "Tuning against the test set leaks information and inflates your reported performance.",
+          "question": {
+            "id": "torch-gen-q",
+            "prompt": "A large train/val gap indicates:",
+            "options": [
+              {
+                "id": "a",
+                "text": "underfitting"
+              },
+              {
+                "id": "b",
+                "text": "overfitting"
+              },
+              {
+                "id": "c",
+                "text": "a bug in saving"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Overfitting the training data.",
+            "lessonId": "torch-generalize"
+          }
+        }
+      ],
+      "steps": [
+        "Compute a confusion matrix on validation predictions.",
+        "Save and reload the model via its state_dict.",
+        "Run inference in eval + no_grad mode.",
+        "Diagnose a train/val gap and propose a fix."
+      ],
+      "challenge": {
+        "task": "Save a trained model, reload it, and run inference on new inputs.",
+        "acceptance": [
+          "Save/load the state_dict",
+          "Use eval() and no_grad",
+          "Report a validation metric beyond accuracy"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "torch-ev-e1",
+            "prompt": "For imbalanced data also report:",
+            "options": [
+              {
+                "id": "a",
+                "text": "only accuracy"
+              },
+              {
+                "id": "b",
+                "text": "precision/recall"
+              },
+              {
+                "id": "c",
+                "text": "the learning rate"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Per-class metrics.",
+            "lessonId": "torch-metrics"
+          },
+          {
+            "id": "torch-ev-e2",
+            "prompt": "state_dict stores:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the whole program"
+              },
+              {
+                "id": "b",
+                "text": "the learned tensors"
+              },
+              {
+                "id": "c",
+                "text": "the dataset"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Parameters and buffers.",
+            "lessonId": "torch-save"
+          },
+          {
+            "id": "torch-ev-e3",
+            "prompt": "Inference disables:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the GPU"
+              },
+              {
+                "id": "b",
+                "text": "dropout/batchnorm training behavior"
+              },
+              {
+                "id": "c",
+                "text": "the model"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "eval() switches those off.",
+            "lessonId": "torch-infer"
+          },
+          {
+            "id": "torch-ev-e4",
+            "prompt": "Both train and val error high means:",
+            "options": [
+              {
+                "id": "a",
+                "text": "overfitting"
+              },
+              {
+                "id": "b",
+                "text": "underfitting"
+              },
+              {
+                "id": "c",
+                "text": "perfect fit"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The model underfits.",
+            "lessonId": "torch-generalize"
+          },
+          {
+            "id": "torch-ev-e5",
+            "prompt": "The test set is used:",
+            "options": [
+              {
+                "id": "a",
+                "text": "for tuning"
+              },
+              {
+                "id": "b",
+                "text": "once, at the end"
+              },
+              {
+                "id": "c",
+                "text": "every epoch"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Final evaluation only.",
+            "lessonId": "torch-generalize"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "PyTorch documentation",
+          "url": "https://docs.pytorch.org/docs/stable/index.html"
+        },
+        {
+          "title": "PyTorch tutorials — Learn the Basics",
+          "url": "https://docs.pytorch.org/tutorials/beginner/basics/intro.html"
+        }
+      ],
+      "reviewedAt": "2026-10-11"
+    },
+    {
+      "id": "torch-capstone",
+      "version": 1,
+      "order": 10,
+      "title": "10. Capstone: build and train a full ML model",
+      "summary": "Combine data, model, training, evaluation and saving into one complete ML project.",
+      "difficulty": "Advanced",
+      "minutes": 32,
+      "code": "import torch\nimport torch.nn as nn\nfrom torch.utils.data import TensorDataset, DataLoader, random_split\n\ntorch.manual_seed(0)\n\n# 1. data: three Gaussian blobs in 8 dimensions, K = 3 classes\nD, K, N = 8, 3, 900\ncenters = torch.randn(K, D) * 3\ny = torch.arange(K).repeat_interleave(N // K)\nX = centers[y] + torch.randn(N, D)\nds = TensorDataset(X, y)\ntrain_ds, val_ds, test_ds = random_split(ds, [0.7, 0.15, 0.15])\ntrain = DataLoader(train_ds, batch_size=32, shuffle=True)\nval = DataLoader(val_ds, batch_size=64)\ntest = DataLoader(test_ds, batch_size=64)\n\n# 2. model\nmodel = nn.Sequential(nn.Linear(D, 64), nn.ReLU(), nn.Dropout(0.2), nn.Linear(64, K))\nopt = torch.optim.Adam(model.parameters(), lr=1e-2)\nloss_fn = nn.CrossEntropyLoss()\n\n# 3. train, 4. validate each epoch, keeping the best checkpoint by validation loss\nbest = float(\"inf\")\nfor epoch in range(15):\n    model.train()\n    for xb, yb in train:\n        opt.zero_grad()\n        loss_fn(model(xb), yb).backward()\n        opt.step()\n    model.eval()\n    with torch.no_grad():\n        val_loss = sum(loss_fn(model(xb), yb).item() for xb, yb in val) / len(val)\n    if val_loss < best:\n        best = val_loss\n        torch.save(model.state_dict(), \"best.pt\")\n\n# 5. reload the best checkpoint and report accuracy on the held-out test set\nmodel.load_state_dict(torch.load(\"best.pt\"))\nmodel.eval()\nwith torch.no_grad():\n    correct = sum((model(xb).argmax(1) == yb).float().sum().item() for xb, yb in test)\nprint(f\"best val loss {best:.3f}, test accuracy {correct / len(test_ds):.2f}\")",
+      "expected": "The capstone assembles a reproducible pipeline that trains, validates each epoch, saves the best checkpoint by validation loss, then reloads it and reports accuracy on a held-out test set it never trained or selected on.",
+      "lessons": [
+        {
+          "id": "torch-pipeline",
+          "title": "The end-to-end pipeline",
+          "paragraphs": [
+            "A complete project is five stages: prepare data with a DataLoader, define the model, train with a proper loop, evaluate on validation, and save the best weights. Each stage you have already practiced.",
+            "Treat the whole thing as one reproducible script with a fixed seed."
+          ],
+          "example": "# data -> model -> train -> eval -> save",
+          "pitfall": "Skipping the validation stage means you cannot tell whether the model actually generalizes.",
+          "question": {
+            "id": "torch-pp-q",
+            "prompt": "A full ML pipeline ends by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "deleting the data"
+              },
+              {
+                "id": "b",
+                "text": "evaluating and saving the best model"
+              },
+              {
+                "id": "c",
+                "text": "raising the learning rate"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Evaluate, then save the best weights.",
+            "lessonId": "torch-pipeline"
+          }
+        },
+        {
+          "id": "torch-bestmodel",
+          "title": "Tracking the best model",
+          "paragraphs": [
+            "During training, track validation loss and save the state_dict whenever it improves, so you keep the best checkpoint rather than the last. This is a simple form of early stopping.",
+            "Reload the best checkpoint before the final test."
+          ],
+          "example": "if val_loss < best: best = val_loss; torch.save(model.state_dict(), \"best.pt\")",
+          "pitfall": "Keeping only the final epoch can discard a better earlier model; checkpoint the best.",
+          "question": {
+            "id": "torch-bm-q",
+            "prompt": "You should checkpoint the model when:",
+            "options": [
+              {
+                "id": "a",
+                "text": "training loss rises"
+              },
+              {
+                "id": "b",
+                "text": "validation loss improves"
+              },
+              {
+                "id": "c",
+                "text": "every batch"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Save on validation improvement.",
+            "lessonId": "torch-bestmodel"
+          }
+        },
+        {
+          "id": "torch-repro",
+          "title": "Reproducibility",
+          "paragraphs": [
+            "Set the random seed, record hyperparameters, and log metrics so a run can be repeated and compared. Reproducible experiments are what make results trustworthy.",
+            "Note the library versions and device too."
+          ],
+          "example": "torch.manual_seed(0)",
+          "pitfall": "An unseeded run that cannot be reproduced makes a reported number impossible to trust.",
+          "question": {
+            "id": "torch-rp-q",
+            "prompt": "Reproducibility starts with:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a bigger model"
+              },
+              {
+                "id": "b",
+                "text": "setting the seed and logging config"
+              },
+              {
+                "id": "c",
+                "text": "more epochs"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Seed and record the setup.",
+            "lessonId": "torch-repro"
+          }
+        },
+        {
+          "id": "torch-next",
+          "title": "From here to real projects",
+          "paragraphs": [
+            "Real projects add learning-rate schedules, better architectures, transfer learning from pretrained models, and deployment. The pipeline you built is the backbone they all extend.",
+            "The same five stages scale from a toy model to production."
+          ],
+          "example": "# fine-tune a pretrained model: swap the classifier head",
+          "pitfall": "Reaching for huge models before the basic pipeline is solid usually wastes time; get the loop right first.",
+          "question": {
+            "id": "torch-nx-q",
+            "prompt": "Transfer learning reuses:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a pretrained model"
+              },
+              {
+                "id": "b",
+                "text": "the test set"
+              },
+              {
+                "id": "c",
+                "text": "the optimizer state"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "It starts from pretrained weights.",
+            "lessonId": "torch-next"
+          }
+        }
+      ],
+      "steps": [
+        "Assemble data, model, train, eval and save into one script.",
+        "Validate each epoch and checkpoint the best model.",
+        "Set a seed and log the hyperparameters.",
+        "Reload the best checkpoint and report test metrics."
+      ],
+      "challenge": {
+        "task": "Deliver a complete, reproducible training script that saves the best model by validation loss.",
+        "acceptance": [
+          "Data, model, loop, eval and save stages",
+          "Best-checkpoint on validation",
+          "Seed set and metrics reported"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "torch-cap-e1",
+            "prompt": "The five pipeline stages are:",
+            "options": [
+              {
+                "id": "a",
+                "text": "data, model, train, eval, save"
+              },
+              {
+                "id": "b",
+                "text": "import, print, exit"
+              },
+              {
+                "id": "c",
+                "text": "forward, forward, forward"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The standard end-to-end flow.",
+            "lessonId": "torch-pipeline"
+          },
+          {
+            "id": "torch-cap-e2",
+            "prompt": "The best checkpoint is chosen by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "lowest training loss"
+              },
+              {
+                "id": "b",
+                "text": "best validation metric"
+              },
+              {
+                "id": "c",
+                "text": "the last epoch"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Validation decides the best model.",
+            "lessonId": "torch-bestmodel"
+          },
+          {
+            "id": "torch-cap-e3",
+            "prompt": "manual_seed improves:",
+            "options": [
+              {
+                "id": "a",
+                "text": "accuracy"
+              },
+              {
+                "id": "b",
+                "text": "reproducibility"
+              },
+              {
+                "id": "c",
+                "text": "GPU speed"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It makes runs repeatable.",
+            "lessonId": "torch-repro"
+          },
+          {
+            "id": "torch-cap-e4",
+            "prompt": "Transfer learning typically swaps the:",
+            "options": [
+              {
+                "id": "a",
+                "text": "optimizer"
+              },
+              {
+                "id": "b",
+                "text": "classifier head"
+              },
+              {
+                "id": "c",
+                "text": "dataset"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Replace the final head and fine-tune.",
+            "lessonId": "torch-next"
+          },
+          {
+            "id": "torch-cap-e5",
+            "prompt": "Validation during training lets you:",
+            "options": [
+              {
+                "id": "a",
+                "text": "train faster"
+              },
+              {
+                "id": "b",
+                "text": "detect overfitting and pick the best model"
+              },
+              {
+                "id": "c",
+                "text": "skip the test set"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It guides model selection.",
+            "lessonId": "torch-pipeline"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "PyTorch documentation",
+          "url": "https://docs.pytorch.org/docs/stable/index.html"
+        },
+        {
+          "title": "PyTorch tutorials — Learn the Basics",
+          "url": "https://docs.pytorch.org/tutorials/beginner/basics/intro.html"
+        }
+      ],
+      "reviewedAt": "2026-10-11"
+    }
+  ],
+  "reviewedAt": "2026-10-11"
+}
