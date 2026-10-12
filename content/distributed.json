@@ -1,0 +1,2735 @@
+{
+  "courses": [
+    {
+      "id": "ds-foundations",
+      "version": 1,
+      "order": 1,
+      "title": "1. Foundations: failure, fallacies and exactly-once",
+      "summary": "Why distributed systems are hard: partial failure, the fallacies, and achieving exactly-once effects with idempotency and deduplication.",
+      "difficulty": "Fundamental",
+      "minutes": 24,
+      "code": "import random\n\n# A client sends a money transfer over an unreliable link. The request OR the\n# acknowledgement may be lost, so the client retries. The server makes the effect\n# exactly-once by deduplicating on the idempotency key.\nrandom.seed(1)\napplied = {}                       # idempotency key -> result (server-side dedup)\nbalance = {\"acct\": 100}\n\ndef server(key, amount):\n    if key not in applied:         # first time: apply the effect\n        balance[\"acct\"] -= amount\n        applied[key] = \"ok\"\n    return applied[key]            # idempotent: same ack for any retry\n\nkey, attempts, acked = \"txn-1\", 0, False\nwhile not acked:\n    attempts += 1\n    if random.random() < 0.5:      # the request reaches the server\n        server(key, 10)            # may be a duplicate delivery; server dedups\n        if random.random() < 0.5:  # the ack reaches the client\n            acked = True\n    # otherwise the client timed out and retries the SAME key\n\nprint(f\"attempts={attempts} balance={balance['acct']}\")\nassert balance[\"acct\"] == 90\nprint(\"exactly-once (idempotent + dedup) holds:\", balance[\"acct\"] == 90)\n",
+      "codeExt": "py",
+      "expected": "Prints the number of retries and a final balance of 90: despite duplicate deliveries, the transfer applied exactly once.",
+      "lessons": [
+        {
+          "id": "ds-why",
+          "title": "Partial failure is the defining problem",
+          "paragraphs": [
+            "A distributed system is a set of processes that communicate only by passing messages over a network that can delay, drop, duplicate or reorder them. The defining difficulty is partial failure: one component fails or becomes unreachable while others keep running, and no node has an up-to-date global view.",
+            "You cannot tell a slow node from a dead one, because a missing reply could mean the request was lost, the node crashed, or it is simply slow. Every design decision flows from this uncertainty."
+          ],
+          "example": "A timed-out RPC has three indistinguishable causes: request lost, reply lost, or peer slow.",
+          "pitfall": "Treating a timeout as proof the operation did not happen is wrong: it may have completed and only the reply was lost.",
+          "question": {
+            "id": "ds-why-q",
+            "prompt": "A request that times out means:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the operation definitely did not run"
+              },
+              {
+                "id": "b",
+                "text": "the operation definitely ran"
+              },
+              {
+                "id": "c",
+                "text": "the outcome is unknown"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "A timeout is ambiguous; the call may or may not have taken effect.",
+            "lessonId": "ds-why"
+          }
+        },
+        {
+          "id": "ds-fallacies",
+          "title": "The fallacies of distributed computing",
+          "paragraphs": [
+            "The classic eight fallacies are false assumptions engineers make: the network is reliable, latency is zero, bandwidth is infinite, the network is secure, topology doesn't change, there is one administrator, transport cost is zero, and the network is homogeneous.",
+            "Each fallacy, assumed rather than designed around, becomes an outage. Robust systems treat the network as hostile: everything can fail, lag, or change underneath you."
+          ],
+          "example": "Assuming \"latency is zero\" turns a chatty N+1 call pattern into a timeout under real network delay.",
+          "pitfall": "Designing on a fast, reliable LAN and assuming production behaves the same is how prototypes die in the real world.",
+          "question": {
+            "id": "ds-fallacies-q",
+            "prompt": "The fallacies of distributed computing are:",
+            "options": [
+              {
+                "id": "a",
+                "text": "performance tips"
+              },
+              {
+                "id": "b",
+                "text": "false assumptions that cause outages"
+              },
+              {
+                "id": "c",
+                "text": "security standards"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "They are assumptions that fail in practice.",
+            "lessonId": "ds-fallacies"
+          }
+        },
+        {
+          "id": "ds-idempotent",
+          "title": "Idempotency and deduplication",
+          "paragraphs": [
+            "An operation is idempotent if applying it more than once has the same effect as applying it once. Because retries can cause duplicate delivery, idempotency is what makes retrying safe.",
+            "Non-idempotent effects (like 'subtract 10') are made exactly-once by attaching a unique idempotency key and having the receiver deduplicate: apply the key's effect once and return the same acknowledgement for every retry."
+          ],
+          "example": "server(key): if key not in applied: apply(); applied[key]=ok; return applied[key]",
+          "pitfall": "Retrying a non-idempotent write without a dedup key double-charges the customer on the first lost acknowledgement.",
+          "question": {
+            "id": "ds-idempotent-q",
+            "prompt": "Safe retries of a non-idempotent effect require:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a faster network"
+              },
+              {
+                "id": "b",
+                "text": "an idempotency key plus deduplication"
+              },
+              {
+                "id": "c",
+                "text": "more replicas"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Dedup on a unique key gives exactly-once effect.",
+            "lessonId": "ds-idempotent"
+          }
+        },
+        {
+          "id": "ds-exactlyonce",
+          "title": "There is no magic exactly-once delivery",
+          "paragraphs": [
+            "Networks give you at-most-once (never retry) or at-least-once (retry until acked) delivery. True exactly-once *delivery* is impossible over a lossy link, because the sender can never be sure the receiver got the last message.",
+            "What systems actually provide is exactly-once *processing*: at-least-once delivery plus idempotent, deduplicated handlers, so duplicates are absorbed and the observable effect happens once."
+          ],
+          "example": "exactly-once effect = at-least-once delivery + idempotent, deduplicated processing",
+          "pitfall": "Believing a broker gives literal exactly-once delivery leads teams to skip dedup and then double-process on redelivery.",
+          "question": {
+            "id": "ds-exactlyonce-q",
+            "prompt": "\"Exactly-once\" in practice is achieved by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a special network protocol"
+              },
+              {
+                "id": "b",
+                "text": "at-least-once delivery + idempotent dedup"
+              },
+              {
+                "id": "c",
+                "text": "disabling retries"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Processing is made exactly-once, not delivery.",
+            "lessonId": "ds-exactlyonce"
+          }
+        }
+      ],
+      "steps": [
+        "Save the program as ds-foundations.py and run `python3 ds-foundations.py`.",
+        "Predict the final balance before running; confirm it is 90 regardless of the retry count.",
+        "Remove the dedup check (apply on every delivery) and watch the balance drop below 90.",
+        "Explain why a timeout alone cannot tell you whether the transfer happened."
+      ],
+      "challenge": {
+        "task": "Make a non-idempotent operation safe under retries using an idempotency key and server-side deduplication.",
+        "acceptance": [
+          "Retries never double-apply the effect",
+          "The server returns the same ack for duplicates",
+          "Explain the three causes of a timed-out request"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "ds-f-e1",
+            "prompt": "The defining difficulty of distributed systems is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "slow CPUs"
+              },
+              {
+                "id": "b",
+                "text": "partial failure"
+              },
+              {
+                "id": "c",
+                "text": "disk size"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Some parts fail while others run.",
+            "lessonId": "ds-why"
+          },
+          {
+            "id": "ds-f-e2",
+            "prompt": "\"The network is reliable\" is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a safe assumption"
+              },
+              {
+                "id": "b",
+                "text": "a fallacy"
+              },
+              {
+                "id": "c",
+                "text": "a protocol"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It is the first fallacy.",
+            "lessonId": "ds-fallacies"
+          },
+          {
+            "id": "ds-f-e3",
+            "prompt": "An idempotent operation applied twice:",
+            "options": [
+              {
+                "id": "a",
+                "text": "doubles its effect"
+              },
+              {
+                "id": "b",
+                "text": "has the same effect as once"
+              },
+              {
+                "id": "c",
+                "text": "errors"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "That is the definition.",
+            "lessonId": "ds-idempotent"
+          },
+          {
+            "id": "ds-f-e4",
+            "prompt": "Exactly-once delivery over a lossy link is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "built into TCP"
+              },
+              {
+                "id": "b",
+                "text": "impossible; use idempotent processing"
+              },
+              {
+                "id": "c",
+                "text": "the default"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Only exactly-once processing is achievable.",
+            "lessonId": "ds-exactlyonce"
+          },
+          {
+            "id": "ds-f-e5",
+            "prompt": "You cannot distinguish a crashed node from:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a slow node"
+              },
+              {
+                "id": "b",
+                "text": "a fast node"
+              },
+              {
+                "id": "c",
+                "text": "the leader"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "A missing reply looks the same for both.",
+            "lessonId": "ds-why"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Fallacies of distributed computing",
+          "url": "https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing"
+        },
+        {
+          "title": "Designing Data-Intensive Applications (Kleppmann)",
+          "url": "https://dataintensive.net/"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "ds-clocks",
+      "version": 1,
+      "order": 2,
+      "title": "2. Time and ordering: logical and vector clocks",
+      "summary": "Why wall clocks lie, how Lamport and vector clocks capture causality, and how to tell causally-ordered events from concurrent ones.",
+      "difficulty": "Fundamental",
+      "minutes": 26,
+      "code": "# Vector clocks capture causality across 3 processes without a shared wall clock.\nclass VectorClock:\n    def __init__(self, n, i):\n        self.v = [0] * n\n        self.i = i\n    def tick(self):\n        self.v[self.i] += 1\n    def send(self):\n        self.tick()\n        return list(self.v)\n    def recv(self, msg):\n        self.v = [max(a, b) for a, b in zip(self.v, msg)]\n        self.tick()\n\ndef happens_before(a, b):\n    return a != b and all(x <= y for x, y in zip(a, b))\ndef concurrent(a, b):\n    return a != b and not happens_before(a, b) and not happens_before(b, a)\n\nP = [VectorClock(3, i) for i in range(3)]\nP[0].tick()                 # P0 local event      -> [1,0,0]\nmsg = P[0].send()           # P0 sends            -> [2,0,0]\nP[1].recv(msg)              # P1 receives         -> [2,1,0]\nP[2].tick()                 # P2 independent event-> [0,0,1]\n\na, b, c = [2, 0, 0], [2, 1, 0], [0, 0, 1]\nprint(\"send(a) -> recv(b):\", happens_before(a, b))   # True: causally ordered\nprint(\"a concurrent with c:\", concurrent(a, c))      # True: no causal link\nprint(\"P1 clock:\", P[1].v, \" P2 clock:\", P[2].v)\nassert happens_before(a, b) and concurrent(a, c)\nprint(\"vector clocks separate causal from concurrent:\", True)\n",
+      "codeExt": "py",
+      "expected": "Prints that a happens-before b (a message creates a causal link) while a and c are concurrent, and the final assertion holds.",
+      "lessons": [
+        {
+          "id": "ds-wallclock",
+          "title": "Why wall clocks are not enough",
+          "paragraphs": [
+            "Physical clocks on different machines drift and are only loosely synchronized (NTP leaves tens of milliseconds of error, and clocks can even jump backwards). So comparing two machines' timestamps does not reliably tell you which event really happened first.",
+            "Ordering in a distributed system should be based on causality — did event A influence event B — not on raw timestamps that may disagree with reality."
+          ],
+          "example": "Two servers can log an event at the \"same\" millisecond yet be seconds apart in truth.",
+          "pitfall": "Ordering events by wall-clock timestamps across machines produces wrong orderings whenever clocks are skewed.",
+          "question": {
+            "id": "ds-wallclock-q",
+            "prompt": "Comparing wall-clock timestamps across machines is unreliable because clocks:",
+            "options": [
+              {
+                "id": "a",
+                "text": "are too fast"
+              },
+              {
+                "id": "b",
+                "text": "drift and are only loosely synced"
+              },
+              {
+                "id": "c",
+                "text": "use UTC"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Skew makes cross-machine timestamps untrustworthy.",
+            "lessonId": "ds-wallclock"
+          }
+        },
+        {
+          "id": "ds-lamport",
+          "title": "Lamport clocks and happens-before",
+          "paragraphs": [
+            "A Lamport clock is a single counter per process: increment on each event, and on receiving a message set the counter to max(local, received)+1. This guarantees that if A happens-before B then L(A) < L(B).",
+            "The converse does not hold: L(A) < L(B) does not prove causality, because unrelated events on different processes can still get ordered counter values. Lamport clocks give a consistent total order but lose the concept of concurrency."
+          ],
+          "example": "recv: counter = max(local, msg) + 1",
+          "pitfall": "Reading L(A) < L(B) as 'A caused B' is wrong; Lamport order can place concurrent events in an arbitrary order.",
+          "question": {
+            "id": "ds-lamport-q",
+            "prompt": "If A happens-before B, a Lamport clock guarantees:",
+            "options": [
+              {
+                "id": "a",
+                "text": "L(A) > L(B)"
+              },
+              {
+                "id": "b",
+                "text": "L(A) < L(B)"
+              },
+              {
+                "id": "c",
+                "text": "L(A) = L(B)"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Causality implies increasing Lamport values.",
+            "lessonId": "ds-lamport"
+          }
+        },
+        {
+          "id": "ds-vector",
+          "title": "Vector clocks capture causality exactly",
+          "paragraphs": [
+            "A vector clock holds one counter per process. A process increments its own entry on each event and, on receive, takes the element-wise maximum then increments its own entry. Comparing two vectors tells you the exact relationship.",
+            "A happens-before B iff every entry of A is <= B and they differ; if neither is <= the other, the events are concurrent. Unlike Lamport clocks, vector clocks detect concurrency."
+          ],
+          "example": "happens_before(a,b) = a != b and all(x <= y for x,y in zip(a,b))",
+          "pitfall": "Vector clocks grow with the number of processes, so using them unbounded in a huge cluster is a storage and bandwidth cost to budget for.",
+          "question": {
+            "id": "ds-vector-q",
+            "prompt": "Two vector clocks where neither is <= the other are:",
+            "options": [
+              {
+                "id": "a",
+                "text": "causally ordered"
+              },
+              {
+                "id": "b",
+                "text": "concurrent"
+              },
+              {
+                "id": "c",
+                "text": "equal"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "No causal link means concurrent.",
+            "lessonId": "ds-vector"
+          }
+        },
+        {
+          "id": "ds-causal",
+          "title": "Causal ordering in practice",
+          "paragraphs": [
+            "Causal metadata (vector clocks or version vectors) lets replicas deliver updates in an order that respects cause and effect, and lets a key-value store detect conflicting concurrent writes instead of silently dropping one.",
+            "When two updates are concurrent, the system cannot decide which is 'right' by time alone: it must keep both as siblings for the application to merge, or apply a deterministic resolution rule."
+          ],
+          "example": "Concurrent writes -> keep siblings or merge; never silently pick by wall clock.",
+          "pitfall": "Collapsing concurrent writes with a timestamp instead of surfacing a conflict quietly loses data.",
+          "question": {
+            "id": "ds-causal-q",
+            "prompt": "When a store detects two concurrent writes it should:",
+            "options": [
+              {
+                "id": "a",
+                "text": "drop the older timestamp"
+              },
+              {
+                "id": "b",
+                "text": "keep both as siblings or merge"
+              },
+              {
+                "id": "c",
+                "text": "crash"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Concurrency is a real conflict to resolve, not ignore.",
+            "lessonId": "ds-causal"
+          }
+        }
+      ],
+      "steps": [
+        "Save as ds-clocks.py and run it; confirm a happens-before b and a is concurrent with c.",
+        "Add a fourth process and a message from P2 to it; print the receiver's vector.",
+        "Replace vector clocks with a single Lamport counter and show it can no longer detect concurrency.",
+        "Explain why max() of element-wise entries is used on receive."
+      ],
+      "challenge": {
+        "task": "Use vector clocks to classify every pair of events in a 3-process run as causally ordered or concurrent.",
+        "acceptance": [
+          "Implement tick/send/recv correctly",
+          "Correctly detect at least one concurrent pair",
+          "Explain why wall clocks cannot do this"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "ds-c-e1",
+            "prompt": "NTP-synced wall clocks across machines are:",
+            "options": [
+              {
+                "id": "a",
+                "text": "exact"
+              },
+              {
+                "id": "b",
+                "text": "only loosely synchronized"
+              },
+              {
+                "id": "c",
+                "text": "monotonic everywhere"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Tens of ms of skew remain.",
+            "lessonId": "ds-wallclock"
+          },
+          {
+            "id": "ds-c-e2",
+            "prompt": "Lamport clocks give a total order but lose:",
+            "options": [
+              {
+                "id": "a",
+                "text": "causality"
+              },
+              {
+                "id": "b",
+                "text": "the notion of concurrency"
+              },
+              {
+                "id": "c",
+                "text": "the counter"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "They cannot tell concurrent apart.",
+            "lessonId": "ds-lamport"
+          },
+          {
+            "id": "ds-c-e3",
+            "prompt": "On receive, a vector clock takes the element-wise:",
+            "options": [
+              {
+                "id": "a",
+                "text": "sum"
+              },
+              {
+                "id": "b",
+                "text": "maximum then increments self"
+              },
+              {
+                "id": "c",
+                "text": "minimum"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "max then bump own entry.",
+            "lessonId": "ds-vector"
+          },
+          {
+            "id": "ds-c-e4",
+            "prompt": "A <= B element-wise and A != B means:",
+            "options": [
+              {
+                "id": "a",
+                "text": "A happens-before B"
+              },
+              {
+                "id": "b",
+                "text": "concurrent"
+              },
+              {
+                "id": "c",
+                "text": "B happens-before A"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "That is the happens-before test.",
+            "lessonId": "ds-vector"
+          },
+          {
+            "id": "ds-c-e5",
+            "prompt": "Concurrent conflicting writes should be:",
+            "options": [
+              {
+                "id": "a",
+                "text": "silently merged by time"
+              },
+              {
+                "id": "b",
+                "text": "surfaced as siblings or merged by rule"
+              },
+              {
+                "id": "c",
+                "text": "both discarded"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Don't lose data by wall clock.",
+            "lessonId": "ds-causal"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Lamport — Time, Clocks, and the Ordering of Events",
+          "url": "https://lamport.azurewebsites.net/pubs/time-clocks.pdf"
+        },
+        {
+          "title": "Designing Data-Intensive Applications (Kleppmann)",
+          "url": "https://dataintensive.net/"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "ds-replication",
+      "version": 1,
+      "order": 3,
+      "title": "3. Replication and quorums",
+      "summary": "Leader-based vs leaderless replication, synchronous vs asynchronous, and why R+W>N makes read and write quorums overlap.",
+      "difficulty": "Intermediate",
+      "minutes": 26,
+      "code": "import random\n\n# N replicas hold a versioned value. A write goes to any W replicas; a read polls\n# any R replicas and takes the newest version. R + W > N forces the two sets to\n# overlap, so the read always sees the latest write.\ndef overlaps(n, r, w):\n    return r + w > n\n\nrandom.seed(0)\nN, R, W = 5, 3, 3\nreplicas = [0] * N                         # version numbers, all start at 0\n\nwrite_set = random.sample(range(N), W)     # write v1 to W replicas\nfor i in write_set:\n    replicas[i] = 1\n\nread_set = random.sample(range(N), R)      # read from R replicas\nseen = max(replicas[i] for i in read_set)  # newest version observed\n\nprint(f\"N={N} R={R} W={W}  quorum overlap guaranteed: {overlaps(N, R, W)}\")\nprint(f\"write_set={sorted(write_set)} read_set={sorted(read_set)} read sees v{seen}\")\nassert overlaps(N, R, W) and seen == 1     # 3+3>5 => sets must intersect\nprint(\"R+W>N forces read and write quorums to intersect:\", overlaps(N, R, W))\n",
+      "codeExt": "py",
+      "expected": "Prints that the quorum overlap is guaranteed and the read observes version 1 (the latest write), because any 3-of-5 read set intersects any 3-of-5 write set.",
+      "lessons": [
+        {
+          "id": "ds-leader",
+          "title": "Leader-based replication",
+          "paragraphs": [
+            "In leader/follower (primary/replica) replication, all writes go to one leader, which streams an ordered change log to followers. Followers serve reads and can be promoted if the leader fails.",
+            "Replication can be synchronous (the leader waits for follower acks before confirming — safer, slower) or asynchronous (confirm immediately — faster, but a leader crash can lose the last writes). Most systems use semi-synchronous: one synchronous follower, the rest async."
+          ],
+          "example": "Async replication + leader crash = the most recent acknowledged writes can be lost.",
+          "pitfall": "Fully asynchronous replication while promising durability means a failover silently drops the latest writes.",
+          "question": {
+            "id": "ds-leader-q",
+            "prompt": "Asynchronous replication trades durability for:",
+            "options": [
+              {
+                "id": "a",
+                "text": "consistency"
+              },
+              {
+                "id": "b",
+                "text": "lower write latency"
+              },
+              {
+                "id": "c",
+                "text": "more replicas"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "You confirm before followers ack.",
+            "lessonId": "ds-leader"
+          }
+        },
+        {
+          "id": "ds-leaderless",
+          "title": "Leaderless replication and quorums",
+          "paragraphs": [
+            "In leaderless (Dynamo-style) replication the client (or a coordinator) writes to many replicas directly and reads from many, with no single leader. Each replica keeps a versioned value.",
+            "Durability and freshness are tuned by the quorum parameters N (replicas per key), W (acks required to confirm a write) and R (replicas contacted for a read)."
+          ],
+          "example": "A write succeeds after W acks; a read gathers R responses and picks the newest.",
+          "pitfall": "Setting W or R to 1 for speed means a single stale or lost replica can serve old data.",
+          "question": {
+            "id": "ds-leaderless-q",
+            "prompt": "In leaderless replication, W is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the number of replicas per key"
+              },
+              {
+                "id": "b",
+                "text": "acks required to confirm a write"
+              },
+              {
+                "id": "c",
+                "text": "the read latency"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "W is the write quorum size.",
+            "lessonId": "ds-leaderless"
+          }
+        },
+        {
+          "id": "ds-quorum",
+          "title": "The quorum condition R+W>N",
+          "paragraphs": [
+            "If R+W>N, then any set of R replicas and any set of W replicas must share at least one replica (pigeonhole). That shared replica has the latest write, so the read is guaranteed to observe it.",
+            "Common choices: W=R=⌈(N+1)/2⌉ balances read and write cost; W=N,R=1 makes reads cheap and writes expensive; W=1,R=N does the reverse."
+          ],
+          "example": "R + W > N  =>  read set and write set always intersect",
+          "pitfall": "Choosing R+W<=N (e.g. R=W=1 on N=3) breaks the overlap guarantee and lets reads miss recent writes.",
+          "question": {
+            "id": "ds-quorum-q",
+            "prompt": "R+W>N guarantees that read and write quorums:",
+            "options": [
+              {
+                "id": "a",
+                "text": "are disjoint"
+              },
+              {
+                "id": "b",
+                "text": "always overlap"
+              },
+              {
+                "id": "c",
+                "text": "are equal size"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Overlap is the whole point.",
+            "lessonId": "ds-quorum"
+          }
+        },
+        {
+          "id": "ds-quorum-limits",
+          "title": "What quorums do NOT give you",
+          "paragraphs": [
+            "Quorum overlap guarantees a read can *see* a recent write, but it does not by itself give linearizability. With concurrent writes, sloppy quorums, or reads that race writes, replicas can still diverge and a read can return stale or conflicting values.",
+            "Real systems add versioning (version numbers or vector clocks), read-repair and anti-entropy to reconcile replicas. Quorums are necessary, not sufficient, for strong consistency."
+          ],
+          "example": "Overlap lets a read observe a write; versioning + read-repair reconcile the rest.",
+          "pitfall": "Assuming R+W>N alone yields linearizability is a classic mistake; concurrent writes still need conflict handling.",
+          "question": {
+            "id": "ds-quorum-limits-q",
+            "prompt": "R+W>N on its own provides:",
+            "options": [
+              {
+                "id": "a",
+                "text": "linearizability"
+              },
+              {
+                "id": "b",
+                "text": "quorum overlap, not full linearizability"
+              },
+              {
+                "id": "c",
+                "text": "nothing useful"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Overlap, not strong consistency by itself.",
+            "lessonId": "ds-quorum-limits"
+          }
+        }
+      ],
+      "steps": [
+        "Save as ds-replication.py and run it; confirm the read sees version 1.",
+        "Change R and W to 1 (R+W=2 <= N=5) and run several seeds; find a run where the read misses the write.",
+        "Add a second write with version 2 to a different write set and confirm the read still sees the newest.",
+        "State the pigeonhole argument for why 3+3>5 forces overlap."
+      ],
+      "challenge": {
+        "task": "Demonstrate, by code, that R+W>N guarantees a read observes the latest write and that R+W<=N does not.",
+        "acceptance": [
+          "Show an overlapping configuration always reads the latest",
+          "Show a non-overlapping config can miss it",
+          "Explain why overlap is not the same as linearizability"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "ds-r-e1",
+            "prompt": "In leader-based replication, writes go to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "any replica"
+              },
+              {
+                "id": "b",
+                "text": "the single leader"
+              },
+              {
+                "id": "c",
+                "text": "the client cache"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "One leader orders all writes.",
+            "lessonId": "ds-leader"
+          },
+          {
+            "id": "ds-r-e2",
+            "prompt": "N in quorum notation is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "replicas per key"
+              },
+              {
+                "id": "b",
+                "text": "the read size"
+              },
+              {
+                "id": "c",
+                "text": "the network latency"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "N is the replication factor.",
+            "lessonId": "ds-leaderless"
+          },
+          {
+            "id": "ds-r-e3",
+            "prompt": "With N=5, a balanced quorum is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "R=W=1"
+              },
+              {
+                "id": "b",
+                "text": "R=W=3"
+              },
+              {
+                "id": "c",
+                "text": "R=5,W=5"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "3+3>5 and balances cost.",
+            "lessonId": "ds-quorum"
+          },
+          {
+            "id": "ds-r-e4",
+            "prompt": "Quorum overlap by itself does NOT give:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a chance to read recent writes"
+              },
+              {
+                "id": "b",
+                "text": "linearizability"
+              },
+              {
+                "id": "c",
+                "text": "durability from W acks"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Concurrency still needs versioning.",
+            "lessonId": "ds-quorum-limits"
+          },
+          {
+            "id": "ds-r-e5",
+            "prompt": "Synchronous replication improves durability at the cost of:",
+            "options": [
+              {
+                "id": "a",
+                "text": "write latency"
+              },
+              {
+                "id": "b",
+                "text": "read latency"
+              },
+              {
+                "id": "c",
+                "text": "storage"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The leader waits for follower acks.",
+            "lessonId": "ds-leader"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Designing Data-Intensive Applications (Kleppmann)",
+          "url": "https://dataintensive.net/"
+        },
+        {
+          "title": "Jepsen: consistency models",
+          "url": "https://jepsen.io/consistency"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "ds-consistency",
+      "version": 1,
+      "order": 4,
+      "title": "4. Consistency models, CAP and LWW",
+      "summary": "Linearizability vs causal vs eventual consistency, what CAP really says, and why last-writer-wins can silently lose data.",
+      "difficulty": "Intermediate",
+      "minutes": 28,
+      "code": "# A last-writer-wins (LWW) register: the highest (timestamp, node) wins. Replicas\n# converge under anti-entropy, but a skewed clock can make a stale write win and\n# silently LOSE the real latest value -- the classic LWW hazard.\nclass LWW:\n    def __init__(self):\n        self.ts, self.val, self.node = -1, None, -1\n    def write(self, val, ts, node):\n        if (ts, node) > (self.ts, self.node):     # last writer (tie-break by node id)\n            self.ts, self.val, self.node = ts, val, node\n    def merge(self, other):\n        self.write(other.val, other.ts, other.node)\n\n# Case 1: honest clocks -> replicas converge on the newer write.\na, b = LWW(), LWW()\na.write(\"x=1\", ts=10, node=0)\nb.write(\"x=2\", ts=12, node=1)\na.merge(b); b.merge(a)\nprint(\"converged:\", a.val, \"==\", b.val, \":\", a.val == b.val)   # both x=2\n\n# Case 2: a skewed clock makes an OLDER write win and loses the real latest.\nc, d = LWW(), LWW()\nc.write(\"real-latest\", ts=100, node=0)        # truly the latest action\nd.write(\"stale-but-skewed\", ts=999, node=1)   # earlier action, skewed clock\nc.merge(d)\nprint(\"LWW lost the real latest write:\", c.val != \"real-latest\")  # True\nassert a.val == \"x=2\" and c.val != \"real-latest\"\nprint(\"replicas converge; LWW can still lose writes under clock skew:\", True)\n",
+      "codeExt": "py",
+      "expected": "Prints that both replicas converge on x=2, and that under clock skew LWW discards the genuinely latest write — showing convergence does not mean no data loss.",
+      "lessons": [
+        {
+          "id": "ds-strong",
+          "title": "Linearizability (strong consistency)",
+          "paragraphs": [
+            "Linearizability means the system behaves as if there were a single copy of the data and every operation took effect atomically at some instant between its call and its return. Once a write completes, every later read sees it.",
+            "It is the most intuitive model but the most expensive: it needs coordination (a leader or consensus) on every operation and cannot be maintained across a network partition without sacrificing availability."
+          ],
+          "example": "After a linearizable write returns, no subsequent read can see the old value.",
+          "pitfall": "Assuming your database is linearizable by default is usually wrong; many offer weaker defaults for speed.",
+          "question": {
+            "id": "ds-strong-q",
+            "prompt": "Linearizability makes the system behave as if there is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "no data"
+              },
+              {
+                "id": "b",
+                "text": "a single up-to-date copy"
+              },
+              {
+                "id": "c",
+                "text": "many independent copies"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "One copy, atomic operations.",
+            "lessonId": "ds-strong"
+          }
+        },
+        {
+          "id": "ds-weak",
+          "title": "Causal and eventual consistency",
+          "paragraphs": [
+            "Eventual consistency only promises that, if writes stop, replicas eventually converge to the same value — reads may see stale data meanwhile. It is cheap and highly available.",
+            "Causal consistency is a useful middle ground: operations that are causally related are seen by everyone in the same order, while concurrent operations may be seen in different orders. It preserves cause-and-effect without global coordination."
+          ],
+          "example": "Causal > eventual: it preserves cause-and-effect ordering without a global leader.",
+          "pitfall": "Exposing eventual consistency to users without handling stale reads leads to bugs like a user not seeing their own just-posted comment.",
+          "question": {
+            "id": "ds-weak-q",
+            "prompt": "Eventual consistency guarantees that, if writes stop, replicas:",
+            "options": [
+              {
+                "id": "a",
+                "text": "stay different"
+              },
+              {
+                "id": "b",
+                "text": "eventually converge"
+              },
+              {
+                "id": "c",
+                "text": "roll back"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Convergence is the only promise.",
+            "lessonId": "ds-weak"
+          }
+        },
+        {
+          "id": "ds-cap",
+          "title": "What CAP actually says",
+          "paragraphs": [
+            "CAP states that when a network Partition occurs, a system must choose between Consistency (linearizability) and Availability (every request gets a non-error response). Partitions are a fact of networks, not a choice.",
+            "So CAP is not 'pick two of three'. Partition tolerance is mandatory; the real decision is CP (refuse some requests to stay consistent) vs AP (stay available and risk stale/divergent data). PACELC extends this: Else (no partition) you still trade Latency vs Consistency."
+          ],
+          "example": "During a partition: CP refuses to serve divergent data; AP serves it and reconciles later.",
+          "pitfall": "Repeating 'CAP: pick two' is a myth; you never give up partition tolerance, and C here specifically means linearizability.",
+          "question": {
+            "id": "ds-cap-q",
+            "prompt": "Under CAP, during a partition you choose between:",
+            "options": [
+              {
+                "id": "a",
+                "text": "consistency and availability"
+              },
+              {
+                "id": "b",
+                "text": "any two of three"
+              },
+              {
+                "id": "c",
+                "text": "latency and bandwidth"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Partition tolerance is not optional.",
+            "lessonId": "ds-cap"
+          }
+        },
+        {
+          "id": "ds-lww",
+          "title": "Last-writer-wins and its hazard",
+          "paragraphs": [
+            "Last-writer-wins (LWW) resolves conflicts by keeping the write with the highest timestamp (tie-broken deterministically, e.g. by node id). It makes replicas converge and is simple to implement.",
+            "Its hazard: it decides 'latest' by clock, and clocks are skewed. A node with a fast clock can make an older write win and silently discard a newer one. LWW trades data safety for simplicity; vector-clock siblings or CRDTs avoid the loss."
+          ],
+          "example": "LWW keeps the max timestamp; a skewed clock can drop the genuinely newer write.",
+          "pitfall": "Using LWW for data you cannot afford to lose (like financial edits) will silently discard writes under clock skew.",
+          "question": {
+            "id": "ds-lww-q",
+            "prompt": "The main hazard of last-writer-wins is that it:",
+            "options": [
+              {
+                "id": "a",
+                "text": "never converges"
+              },
+              {
+                "id": "b",
+                "text": "can silently lose writes under clock skew"
+              },
+              {
+                "id": "c",
+                "text": "needs a leader"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Clock skew makes it drop newer writes.",
+            "lessonId": "ds-lww"
+          }
+        }
+      ],
+      "steps": [
+        "Save as ds-consistency.py and run it; confirm convergence to x=2 and the lost-write case.",
+        "Change the skewed timestamp so the real-latest write wins and observe the difference.",
+        "Replace LWW with 'keep both siblings' and print the conflict set instead of one value.",
+        "Classify your favourite datastore's default as CP or AP and justify it."
+      ],
+      "challenge": {
+        "task": "Show that LWW converges but can lose data, and propose a conflict-resolution scheme that does not.",
+        "acceptance": [
+          "Demonstrate convergence under honest clocks",
+          "Demonstrate a lost write under clock skew",
+          "Describe a sibling/CRDT alternative"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "ds-cons-e1",
+            "prompt": "Linearizability requires on each operation:",
+            "options": [
+              {
+                "id": "a",
+                "text": "no coordination"
+              },
+              {
+                "id": "b",
+                "text": "coordination (leader/consensus)"
+              },
+              {
+                "id": "c",
+                "text": "a faster disk"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Strong consistency is coordination-heavy.",
+            "lessonId": "ds-strong"
+          },
+          {
+            "id": "ds-cons-e2",
+            "prompt": "Causal consistency preserves the order of:",
+            "options": [
+              {
+                "id": "a",
+                "text": "all operations globally"
+              },
+              {
+                "id": "b",
+                "text": "causally related operations"
+              },
+              {
+                "id": "c",
+                "text": "nothing"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Cause-and-effect ordering.",
+            "lessonId": "ds-weak"
+          },
+          {
+            "id": "ds-cons-e3",
+            "prompt": "CAP's 'pick two' phrasing is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "accurate"
+              },
+              {
+                "id": "b",
+                "text": "a myth; partition tolerance is mandatory"
+              },
+              {
+                "id": "c",
+                "text": "about latency"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "You always keep P.",
+            "lessonId": "ds-cap"
+          },
+          {
+            "id": "ds-cons-e4",
+            "prompt": "The C in CAP specifically means:",
+            "options": [
+              {
+                "id": "a",
+                "text": "caching"
+              },
+              {
+                "id": "b",
+                "text": "linearizability"
+              },
+              {
+                "id": "c",
+                "text": "compression"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Strong consistency.",
+            "lessonId": "ds-cap"
+          },
+          {
+            "id": "ds-cons-e5",
+            "prompt": "LWW decides the winner by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "value size"
+              },
+              {
+                "id": "b",
+                "text": "highest timestamp"
+              },
+              {
+                "id": "c",
+                "text": "replica count"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Highest timestamp, which clocks can skew.",
+            "lessonId": "ds-lww"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Jepsen: consistency models",
+          "url": "https://jepsen.io/consistency"
+        },
+        {
+          "title": "Designing Data-Intensive Applications (Kleppmann)",
+          "url": "https://dataintensive.net/"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "ds-consensus",
+      "version": 1,
+      "order": 5,
+      "title": "5. Consensus and Raft leader election",
+      "summary": "The consensus problem, how Raft elects a single leader per term with majority votes, and why the up-to-date-log rule protects safety.",
+      "difficulty": "Advanced",
+      "minutes": 30,
+      "code": "import heapq, random\n\n# A SIMPLIFIED, election-only Raft simulation (no log replication). N nodes use\n# randomized timeouts; a candidate wins a term only with a MAJORITY of votes, and a\n# voter grants its vote only if the candidate's log is at least as up-to-date.\nrandom.seed(3)\nN = 5\n\nclass Node:\n    def __init__(self, i):\n        self.i = i; self.term = 0; self.voted_for = None; self.state = \"follower\"\n        self.log_term = random.randint(0, 2)     # varied logs across nodes\n        self.log_len = random.randint(0, 4)\n\nnodes = [Node(i) for i in range(N)]\nevents = []                                      # (time, node_id, \"timeout\")\nfor n in nodes:\n    heapq.heappush(events, (random.randint(150, 300), n.i, \"timeout\"))\n\ndef up_to_date(cand, voter):                     # Raft's vote restriction\n    return (cand.log_term, cand.log_len) >= (voter.log_term, voter.log_len)\n\nleader, deadline = None, 5000\nwhile events and leader is None:\n    time, i, _ = heapq.heappop(events)\n    if time > deadline:\n        break\n    n = nodes[i]\n    if n.state == \"leader\":\n        continue\n    n.term += 1; n.state = \"candidate\"; n.voted_for = n.i; votes = 1   # new term, vote for self\n    for m in nodes:\n        if m.i == n.i:\n            continue\n        if n.term > m.term:                      # higher term: voter steps down, may re-vote\n            m.term = n.term; m.state = \"follower\"; m.voted_for = None\n        if m.term == n.term and m.voted_for is None and up_to_date(n, m):\n            m.voted_for = n.i; votes += 1        # at most one vote per term\n    if votes > N // 2:                           # majority quorum\n        n.state = \"leader\"; leader = (n.i, n.term, votes)\n    else:\n        heapq.heappush(events, (time + random.randint(150, 300), n.i, \"timeout\"))\n\nprint(f\"elected leader: node {leader[0]} in term {leader[1]} with {leader[2]}/{N} votes\")\nassert leader[2] > N // 2\nprint(\"a single leader won a majority quorum:\", leader[2] > N // 2)\n",
+      "codeExt": "py",
+      "expected": "Prints the elected leader, its term and vote count, confirming one node won a majority of the five votes.",
+      "lessons": [
+        {
+          "id": "ds-consensus-problem",
+          "title": "The consensus problem",
+          "paragraphs": [
+            "Consensus is getting a group of nodes to agree on a single value (or an ordered sequence of values) despite crashes and message loss. It underpins leader election, replicated logs, locks and configuration.",
+            "A correct consensus protocol guarantees agreement (no two nodes decide differently), validity (the value was proposed) and termination (it eventually decides), and it can tolerate a minority of nodes failing."
+          ],
+          "example": "Consensus powers replicated logs, leader election, locks and membership.",
+          "pitfall": "Trying to coordinate with a simple 'ask everyone' broadcast instead of a quorum protocol breaks the moment one node is unreachable.",
+          "question": {
+            "id": "ds-cp-q",
+            "prompt": "Consensus gets nodes to agree on:",
+            "options": [
+              {
+                "id": "a",
+                "text": "their clocks"
+              },
+              {
+                "id": "b",
+                "text": "a single value / ordered log"
+              },
+              {
+                "id": "c",
+                "text": "their IP addresses"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Agreement on a value or log order.",
+            "lessonId": "ds-consensus-problem"
+          }
+        },
+        {
+          "id": "ds-raft-terms",
+          "title": "Terms and leader election",
+          "paragraphs": [
+            "Raft divides time into terms, each beginning with an election. A follower that hears nothing for a randomized timeout becomes a candidate, increments the term, votes for itself and requests votes from the others.",
+            "A candidate that collects votes from a majority becomes leader for that term. Randomized timeouts make split votes rare; if one happens, the term ends with no leader and a new election starts."
+          ],
+          "example": "A candidate needs a MAJORITY (more than N/2) of votes to become leader.",
+          "pitfall": "Allowing a leader with only a plurality (not a majority) of votes permits two leaders in one term and split-brain.",
+          "question": {
+            "id": "ds-rt-q",
+            "prompt": "To become leader a Raft candidate needs:",
+            "options": [
+              {
+                "id": "a",
+                "text": "any vote"
+              },
+              {
+                "id": "b",
+                "text": "a majority of votes"
+              },
+              {
+                "id": "c",
+                "text": "all votes"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "More than half the cluster.",
+            "lessonId": "ds-raft-terms"
+          }
+        },
+        {
+          "id": "ds-raft-safety",
+          "title": "The up-to-date-log vote restriction",
+          "paragraphs": [
+            "Raft's safety depends on only electing a leader whose log is at least as up-to-date as the voter's. A voter compares the candidate's last log term (then length) to its own and refuses the vote if the candidate is behind.",
+            "This rule guarantees a new leader already contains every committed entry, so committed data is never lost in a leader change. Majority quorum plus this restriction is what makes Raft safe."
+          ],
+          "example": "Grant a vote only if (cand.last_term, cand.len) >= (voter.last_term, voter.len).",
+          "pitfall": "Electing the fastest candidate regardless of log state can elect a node missing committed entries, silently losing data.",
+          "question": {
+            "id": "ds-rs-q",
+            "prompt": "A voter refuses its vote when the candidate's log is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "longer"
+              },
+              {
+                "id": "b",
+                "text": "behind (not up-to-date)"
+              },
+              {
+                "id": "c",
+                "text": "identical"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Behind candidates must not win.",
+            "lessonId": "ds-raft-safety"
+          }
+        },
+        {
+          "id": "ds-raft-log",
+          "title": "From election to a replicated log",
+          "paragraphs": [
+            "A full Raft (beyond this election-only demo) has the leader append client commands to its log and replicate them to followers. An entry is committed once a majority has stored it; committed entries are applied to the state machine in order.",
+            "Because every leader is constrained to be up-to-date and entries commit by majority, all nodes apply the same commands in the same order — a replicated state machine. etcd, Consul and many databases are built on this."
+          ],
+          "example": "An entry commits once a majority of followers have stored it, then is applied in order.",
+          "pitfall": "Reporting a write as committed after only the leader stored it (no majority) loses it if the leader then crashes.",
+          "question": {
+            "id": "ds-rl-q",
+            "prompt": "A Raft log entry is committed once:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the leader writes it"
+              },
+              {
+                "id": "b",
+                "text": "a majority stores it"
+              },
+              {
+                "id": "c",
+                "text": "any follower stores it"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Majority storage = committed.",
+            "lessonId": "ds-raft-log"
+          }
+        }
+      ],
+      "steps": [
+        "Save as ds-consensus.py and run it; note which node wins and in which term.",
+        "Change the random seed and re-run; confirm a single leader still wins a majority each time.",
+        "Remove the up_to_date() check and argue which committed entry could now be lost.",
+        "Explain why randomized timeouts reduce split votes."
+      ],
+      "challenge": {
+        "task": "Simulate Raft leader election so that exactly one leader wins a majority, respecting the up-to-date-log vote restriction.",
+        "acceptance": [
+          "A single leader per term",
+          "Majority (>N/2) votes required",
+          "The up-to-date-log restriction enforced"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "ds-con-e1",
+            "prompt": "Consensus can tolerate the failure of:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a minority of nodes"
+              },
+              {
+                "id": "b",
+                "text": "a majority of nodes"
+              },
+              {
+                "id": "c",
+                "text": "no nodes"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "A majority must survive to decide.",
+            "lessonId": "ds-consensus-problem"
+          },
+          {
+            "id": "ds-con-e2",
+            "prompt": "Raft divides time into:",
+            "options": [
+              {
+                "id": "a",
+                "text": "epochs of fixed length"
+              },
+              {
+                "id": "b",
+                "text": "terms, each with an election"
+              },
+              {
+                "id": "c",
+                "text": "seconds"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Each term starts with an election.",
+            "lessonId": "ds-raft-terms"
+          },
+          {
+            "id": "ds-con-e3",
+            "prompt": "Randomized election timeouts exist to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "save power"
+              },
+              {
+                "id": "b",
+                "text": "reduce split votes"
+              },
+              {
+                "id": "c",
+                "text": "order logs"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "They stagger candidacies.",
+            "lessonId": "ds-raft-terms"
+          },
+          {
+            "id": "ds-con-e4",
+            "prompt": "The vote restriction ensures the new leader has:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the smallest log"
+              },
+              {
+                "id": "b",
+                "text": "every committed entry"
+              },
+              {
+                "id": "c",
+                "text": "the lowest id"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Up-to-date logs keep committed data.",
+            "lessonId": "ds-raft-safety"
+          },
+          {
+            "id": "ds-con-e5",
+            "prompt": "A replicated state machine applies commands:",
+            "options": [
+              {
+                "id": "a",
+                "text": "in random order"
+              },
+              {
+                "id": "b",
+                "text": "in the same committed order on every node"
+              },
+              {
+                "id": "c",
+                "text": "only on the leader"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Same order everywhere.",
+            "lessonId": "ds-raft-log"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Raft consensus algorithm",
+          "url": "https://raft.github.io/"
+        },
+        {
+          "title": "Designing Data-Intensive Applications (Kleppmann)",
+          "url": "https://dataintensive.net/"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "ds-partitioning",
+      "version": 1,
+      "order": 6,
+      "title": "6. Partitioning and consistent hashing",
+      "summary": "Sharding strategies, why naive hash(key) mod N is a rebalancing disaster, and how consistent hashing with virtual nodes fixes it.",
+      "difficulty": "Intermediate",
+      "minutes": 26,
+      "code": "import hashlib, bisect\nfrom collections import Counter\n\n# Consistent hashing: nodes and keys map onto one hash ring. A key belongs to the\n# next node clockwise. Adding/removing a node only remaps that node's share of keys,\n# not everything -- unlike hash(key) % N. Virtual nodes even out the distribution.\ndef h(s):\n    return int(hashlib.md5(s.encode()).hexdigest(), 16)\n\nclass Ring:\n    def __init__(self, vnodes=100):\n        self.vnodes = vnodes; self.points = []; self.owner = {}\n    def add(self, node):\n        for v in range(self.vnodes):\n            p = h(f\"{node}#{v}\"); bisect.insort(self.points, p); self.owner[p] = node\n    def remove(self, node):\n        self.points = [p for p in self.points if self.owner[p] != node]\n        self.owner = {p: n for p, n in self.owner.items() if n != node}\n    def locate(self, key):\n        i = bisect.bisect(self.points, h(key)) % len(self.points)\n        return self.owner[self.points[i]]\n\nring = Ring()\nfor node in [\"A\", \"B\", \"C\", \"D\"]:\n    ring.add(node)\nkeys = [f\"key{i}\" for i in range(10000)]\nbefore = {k: ring.locate(k) for k in keys}\nprint(\"distribution:\", dict(sorted(Counter(before.values()).items())))\n\nring.remove(\"C\")\nafter = {k: ring.locate(k) for k in keys}\nmoved = sum(before[k] != after[k] for k in keys)\nprint(f\"keys remapped after removing 1 of 4 nodes: {moved/len(keys):.1%} (ideal ~25%)\")\nassert all(after[k] == before[k] for k in keys if before[k] != \"C\")\nprint(\"only keys owned by the removed node moved:\", True)\n",
+      "codeExt": "py",
+      "expected": "Prints a roughly even key distribution across four nodes and shows that removing one node remaps only about a quarter of the keys — only those it owned.",
+      "lessons": [
+        {
+          "id": "ds-why-partition",
+          "title": "Why partition",
+          "paragraphs": [
+            "Partitioning (sharding) splits a dataset across nodes so each holds a subset, letting storage and throughput scale beyond one machine. Each partition can itself be replicated for fault tolerance.",
+            "The goal is an even spread of data and load. A skewed partitioning creates hot spots: one node overloaded while others idle."
+          ],
+          "example": "Partitioning scales capacity; replication (per partition) adds fault tolerance.",
+          "pitfall": "Partitioning by a low-cardinality or skewed key (like country) overloads one shard and wastes the rest.",
+          "question": {
+            "id": "ds-wp-q",
+            "prompt": "Partitioning exists mainly to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "add consistency"
+              },
+              {
+                "id": "b",
+                "text": "scale capacity and load across nodes"
+              },
+              {
+                "id": "c",
+                "text": "reduce code size"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Spread data/throughput across machines.",
+            "lessonId": "ds-why-partition"
+          }
+        },
+        {
+          "id": "ds-schemes",
+          "title": "Range vs hash partitioning",
+          "paragraphs": [
+            "Range partitioning keeps keys sorted and splits by key ranges — great for range scans, but prone to hot spots (e.g. all of today's timestamped writes hit one shard).",
+            "Hash partitioning applies a hash to the key and splits by hash value, spreading load evenly but destroying key order, so range scans must hit every shard."
+          ],
+          "example": "Range = good scans, risk of hot spots; hash = even load, no efficient range scans.",
+          "pitfall": "Using a monotonically increasing key (timestamp, auto-increment id) with range partitioning funnels all writes to the last shard.",
+          "question": {
+            "id": "ds-sch-q",
+            "prompt": "Hash partitioning spreads load evenly but loses:",
+            "options": [
+              {
+                "id": "a",
+                "text": "durability"
+              },
+              {
+                "id": "b",
+                "text": "key ordering (range scans)"
+              },
+              {
+                "id": "c",
+                "text": "replication"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Hashing destroys key order.",
+            "lessonId": "ds-schemes"
+          }
+        },
+        {
+          "id": "ds-modn",
+          "title": "The hash-mod-N rebalancing problem",
+          "paragraphs": [
+            "The naive scheme node = hash(key) % N is even, but changing N (adding/removing a node) changes almost every key's assignment, forcing a massive data reshuffle and cache-wide misses.",
+            "That rebalancing storm can take a cluster down. You want a scheme where adding or removing one node moves only a small, proportional fraction of keys."
+          ],
+          "example": "Going from N to N+1 with hash%N remaps nearly ALL keys at once.",
+          "pitfall": "Scaling a hash%N cache cluster by one node invalidates almost the entire cache simultaneously — a self-inflicted outage.",
+          "question": {
+            "id": "ds-modn-q",
+            "prompt": "hash(key) % N is bad when scaling because changing N:",
+            "options": [
+              {
+                "id": "a",
+                "text": "is illegal"
+              },
+              {
+                "id": "b",
+                "text": "remaps almost all keys"
+              },
+              {
+                "id": "c",
+                "text": "loses durability"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Nearly every key moves.",
+            "lessonId": "ds-modn"
+          }
+        },
+        {
+          "id": "ds-consistent-hash",
+          "title": "Consistent hashing and virtual nodes",
+          "paragraphs": [
+            "Consistent hashing maps both nodes and keys onto a hash ring; a key is owned by the next node clockwise. Adding or removing a node only reassigns the keys between it and its neighbour — about 1/N of the keys.",
+            "A few physical nodes make for a lumpy ring, so each node is placed at many points as 'virtual nodes', which smooths the distribution and makes rebalancing finer-grained."
+          ],
+          "example": "Remove one of N nodes -> only ~1/N of keys move, to the clockwise neighbour.",
+          "pitfall": "Using consistent hashing with too few virtual nodes leaves an uneven distribution and lingering hot spots.",
+          "question": {
+            "id": "ds-ch-q",
+            "prompt": "Removing one of N nodes under consistent hashing moves about:",
+            "options": [
+              {
+                "id": "a",
+                "text": "all keys"
+              },
+              {
+                "id": "b",
+                "text": "1/N of keys"
+              },
+              {
+                "id": "c",
+                "text": "no keys"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Only the removed node's share moves.",
+            "lessonId": "ds-consistent-hash"
+          }
+        }
+      ],
+      "steps": [
+        "Save as ds-partitioning.py and run it; confirm ~25% of keys move and the distribution is roughly even.",
+        "Set vnodes=1 and observe the distribution become lumpy.",
+        "Add a fifth node instead of removing one and measure the fraction of keys that move.",
+        "Explain why hash(key) % N would move far more keys here."
+      ],
+      "challenge": {
+        "task": "Build a consistent-hash ring and show that adding/removing a node remaps only a small fraction of keys.",
+        "acceptance": [
+          "Roughly even key distribution with virtual nodes",
+          "Only ~1/N of keys move on membership change",
+          "Contrast with hash%N"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "ds-p-e1",
+            "prompt": "A skewed partition key causes:",
+            "options": [
+              {
+                "id": "a",
+                "text": "hot spots"
+              },
+              {
+                "id": "b",
+                "text": "more replicas"
+              },
+              {
+                "id": "c",
+                "text": "stronger consistency"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "One shard gets overloaded.",
+            "lessonId": "ds-why-partition"
+          },
+          {
+            "id": "ds-p-e2",
+            "prompt": "Efficient range scans favour:",
+            "options": [
+              {
+                "id": "a",
+                "text": "hash partitioning"
+              },
+              {
+                "id": "b",
+                "text": "range partitioning"
+              },
+              {
+                "id": "c",
+                "text": "no partitioning"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Sorted keys enable scans.",
+            "lessonId": "ds-schemes"
+          },
+          {
+            "id": "ds-p-e3",
+            "prompt": "Changing N in hash%N remaps:",
+            "options": [
+              {
+                "id": "a",
+                "text": "one key"
+              },
+              {
+                "id": "b",
+                "text": "almost all keys"
+              },
+              {
+                "id": "c",
+                "text": "no keys"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A full reshuffle.",
+            "lessonId": "ds-modn"
+          },
+          {
+            "id": "ds-p-e4",
+            "prompt": "Virtual nodes exist to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "add consistency"
+              },
+              {
+                "id": "b",
+                "text": "even out the key distribution"
+              },
+              {
+                "id": "c",
+                "text": "reduce replicas"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "They smooth the ring.",
+            "lessonId": "ds-consistent-hash"
+          },
+          {
+            "id": "ds-p-e5",
+            "prompt": "Consistent hashing assigns a key to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a random node"
+              },
+              {
+                "id": "b",
+                "text": "the next node clockwise on the ring"
+              },
+              {
+                "id": "c",
+                "text": "every node"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Clockwise successor owns it.",
+            "lessonId": "ds-consistent-hash"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Consistent hashing (Karger et al.)",
+          "url": "https://en.wikipedia.org/wiki/Consistent_hashing"
+        },
+        {
+          "title": "Designing Data-Intensive Applications (Kleppmann)",
+          "url": "https://dataintensive.net/"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "ds-faults",
+      "version": 1,
+      "order": 7,
+      "title": "7. Fault tolerance: detection, retries and circuit breakers",
+      "summary": "Failure detection with heartbeats, safe retries with backoff and jitter, and circuit breakers that stop a struggling service from being hammered.",
+      "difficulty": "Intermediate",
+      "minutes": 26,
+      "code": "# A circuit breaker driven by a deterministic timeline (no threads, no wall clock).\n# It trips OPEN after repeated failures, REJECTS during a cooldown, then tries a\n# HALF-OPEN probe and closes again on success.\nclass CircuitBreaker:\n    def __init__(self, threshold=3, cooldown=5):\n        self.state = \"closed\"; self.fails = 0\n        self.threshold = threshold; self.cooldown = cooldown; self.opened_at = None\n    def call(self, ok, now):\n        if self.state == \"open\":\n            if now - self.opened_at >= self.cooldown:\n                self.state = \"half-open\"          # allow one probe\n            else:\n                return \"rejected\"                 # fail fast, don't hammer\n        if ok:\n            self.state = \"closed\"; self.fails = 0; return \"ok\"\n        self.fails += 1\n        if self.state == \"half-open\" or self.fails >= self.threshold:\n            self.state = \"open\"; self.opened_at = now\n        return \"fail\"\n\ncb = CircuitBreaker()\ntimeline = [(0, True), (1, False), (2, False), (3, False), (4, True), (9, True)]\nfor now, ok in timeline:\n    print(f\"t={now} -> {cb.call(ok, now):8} state={cb.state}\")\nassert cb.state == \"closed\"\nprint(\"breaker opened on repeated failures, then recovered:\", cb.state == \"closed\")\n",
+      "codeExt": "py",
+      "expected": "Prints the breaker tripping OPEN after three failures, rejecting a call during the cooldown, then probing HALF-OPEN and returning to CLOSED on success.",
+      "lessons": [
+        {
+          "id": "ds-detect",
+          "title": "Failure detection with heartbeats",
+          "paragraphs": [
+            "Nodes detect peer failure with heartbeats: periodic 'I'm alive' messages. If none arrive within a timeout, the peer is suspected dead. The timeout is a trade-off between fast detection and false positives.",
+            "Because a slow network looks like a dead node, detectors are inherently imperfect. Adaptive detectors (like phi-accrual) output a suspicion level instead of a binary dead/alive verdict."
+          ],
+          "example": "No heartbeat within the timeout -> suspect the peer; too-short timeouts cause false positives.",
+          "pitfall": "Setting the heartbeat timeout too aggressively declares healthy-but-slow nodes dead, triggering needless failovers.",
+          "question": {
+            "id": "ds-detect-q",
+            "prompt": "A heartbeat timeout that is too short causes:",
+            "options": [
+              {
+                "id": "a",
+                "text": "slower detection"
+              },
+              {
+                "id": "b",
+                "text": "false positives (healthy nodes marked dead)"
+              },
+              {
+                "id": "c",
+                "text": "data loss"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Slow nodes get wrongly suspected.",
+            "lessonId": "ds-detect"
+          }
+        },
+        {
+          "id": "ds-retry",
+          "title": "Retries, backoff and jitter",
+          "paragraphs": [
+            "Retrying a failed request helps with transient faults, but naive immediate retries from many clients cause a retry storm that overwhelms a recovering service.",
+            "Exponential backoff (double the wait each attempt) plus jitter (randomize the wait) spreads retries out, and a retry budget caps total attempts so one request can't retry forever."
+          ],
+          "example": "wait = min(cap, base * 2**attempt) + random_jitter",
+          "pitfall": "Synchronized retries with no jitter make thousands of clients hit the service at the same instant — a thundering herd.",
+          "question": {
+            "id": "ds-retry-q",
+            "prompt": "Jitter is added to backoff to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "speed up retries"
+              },
+              {
+                "id": "b",
+                "text": "desynchronize clients (avoid thundering herd)"
+              },
+              {
+                "id": "c",
+                "text": "reduce latency"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It spreads retries over time.",
+            "lessonId": "ds-retry"
+          }
+        },
+        {
+          "id": "ds-breaker",
+          "title": "Circuit breakers",
+          "paragraphs": [
+            "A circuit breaker wraps calls to a dependency. While closed, calls pass through. After a failure threshold it trips open and fails fast for a cooldown, giving the dependency time to recover instead of being hammered.",
+            "After the cooldown it goes half-open and lets one probe through: success closes it, failure re-opens it. This bounds the blast radius of a failing dependency and prevents cascading failure."
+          ],
+          "example": "closed -> (failures) -> open -> (cooldown) -> half-open -> (success) -> closed",
+          "pitfall": "Retrying hard against an already-overloaded dependency with no breaker turns a partial outage into a full cascading collapse.",
+          "question": {
+            "id": "ds-breaker-q",
+            "prompt": "An open circuit breaker:",
+            "options": [
+              {
+                "id": "a",
+                "text": "retries faster"
+              },
+              {
+                "id": "b",
+                "text": "fails fast to let the dependency recover"
+              },
+              {
+                "id": "c",
+                "text": "ignores failures"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Fail fast during cooldown.",
+            "lessonId": "ds-breaker"
+          }
+        },
+        {
+          "id": "ds-redundancy",
+          "title": "Redundancy and graceful degradation",
+          "paragraphs": [
+            "Fault tolerance ultimately comes from redundancy: multiple replicas, multiple availability zones, no single point of failure. The system must also degrade gracefully — shed load, serve cached or partial results — rather than collapse.",
+            "Timeouts everywhere, bulkheads that isolate resource pools, and idempotent operations (so retries are safe) are the building blocks of a system that bends instead of breaking."
+          ],
+          "example": "Bulkheads isolate failures; timeouts + idempotency make recovery safe.",
+          "pitfall": "A call path with no timeout can hang forever holding a connection, exhausting the pool and taking down unrelated features.",
+          "question": {
+            "id": "ds-red-q",
+            "prompt": "Bulkheads improve fault tolerance by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "sharing all resources"
+              },
+              {
+                "id": "b",
+                "text": "isolating resource pools so one failure can't exhaust everything"
+              },
+              {
+                "id": "c",
+                "text": "removing replicas"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Isolation limits blast radius.",
+            "lessonId": "ds-redundancy"
+          }
+        }
+      ],
+      "steps": [
+        "Save as ds-faults.py and run it; trace the breaker through closed -> open -> half-open -> closed.",
+        "Change the cooldown to 10 and confirm t=9 is still rejected.",
+        "Add exponential backoff with jitter to a retry loop and print the wait times.",
+        "Explain why a timeout looks identical to a crash to the detector."
+      ],
+      "challenge": {
+        "task": "Implement a circuit breaker that trips open after repeated failures and recovers via a half-open probe.",
+        "acceptance": [
+          "Opens after the failure threshold",
+          "Rejects during the cooldown",
+          "Recovers to closed after a successful probe"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "ds-flt-e1",
+            "prompt": "Heartbeats are used to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "replicate data"
+              },
+              {
+                "id": "b",
+                "text": "detect peer failure"
+              },
+              {
+                "id": "c",
+                "text": "elect leaders"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Missing heartbeats suggest failure.",
+            "lessonId": "ds-detect"
+          },
+          {
+            "id": "ds-flt-e2",
+            "prompt": "Exponential backoff means each retry waits:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the same time"
+              },
+              {
+                "id": "b",
+                "text": "roughly double the previous"
+              },
+              {
+                "id": "c",
+                "text": "less time"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Doubling spreads load.",
+            "lessonId": "ds-retry"
+          },
+          {
+            "id": "ds-flt-e3",
+            "prompt": "A half-open breaker lets through:",
+            "options": [
+              {
+                "id": "a",
+                "text": "all calls"
+              },
+              {
+                "id": "b",
+                "text": "one probe call"
+              },
+              {
+                "id": "c",
+                "text": "no calls ever"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A single trial call.",
+            "lessonId": "ds-breaker"
+          },
+          {
+            "id": "ds-flt-e4",
+            "prompt": "A retry storm is prevented by backoff plus:",
+            "options": [
+              {
+                "id": "a",
+                "text": "jitter and a retry budget"
+              },
+              {
+                "id": "b",
+                "text": "more threads"
+              },
+              {
+                "id": "c",
+                "text": "larger timeouts only"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Jitter + a cap bound retries.",
+            "lessonId": "ds-retry"
+          },
+          {
+            "id": "ds-flt-e5",
+            "prompt": "The root source of fault tolerance is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "redundancy"
+              },
+              {
+                "id": "b",
+                "text": "faster code"
+              },
+              {
+                "id": "c",
+                "text": "bigger disks"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "No single point of failure.",
+            "lessonId": "ds-redundancy"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Designing Data-Intensive Applications (Kleppmann)",
+          "url": "https://dataintensive.net/"
+        },
+        {
+          "title": "Fallacies of distributed computing",
+          "url": "https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "ds-transactions",
+      "version": 1,
+      "order": 8,
+      "title": "8. Distributed transactions: 2PC and sagas",
+      "summary": "Atomic commit across services with two-phase commit, why it blocks on coordinator failure, and the saga pattern with compensations.",
+      "difficulty": "Advanced",
+      "minutes": 28,
+      "code": "# Two-phase commit, including the blocking failure mode, and a saga with\n# compensations. Pure functions; no network, no threads.\ndef two_phase_commit(participants, coordinator_crashes=False):\n    votes = [p() for p in participants]          # phase 1: PREPARE (collect votes)\n    if not all(votes):\n        return \"abort\"                           # any NO -> global abort\n    if coordinator_crashes:                       # crash AFTER prepare, BEFORE commit\n        return \"blocked: participants hold locks, awaiting a decision\"\n    return \"commit\"                              # phase 2: COMMIT\n\nyes = [lambda: True, lambda: True, lambda: True]\nmixed = [lambda: True, lambda: False, lambda: True]\nprint(\"all vote yes         ->\", two_phase_commit(yes))\nprint(\"one votes no         ->\", two_phase_commit(mixed))\nprint(\"coordinator crashes  ->\", two_phase_commit(yes, coordinator_crashes=True))\n\n# A saga: forward steps each have a compensating action; a late failure rolls\n# back by running compensations in reverse order.\nlog = []\ndef saga(steps):\n    done = []\n    for name, action, compensate in steps:\n        if action():\n            done.append((name, compensate))\n        else:\n            for _, comp in reversed(done):       # compensate in reverse\n                comp()\n            return f\"rolled back at {name}\"\n    return \"committed\"\n\nsteps = [\n    (\"reserve\", lambda: True, lambda: log.append(\"unreserve\")),\n    (\"charge\",  lambda: True, lambda: log.append(\"refund\")),\n    (\"ship\",    lambda: False, lambda: log.append(\"un-ship\")),   # fails here\n]\nprint(\"saga result          ->\", saga(steps), \"| compensations:\", log)\nassert \"blocked\" in two_phase_commit(yes, coordinator_crashes=True)\nprint(\"2PC blocks on coordinator crash; saga compensated cleanly:\", log == [\"refund\", \"unreserve\"])\n",
+      "codeExt": "py",
+      "expected": "Prints 2PC committing when all vote yes, aborting on a no vote, and blocking when the coordinator crashes after prepare; the saga rolls back with compensations in reverse order (refund, then unreserve).",
+      "lessons": [
+        {
+          "id": "ds-atomic",
+          "title": "Atomic commit across services",
+          "paragraphs": [
+            "A distributed transaction must be all-or-nothing across multiple nodes or services: either every participant commits, or every one aborts. Local ACID transactions don't extend across the network for free.",
+            "The classic solution is an atomic commit protocol with a coordinator that drives all participants to the same decision."
+          ],
+          "example": "All-or-nothing across participants: everyone commits, or everyone aborts.",
+          "pitfall": "Doing independent local commits across services with no atomic protocol leaves the system half-updated when one fails.",
+          "question": {
+            "id": "ds-atomic-q",
+            "prompt": "A distributed transaction must be:",
+            "options": [
+              {
+                "id": "a",
+                "text": "best-effort"
+              },
+              {
+                "id": "b",
+                "text": "all-or-nothing across participants"
+              },
+              {
+                "id": "c",
+                "text": "single-node only"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Atomic across all participants.",
+            "lessonId": "ds-atomic"
+          }
+        },
+        {
+          "id": "ds-2pc",
+          "title": "Two-phase commit (2PC)",
+          "paragraphs": [
+            "2PC has two rounds. Phase 1 (prepare): the coordinator asks every participant to vote; each durably prepares and votes yes or no. Phase 2 (commit/abort): if all voted yes the coordinator tells everyone to commit, otherwise to abort.",
+            "Once a participant votes yes it must be able to commit, so it holds locks until it hears the decision. 2PC gives atomicity but at the cost of held locks and a dependence on the coordinator."
+          ],
+          "example": "Phase 1 prepare (vote) -> Phase 2 commit/abort (apply the decision).",
+          "pitfall": "Letting a participant release locks after voting yes but before the commit decision breaks atomicity.",
+          "question": {
+            "id": "ds-2pc-q",
+            "prompt": "In 2PC, after a participant votes yes it must:",
+            "options": [
+              {
+                "id": "a",
+                "text": "release locks immediately"
+              },
+              {
+                "id": "b",
+                "text": "hold locks until it hears the decision"
+              },
+              {
+                "id": "c",
+                "text": "abort"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It must be able to commit later.",
+            "lessonId": "ds-2pc"
+          }
+        },
+        {
+          "id": "ds-2pc-blocking",
+          "title": "Why 2PC blocks",
+          "paragraphs": [
+            "2PC's fatal weakness: if the coordinator crashes after participants have voted yes but before sending the decision, the participants are stuck. They have promised to commit, hold their locks, and cannot unilaterally decide — they block until the coordinator recovers.",
+            "This makes 2PC a blocking protocol with the coordinator as a single point of failure. Three-phase commit and consensus-based commit (Raft/Paxos) reduce blocking at extra cost."
+          ],
+          "example": "Coordinator dies after prepare -> participants block, holding locks, awaiting a decision.",
+          "pitfall": "Relying on plain 2PC for high availability is a trap: a coordinator crash freezes every in-flight transaction.",
+          "question": {
+            "id": "ds-blk-q",
+            "prompt": "2PC blocks when the coordinator crashes:",
+            "options": [
+              {
+                "id": "a",
+                "text": "before prepare"
+              },
+              {
+                "id": "b",
+                "text": "after prepare, before the decision"
+              },
+              {
+                "id": "c",
+                "text": "never"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Participants are stuck holding locks.",
+            "lessonId": "ds-2pc-blocking"
+          }
+        },
+        {
+          "id": "ds-saga",
+          "title": "Sagas and compensations",
+          "paragraphs": [
+            "A saga replaces one big distributed transaction with a sequence of local transactions, each with a compensating action that semantically undoes it. If a later step fails, the saga runs the compensations for the completed steps in reverse.",
+            "Sagas give high availability and no held cross-service locks, but only eventual, not atomic, consistency: intermediate states are visible, and compensation is a business-level undo (refund), not a rollback."
+          ],
+          "example": "On failure, run compensations for completed steps in reverse order.",
+          "pitfall": "Assuming a saga is atomic is wrong: other readers can observe intermediate states before a compensation runs.",
+          "question": {
+            "id": "ds-saga-q",
+            "prompt": "A saga handles a failed step by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a database rollback"
+              },
+              {
+                "id": "b",
+                "text": "running compensations in reverse"
+              },
+              {
+                "id": "c",
+                "text": "ignoring it"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Compensating completed steps.",
+            "lessonId": "ds-saga"
+          }
+        }
+      ],
+      "steps": [
+        "Save as ds-transactions.py and run it; observe commit, abort and the blocked case.",
+        "Add a fourth participant that votes no and confirm the transaction aborts.",
+        "Add a step after 'ship' and verify compensations still run in reverse.",
+        "Explain why a participant cannot unilaterally commit after voting yes."
+      ],
+      "challenge": {
+        "task": "Contrast 2PC and sagas by code: show 2PC blocking on coordinator crash and a saga compensating a late failure.",
+        "acceptance": [
+          "2PC commits, aborts, and blocks correctly",
+          "Saga compensations run in reverse order",
+          "Explain atomic vs eventual trade-offs"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "ds-tx-e1",
+            "prompt": "A distributed transaction requires every participant to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "decide independently"
+              },
+              {
+                "id": "b",
+                "text": "reach the same commit/abort decision"
+              },
+              {
+                "id": "c",
+                "text": "use one database"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "All-or-nothing agreement.",
+            "lessonId": "ds-atomic"
+          },
+          {
+            "id": "ds-tx-e2",
+            "prompt": "Phase 1 of 2PC is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "commit"
+              },
+              {
+                "id": "b",
+                "text": "prepare / vote"
+              },
+              {
+                "id": "c",
+                "text": "abort"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Prepare collects votes.",
+            "lessonId": "ds-2pc"
+          },
+          {
+            "id": "ds-tx-e3",
+            "prompt": "2PC's single point of failure is the:",
+            "options": [
+              {
+                "id": "a",
+                "text": "participant"
+              },
+              {
+                "id": "b",
+                "text": "coordinator"
+              },
+              {
+                "id": "c",
+                "text": "client"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Its crash blocks everyone.",
+            "lessonId": "ds-2pc-blocking"
+          },
+          {
+            "id": "ds-tx-e4",
+            "prompt": "Saga consistency is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "atomic"
+              },
+              {
+                "id": "b",
+                "text": "eventual, via compensations"
+              },
+              {
+                "id": "c",
+                "text": "linearizable"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Intermediate states are visible.",
+            "lessonId": "ds-saga"
+          },
+          {
+            "id": "ds-tx-e5",
+            "prompt": "A compensation is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a DB rollback"
+              },
+              {
+                "id": "b",
+                "text": "a business-level undo of a committed step"
+              },
+              {
+                "id": "c",
+                "text": "a retry"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "E.g. a refund for a charge.",
+            "lessonId": "ds-saga"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Designing Data-Intensive Applications (Kleppmann)",
+          "url": "https://dataintensive.net/"
+        },
+        {
+          "title": "Jepsen: consistency models",
+          "url": "https://jepsen.io/consistency"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "ds-coordination",
+      "version": 1,
+      "order": 9,
+      "title": "9. Logs, offsets and coordination services",
+      "summary": "The append-only log as a distributed-systems backbone, consumer offsets, and coordination with leases and fencing tokens.",
+      "difficulty": "Advanced",
+      "minutes": 26,
+      "code": "# An append-only log with per-consumer offsets, plus a lease with fencing tokens\n# that rejects a stale holder. No threads; deterministic.\nclass Log:\n    def __init__(self):\n        self.entries = []\n    def append(self, rec):\n        self.entries.append(rec)\n        return len(self.entries) - 1          # the new offset\n    def read(self, offset):\n        return self.entries[offset:]          # consumer reads from its offset onward\n\nlog = Log()\nfor msg in [\"a\", \"b\", \"c\"]:\n    log.append(msg)\noffset = 0\nbatch1 = log.read(offset); offset += len(batch1)\nlog.append(\"d\")\nbatch2 = log.read(offset); offset += len(batch2)\nprint(\"batch1:\", batch1, \"batch2:\", batch2, \"committed offset:\", offset)\n\n# Leases + fencing tokens: each grant bumps a monotonic token. Storage remembers\n# the highest token it has seen and rejects writes carrying an older one.\nclass LeaseManager:\n    def __init__(self):\n        self.token = 0\n    def acquire(self, who):\n        self.token += 1                        # monotonically increasing fence\n        return self.token\n\nlm = LeaseManager()\nt1 = lm.acquire(\"node-1\")                       # token 1\nt2 = lm.acquire(\"node-2\")                       # token 2 (node-1 paused; lease reassigned)\nseen_by_storage = t2\ndef write(fencing):\n    return \"accepted\" if fencing >= seen_by_storage else \"rejected (stale lease)\"\nprint(\"node-1 write with token\", t1, \"->\", write(t1))   # rejected\nprint(\"node-2 write with token\", t2, \"->\", write(t2))   # accepted\nassert write(t1) == \"rejected (stale lease)\"\nprint(\"fencing tokens reject the stale lease holder:\", True)\n",
+      "codeExt": "py",
+      "expected": "Prints the log delivering batches by offset, then a stale lease holder (token 1) being rejected while the current holder (token 2) is accepted.",
+      "lessons": [
+        {
+          "id": "ds-log",
+          "title": "The log as a backbone",
+          "paragraphs": [
+            "An append-only, totally-ordered log is one of the most useful distributed-systems primitives. Writers append records; the position of a record is its offset. Replicating the log gives every replica the same ordered history.",
+            "Systems like Kafka and database write-ahead logs use this: the log is the source of truth, and state is a deterministic replay of the log. Ordering plus replay is what makes recovery and replication simple."
+          ],
+          "example": "State = a deterministic replay of an ordered, append-only log.",
+          "pitfall": "Treating the log as a queue you delete from, rather than an ordered history you replay, loses the ability to rebuild state.",
+          "question": {
+            "id": "ds-log-q",
+            "prompt": "An append-only log gives you an ordered:",
+            "options": [
+              {
+                "id": "a",
+                "text": "cache"
+              },
+              {
+                "id": "b",
+                "text": "history that can be replayed"
+              },
+              {
+                "id": "c",
+                "text": "lock"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Replayable ordered records.",
+            "lessonId": "ds-log"
+          }
+        },
+        {
+          "id": "ds-offsets",
+          "title": "Consumer offsets",
+          "paragraphs": [
+            "Consumers read the log from an offset and advance it as they process records. Because the log is retained (not deleted on read), many independent consumers can read at their own pace, and a consumer can rewind to reprocess.",
+            "Committing the offset is how a consumer records progress. Committing before processing risks losing messages (at-most-once); committing after risks reprocessing (at-least-once) — hence idempotent consumers."
+          ],
+          "example": "Commit offset AFTER processing -> at-least-once -> make the consumer idempotent.",
+          "pitfall": "Committing the offset before the work is done means a crash skips unprocessed records (silent message loss).",
+          "question": {
+            "id": "ds-off-q",
+            "prompt": "Committing the offset after processing gives:",
+            "options": [
+              {
+                "id": "a",
+                "text": "at-most-once"
+              },
+              {
+                "id": "b",
+                "text": "at-least-once delivery"
+              },
+              {
+                "id": "c",
+                "text": "exactly-once delivery"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A crash reprocesses, not skips.",
+            "lessonId": "ds-offsets"
+          }
+        },
+        {
+          "id": "ds-coord-svc",
+          "title": "Coordination services",
+          "paragraphs": [
+            "Coordination services like ZooKeeper and etcd provide a small, strongly-consistent (consensus-backed) store for metadata: leader election, membership, configuration and distributed locks. They are the cluster's reliable source of truth for 'who is in charge'.",
+            "You keep bulk data out of them; they are for small, critical, strongly-consistent coordination state, not a general database."
+          ],
+          "example": "etcd/ZooKeeper: consensus-backed store for leadership, membership and locks.",
+          "pitfall": "Storing large or high-churn application data in ZooKeeper/etcd overloads a system meant for small coordination metadata.",
+          "question": {
+            "id": "ds-coord-q",
+            "prompt": "etcd and ZooKeeper are best used for:",
+            "options": [
+              {
+                "id": "a",
+                "text": "bulk data storage"
+              },
+              {
+                "id": "b",
+                "text": "small strongly-consistent coordination metadata"
+              },
+              {
+                "id": "c",
+                "text": "media files"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Leadership, config, locks.",
+            "lessonId": "ds-coord-svc"
+          }
+        },
+        {
+          "id": "ds-fencing",
+          "title": "Leases and fencing tokens",
+          "paragraphs": [
+            "A distributed lock is usually a lease: a lock with an expiry, so a crashed holder's lock is eventually released. But a paused holder (GC pause, slow network) can wake up believing it still holds the lease after it expired.",
+            "The fix is a fencing token: each lease grant returns a monotonically increasing number, and the protected resource rejects any operation carrying a token older than the highest it has seen. This blocks the stale holder even if it thinks it still owns the lock."
+          ],
+          "example": "Resource accepts a write only if its fencing token >= the highest token seen.",
+          "pitfall": "Using a lease without fencing tokens lets a paused-then-resumed holder corrupt data with a stale lock.",
+          "question": {
+            "id": "ds-fence-q",
+            "prompt": "A fencing token protects against:",
+            "options": [
+              {
+                "id": "a",
+                "text": "slow disks"
+              },
+              {
+                "id": "b",
+                "text": "a stale lease holder resuming after expiry"
+              },
+              {
+                "id": "c",
+                "text": "network latency"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It rejects out-of-date lock holders.",
+            "lessonId": "ds-fencing"
+          }
+        }
+      ],
+      "steps": [
+        "Save as ds-coordination.py and run it; confirm the stale token is rejected.",
+        "Add a second consumer with its own offset and show both read independently.",
+        "Commit the offset before reading and describe how a crash could now lose a record.",
+        "Explain why a lease alone (no fencing token) is unsafe under a GC pause."
+      ],
+      "challenge": {
+        "task": "Implement an append-only log with consumer offsets and a lease that uses fencing tokens to reject a stale holder.",
+        "acceptance": [
+          "Consumers read by offset and advance independently",
+          "A fencing token rejects the stale lease holder",
+          "Explain at-least-once vs at-most-once offset commit"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "ds-co-e1",
+            "prompt": "In a log, a record's position is its:",
+            "options": [
+              {
+                "id": "a",
+                "text": "key"
+              },
+              {
+                "id": "b",
+                "text": "offset"
+              },
+              {
+                "id": "c",
+                "text": "checksum"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The offset identifies position.",
+            "lessonId": "ds-log"
+          },
+          {
+            "id": "ds-co-e2",
+            "prompt": "Retained (not deleted on read) logs let:",
+            "options": [
+              {
+                "id": "a",
+                "text": "only one consumer read"
+              },
+              {
+                "id": "b",
+                "text": "many consumers read at their own pace and rewind"
+              },
+              {
+                "id": "c",
+                "text": "no rewind"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Independent, replayable consumption.",
+            "lessonId": "ds-offsets"
+          },
+          {
+            "id": "ds-co-e3",
+            "prompt": "ZooKeeper/etcd store should hold:",
+            "options": [
+              {
+                "id": "a",
+                "text": "large blobs"
+              },
+              {
+                "id": "b",
+                "text": "small coordination metadata"
+              },
+              {
+                "id": "c",
+                "text": "video"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Small, critical, consistent state.",
+            "lessonId": "ds-coord-svc"
+          },
+          {
+            "id": "ds-co-e4",
+            "prompt": "A lease is a lock with:",
+            "options": [
+              {
+                "id": "a",
+                "text": "no expiry"
+              },
+              {
+                "id": "b",
+                "text": "an expiry"
+              },
+              {
+                "id": "c",
+                "text": "two owners"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Expiry releases a dead holder.",
+            "lessonId": "ds-fencing"
+          },
+          {
+            "id": "ds-co-e5",
+            "prompt": "Fencing tokens must be:",
+            "options": [
+              {
+                "id": "a",
+                "text": "random"
+              },
+              {
+                "id": "b",
+                "text": "monotonically increasing"
+              },
+              {
+                "id": "c",
+                "text": "reused"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "So stale ones are detectable.",
+            "lessonId": "ds-fencing"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Designing Data-Intensive Applications (Kleppmann)",
+          "url": "https://dataintensive.net/"
+        },
+        {
+          "title": "Raft consensus algorithm",
+          "url": "https://raft.github.io/"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "ds-capstone",
+      "version": 1,
+      "order": 10,
+      "title": "10. Capstone: a sharded, replicated key-value store",
+      "summary": "Combine consistent hashing, replication, quorum reads/writes and versioning into one available, scalable key-value store.",
+      "difficulty": "Advanced",
+      "minutes": 32,
+      "code": "import hashlib, bisect\n\n# A sharded + replicated in-memory KV store. Keys are placed by consistent hashing;\n# each key is stored on RF replicas. Writes need W acks, reads need R responses and\n# take the highest version. R + W > RF keeps reads and writes overlapping, so the\n# store stays available and correct while one replica is down.\ndef h(s):\n    return int(hashlib.sha1(s.encode()).hexdigest(), 16)\n\nclass Cluster:\n    def __init__(self, nodes, rf=3, vnodes=50):\n        self.rf = rf\n        self.store = {n: {} for n in nodes}       # node -> {key: (version, value)}\n        self.down = set()\n        self.points = []; self.owner = {}\n        for n in nodes:\n            for v in range(vnodes):\n                p = h(f\"{n}#{v}\"); bisect.insort(self.points, p); self.owner[p] = n\n    def replicas(self, key):                        # RF distinct nodes, clockwise\n        out, i = [], bisect.bisect(self.points, h(key))\n        while len(out) < self.rf:\n            n = self.owner[self.points[i % len(self.points)]]\n            if n not in out:\n                out.append(n)\n            i += 1\n        return out\n    def put(self, key, value, w):\n        reps = self.replicas(key)\n        version = 1 + max(self.store[n].get(key, (0, None))[0] for n in reps)\n        acks = 0\n        for n in reps:\n            if n not in self.down:\n                self.store[n][key] = (version, value); acks += 1\n        return acks >= w, version\n    def get(self, key, r):\n        reps = self.replicas(key)\n        got = [self.store[n][key] for n in reps if n not in self.down and key in self.store[n]]\n        if len(got) < r:\n            return None, \"unavailable (quorum not met)\"\n        return max(got)[1], f\"ok from {len(got)}/{self.rf} replicas\"   # newest version wins\n\nc = Cluster([\"n1\", \"n2\", \"n3\", \"n4\", \"n5\"], rf=3)\nok, ver = c.put(\"user:42\", \"Alice\", w=2)\nprint(\"put ok:\", ok, \"version:\", ver, \"replicas:\", c.replicas(\"user:42\"))\nprint(\"get:\", c.get(\"user:42\", r=2))\nc.down.add(c.replicas(\"user:42\")[0])              # one replica fails\nval, how = c.get(\"user:42\", r=2)                  # R=2 still met by the other two\nprint(\"after one replica down -> get:\", val, how)\nassert ok and val == \"Alice\"\nprint(\"sharded+replicated KV serves quorum reads with a node down:\", val == \"Alice\")\n",
+      "codeExt": "py",
+      "expected": "Prints the put succeeding to its replicas and the value reading back as Alice even after one of its three replicas is taken down, because the read quorum is still met.",
+      "lessons": [
+        {
+          "id": "ds-design",
+          "title": "Putting the pieces together",
+          "paragraphs": [
+            "A production key-value store combines everything in this track: consistent hashing to place keys on nodes, replication for durability and availability, quorum reads/writes for tunable consistency, and versioning to reconcile replicas.",
+            "This is the architecture behind Dynamo, Cassandra and Riak. Each piece addresses one of the hard problems — scale, failure, consistency — and together they make a store that scales horizontally and survives node loss."
+          ],
+          "example": "placement (consistent hashing) + replication + quorums + versioning = a scalable store.",
+          "pitfall": "Adding replication without quorum tuning or versioning gives you more copies that can silently disagree.",
+          "question": {
+            "id": "ds-design-q",
+            "prompt": "A scalable KV store combines placement, replication, quorums and:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a single leader"
+              },
+              {
+                "id": "b",
+                "text": "versioning for reconciliation"
+              },
+              {
+                "id": "c",
+                "text": "one big lock"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Versioning reconciles replicas.",
+            "lessonId": "ds-design"
+          }
+        },
+        {
+          "id": "ds-place",
+          "title": "Placement and replication factor",
+          "paragraphs": [
+            "Each key is hashed onto the ring and assigned to the next RF distinct nodes clockwise — its replica set. The replication factor RF is how many copies exist; higher RF survives more failures at higher storage cost.",
+            "Because placement is deterministic from the ring, any node (or a smart client) can compute a key's replicas without a lookup table, and adding a node only shifts a small slice of keys."
+          ],
+          "example": "A key maps to the next RF distinct nodes clockwise on the ring.",
+          "pitfall": "Picking replicas that aren't distinct (e.g. the same physical node twice) silently lowers the real replication factor.",
+          "question": {
+            "id": "ds-place-q",
+            "prompt": "The replication factor RF is the number of:",
+            "options": [
+              {
+                "id": "a",
+                "text": "nodes in the cluster"
+              },
+              {
+                "id": "b",
+                "text": "copies of each key"
+              },
+              {
+                "id": "c",
+                "text": "reads per second"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Copies stored per key.",
+            "lessonId": "ds-place"
+          }
+        },
+        {
+          "id": "ds-tunable",
+          "title": "Tunable consistency with R and W",
+          "paragraphs": [
+            "With RF replicas, choosing W (write acks) and R (read responses) tunes the consistency/availability trade-off per operation. R+W>RF keeps read and write quorums overlapping so reads can see the latest write.",
+            "W=RF,R=1 optimizes reads; W=1,R=RF optimizes writes; W=R=quorum balances both and tolerates the loss of a minority of a key's replicas while staying available."
+          ],
+          "example": "R + W > RF (e.g. RF=3, R=W=2) survives one replica down and still overlaps.",
+          "pitfall": "Setting R=W=1 for speed sacrifices the overlap guarantee and can return stale data right after a write.",
+          "question": {
+            "id": "ds-tunable-q",
+            "prompt": "For RF=3, which keeps quorums overlapping while tolerating one failure?",
+            "options": [
+              {
+                "id": "a",
+                "text": "R=W=1"
+              },
+              {
+                "id": "b",
+                "text": "R=W=2"
+              },
+              {
+                "id": "c",
+                "text": "R=1,W=1"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "2+2>3 and survives one down replica.",
+            "lessonId": "ds-tunable"
+          }
+        },
+        {
+          "id": "ds-repair",
+          "title": "Read-repair and anti-entropy",
+          "paragraphs": [
+            "Replicas drift: a down replica misses writes, messages are lost. The store heals itself with read-repair (a read that notices a stale replica writes the newest value back) and background anti-entropy (replicas compare and reconcile, often via Merkle trees).",
+            "Combined with versioning (version numbers or vector clocks), these keep replicas converging. Hinted handoff lets a temporarily-down replica's writes be stored elsewhere and delivered when it returns."
+          ],
+          "example": "Read-repair + anti-entropy + hinted handoff keep replicas converging after failures.",
+          "pitfall": "Relying only on write-time quorums with no background repair lets a replica that was briefly down stay permanently stale.",
+          "question": {
+            "id": "ds-repair-q",
+            "prompt": "Read-repair fixes a stale replica by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "deleting it"
+              },
+              {
+                "id": "b",
+                "text": "writing the newest value back during a read"
+              },
+              {
+                "id": "c",
+                "text": "restarting it"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Reads heal detected staleness.",
+            "lessonId": "ds-repair"
+          }
+        }
+      ],
+      "steps": [
+        "Save as ds-capstone.py and run it; confirm the read returns Alice with one replica down.",
+        "Take a second replica of the key down and show the read becomes unavailable (R not met).",
+        "Add a concurrent put with a higher version and confirm the read returns the newer value.",
+        "Choose R and W for RF=5 that tolerate two failures and still overlap; justify them."
+      ],
+      "challenge": {
+        "task": "Build a sharded, replicated KV store with quorum reads/writes and show it stays correct and available with one replica down.",
+        "acceptance": [
+          "Consistent-hash placement across RF replicas",
+          "Quorum put/get with R+W>RF",
+          "A correct read while one replica is down"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "ds-cap-e1",
+            "prompt": "The Dynamo-style architecture combines consistent hashing, replication, quorums and:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a single leader"
+              },
+              {
+                "id": "b",
+                "text": "versioning"
+              },
+              {
+                "id": "c",
+                "text": "SQL joins"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Versioning reconciles replicas.",
+            "lessonId": "ds-design"
+          },
+          {
+            "id": "ds-cap-e2",
+            "prompt": "A key's replica set is the next RF:",
+            "options": [
+              {
+                "id": "a",
+                "text": "random nodes"
+              },
+              {
+                "id": "b",
+                "text": "distinct nodes clockwise on the ring"
+              },
+              {
+                "id": "c",
+                "text": "leaders"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Clockwise successors.",
+            "lessonId": "ds-place"
+          },
+          {
+            "id": "ds-cap-e3",
+            "prompt": "R+W>RF keeps read and write quorums:",
+            "options": [
+              {
+                "id": "a",
+                "text": "disjoint"
+              },
+              {
+                "id": "b",
+                "text": "overlapping"
+              },
+              {
+                "id": "c",
+                "text": "empty"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Overlap sees latest writes.",
+            "lessonId": "ds-tunable"
+          },
+          {
+            "id": "ds-cap-e4",
+            "prompt": "For RF=3, R=W=2 tolerates the loss of:",
+            "options": [
+              {
+                "id": "a",
+                "text": "two replicas"
+              },
+              {
+                "id": "b",
+                "text": "one replica"
+              },
+              {
+                "id": "c",
+                "text": "no replicas"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Two of three still answer.",
+            "lessonId": "ds-tunable"
+          },
+          {
+            "id": "ds-cap-e5",
+            "prompt": "Background convergence of replicas uses:",
+            "options": [
+              {
+                "id": "a",
+                "text": "read-repair and anti-entropy"
+              },
+              {
+                "id": "b",
+                "text": "bigger disks"
+              },
+              {
+                "id": "c",
+                "text": "a global lock"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "They reconcile drift.",
+            "lessonId": "ds-repair"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Designing Data-Intensive Applications (Kleppmann)",
+          "url": "https://dataintensive.net/"
+        },
+        {
+          "title": "Consistent hashing (Karger et al.)",
+          "url": "https://en.wikipedia.org/wiki/Consistent_hashing"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    }
+  ],
+  "reviewedAt": "2026-10-12"
+}

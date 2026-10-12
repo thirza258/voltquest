@@ -1,0 +1,2189 @@
+{
+  "courses": [
+    {
+      "id": "kern-intro",
+      "version": 1,
+      "order": 1,
+      "title": "1. Kernel space and your first module",
+      "summary": "Kernel space vs user space, loadable kernel modules, and building/loading a hello-world module with insmod, rmmod and dmesg.",
+      "difficulty": "Fundamental",
+      "minutes": 24,
+      "code": "#include <linux/module.h>\n#include <linux/kernel.h>\n#include <linux/init.h>\n\nstatic int __init hello_init(void)\n{\n    pr_info(\"hello: module loaded\\n\");\n    return 0;                 /* 0 = success; a negative errno aborts loading */\n}\n\nstatic void __exit hello_exit(void)\n{\n    pr_info(\"hello: module unloaded\\n\");\n}\n\nmodule_init(hello_init);\nmodule_exit(hello_exit);\n\nMODULE_LICENSE(\"GPL\");         /* required; a non-GPL taint restricts symbols */\nMODULE_AUTHOR(\"VoltQuest\");\nMODULE_DESCRIPTION(\"A minimal hello-world kernel module\");\n",
+      "codeExt": "c",
+      "expected": "After `make` and `sudo insmod hello.ko`, `sudo dmesg` shows 'hello: module loaded'; `sudo rmmod hello` logs 'hello: module unloaded'.",
+      "lessons": [
+        {
+          "id": "kern-space",
+          "title": "Kernel space vs user space",
+          "paragraphs": [
+            "The CPU runs code in two privilege levels. User space (applications) is isolated: a crash kills one process. Kernel space runs with full hardware access in a single shared address space, so a kernel bug can corrupt memory or hang the whole machine.",
+            "User programs ask the kernel for privileged work through system calls. Kernel code never calls libc, has a small fixed stack, and must not use floating point — it is a different world from ordinary C programming."
+          ],
+          "example": "A null-pointer bug in user space segfaults one process; in the kernel it can panic the box.",
+          "pitfall": "Writing kernel code as if it were a normal C program (libc calls, big stack buffers, floats) does not even compile, or crashes the machine.",
+          "question": {
+            "id": "kern-space-q",
+            "prompt": "A bug in kernel space can:",
+            "options": [
+              {
+                "id": "a",
+                "text": "only crash one process"
+              },
+              {
+                "id": "b",
+                "text": "corrupt memory or hang the whole system"
+              },
+              {
+                "id": "c",
+                "text": "never cause harm"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The kernel has no isolation from itself.",
+            "lessonId": "kern-space"
+          }
+        },
+        {
+          "id": "kern-module",
+          "title": "Loadable kernel modules",
+          "paragraphs": [
+            "A loadable kernel module (LKM) is kernel code you can insert and remove at runtime without rebooting, the usual way device drivers and filesystems are delivered. It is compiled to a .ko file against the running kernel's headers.",
+            "A module registers an init function (run on load) and an exit function (run on unload). `insmod` loads it, `rmmod` removes it, `lsmod` lists loaded modules, and `modinfo` shows its metadata."
+          ],
+          "example": "# Makefile (the recipe lines MUST start with a real tab, not spaces):\nobj-m += hello.o\nKDIR ?= /lib/modules/$(shell uname -r)/build\nall:\n\t$(MAKE) -C $(KDIR) M=$(PWD) modules\nclean:\n\t$(MAKE) -C $(KDIR) M=$(PWD) clean",
+          "pitfall": "Building a module against headers that do not match `uname -r` produces a .ko that insmod refuses with version-magic errors.",
+          "question": {
+            "id": "kern-module-q",
+            "prompt": "A loadable kernel module lets you add kernel code:",
+            "options": [
+              {
+                "id": "a",
+                "text": "only at boot"
+              },
+              {
+                "id": "b",
+                "text": "at runtime without rebooting"
+              },
+              {
+                "id": "c",
+                "text": "from user space"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "insmod/rmmod load and unload at runtime.",
+            "lessonId": "kern-module"
+          }
+        },
+        {
+          "id": "kern-printk",
+          "title": "printk, log levels and dmesg",
+          "paragraphs": [
+            "The kernel cannot printf to a terminal; it logs with printk and its helpers (pr_info, pr_err, pr_warn), each carrying a log level. Messages go to the kernel ring buffer, read with `dmesg`.",
+            "pr_info uses the KERN_INFO level; pr_err uses KERN_ERR. Log levels decide what reaches the console versus only the buffer, so use the right severity."
+          ],
+          "example": "pr_info(\"x=%d\\n\", x);  // read it back with: dmesg | tail",
+          "pitfall": "Forgetting the trailing \\n in a printk makes the next message concatenate onto the same line in the log.",
+          "question": {
+            "id": "kern-printk-q",
+            "prompt": "Kernel messages are read with:",
+            "options": [
+              {
+                "id": "a",
+                "text": "printf"
+              },
+              {
+                "id": "b",
+                "text": "dmesg (the ring buffer)"
+              },
+              {
+                "id": "c",
+                "text": "cat /dev/stdout"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "printk writes the ring buffer; dmesg reads it.",
+            "lessonId": "kern-printk"
+          }
+        },
+        {
+          "id": "kern-license",
+          "title": "Licensing and module metadata",
+          "paragraphs": [
+            "Every module must declare MODULE_LICENSE. A non-GPL declaration taints the kernel and hides GPL-only symbols from the module. MODULE_AUTHOR and MODULE_DESCRIPTION are metadata shown by modinfo; recent toolchains warn if the description is missing.",
+            "The init function returns 0 on success or a negative errno (like -ENOMEM) on failure, which aborts the load. Clean error handling in init is essential because a half-initialized module is dangerous."
+          ],
+          "example": "MODULE_LICENSE(\"GPL\"); MODULE_DESCRIPTION(\"...\"); // metadata for modinfo",
+          "pitfall": "Omitting MODULE_LICENSE taints the kernel and can block access to many kernel symbols your module needs.",
+          "question": {
+            "id": "kern-license-q",
+            "prompt": "An init function signals failure by returning:",
+            "options": [
+              {
+                "id": "a",
+                "text": "0"
+              },
+              {
+                "id": "b",
+                "text": "a negative errno"
+              },
+              {
+                "id": "c",
+                "text": "NULL"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Negative errno aborts the load.",
+            "lessonId": "kern-license"
+          }
+        }
+      ],
+      "steps": [
+        "Save the source as hello.c, and create a Makefile next to it from the 'Loadable kernel modules' lesson above (its recipe lines must begin with a real tab). Build other courses by changing obj-m to that lesson's file. Then run make.",
+        "Run `make`, then `sudo insmod hello.ko`, and check `sudo dmesg | tail` for the load message.",
+        "Run `sudo rmmod hello` and confirm the unload message; inspect metadata with `modinfo hello.ko`.",
+        "Explain why a kernel oops is more dangerous than a user-space segfault."
+      ],
+      "challenge": {
+        "task": "Build, load, inspect and unload a hello-world kernel module, reading its messages from the kernel log.",
+        "acceptance": [
+          "module_init/module_exit defined",
+          "MODULE_LICENSE and MODULE_DESCRIPTION present",
+          "Load/unload messages visible in dmesg"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "kern-i-e1",
+            "prompt": "Kernel code must NOT use:",
+            "options": [
+              {
+                "id": "a",
+                "text": "pr_info"
+              },
+              {
+                "id": "b",
+                "text": "floating point / libc"
+              },
+              {
+                "id": "c",
+                "text": "integers"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "No FPU or libc in the kernel.",
+            "lessonId": "kern-space"
+          },
+          {
+            "id": "kern-i-e2",
+            "prompt": "A compiled module file has the extension:",
+            "options": [
+              {
+                "id": "a",
+                "text": ".so"
+              },
+              {
+                "id": "b",
+                "text": ".ko"
+              },
+              {
+                "id": "c",
+                "text": ".elf"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Kernel object = .ko.",
+            "lessonId": "kern-module"
+          },
+          {
+            "id": "kern-i-e3",
+            "prompt": "pr_err logs at which severity vs pr_info?",
+            "options": [
+              {
+                "id": "a",
+                "text": "lower"
+              },
+              {
+                "id": "b",
+                "text": "higher (error)"
+              },
+              {
+                "id": "c",
+                "text": "the same"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Error level is higher priority.",
+            "lessonId": "kern-printk"
+          },
+          {
+            "id": "kern-i-e4",
+            "prompt": "MODULE_LICENSE(\"GPL\") matters because a non-GPL module:",
+            "options": [
+              {
+                "id": "a",
+                "text": "runs faster"
+              },
+              {
+                "id": "b",
+                "text": "taints the kernel and loses GPL-only symbols"
+              },
+              {
+                "id": "c",
+                "text": "cannot log"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Tainting restricts symbol access.",
+            "lessonId": "kern-license"
+          },
+          {
+            "id": "kern-i-e5",
+            "prompt": "insmod will refuse a module built against:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the matching kernel headers"
+              },
+              {
+                "id": "b",
+                "text": "mismatched kernel headers"
+              },
+              {
+                "id": "c",
+                "text": "GCC"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Version magic must match uname -r.",
+            "lessonId": "kern-module"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "The Linux Kernel Module Programming Guide",
+          "url": "https://sysprog21.github.io/lkmpg/"
+        },
+        {
+          "title": "The Linux Kernel documentation",
+          "url": "https://docs.kernel.org/"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "kern-params",
+      "version": 1,
+      "order": 2,
+      "title": "2. Module parameters and the build system",
+      "summary": "Pass parameters into a module, understand the out-of-tree Kbuild build, and see how exported symbols and tainting work.",
+      "difficulty": "Fundamental",
+      "minutes": 24,
+      "code": "#include <linux/module.h>\n#include <linux/kernel.h>\n#include <linux/init.h>\n#include <linux/moduleparam.h>\n\nstatic int count = 1;\nstatic char *who = \"world\";\n\n/* 0444 exposes the parameter read-only under /sys/module/<name>/parameters/ */\nmodule_param(count, int, 0444);\nMODULE_PARM_DESC(count, \"number of greetings\");\nmodule_param(who, charp, 0444);\nMODULE_PARM_DESC(who, \"who to greet\");\n\nstatic int __init params_init(void)\n{\n    int i;\n    for (i = 0; i < count; i++)\n        pr_info(\"params: hello %s (%d/%d)\\n\", who, i + 1, count);\n    return 0;\n}\n\nstatic void __exit params_exit(void)\n{\n    pr_info(\"params: goodbye %s\\n\", who);\n}\n\nmodule_init(params_init);\nmodule_exit(params_exit);\n\nMODULE_LICENSE(\"GPL\");\nMODULE_AUTHOR(\"VoltQuest\");\nMODULE_DESCRIPTION(\"Demonstrates module parameters\");\n",
+      "codeExt": "c",
+      "expected": "`sudo insmod params.ko count=3 who=kernel` logs three greetings to 'kernel'; the values appear under /sys/module/params/parameters/.",
+      "lessons": [
+        {
+          "id": "kern-param",
+          "title": "Module parameters",
+          "paragraphs": [
+            "module_param(name, type, perm) exposes a variable as a parameter that can be set at load time (insmod name=value) and, with non-zero permissions, read or written through /sys/module/<name>/parameters/.",
+            "Supported types include int, charp (string), bool and arrays. MODULE_PARM_DESC documents each one for modinfo. Parameters are how you configure a driver without recompiling it."
+          ],
+          "example": "module_param(count, int, 0444); // set with: insmod mod.ko count=3",
+          "pitfall": "Giving a parameter writable sysfs permissions (0644) without handling concurrent changes can race with the code that reads it.",
+          "question": {
+            "id": "kern-param-q",
+            "prompt": "module_param exposes a variable that can be set:",
+            "options": [
+              {
+                "id": "a",
+                "text": "only in code"
+              },
+              {
+                "id": "b",
+                "text": "at insmod time and via sysfs"
+              },
+              {
+                "id": "c",
+                "text": "never"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "At load time and through /sys/module.",
+            "lessonId": "kern-param"
+          }
+        },
+        {
+          "id": "kern-kbuild",
+          "title": "The Kbuild out-of-tree build",
+          "paragraphs": [
+            "Modules are built with the kernel's own build system, Kbuild. An out-of-tree module uses a tiny Makefile: `obj-m += name.o` tells Kbuild what to build, and you invoke the kernel build directory with `make -C /lib/modules/$(uname -r)/build M=$(PWD) modules`.",
+            "This compiles against the exact configuration and headers of the target kernel, producing a .ko with matching version magic. The kernel-headers (or kernel-devel) package provides that build directory."
+          ],
+          "example": "obj-m += mymod.o   # then: make -C /lib/modules/$(uname -r)/build M=$(PWD) modules",
+          "pitfall": "Compiling a module with plain `gcc file.c` instead of Kbuild produces an object that is not a loadable module and lacks version magic.",
+          "question": {
+            "id": "kern-kbuild-q",
+            "prompt": "obj-m += foo.o in a Makefile tells Kbuild to build:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a user program"
+              },
+              {
+                "id": "b",
+                "text": "foo as a loadable module"
+              },
+              {
+                "id": "c",
+                "text": "the whole kernel"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "obj-m marks a module target.",
+            "lessonId": "kern-kbuild"
+          }
+        },
+        {
+          "id": "kern-symbols",
+          "title": "Exported symbols",
+          "paragraphs": [
+            "The kernel and modules share functions through exported symbols. A symbol is only visible to modules if it is exported with EXPORT_SYMBOL or EXPORT_SYMBOL_GPL; the GPL variant is visible only to GPL-licensed modules.",
+            "This is why MODULE_LICENSE matters for linking: a proprietary module cannot see EXPORT_SYMBOL_GPL symbols. `cat /proc/kallsyms` lists kernel symbols and their addresses."
+          ],
+          "example": "EXPORT_SYMBOL_GPL(my_func);  // visible only to GPL modules",
+          "pitfall": "Calling a kernel function that is not exported fails at module load with an 'unknown symbol' error, not at compile time.",
+          "question": {
+            "id": "kern-symbols-q",
+            "prompt": "EXPORT_SYMBOL_GPL makes a symbol visible to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "all modules"
+              },
+              {
+                "id": "b",
+                "text": "only GPL-licensed modules"
+              },
+              {
+                "id": "c",
+                "text": "user space"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "GPL-only export restricts by license.",
+            "lessonId": "kern-symbols"
+          }
+        },
+        {
+          "id": "kern-taint",
+          "title": "Tainting the kernel",
+          "paragraphs": [
+            "The kernel tracks a 'taint' state recording conditions that make bug reports less trustworthy: a proprietary module loaded, a module force-loaded, a previous oops, and more. `dmesg` shows taint flags and maintainers may ignore tainted bug reports.",
+            "Loading your own experimental modules taints the kernel (out-of-tree flag), which is normal for development but means you should reproduce real bugs on a clean kernel."
+          ],
+          "example": "A proprietary MODULE_LICENSE taints the kernel (flag P in dmesg).",
+          "pitfall": "Reporting a kernel bug from a tainted kernel (your experimental module loaded) usually gets the report dismissed.",
+          "question": {
+            "id": "kern-taint-q",
+            "prompt": "Loading a proprietary module causes the kernel to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "run faster"
+              },
+              {
+                "id": "b",
+                "text": "become tainted"
+              },
+              {
+                "id": "c",
+                "text": "reboot"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Taint flags mark reduced trust.",
+            "lessonId": "kern-taint"
+          }
+        }
+      ],
+      "steps": [
+        "Save as params.c and build it with the out-of-tree Makefile (obj-m += params.o).",
+        "Load with `sudo insmod params.ko count=3 who=kernel` and read `sudo dmesg | tail`.",
+        "Inspect `cat /sys/module/params/parameters/count` and `modinfo params.ko`.",
+        "Explain why plain gcc cannot build a loadable module."
+      ],
+      "challenge": {
+        "task": "Build a module whose greeting count and target are set by load-time parameters and visible under sysfs.",
+        "acceptance": [
+          "Two module_param values wired to behaviour",
+          "Parameters documented with MODULE_PARM_DESC",
+          "Values readable under /sys/module/<name>/parameters/"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "kern-p-e1",
+            "prompt": "The charp parameter type holds a:",
+            "options": [
+              {
+                "id": "a",
+                "text": "character"
+              },
+              {
+                "id": "b",
+                "text": "string pointer"
+              },
+              {
+                "id": "c",
+                "text": "boolean"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "charp is a C string.",
+            "lessonId": "kern-param"
+          },
+          {
+            "id": "kern-p-e2",
+            "prompt": "Out-of-tree modules are built against:",
+            "options": [
+              {
+                "id": "a",
+                "text": "any GCC headers"
+              },
+              {
+                "id": "b",
+                "text": "the target kernel's build dir/headers"
+              },
+              {
+                "id": "c",
+                "text": "glibc"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Kbuild uses the kernel headers.",
+            "lessonId": "kern-kbuild"
+          },
+          {
+            "id": "kern-p-e3",
+            "prompt": "An 'unknown symbol' error at insmod means:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a syntax error"
+              },
+              {
+                "id": "b",
+                "text": "a called symbol is not exported"
+              },
+              {
+                "id": "c",
+                "text": "out of memory"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The symbol is not exported.",
+            "lessonId": "kern-symbols"
+          },
+          {
+            "id": "kern-p-e4",
+            "prompt": "Kernel taint flags indicate:",
+            "options": [
+              {
+                "id": "a",
+                "text": "performance"
+              },
+              {
+                "id": "b",
+                "text": "conditions that reduce bug-report trust"
+              },
+              {
+                "id": "c",
+                "text": "the version"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "They mark the kernel's trust state.",
+            "lessonId": "kern-taint"
+          },
+          {
+            "id": "kern-p-e5",
+            "prompt": "insmod mod.ko count=3 sets count:",
+            "options": [
+              {
+                "id": "a",
+                "text": "at compile time"
+              },
+              {
+                "id": "b",
+                "text": "at load time"
+              },
+              {
+                "id": "c",
+                "text": "never"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Parameters are load-time config.",
+            "lessonId": "kern-param"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "The Linux Kernel Module Programming Guide",
+          "url": "https://sysprog21.github.io/lkmpg/"
+        },
+        {
+          "title": "The Linux Kernel documentation",
+          "url": "https://docs.kernel.org/"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "kern-chardev",
+      "version": 1,
+      "order": 3,
+      "title": "3. Character devices and file_operations",
+      "summary": "Expose a device to user space as a /dev node: register a char device, implement file_operations, and copy data safely to user space.",
+      "difficulty": "Intermediate",
+      "minutes": 28,
+      "code": "#include <linux/module.h>\n#include <linux/kernel.h>\n#include <linux/init.h>\n#include <linux/fs.h>\n#include <linux/uaccess.h>\n\n#define DEVICE_NAME \"vqchar\"\nstatic int major;\nstatic const char message[] = \"Hello from the kernel char device\\n\";\n\nstatic ssize_t dev_read(struct file *f, char __user *ubuf, size_t len, loff_t *off)\n{\n    /* simple_read_from_buffer handles *off and returns 0 at EOF, so cat stops */\n    return simple_read_from_buffer(ubuf, len, off, message, sizeof(message) - 1);\n}\n\nstatic const struct file_operations fops = {\n    .owner = THIS_MODULE,\n    .read = dev_read,\n};\n\nstatic int __init chardev_init(void)\n{\n    major = register_chrdev(0, DEVICE_NAME, &fops);   /* 0 = pick a free major */\n    if (major < 0) {\n        pr_err(\"vqchar: register_chrdev failed: %d\\n\", major);\n        return major;\n    }\n    pr_info(\"vqchar: major %d; create node: sudo mknod /dev/%s c %d 0\\n\",\n            major, DEVICE_NAME, major);\n    return 0;\n}\n\nstatic void __exit chardev_exit(void)\n{\n    unregister_chrdev(major, DEVICE_NAME);\n    pr_info(\"vqchar: unregistered\\n\");\n}\n\nmodule_init(chardev_init);\nmodule_exit(chardev_exit);\n\nMODULE_LICENSE(\"GPL\");\nMODULE_AUTHOR(\"VoltQuest\");\nMODULE_DESCRIPTION(\"A read-only character device using simple_read_from_buffer\");\n",
+      "codeExt": "c",
+      "expected": "After loading, create the node with the printed mknod command, then `cat /dev/vqchar` prints the message once and stops at EOF.",
+      "lessons": [
+        {
+          "id": "kern-devfiles",
+          "title": "Devices as files",
+          "paragraphs": [
+            "Unix exposes devices as special files under /dev. A character device transfers a stream of bytes (like a serial port or /dev/null); a block device transfers fixed-size blocks (like a disk). Each is identified by a major number (which driver) and a minor number (which instance).",
+            "User space opens, reads and writes the device file with ordinary file calls; the kernel routes those calls to the driver's handlers."
+          ],
+          "example": "crw-rw---- 1 root root 10, 58 /dev/vqchar  -> char device, major 10 minor 58",
+          "pitfall": "Confusing a character device (byte stream) with a block device (fixed blocks) leads to the wrong driver model entirely.",
+          "question": {
+            "id": "kern-devfiles-q",
+            "prompt": "A character device transfers:",
+            "options": [
+              {
+                "id": "a",
+                "text": "fixed-size blocks"
+              },
+              {
+                "id": "b",
+                "text": "a stream of bytes"
+              },
+              {
+                "id": "c",
+                "text": "network packets only"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Char devices are byte streams.",
+            "lessonId": "kern-devfiles"
+          }
+        },
+        {
+          "id": "kern-register",
+          "title": "Registering a char device",
+          "paragraphs": [
+            "register_chrdev(0, name, &fops) asks the kernel to allocate a free major number and bind it to your file_operations; it returns the major (or a negative errno). unregister_chrdev reverses it on unload.",
+            "Registration only creates the driver binding; the /dev node is created separately — by udev automatically for modern class-based drivers, or manually with mknod using the printed major number for this simple example."
+          ],
+          "example": "major = register_chrdev(0, \"vqchar\", &fops);  // 0 = auto-assign major",
+          "pitfall": "Forgetting unregister_chrdev in the exit path leaks the major number and leaves a dangling binding after rmmod.",
+          "question": {
+            "id": "kern-register-q",
+            "prompt": "register_chrdev(0, ...) with a 0 major:",
+            "options": [
+              {
+                "id": "a",
+                "text": "fails"
+              },
+              {
+                "id": "b",
+                "text": "auto-allocates a free major number"
+              },
+              {
+                "id": "c",
+                "text": "uses major 0"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "0 means auto-assign.",
+            "lessonId": "kern-register"
+          }
+        },
+        {
+          "id": "kern-fops",
+          "title": "file_operations",
+          "paragraphs": [
+            "A struct file_operations maps file calls to your functions: .open, .release, .read, .write, .llseek and more. The VFS calls these when user space operates on the device file. Set .owner = THIS_MODULE so the module cannot be unloaded while the file is open.",
+            "A .read returns the number of bytes delivered, 0 at end-of-file, or a negative errno. Returning the wrong value — never signalling EOF — makes `cat` loop forever."
+          ],
+          "example": ".read returns bytes read, 0 at EOF, or -errno; .owner = THIS_MODULE pins the module.",
+          "pitfall": "A read handler that always returns a positive count never signals EOF, so `cat` on the device spins forever.",
+          "question": {
+            "id": "kern-fops-q",
+            "prompt": "A .read handler signals end-of-file by returning:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a negative errno"
+              },
+              {
+                "id": "b",
+                "text": "0"
+              },
+              {
+                "id": "c",
+                "text": "the buffer size"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "0 means EOF.",
+            "lessonId": "kern-fops"
+          }
+        },
+        {
+          "id": "kern-copyuser",
+          "title": "Crossing the user/kernel boundary",
+          "paragraphs": [
+            "A kernel driver must never dereference a user pointer directly — the address may be invalid, swapped out, or malicious. It uses copy_to_user and copy_from_user, which validate the address and may sleep on a page fault.",
+            "copy_to_user/copy_from_user return the number of bytes NOT copied (0 on full success). Helpers like simple_read_from_buffer and simple_write_to_buffer wrap this correctly, handling the offset and partial copies for you."
+          ],
+          "example": "copy_to_user returns bytes NOT copied; simple_read_from_buffer wraps it with offset handling.",
+          "pitfall": "Treating copy_to_user's return value as the number of bytes copied (instead of not-copied) inverts your success check.",
+          "question": {
+            "id": "kern-copyuser-q",
+            "prompt": "copy_to_user returns the number of bytes:",
+            "options": [
+              {
+                "id": "a",
+                "text": "copied"
+              },
+              {
+                "id": "b",
+                "text": "NOT copied (0 on success)"
+              },
+              {
+                "id": "c",
+                "text": "requested"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Nonzero means a partial/failed copy.",
+            "lessonId": "kern-copyuser"
+          }
+        }
+      ],
+      "steps": [
+        "Save as chardev.c and build it (obj-m += chardev.o).",
+        "Load it, read the major from `sudo dmesg`, then `sudo mknod /dev/vqchar c <major> 0`.",
+        "Run `cat /dev/vqchar` and confirm it prints once and stops (EOF handled).",
+        "Remove the node (rm /dev/vqchar) and `sudo rmmod chardev`."
+      ],
+      "challenge": {
+        "task": "Implement a read-only character device that returns a fixed message and correctly signals EOF.",
+        "acceptance": [
+          "register_chrdev / unregister_chrdev paired",
+          "file_operations with a correct .read",
+          "cat terminates (EOF handled, no infinite loop)"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "kern-cd-e1",
+            "prompt": "A device's major number identifies the:",
+            "options": [
+              {
+                "id": "a",
+                "text": "instance"
+              },
+              {
+                "id": "b",
+                "text": "driver"
+              },
+              {
+                "id": "c",
+                "text": "user"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Major = which driver; minor = which instance.",
+            "lessonId": "kern-devfiles"
+          },
+          {
+            "id": "kern-cd-e2",
+            "prompt": "unregister_chrdev belongs in the:",
+            "options": [
+              {
+                "id": "a",
+                "text": "init function"
+              },
+              {
+                "id": "b",
+                "text": "exit function"
+              },
+              {
+                "id": "c",
+                "text": "read handler"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Cleanup on unload.",
+            "lessonId": "kern-register"
+          },
+          {
+            "id": "kern-cd-e3",
+            "prompt": ".owner = THIS_MODULE prevents:",
+            "options": [
+              {
+                "id": "a",
+                "text": "reading"
+              },
+              {
+                "id": "b",
+                "text": "unloading the module while a file is open"
+              },
+              {
+                "id": "c",
+                "text": "writing"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It pins the module's refcount.",
+            "lessonId": "kern-fops"
+          },
+          {
+            "id": "kern-cd-e4",
+            "prompt": "A driver accesses a user buffer with:",
+            "options": [
+              {
+                "id": "a",
+                "text": "memcpy"
+              },
+              {
+                "id": "b",
+                "text": "copy_to_user/copy_from_user"
+              },
+              {
+                "id": "c",
+                "text": "direct dereference"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Never dereference user pointers directly.",
+            "lessonId": "kern-copyuser"
+          },
+          {
+            "id": "kern-cd-e5",
+            "prompt": "A .read that never returns 0 makes cat:",
+            "options": [
+              {
+                "id": "a",
+                "text": "print once"
+              },
+              {
+                "id": "b",
+                "text": "loop forever"
+              },
+              {
+                "id": "c",
+                "text": "error"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "No EOF means an endless loop.",
+            "lessonId": "kern-fops"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "The Linux Kernel Module Programming Guide",
+          "url": "https://sysprog21.github.io/lkmpg/"
+        },
+        {
+          "title": "The Linux Kernel documentation",
+          "url": "https://docs.kernel.org/"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "kern-memory",
+      "version": 1,
+      "order": 4,
+      "title": "4. Kernel memory management",
+      "summary": "Allocate memory in the kernel with kmalloc and vmalloc, choose GFP flags, and respect the kernel's small stack and no-float rules.",
+      "difficulty": "Intermediate",
+      "minutes": 26,
+      "code": "#include <linux/module.h>\n#include <linux/kernel.h>\n#include <linux/init.h>\n#include <linux/slab.h>\n\n#define N 64\nstatic int *buf;\n\nstatic int __init kmem_init(void)\n{\n    long sum = 0;\n    int i;\n\n    buf = kmalloc_array(N, sizeof(int), GFP_KERNEL);   /* may sleep; not in atomic ctx */\n    if (!buf)\n        return -ENOMEM;                                /* always check allocations */\n    for (i = 0; i < N; i++)\n        buf[i] = i;\n    for (i = 0; i < N; i++)\n        sum += buf[i];\n    pr_info(\"kmem: sum of 0..%d = %ld\\n\", N - 1, sum);  /* 2016 */\n    return 0;\n}\n\nstatic void __exit kmem_exit(void)\n{\n    kfree(buf);                                        /* free exactly what you kmalloc'd */\n    pr_info(\"kmem: freed\\n\");\n}\n\nmodule_init(kmem_init);\nmodule_exit(kmem_exit);\n\nMODULE_LICENSE(\"GPL\");\nMODULE_AUTHOR(\"VoltQuest\");\nMODULE_DESCRIPTION(\"Kernel memory allocation with kmalloc_array/kfree\");\n",
+      "codeExt": "c",
+      "expected": "On load, `sudo dmesg` shows 'kmem: sum of 0..63 = 2016'; on unload the buffer is freed with no leak (confirm with kmemleak if enabled).",
+      "lessons": [
+        {
+          "id": "kern-kmalloc",
+          "title": "kmalloc and kfree",
+          "paragraphs": [
+            "kmalloc allocates physically contiguous memory and is the kernel's everyday allocator, backed by the slab allocator. kfree releases it. kzalloc zeroes the memory; kmalloc_array guards against size overflow for N items.",
+            "Allocations are relatively small and fast but can fail, so every allocation must be checked for NULL and freed on every path, including error paths in init."
+          ],
+          "example": "buf = kmalloc_array(N, sizeof(*buf), GFP_KERNEL); if (!buf) return -ENOMEM;",
+          "pitfall": "Not checking kmalloc for NULL and dereferencing it crashes the kernel on memory pressure.",
+          "question": {
+            "id": "kern-kmalloc-q",
+            "prompt": "kmalloc returns memory that is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "always zeroed"
+              },
+              {
+                "id": "b",
+                "text": "physically contiguous"
+              },
+              {
+                "id": "c",
+                "text": "in user space"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "kmalloc is physically contiguous; use kzalloc to zero.",
+            "lessonId": "kern-kmalloc"
+          }
+        },
+        {
+          "id": "kern-gfp",
+          "title": "GFP flags",
+          "paragraphs": [
+            "Every allocation takes a GFP flag describing the context. GFP_KERNEL is the normal flag and may sleep to reclaim memory — it must not be used in atomic context (interrupt handlers, while holding a spinlock). GFP_ATOMIC does not sleep but can fail more easily.",
+            "Choosing the wrong flag is a classic bug: GFP_KERNEL inside a spinlock can deadlock the kernel because the allocator may try to sleep."
+          ],
+          "example": "GFP_KERNEL may sleep; use GFP_ATOMIC in interrupt/spinlock context.",
+          "pitfall": "Calling kmalloc(..., GFP_KERNEL) while holding a spinlock can sleep and deadlock the CPU.",
+          "question": {
+            "id": "kern-gfp-q",
+            "prompt": "GFP_KERNEL must NOT be used:",
+            "options": [
+              {
+                "id": "a",
+                "text": "in process context"
+              },
+              {
+                "id": "b",
+                "text": "in atomic context (IRQ/spinlock)"
+              },
+              {
+                "id": "c",
+                "text": "ever"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It may sleep; atomic context cannot.",
+            "lessonId": "kern-gfp"
+          }
+        },
+        {
+          "id": "kern-vmalloc",
+          "title": "kmalloc vs vmalloc",
+          "paragraphs": [
+            "vmalloc allocates memory that is virtually contiguous but may be physically fragmented, so it can satisfy large allocations that kmalloc cannot. It is slower and the memory is not usable for DMA that needs physical contiguity.",
+            "Rule of thumb: kmalloc for small-to-medium, physically contiguous needs (and DMA); vmalloc for large buffers where physical contiguity does not matter."
+          ],
+          "example": "vmalloc(size) -> large, virtually-contiguous; kmalloc -> small, physically-contiguous.",
+          "pitfall": "Using vmalloc memory for a DMA transfer that requires physical contiguity corrupts data.",
+          "question": {
+            "id": "kern-vmalloc-q",
+            "prompt": "vmalloc memory is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "physically contiguous"
+              },
+              {
+                "id": "b",
+                "text": "virtually contiguous, possibly physically fragmented"
+              },
+              {
+                "id": "c",
+                "text": "in user space"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Only virtually contiguous.",
+            "lessonId": "kern-vmalloc"
+          }
+        },
+        {
+          "id": "kern-limits",
+          "title": "Stack, floats and leaks",
+          "paragraphs": [
+            "Kernel stacks are tiny (a few KB per thread), so large local arrays or deep recursion overflow the stack and corrupt memory — allocate big buffers dynamically instead. The kernel also forbids floating point in normal code because it does not save FPU state.",
+            "There is no garbage collector: every allocation must be freed exactly once on every path. Tools like kmemleak and KASAN catch leaks and out-of-bounds access during testing."
+          ],
+          "example": "Never put a large array on the kernel stack; kmalloc it instead.",
+          "pitfall": "Declaring a large local buffer (e.g. char buf[8192]) on the kernel stack overflows it and corrupts memory silently.",
+          "question": {
+            "id": "kern-limits-q",
+            "prompt": "Large buffers in the kernel should be:",
+            "options": [
+              {
+                "id": "a",
+                "text": "local stack arrays"
+              },
+              {
+                "id": "b",
+                "text": "dynamically allocated (kmalloc/vmalloc)"
+              },
+              {
+                "id": "c",
+                "text": "global floats"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The kernel stack is tiny.",
+            "lessonId": "kern-limits"
+          }
+        }
+      ],
+      "steps": [
+        "Save as kmem.c, build it, and load it; confirm `sudo dmesg` shows the sum 2016.",
+        "Change N and verify the printed sum updates accordingly.",
+        "Add an error path that returns -ENOMEM and make sure nothing is freed twice.",
+        "Explain why GFP_KERNEL is unsafe inside a spinlock."
+      ],
+      "challenge": {
+        "task": "Allocate, fill, summarise and free a kernel buffer with correct NULL checks and no leak.",
+        "acceptance": [
+          "kmalloc/kmalloc_array checked for NULL",
+          "kfree on every path including errors",
+          "Correct GFP flag for process context"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "kern-m-e1",
+            "prompt": "kzalloc differs from kmalloc by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "being slower only"
+              },
+              {
+                "id": "b",
+                "text": "zeroing the memory"
+              },
+              {
+                "id": "c",
+                "text": "using user space"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "kzalloc zeroes the allocation.",
+            "lessonId": "kern-kmalloc"
+          },
+          {
+            "id": "kern-m-e2",
+            "prompt": "GFP_ATOMIC allocations:",
+            "options": [
+              {
+                "id": "a",
+                "text": "may sleep"
+              },
+              {
+                "id": "b",
+                "text": "do not sleep but fail more easily"
+              },
+              {
+                "id": "c",
+                "text": "are zeroed"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "No sleeping in atomic context.",
+            "lessonId": "kern-gfp"
+          },
+          {
+            "id": "kern-m-e3",
+            "prompt": "For a DMA buffer needing physical contiguity use:",
+            "options": [
+              {
+                "id": "a",
+                "text": "vmalloc"
+              },
+              {
+                "id": "b",
+                "text": "kmalloc"
+              },
+              {
+                "id": "c",
+                "text": "a stack array"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "kmalloc is physically contiguous.",
+            "lessonId": "kern-vmalloc"
+          },
+          {
+            "id": "kern-m-e4",
+            "prompt": "Floating point in normal kernel code is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "encouraged"
+              },
+              {
+                "id": "b",
+                "text": "forbidden"
+              },
+              {
+                "id": "c",
+                "text": "required"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The kernel does not save FPU state.",
+            "lessonId": "kern-limits"
+          },
+          {
+            "id": "kern-m-e5",
+            "prompt": "Kernel memory is freed by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a garbage collector"
+              },
+              {
+                "id": "b",
+                "text": "you, exactly once per allocation"
+              },
+              {
+                "id": "c",
+                "text": "the compiler"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "No GC; free manually.",
+            "lessonId": "kern-limits"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "The Linux Kernel Module Programming Guide",
+          "url": "https://sysprog21.github.io/lkmpg/"
+        },
+        {
+          "title": "The Linux Kernel documentation",
+          "url": "https://docs.kernel.org/"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "kern-concurrency",
+      "version": 1,
+      "order": 5,
+      "title": "5. Concurrency: locks and atomics",
+      "summary": "Protect shared data on an SMP, preemptible kernel with mutexes, spinlocks and atomic operations, and know which to use where.",
+      "difficulty": "Advanced",
+      "minutes": 28,
+      "code": "#include <linux/module.h>\n#include <linux/kernel.h>\n#include <linux/init.h>\n#include <linux/mutex.h>\n#include <linux/atomic.h>\n\nstatic DEFINE_MUTEX(lock);                 /* mutex: may sleep; for process context */\nstatic int shared;                         /* protected by lock */\nstatic atomic_t hits = ATOMIC_INIT(0);     /* lock-free counter */\n\nstatic void bump(void)\n{\n    mutex_lock(&lock);\n    shared++;                              /* critical section */\n    mutex_unlock(&lock);\n    atomic_inc(&hits);                     /* no lock needed for a simple counter */\n}\n\nstatic int __init sync_init(void)\n{\n    int i;\n    for (i = 0; i < 100; i++)\n        bump();\n    pr_info(\"sync: mutex-guarded=%d atomic=%d\\n\", shared, atomic_read(&hits));\n    return 0;\n}\n\nstatic void __exit sync_exit(void)\n{\n    pr_info(\"sync: final=%d\\n\", shared);\n}\n\nmodule_init(sync_init);\nmodule_exit(sync_exit);\n\nMODULE_LICENSE(\"GPL\");\nMODULE_AUTHOR(\"VoltQuest\");\nMODULE_DESCRIPTION(\"Mutex and atomic counters\");\n",
+      "codeExt": "c",
+      "expected": "On load, `sudo dmesg` shows 'sync: mutex-guarded=100 atomic=100' — both counters agree because every increment was serialized.",
+      "lessons": [
+        {
+          "id": "kern-race",
+          "title": "Why the kernel needs locks",
+          "paragraphs": [
+            "The kernel is concurrent: multiple CPUs run kernel code at once (SMP), the scheduler can preempt kernel threads, and interrupts fire at any time. Any data touched by more than one of these needs protection, or you get a race condition.",
+            "A race is a bug where the outcome depends on timing — two CPUs incrementing the same counter can lose an update. These bugs are intermittent and brutal to debug, so identify shared data and lock it from the start."
+          ],
+          "example": "counter++ is read-modify-write: two CPUs can interleave and lose an increment.",
+          "pitfall": "Assuming a simple counter++ is atomic on SMP is wrong; concurrent increments silently lose updates.",
+          "question": {
+            "id": "kern-race-q",
+            "prompt": "A data race happens when shared data is accessed:",
+            "options": [
+              {
+                "id": "a",
+                "text": "by one CPU"
+              },
+              {
+                "id": "b",
+                "text": "concurrently without synchronization"
+              },
+              {
+                "id": "c",
+                "text": "read-only"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Unsynchronized concurrent access races.",
+            "lessonId": "kern-race"
+          }
+        },
+        {
+          "id": "kern-mutex",
+          "title": "Mutexes vs spinlocks",
+          "paragraphs": [
+            "A mutex puts a waiting task to sleep until the lock is free, so it may only be used in process context where sleeping is allowed. A spinlock busy-waits (spins) without sleeping, so it is the tool for atomic context like interrupt handlers — but it must be held only briefly.",
+            "The decisive rule: you must never sleep while holding a spinlock. Since copy_to_user and most allocations can sleep, code that needs them around shared data must use a mutex, not a spinlock."
+          ],
+          "example": "Mutex: can sleep (process context). Spinlock: never sleep while held (atomic context).",
+          "pitfall": "Holding a spinlock across copy_to_user (which can sleep) can deadlock the CPU — use a mutex there.",
+          "question": {
+            "id": "kern-mutex-q",
+            "prompt": "You must never, while holding a spinlock:",
+            "options": [
+              {
+                "id": "a",
+                "text": "read a variable"
+              },
+              {
+                "id": "b",
+                "text": "sleep (e.g. copy_to_user, GFP_KERNEL)"
+              },
+              {
+                "id": "c",
+                "text": "unlock it"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Sleeping with a spinlock held can deadlock.",
+            "lessonId": "kern-mutex"
+          }
+        },
+        {
+          "id": "kern-atomic",
+          "title": "Atomic operations",
+          "paragraphs": [
+            "For simple shared integers and bit flags, the atomic_t type and operations (atomic_inc, atomic_dec, atomic_read, atomic_cmpxchg) perform indivisible updates without a lock, which is cheaper than taking a mutex or spinlock.",
+            "Atomics are ideal for counters and reference counts. For anything more complex than a single integer operation — updating several fields together — you still need a real lock."
+          ],
+          "example": "atomic_inc(&refcount);  // indivisible, no lock required",
+          "pitfall": "Using several separate atomic operations to update related fields is not atomic as a group; the combination still needs a lock.",
+          "question": {
+            "id": "kern-atomic-q",
+            "prompt": "atomic_t is best for:",
+            "options": [
+              {
+                "id": "a",
+                "text": "updating many fields together"
+              },
+              {
+                "id": "b",
+                "text": "a single shared counter/flag"
+              },
+              {
+                "id": "c",
+                "text": "sleeping locks"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Single-value indivisible updates.",
+            "lessonId": "kern-atomic"
+          }
+        },
+        {
+          "id": "kern-deadlock",
+          "title": "Deadlock and lock ordering",
+          "paragraphs": [
+            "A deadlock occurs when two paths each hold one lock and wait for the other. The standard prevention is a global lock ordering: always acquire multiple locks in the same order everywhere, and release in reverse.",
+            "The kernel ships lockdep, a runtime validator that detects potential deadlocks and ordering violations during testing. Keep critical sections short and avoid calling into unknown code while holding a lock."
+          ],
+          "example": "Always take lock A before lock B everywhere; lockdep flags violations.",
+          "pitfall": "Acquiring locks in different orders on different paths is the classic recipe for an ABBA deadlock.",
+          "question": {
+            "id": "kern-deadlock-q",
+            "prompt": "The standard way to prevent deadlock is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "more locks"
+              },
+              {
+                "id": "b",
+                "text": "a consistent global lock ordering"
+              },
+              {
+                "id": "c",
+                "text": "no locks"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Consistent ordering avoids ABBA.",
+            "lessonId": "kern-deadlock"
+          }
+        }
+      ],
+      "steps": [
+        "Save as sync.c, build and load it; confirm `sudo dmesg` shows both counters read 100.",
+        "Add a second function that updates a related field and protect the pair with the mutex.",
+        "Explain why replacing the mutex with a spinlock would be unsafe if the section called copy_to_user.",
+        "Describe an ABBA deadlock and how lock ordering prevents it."
+      ],
+      "challenge": {
+        "task": "Protect shared kernel data with the correct primitive, using a mutex for sleepable sections and an atomic for a simple counter.",
+        "acceptance": [
+          "Mutex guards the multi-step shared state",
+          "Atomic used for the simple counter",
+          "Explain why a spinlock is wrong when the section can sleep"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "kern-co-e1",
+            "prompt": "Races are possible in the kernel because of:",
+            "options": [
+              {
+                "id": "a",
+                "text": "single-threading"
+              },
+              {
+                "id": "b",
+                "text": "SMP, preemption and interrupts"
+              },
+              {
+                "id": "c",
+                "text": "user space"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Many contexts run concurrently.",
+            "lessonId": "kern-race"
+          },
+          {
+            "id": "kern-co-e2",
+            "prompt": "A mutex may be used only in:",
+            "options": [
+              {
+                "id": "a",
+                "text": "interrupt context"
+              },
+              {
+                "id": "b",
+                "text": "process context (sleeping allowed)"
+              },
+              {
+                "id": "c",
+                "text": "any context"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Mutexes can sleep.",
+            "lessonId": "kern-mutex"
+          },
+          {
+            "id": "kern-co-e3",
+            "prompt": "In interrupt context you protect brief data with a:",
+            "options": [
+              {
+                "id": "a",
+                "text": "mutex"
+              },
+              {
+                "id": "b",
+                "text": "spinlock"
+              },
+              {
+                "id": "c",
+                "text": "semaphore"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Spinlocks don't sleep.",
+            "lessonId": "kern-mutex"
+          },
+          {
+            "id": "kern-co-e4",
+            "prompt": "atomic_inc avoids:",
+            "options": [
+              {
+                "id": "a",
+                "text": "correctness"
+              },
+              {
+                "id": "b",
+                "text": "taking a lock for a single counter"
+              },
+              {
+                "id": "c",
+                "text": "the CPU"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Lock-free single-value update.",
+            "lessonId": "kern-atomic"
+          },
+          {
+            "id": "kern-co-e5",
+            "prompt": "lockdep is a tool that:",
+            "options": [
+              {
+                "id": "a",
+                "text": "allocates memory"
+              },
+              {
+                "id": "b",
+                "text": "detects lock-ordering/deadlock issues"
+              },
+              {
+                "id": "c",
+                "text": "formats disks"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A runtime lock validator.",
+            "lessonId": "kern-deadlock"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "The Linux Kernel Module Programming Guide",
+          "url": "https://sysprog21.github.io/lkmpg/"
+        },
+        {
+          "title": "The Linux Kernel documentation",
+          "url": "https://docs.kernel.org/"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "kern-interrupts",
+      "version": 1,
+      "order": 6,
+      "title": "6. Interrupts and deferred work",
+      "summary": "Handle hardware interrupts with top halves, and defer the real work to bottom halves such as workqueues to keep interrupt handlers short.",
+      "difficulty": "Advanced",
+      "minutes": 26,
+      "code": "#include <linux/module.h>\n#include <linux/kernel.h>\n#include <linux/init.h>\n#include <linux/workqueue.h>\n\nstatic struct work_struct deferred;\n\n/* A workqueue handler runs later in PROCESS context, so it may sleep. */\nstatic void work_handler(struct work_struct *w)\n{\n    pr_info(\"work: deferred handler ran in process context\\n\");\n}\n\nstatic int __init work_init(void)\n{\n    INIT_WORK(&deferred, work_handler);\n    schedule_work(&deferred);          /* queue the bottom half */\n    pr_info(\"work: scheduled deferred work\\n\");\n    return 0;\n}\n\nstatic void __exit work_exit(void)\n{\n    cancel_work_sync(&deferred);       /* wait for the handler before unloading */\n    pr_info(\"work: flushed and exiting\\n\");\n}\n\nmodule_init(work_init);\nmodule_exit(work_exit);\n\nMODULE_LICENSE(\"GPL\");\nMODULE_AUTHOR(\"VoltQuest\");\nMODULE_DESCRIPTION(\"Deferred work with a workqueue (bottom half)\");\n",
+      "codeExt": "c",
+      "expected": "On load, `sudo dmesg` shows the 'scheduled' message immediately and then the 'deferred handler ran' message once the workqueue runs it; unload flushes it cleanly.",
+      "lessons": [
+        {
+          "id": "kern-irq",
+          "title": "Interrupts and the top half",
+          "paragraphs": [
+            "Hardware signals the CPU with an interrupt; the kernel runs the registered handler (the top half). A driver registers one with request_irq(irq, handler, flags, name, dev) and releases it with free_irq on unload.",
+            "The top half runs in interrupt context: it cannot sleep, must not call blocking functions, and should be as short as possible because it may block other interrupts. It typically acknowledges the device and schedules the heavy work for later."
+          ],
+          "example": "request_irq(irq, handler, IRQF_SHARED, \"mydev\", dev);  // free_irq on unload",
+          "pitfall": "Doing slow work or sleeping inside the top half stalls the system and can drop other interrupts.",
+          "question": {
+            "id": "kern-irq-q",
+            "prompt": "An interrupt top half must:",
+            "options": [
+              {
+                "id": "a",
+                "text": "sleep if needed"
+              },
+              {
+                "id": "b",
+                "text": "stay short and never sleep"
+              },
+              {
+                "id": "c",
+                "text": "run in user space"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Interrupt context cannot sleep.",
+            "lessonId": "kern-irq"
+          }
+        },
+        {
+          "id": "kern-bottom",
+          "title": "Top half vs bottom half",
+          "paragraphs": [
+            "To keep interrupt handlers short, the kernel splits work: the top half does the minimum (acknowledge the device, grab data) and schedules a bottom half to do the rest later with interrupts enabled. This keeps latency low.",
+            "Bottom-half mechanisms include softirqs and tasklets (which run in atomic context and cannot sleep) and workqueues (which run in process context and can sleep). You pick based on whether the deferred work needs to sleep."
+          ],
+          "example": "Top half: acknowledge + schedule. Bottom half: the actual processing, later.",
+          "pitfall": "Putting all the processing in the top half defeats the purpose and hurts interrupt latency across the system.",
+          "question": {
+            "id": "kern-bottom-q",
+            "prompt": "The bottom half exists to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "run before the top half"
+              },
+              {
+                "id": "b",
+                "text": "defer heavy work out of interrupt context"
+              },
+              {
+                "id": "c",
+                "text": "disable interrupts"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It moves slow work to later.",
+            "lessonId": "kern-bottom"
+          }
+        },
+        {
+          "id": "kern-workqueue",
+          "title": "Workqueues",
+          "paragraphs": [
+            "A workqueue runs deferred work in a kernel thread (process context), so its handler may sleep — allocate with GFP_KERNEL, call copy_to_user, take mutexes. You initialise a work item with INIT_WORK and queue it with schedule_work.",
+            "Before unloading, you must cancel_work_sync (or flush) the work so no handler runs against freed module memory. This is the single most important cleanup step for deferred work."
+          ],
+          "example": "INIT_WORK(&w, handler); schedule_work(&w);  // cleanup: cancel_work_sync(&w)",
+          "pitfall": "Unloading the module without cancel_work_sync can run the handler after the module's memory is gone — a use-after-free crash.",
+          "question": {
+            "id": "kern-workqueue-q",
+            "prompt": "A workqueue handler runs in:",
+            "options": [
+              {
+                "id": "a",
+                "text": "interrupt context"
+              },
+              {
+                "id": "b",
+                "text": "process context (may sleep)"
+              },
+              {
+                "id": "c",
+                "text": "user space"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Workqueues can sleep.",
+            "lessonId": "kern-workqueue"
+          }
+        },
+        {
+          "id": "kern-tasklet",
+          "title": "Choosing a deferral mechanism",
+          "paragraphs": [
+            "If the deferred work must not sleep and needs low latency, a softirq/tasklet (atomic context) fits; if it may sleep, a workqueue is the choice. Tasklets are an older atomic-context mechanism and newer code often prefers threaded IRQs or workqueues.",
+            "Threaded interrupts (request_threaded_irq) let the kernel run your handler in a dedicated thread, combining a tiny hard-IRQ part with a sleepable threaded part — a clean modern pattern."
+          ],
+          "example": "Needs to sleep -> workqueue; must stay atomic + low latency -> softirq/tasklet.",
+          "pitfall": "Trying to sleep (kmalloc GFP_KERNEL, mutex) inside a tasklet crashes, because tasklets run in atomic context.",
+          "question": {
+            "id": "kern-tasklet-q",
+            "prompt": "Choose a workqueue over a tasklet when the deferred work:",
+            "options": [
+              {
+                "id": "a",
+                "text": "must not sleep"
+              },
+              {
+                "id": "b",
+                "text": "may need to sleep"
+              },
+              {
+                "id": "c",
+                "text": "is tiny"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Only workqueues can sleep.",
+            "lessonId": "kern-tasklet"
+          }
+        }
+      ],
+      "steps": [
+        "Save as work.c, build and load it; watch `sudo dmesg` for the scheduled and deferred messages.",
+        "Add msleep(10) inside the handler to prove it runs in sleepable process context.",
+        "Remove cancel_work_sync and reason about the use-after-free risk on rmmod.",
+        "Explain why the interrupt top half must not sleep."
+      ],
+      "challenge": {
+        "task": "Defer work from a (conceptual) interrupt into a workqueue bottom half and clean it up correctly on unload.",
+        "acceptance": [
+          "INIT_WORK + schedule_work used",
+          "cancel_work_sync in the exit path",
+          "Explain top-half vs bottom-half responsibilities"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "kern-ir-e1",
+            "prompt": "An IRQ handler is registered with:",
+            "options": [
+              {
+                "id": "a",
+                "text": "schedule_work"
+              },
+              {
+                "id": "b",
+                "text": "request_irq"
+              },
+              {
+                "id": "c",
+                "text": "kmalloc"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "request_irq/free_irq manage handlers.",
+            "lessonId": "kern-irq"
+          },
+          {
+            "id": "kern-ir-e2",
+            "prompt": "Interrupt context forbids:",
+            "options": [
+              {
+                "id": "a",
+                "text": "reading registers"
+              },
+              {
+                "id": "b",
+                "text": "sleeping"
+              },
+              {
+                "id": "c",
+                "text": "acknowledging the device"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "No sleeping in interrupt context.",
+            "lessonId": "kern-irq"
+          },
+          {
+            "id": "kern-ir-e3",
+            "prompt": "A tasklet runs in:",
+            "options": [
+              {
+                "id": "a",
+                "text": "process context"
+              },
+              {
+                "id": "b",
+                "text": "atomic context (cannot sleep)"
+              },
+              {
+                "id": "c",
+                "text": "user space"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Atomic; no sleeping.",
+            "lessonId": "kern-bottom"
+          },
+          {
+            "id": "kern-ir-e4",
+            "prompt": "Before rmmod you must, for pending work:",
+            "options": [
+              {
+                "id": "a",
+                "text": "nothing"
+              },
+              {
+                "id": "b",
+                "text": "cancel_work_sync / flush it"
+              },
+              {
+                "id": "c",
+                "text": "reschedule it"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Avoid running against freed memory.",
+            "lessonId": "kern-workqueue"
+          },
+          {
+            "id": "kern-ir-e5",
+            "prompt": "request_threaded_irq runs the handler's heavy part in:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a hard IRQ"
+              },
+              {
+                "id": "b",
+                "text": "a dedicated kernel thread"
+              },
+              {
+                "id": "c",
+                "text": "user space"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A sleepable threaded handler.",
+            "lessonId": "kern-tasklet"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "The Linux Kernel Module Programming Guide",
+          "url": "https://sysprog21.github.io/lkmpg/"
+        },
+        {
+          "title": "The Linux Kernel documentation",
+          "url": "https://docs.kernel.org/"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "kern-procfs",
+      "version": 1,
+      "order": 7,
+      "title": "7. Exposing data with /proc and sysfs",
+      "summary": "Create a /proc entry with the modern proc_ops interface to publish kernel data to user space, and understand sysfs for driver attributes.",
+      "difficulty": "Intermediate",
+      "minutes": 24,
+      "code": "#include <linux/module.h>\n#include <linux/kernel.h>\n#include <linux/init.h>\n#include <linux/proc_fs.h>\n#include <linux/uaccess.h>\n\n#define PROC_NAME \"vqinfo\"\nstatic struct proc_dir_entry *entry;\n\nstatic ssize_t info_read(struct file *f, char __user *ubuf, size_t len, loff_t *off)\n{\n    static const char text[] = \"VoltQuest kernel info: hello from /proc\\n\";\n    return simple_read_from_buffer(ubuf, len, off, text, sizeof(text) - 1);\n}\n\n/* Since Linux 5.6, /proc entries use proc_ops, not file_operations. */\nstatic const struct proc_ops pops = {\n    .proc_read = info_read,\n};\n\nstatic int __init procfs_init(void)\n{\n    entry = proc_create(PROC_NAME, 0444, NULL, &pops);\n    if (!entry)\n        return -ENOMEM;\n    pr_info(\"vqinfo: created /proc/%s\\n\", PROC_NAME);\n    return 0;\n}\n\nstatic void __exit procfs_exit(void)\n{\n    proc_remove(entry);\n    pr_info(\"vqinfo: removed /proc/%s\\n\", PROC_NAME);\n}\n\nmodule_init(procfs_init);\nmodule_exit(procfs_exit);\n\nMODULE_LICENSE(\"GPL\");\nMODULE_AUTHOR(\"VoltQuest\");\nMODULE_DESCRIPTION(\"A /proc entry using proc_ops (Linux 5.6+)\");\n",
+      "codeExt": "c",
+      "expected": "After loading, `cat /proc/vqinfo` prints the info line and stops at EOF; unloading removes the entry.",
+      "lessons": [
+        {
+          "id": "kern-interfaces",
+          "title": "How the kernel talks to user space",
+          "paragraphs": [
+            "Beyond device files, the kernel exposes information and knobs through virtual filesystems. /proc historically holds process and kernel information; sysfs (/sys) exposes a structured view of devices, drivers and their attributes. Neither is backed by disk — reads and writes call into the kernel.",
+            "These interfaces are how tools like ps, top and udev work, and how you let an administrator read a driver's state or tweak a setting with plain cat and echo."
+          ],
+          "example": "cat /proc/vqinfo and cat /sys/module/<name>/parameters/<p> both call into the kernel.",
+          "pitfall": "Treating /proc and /sys files as real files on disk misses that every read executes kernel code live.",
+          "question": {
+            "id": "kern-interfaces-q",
+            "prompt": "/proc and /sys files are:",
+            "options": [
+              {
+                "id": "a",
+                "text": "stored on disk"
+              },
+              {
+                "id": "b",
+                "text": "virtual; reads call into the kernel"
+              },
+              {
+                "id": "c",
+                "text": "user-space caches"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "They are backed by kernel code.",
+            "lessonId": "kern-interfaces"
+          }
+        },
+        {
+          "id": "kern-proccreate",
+          "title": "Creating a /proc entry",
+          "paragraphs": [
+            "proc_create(name, mode, parent, proc_ops) adds an entry under /proc (parent NULL means the /proc root). It returns a proc_dir_entry or NULL on failure, which you must check. proc_remove tears it down on unload.",
+            "The mode (e.g. 0444) sets the file permissions. Keeping /proc entries read-only unless you truly need writes avoids a whole class of input-validation bugs."
+          ],
+          "example": "entry = proc_create(\"vqinfo\", 0444, NULL, &pops); if (!entry) return -ENOMEM;",
+          "pitfall": "Forgetting proc_remove in the exit path leaves a stale /proc entry whose read handler points into unloaded module memory.",
+          "question": {
+            "id": "kern-proccreate-q",
+            "prompt": "proc_create returns NULL when:",
+            "options": [
+              {
+                "id": "a",
+                "text": "it succeeds"
+              },
+              {
+                "id": "b",
+                "text": "creation fails (must be checked)"
+              },
+              {
+                "id": "c",
+                "text": "the file is read"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Always check for NULL.",
+            "lessonId": "kern-proccreate"
+          }
+        },
+        {
+          "id": "kern-procops",
+          "title": "proc_ops replaced file_operations",
+          "paragraphs": [
+            "Before Linux 5.6, /proc entries reused struct file_operations. Since 5.6 they use a dedicated struct proc_ops with fields like .proc_read, .proc_write and .proc_lseek. Using file_operations for /proc on a modern kernel will not compile.",
+            "This is a concrete example of the kernel's unstable internal API: in-tree code is updated across the tree when an interface changes, so out-of-tree modules must track the kernel version they target."
+          ],
+          "example": "static const struct proc_ops pops = { .proc_read = info_read };",
+          "pitfall": "Copying an old tutorial that uses file_operations for /proc fails to build on any kernel 5.6 or newer.",
+          "question": {
+            "id": "kern-procops-q",
+            "prompt": "Since Linux 5.6, /proc entries use:",
+            "options": [
+              {
+                "id": "a",
+                "text": "file_operations"
+              },
+              {
+                "id": "b",
+                "text": "proc_ops"
+              },
+              {
+                "id": "c",
+                "text": "sysfs_ops"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "proc_ops replaced file_operations for /proc.",
+            "lessonId": "kern-procops"
+          }
+        },
+        {
+          "id": "kern-seqfile",
+          "title": "seq_file and sysfs attributes",
+          "paragraphs": [
+            "For multi-line or large /proc output, the seq_file API handles buffering and the read offset for you, avoiding the manual pagination bugs of raw read handlers. It is the recommended way to produce structured /proc output.",
+            "sysfs is preferred for driver attributes: one value per file, created as device/kobject attributes. The convention is one logical value per sysfs file, which keeps the interface clean and scriptable."
+          ],
+          "example": "seq_file handles buffering/offset; sysfs convention is one value per file.",
+          "pitfall": "Emitting lots of data from a raw .proc_read without seq_file leads to subtle offset and truncation bugs.",
+          "question": {
+            "id": "kern-seqfile-q",
+            "prompt": "The sysfs convention is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "many values per file"
+              },
+              {
+                "id": "b",
+                "text": "one value per file"
+              },
+              {
+                "id": "c",
+                "text": "binary blobs only"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "One attribute value per file.",
+            "lessonId": "kern-seqfile"
+          }
+        }
+      ],
+      "steps": [
+        "Save as procfs.c, build and load it; run `cat /proc/vqinfo`.",
+        "Confirm the read stops at EOF (simple_read_from_buffer handles the offset).",
+        "Unload and verify /proc/vqinfo is gone.",
+        "Explain why reusing file_operations for /proc fails on a 6.x kernel."
+      ],
+      "challenge": {
+        "task": "Publish a kernel string to user space through a read-only /proc entry using proc_ops, with correct creation and cleanup.",
+        "acceptance": [
+          "proc_create/proc_remove paired",
+          "proc_ops (not file_operations) used",
+          "cat terminates at EOF"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "kern-pf-e1",
+            "prompt": "sysfs (/sys) primarily exposes:",
+            "options": [
+              {
+                "id": "a",
+                "text": "process lists"
+              },
+              {
+                "id": "b",
+                "text": "devices, drivers and their attributes"
+              },
+              {
+                "id": "c",
+                "text": "disk files"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A structured device/driver view.",
+            "lessonId": "kern-interfaces"
+          },
+          {
+            "id": "kern-pf-e2",
+            "prompt": "proc_create's parent NULL means:",
+            "options": [
+              {
+                "id": "a",
+                "text": "an error"
+              },
+              {
+                "id": "b",
+                "text": "the /proc root"
+              },
+              {
+                "id": "c",
+                "text": "sysfs"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "NULL = top of /proc.",
+            "lessonId": "kern-proccreate"
+          },
+          {
+            "id": "kern-pf-e3",
+            "prompt": "Using file_operations for a /proc entry on 6.x:",
+            "options": [
+              {
+                "id": "a",
+                "text": "works"
+              },
+              {
+                "id": "b",
+                "text": "fails to compile"
+              },
+              {
+                "id": "c",
+                "text": "is faster"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "proc_ops is required since 5.6.",
+            "lessonId": "kern-procops"
+          },
+          {
+            "id": "kern-pf-e4",
+            "prompt": "seq_file helps by handling:",
+            "options": [
+              {
+                "id": "a",
+                "text": "locking"
+              },
+              {
+                "id": "b",
+                "text": "output buffering and the read offset"
+              },
+              {
+                "id": "c",
+                "text": "interrupts"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It manages pagination.",
+            "lessonId": "kern-seqfile"
+          },
+          {
+            "id": "kern-pf-e5",
+            "prompt": "Reading a /proc file executes:",
+            "options": [
+              {
+                "id": "a",
+                "text": "nothing"
+              },
+              {
+                "id": "b",
+                "text": "kernel code live"
+              },
+              {
+                "id": "c",
+                "text": "a shell script"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The read handler runs in the kernel.",
+            "lessonId": "kern-interfaces"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "The Linux Kernel Module Programming Guide",
+          "url": "https://sysprog21.github.io/lkmpg/"
+        },
+        {
+          "title": "The Linux Kernel documentation",
+          "url": "https://docs.kernel.org/"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "kern-capstone",
+      "version": 1,
+      "order": 8,
+      "title": "8. Capstone: a read/write character driver",
+      "summary": "Combine registration, file_operations, kernel memory and locking into a complete character driver with an in-kernel buffer you can write and read back.",
+      "difficulty": "Advanced",
+      "minutes": 32,
+      "code": "#include <linux/module.h>\n#include <linux/kernel.h>\n#include <linux/init.h>\n#include <linux/fs.h>\n#include <linux/mutex.h>\n#include <linux/uaccess.h>\n\n#define DEVICE_NAME \"charbuf\"\n#define BUF_SIZE 1024\n\nstatic int major;\nstatic char buffer[BUF_SIZE];\nstatic size_t data_len;\nstatic DEFINE_MUTEX(buf_lock);     /* mutex: the copy_*_user calls below can sleep */\n\nstatic ssize_t cb_read(struct file *f, char __user *ubuf, size_t len, loff_t *off)\n{\n    ssize_t ret;\n    mutex_lock(&buf_lock);\n    ret = simple_read_from_buffer(ubuf, len, off, buffer, data_len);\n    mutex_unlock(&buf_lock);\n    return ret;\n}\n\nstatic ssize_t cb_write(struct file *f, const char __user *ubuf, size_t len, loff_t *off)\n{\n    ssize_t ret;\n    if (*off >= BUF_SIZE)\n        return -ENOSPC;           /* buffer full: fail, don't return 0 (that loops write()) */\n    mutex_lock(&buf_lock);\n    ret = simple_write_to_buffer(buffer, BUF_SIZE, off, ubuf, len);\n    if (ret >= 0)\n        data_len = *off;          /* remember how much valid data we hold */\n    mutex_unlock(&buf_lock);\n    return ret;\n}\n\nstatic const struct file_operations fops = {\n    .owner = THIS_MODULE,\n    .read = cb_read,\n    .write = cb_write,\n};\n\nstatic int __init charbuf_init(void)\n{\n    major = register_chrdev(0, DEVICE_NAME, &fops);\n    if (major < 0)\n        return major;\n    pr_info(\"charbuf: major %d; sudo mknod /dev/%s c %d 0\\n\", major, DEVICE_NAME, major);\n    return 0;\n}\n\nstatic void __exit charbuf_exit(void)\n{\n    unregister_chrdev(major, DEVICE_NAME);   /* reverse of init */\n    pr_info(\"charbuf: unloaded\\n\");\n}\n\nmodule_init(charbuf_init);\nmodule_exit(charbuf_exit);\n\nMODULE_LICENSE(\"GPL\");\nMODULE_AUTHOR(\"VoltQuest\");\nMODULE_DESCRIPTION(\"A mutex-protected in-kernel buffer character device\");\n",
+      "codeExt": "c",
+      "expected": "After creating the node, `sudo sh -c 'echo hello > /dev/charbuf'` then `sudo cat /dev/charbuf` reads back 'hello' — the in-kernel buffer stored your write, serialized by the mutex.",
+      "lessons": [
+        {
+          "id": "kern-cap-design",
+          "title": "A complete driver",
+          "paragraphs": [
+            "This capstone is a working character driver that stores what you write and gives it back when you read. It combines registration, file_operations for both read and write, a kernel buffer for state, and a mutex to serialize concurrent access.",
+            "It is the shape of a real driver: initialise resources in init, serve file operations safely, and release everything in reverse on exit. Each earlier lesson contributes one piece."
+          ],
+          "example": "init: register -> serve read/write under a lock -> exit: unregister (reverse order).",
+          "pitfall": "Returning success from init while a later resource failed to set up leaves a half-built driver that crashes on first use.",
+          "question": {
+            "id": "kern-cap-design-q",
+            "prompt": "A driver should release resources in init-failure and exit paths in:",
+            "options": [
+              {
+                "id": "a",
+                "text": "any order"
+              },
+              {
+                "id": "b",
+                "text": "reverse order of acquisition"
+              },
+              {
+                "id": "c",
+                "text": "alphabetical order"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Unwind in reverse to avoid leaks.",
+            "lessonId": "kern-cap-design"
+          }
+        },
+        {
+          "id": "kern-cap-state",
+          "title": "Holding state safely",
+          "paragraphs": [
+            "The driver keeps an in-kernel buffer and a length. Because read and write can run concurrently on an SMP kernel, both take the same mutex around the buffer and length, so a reader never sees a half-written buffer.",
+            "A mutex (not a spinlock) is mandatory here because simple_read_from_buffer and simple_write_to_buffer call copy_to_user/copy_from_user, which can sleep on a page fault."
+          ],
+          "example": "Both read and write take buf_lock; a mutex is required because copy_*_user can sleep.",
+          "pitfall": "Guarding the buffer with a spinlock would be a bug, since the copy to/from user inside the critical section can sleep.",
+          "question": {
+            "id": "kern-cap-state-q",
+            "prompt": "The buffer must be guarded by a mutex (not a spinlock) because the section:",
+            "options": [
+              {
+                "id": "a",
+                "text": "is short"
+              },
+              {
+                "id": "b",
+                "text": "calls copy_*_user, which can sleep"
+              },
+              {
+                "id": "c",
+                "text": "runs in an interrupt"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Sleeping forbids a spinlock.",
+            "lessonId": "kern-cap-state"
+          }
+        },
+        {
+          "id": "kern-cap-rw",
+          "title": "Read and write with offsets",
+          "paragraphs": [
+            "cb_write uses simple_write_to_buffer to copy user data into the kernel buffer at the current offset and advance it; the driver records data_len so a later read returns exactly what was written. cb_read uses simple_read_from_buffer to return that data and signal EOF.",
+            "These helpers correctly handle the offset pointer and partial copies, which is exactly where hand-written read/write handlers usually go wrong (infinite reads, lost bytes)."
+          ],
+          "example": "write: simple_write_to_buffer(...); data_len = *off;  read: simple_read_from_buffer(...)",
+          "pitfall": "Hand-rolling offset arithmetic in read/write instead of the simple_* helpers is the usual source of EOF and truncation bugs.",
+          "question": {
+            "id": "kern-cap-rw-q",
+            "prompt": "simple_read_from_buffer / simple_write_to_buffer manage the:",
+            "options": [
+              {
+                "id": "a",
+                "text": "major number"
+              },
+              {
+                "id": "b",
+                "text": "offset and partial copies"
+              },
+              {
+                "id": "c",
+                "text": "interrupt line"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "They handle *off and partial copies.",
+            "lessonId": "kern-cap-rw"
+          }
+        },
+        {
+          "id": "kern-cap-test",
+          "title": "Testing and safety",
+          "paragraphs": [
+            "Test the driver from user space: create the node, echo text into it, cat it back, and watch dmesg. Because a kernel bug can hang or crash the machine, always develop in a disposable VM and keep a serial or dmesg log to capture an oops.",
+            "Enabling KASAN and lockdep in the test kernel catches memory and locking bugs early. Signed-module and Secure Boot settings may need to allow your unsigned test module to load."
+          ],
+          "example": "Develop in a throwaway VM; a kernel oops can take the whole machine down.",
+          "pitfall": "Developing kernel modules on your main machine risks a hang or filesystem corruption from a single bug; use a VM.",
+          "question": {
+            "id": "kern-cap-test-q",
+            "prompt": "Kernel modules should be developed:",
+            "options": [
+              {
+                "id": "a",
+                "text": "on your main workstation"
+              },
+              {
+                "id": "b",
+                "text": "in a disposable VM"
+              },
+              {
+                "id": "c",
+                "text": "in a browser"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A bug can crash the whole box.",
+            "lessonId": "kern-cap-test"
+          }
+        }
+      ],
+      "steps": [
+        "Save as charbuf.c, build it, load it, and create the node with the printed mknod command.",
+        "Run `sudo sh -c 'echo hello > /dev/charbuf'` then `sudo cat /dev/charbuf` and confirm it returns 'hello'.",
+        "Write a longer-than-1024-byte input and confirm it writes the first 1024 bytes then fails with -ENOSPC ('No space left on device') instead of looping.",
+        "Unload the module, remove the node, and confirm clean teardown in dmesg."
+      ],
+      "challenge": {
+        "task": "Deliver a complete read/write character driver with a mutex-protected in-kernel buffer and correct teardown.",
+        "acceptance": [
+          "read and write both implemented with the simple_* helpers",
+          "A mutex guards the buffer and length",
+          "insmod -> echo -> cat round-trips, then clean rmmod"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "kern-cap-e1",
+            "prompt": "A character driver initialises resources in:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the read handler"
+              },
+              {
+                "id": "b",
+                "text": "the init function"
+              },
+              {
+                "id": "c",
+                "text": "user space"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "init sets up; exit tears down.",
+            "lessonId": "kern-cap-design"
+          },
+          {
+            "id": "kern-cap-e2",
+            "prompt": "Read and write share the buffer safely via:",
+            "options": [
+              {
+                "id": "a",
+                "text": "no lock"
+              },
+              {
+                "id": "b",
+                "text": "the same mutex"
+              },
+              {
+                "id": "c",
+                "text": "two different locks"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "One mutex serializes both.",
+            "lessonId": "kern-cap-state"
+          },
+          {
+            "id": "kern-cap-e3",
+            "prompt": "A spinlock would be wrong here because the section:",
+            "options": [
+              {
+                "id": "a",
+                "text": "is fast"
+              },
+              {
+                "id": "b",
+                "text": "can sleep (copy_*_user)"
+              },
+              {
+                "id": "c",
+                "text": "runs once"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Sleeping forbids spinlocks.",
+            "lessonId": "kern-cap-state"
+          },
+          {
+            "id": "kern-cap-e4",
+            "prompt": "The simple_* buffer helpers prevent bugs in:",
+            "options": [
+              {
+                "id": "a",
+                "text": "licensing"
+              },
+              {
+                "id": "b",
+                "text": "offset handling and EOF"
+              },
+              {
+                "id": "c",
+                "text": "logging"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "They get *off and EOF right.",
+            "lessonId": "kern-cap-rw"
+          },
+          {
+            "id": "kern-cap-e5",
+            "prompt": "The safest place to test a module is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "production"
+              },
+              {
+                "id": "b",
+                "text": "a disposable VM"
+              },
+              {
+                "id": "c",
+                "text": "a container on macOS"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A VM contains crashes.",
+            "lessonId": "kern-cap-test"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "The Linux Kernel Module Programming Guide",
+          "url": "https://sysprog21.github.io/lkmpg/"
+        },
+        {
+          "title": "The Linux Kernel documentation",
+          "url": "https://docs.kernel.org/"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    }
+  ],
+  "reviewedAt": "2026-10-12"
+}

@@ -20,9 +20,9 @@ function page(path = '/cuda') {
 }
 
 describe('CUDA content', () => {
-  it('ships eight CUDA courses with self-contained programs and valid exams', () => {
-    expect(CUDA_COURSES.length).toBe(8)
-    expect(new Set(CUDA_COURSES.map(c => c.id)).size).toBe(8)
+  it('ships ten CUDA courses with self-contained programs and valid exams', () => {
+    expect(CUDA_COURSES.length).toBe(10)
+    expect(new Set(CUDA_COURSES.map(c => c.id)).size).toBe(10)
     for (const course of CUDA_COURSES) {
       expect(typeof course.version).toBe('number')
       expect(course.lessons).toHaveLength(4)
@@ -41,7 +41,7 @@ describe('CUDA track page', () => {
   it('lists the courses on the hub', () => {
     page('/cuda')
     expect(screen.getByRole('heading', { name: /Program NVIDIA GPUs with CUDA/ })).toBeTruthy()
-    expect(screen.getByText(/8 courses found/)).toBeTruthy()
+    expect(screen.getByText(/10 courses found/)).toBeTruthy()
   })
   it('renders a course and downloads its .cu source', () => {
     page('/cuda/cuda-intro')

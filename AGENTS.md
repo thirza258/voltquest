@@ -20,6 +20,7 @@ and what to do next. The specifications in `docs/` remain binding.
 | `docs/WINUI.md` | Before editing C++ / WinUI desktop courses, native source packs or their verification. |
 | `docs/AVR.md` | Before editing the AVR assembly track, the assembler/simulator engine or the AVR IDE. |
 | `docs/CUDA.md`, `docs/PYTORCH.md` | Before editing the CUDA/PyTorch reading tracks or the shared `ReadingTrack` shell. |
+| `docs/KERNEL.md`, `docs/LOADBALANCER.md`, `docs/DISTRIBUTED.md` | Before editing the Linux-kernel, load-balancing or distributed-systems reading tracks. |
 | `docs/COMMUNITY.md` | Before editing community discussions, their moderation limits or post rendering. |
 
 ## 1. Current build, not the target product
@@ -59,12 +60,22 @@ The course directory (shown on both Courses and Tutorials), the home footer (CUD
 sitemap link to three tracks added on 2026-10-11: **`/avr`**
 (eight 8-bit AVR assembly courses on an in-browser assembler + ATmega simulator, with the Computer
 Architecture sandbox retrofitted to the same IDE at `/sandbox?bench=computer&asm=1`), **`/cuda`**
-(eight reading-only CUDA C++ GPU courses) and **`/pytorch`** (ten reading-only PyTorch courses, basics
+(ten reading-only CUDA C++ GPU courses) and **`/pytorch`** (ten reading-only PyTorch courses, basics
 to a full ML pipeline). CUDA and PyTorch share the content-driven `features/courses/ReadingTrack.jsx`
 hub/course shell; each course has four checkpointed sections, a guided lab, one complete self-contained
 program (copied or downloaded, never run in the browser), a challenge and a five-question 80% exam.
 Progress, rewards, localization and certificates reuse the existing systems. There is no GPU, Python or
 AVR hardware in the browser. Read `docs/AVR.md`, `docs/CUDA.md` and `docs/PYTORCH.md` for boundaries.
+
+Three more reading-only tracks were added on 2026-10-12, all on the same `ReadingTrack` shell:
+**`/kernel`** (eight Linux kernel-module courses; the modules compile against Linux 6.8 headers but are not
+built or run in the browser), **`/loadbalancer`** (eight courses — NGINX, HAProxy, Kubernetes Services +
+MetalLB, and the Gateway API, since the community ingress-nginx controller retired in March 2026), and
+**`/distributed`** (ten courses with runnable, stdlib-only Python simulations that a backend test executes).
+Each has four checkpointed sections, a guided lab, one downloadable artifact (`.c`, a config/manifest, or
+`.py` — set per course), a challenge and a five-question 80% exam, with certificates. There is no kernel,
+cluster or distributed runtime in the browser. Read `docs/KERNEL.md`, `docs/LOADBALANCER.md` and
+`docs/DISTRIBUTED.md` for boundaries.
 
 There are **41 firmware tutorials**, ordered Easy → Intermediate → Hard, with editable code,
 real simulation, explanations of program and hardware concepts, exact breadboard placement,
@@ -160,6 +171,41 @@ their explanation or timing is correct. `features/tutorials/programming.test.js`
 numeric output, command dispatch and LED state transitions on all four C++ boards.
 
 ## 3. Completed in this continuation
+
+### CUDA track expanded to 10 courses (2026-10-12)
+
+The CUDA track went from 8 to 10 courses to match PyTorch's depth with more advanced material: added
+**`cuda-libraries`** (Thrust + cuBLAS) and **`cuda-multigpu`** (device enumeration, peer-to-peer, NCCL) before
+the capstone (streams stays 7, capstone → 10). Both are complete, self-contained `.cu` programs; all ten CUDA
+programs compile with `nvcc` 12.6 in an `nvidia/cuda` container (10/10, no errors — compiling needs no GPU),
+and both new pages render in Chromium with no console errors. Counts updated everywhere: `cuda.test.jsx`
+(10), hub metrics and the `/courses` card (10 courses · 40 checkpoints · 10 exams), certificate catalogue
+(now **214**, `test_certificates.py` bumped), sitemap (**506 URLs**), `docs/CUDA.md`, and Indonesian chrome.
+Full suite **1,803 frontend / 123 backend pass**.
+
+### Kernel, load-balancing and distributed-systems tracks (2026-10-12)
+
+Three more reading-only tracks on the shared `features/courses/ReadingTrack.jsx` shell, all beyond the PRD.
+**`/kernel`** (`content/kernel.json`, 8 courses) teaches Linux kernel modules with real, idiomatic C
+(`register_chrdev`, `simple_read_from_buffer`/`simple_write_to_buffer`, `proc_ops`, mutexes around
+`copy_*_user`, reverse-order cleanup). **`/loadbalancer`** (`content/loadbalancer.json`, 8 courses) covers
+L4/L7, NGINX, HAProxy, Kubernetes Services + MetalLB and the **Gateway API** (ingress-nginx retired March
+2026); each course carries its own `codeExt` (`conf`/`cfg`/`yaml`). **`/distributed`**
+(`content/distributed.json`, 10 courses) uses runnable, stdlib-only Python simulations (clocks, quorums,
+LWW, Raft election, consistent hashing, 2PC/sagas, a sharded replicated KV store).
+
+`ReadingTrack` gained a per-course `codeExt` (`course.codeExt ?? track.codeExt`) and a per-track `codeNote`.
+Verification used the real tools: all **8 kernel modules compiled** out-of-tree against Linux 6.8 headers in
+a container (8 `.ko`, no errors); the **NGINX and HAProxy configs load and balance** across `traefik/whoami`
+backends in Docker (`nginx -t` passes for every config incl. all algorithm variants; end-to-end alternates
+backends); the built-in **Kubernetes** capstone passes `kubectl --dry-run=client`, and the MetalLB/Gateway
+API CRD manifests are YAML-parsed and structurally checked only; and
+`backend/tests/test_distributed_content.py` **executes all 10 Python programs** (exit 0, stdlib-only,
+deterministic). A new `systems` domain groups the three in the `/courses` directory
+(`ALL_COURSES` now 16). Wiring: routes, nav, sitemap (504 URLs), certificate catalogue (now **212** courses),
+40 Indonesian chrome strings, and three UI test files. Full suite **1,803 frontend tests in 107 files / 123
+backend tests pass**; `eslint src` clean apart from the pre-existing `qt/samples.js` errors; build **615.6
+KiB** eager gzip (new routes lazy). See CONTRACTS.md §27, KERNEL.md, LOADBALANCER.md, DISTRIBUTED.md.
 
 ### AVR assembly track and CUDA / PyTorch reading tracks (2026-10-11)
 

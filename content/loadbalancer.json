@@ -1,0 +1,2189 @@
+{
+  "courses": [
+    {
+      "id": "lb-fundamentals",
+      "version": 1,
+      "order": 1,
+      "title": "1. Load balancing fundamentals: L4 vs L7",
+      "summary": "What a load balancer does, the difference between layer-4 and layer-7 balancing, and the reverse-proxy model behind every modern web stack.",
+      "difficulty": "Fundamental",
+      "minutes": 24,
+      "code": "# nginx.conf -- the simplest reverse-proxy load balancer: one front door, two\n# backends. nginx terminates the client connection and forwards to a backend.\nevents {}\n\nhttp {\n    upstream app {\n        server web1:80;        # backend 1\n        server web2:80;        # backend 2 (round-robin across them by default)\n    }\n\n    server {\n        listen 80;             # the single address clients talk to\n\n        location / {\n            proxy_pass http://app;             # forward to the upstream group\n            proxy_set_header Host $host;       # preserve the original Host header\n        }\n    }\n}\n",
+      "codeExt": "conf",
+      "expected": "Run behind two backends on a Docker network: repeated `curl localhost:8080` responses alternate between web1 and web2, proving traffic is spread across both.",
+      "lessons": [
+        {
+          "id": "lb-what",
+          "title": "What a load balancer does",
+          "paragraphs": [
+            "A load balancer is the single entry point that spreads incoming requests across a pool of backend servers. It lets you scale horizontally (add servers instead of a bigger one), survive a server failing, and deploy without downtime.",
+            "Clients only ever see the load balancer's address; the pool behind it can grow, shrink or be replaced without the client knowing. This indirection is the foundation of every scalable web service."
+          ],
+          "example": "Clients -> one LB address -> many interchangeable backends behind it.",
+          "pitfall": "Pointing clients directly at individual backends defeats the purpose: you lose failover and can't scale or redeploy transparently.",
+          "question": {
+            "id": "lb-what-q",
+            "prompt": "A load balancer lets you scale by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "buying one bigger server"
+              },
+              {
+                "id": "b",
+                "text": "adding interchangeable backends behind one address"
+              },
+              {
+                "id": "c",
+                "text": "caching only"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Horizontal scale behind one entry point.",
+            "lessonId": "lb-what"
+          }
+        },
+        {
+          "id": "lb-l4l7",
+          "title": "Layer 4 vs layer 7",
+          "paragraphs": [
+            "A layer-4 (transport) load balancer routes by IP address and TCP/UDP port without looking inside the connection. It is fast and protocol-agnostic but cannot make decisions based on the request's content.",
+            "A layer-7 (application) load balancer terminates the connection and understands HTTP, so it can route by hostname, path, header or cookie, do TLS termination, and rewrite requests. It is more capable but does more work per request."
+          ],
+          "example": "L4: route by IP:port (fast). L7: route by Host/path/header (smart).",
+          "pitfall": "Expecting a pure L4 balancer to route by URL path is impossible — it never parses HTTP; you need L7 for that.",
+          "question": {
+            "id": "lb-l4l7-q",
+            "prompt": "Routing by URL path or hostname requires:",
+            "options": [
+              {
+                "id": "a",
+                "text": "layer 4"
+              },
+              {
+                "id": "b",
+                "text": "layer 7"
+              },
+              {
+                "id": "c",
+                "text": "no load balancer"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Only L7 parses HTTP content.",
+            "lessonId": "lb-l4l7"
+          }
+        },
+        {
+          "id": "lb-proxy",
+          "title": "The reverse-proxy model",
+          "paragraphs": [
+            "A reverse proxy sits in front of servers and forwards client requests to them, the opposite of a forward proxy that sits in front of clients. An L7 load balancer is a reverse proxy that also chooses among several backends.",
+            "Because it terminates the client connection, a reverse proxy can add TLS, compression, caching, request buffering and header rewriting in one place, centralising cross-cutting concerns."
+          ],
+          "example": "A reverse proxy terminates the client connection and forwards to a chosen backend.",
+          "pitfall": "Forgetting to forward the real client address (X-Forwarded-For) makes every backend log see the proxy's IP instead of the user's.",
+          "question": {
+            "id": "lb-proxy-q",
+            "prompt": "A reverse proxy sits in front of:",
+            "options": [
+              {
+                "id": "a",
+                "text": "clients"
+              },
+              {
+                "id": "b",
+                "text": "servers"
+              },
+              {
+                "id": "c",
+                "text": "databases only"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It fronts the backend servers.",
+            "lessonId": "lb-proxy"
+          }
+        },
+        {
+          "id": "lb-why",
+          "title": "Availability and scaling",
+          "paragraphs": [
+            "With a pool behind the balancer, one backend failing just means its share of traffic shifts to the others — if the balancer detects the failure. Rolling deployments drain one backend at a time so users never hit a server mid-restart.",
+            "The load balancer itself must not become a single point of failure: production setups run it redundantly (active-passive or active-active) with a floating/virtual IP or a cloud-managed LB."
+          ],
+          "example": "The LB removes single points of failure among backends, but must itself be redundant.",
+          "pitfall": "Running a single load-balancer instance recreates the single point of failure you were trying to remove.",
+          "question": {
+            "id": "lb-why-q",
+            "prompt": "To avoid being a single point of failure, the LB itself should be:",
+            "options": [
+              {
+                "id": "a",
+                "text": "run once"
+              },
+              {
+                "id": "b",
+                "text": "run redundantly"
+              },
+              {
+                "id": "c",
+                "text": "disabled"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Active-passive or active-active.",
+            "lessonId": "lb-why"
+          }
+        }
+      ],
+      "steps": [
+        "Create a Docker network and two backends: `docker network create lb`, then `docker run -d --name web1 --network lb traefik/whoami` and the same for web2.",
+        "Save the downloaded lb-fundamentals.conf, then start the balancer mounting it: `docker run -d --name lb --network lb -p 8080:80 -v $PWD/lb-fundamentals.conf:/etc/nginx/nginx.conf:ro nginx:1.27-alpine`.",
+        "Run `curl -s localhost:8080` several times and watch the responding backend alternate.",
+        "Stop web1 (`docker stop web1`) and observe requests still succeed via web2."
+      ],
+      "challenge": {
+        "task": "Stand up a two-backend reverse-proxy load balancer with NGINX and show traffic spreading across both.",
+        "acceptance": [
+          "One LB address fronts two backends",
+          "Repeated requests hit different backends",
+          "Explain L4 vs L7 for your setup"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "lb-f-e1",
+            "prompt": "Clients connect to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "each backend directly"
+              },
+              {
+                "id": "b",
+                "text": "the load balancer's single address"
+              },
+              {
+                "id": "c",
+                "text": "the database"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "One entry point hides the pool.",
+            "lessonId": "lb-what"
+          },
+          {
+            "id": "lb-f-e2",
+            "prompt": "A layer-4 balancer routes by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "URL path"
+              },
+              {
+                "id": "b",
+                "text": "IP address and port"
+              },
+              {
+                "id": "c",
+                "text": "cookies"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Transport-level, not content.",
+            "lessonId": "lb-l4l7"
+          },
+          {
+            "id": "lb-f-e3",
+            "prompt": "TLS termination and path routing need:",
+            "options": [
+              {
+                "id": "a",
+                "text": "layer 7"
+              },
+              {
+                "id": "b",
+                "text": "layer 4"
+              },
+              {
+                "id": "c",
+                "text": "DNS only"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "L7 understands HTTP.",
+            "lessonId": "lb-l4l7"
+          },
+          {
+            "id": "lb-f-e4",
+            "prompt": "A reverse proxy terminates the:",
+            "options": [
+              {
+                "id": "a",
+                "text": "backend connection only"
+              },
+              {
+                "id": "b",
+                "text": "client connection and forwards on"
+              },
+              {
+                "id": "c",
+                "text": "database connection"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It fronts servers.",
+            "lessonId": "lb-proxy"
+          },
+          {
+            "id": "lb-f-e5",
+            "prompt": "Rolling deployments avoid downtime by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "restarting all backends at once"
+              },
+              {
+                "id": "b",
+                "text": "draining one backend at a time"
+              },
+              {
+                "id": "c",
+                "text": "disabling the LB"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Drain, update, return to pool.",
+            "lessonId": "lb-why"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "NGINX — HTTP load balancing",
+          "url": "https://nginx.org/en/docs/http/load_balancing.html"
+        },
+        {
+          "title": "Kubernetes — Service",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/service/"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "lb-algorithms",
+      "version": 1,
+      "order": 2,
+      "title": "2. Balancing algorithms and session affinity",
+      "summary": "Round-robin, weighted, least-connections and hashing, plus consistent hashing and sticky sessions for stateful backends.",
+      "difficulty": "Fundamental",
+      "minutes": 24,
+      "code": "# nginx.conf -- balancing policies. Round-robin is the DEFAULT; uncomment ONE\n# alternative. Weights and a backup server are shown on the server lines.\nevents {}\n\nhttp {\n    upstream app {\n        # Uncomment ONE policy. NOTE: ip_hash and hash do NOT allow a 'backup' server.\n        # least_conn;                     # send to the backend with fewest active conns\n        # ip_hash;                        # sticky by client IP (simple session affinity)\n        # hash $request_uri consistent;   # consistent hashing by URL (cache-friendly)\n\n        server web1:80 weight=3;          # weighted: web1 gets ~3x the share\n        server web2:80 weight=1;          # (a 'backup' server works only with round-robin/least_conn)\n    }\n\n    server {\n        listen 80;\n        location / { proxy_pass http://app; }\n    }\n}\n",
+      "codeExt": "conf",
+      "expected": "With the weights above and round-robin, roughly three of every four requests hit web1 and one hits web2 (a 3:1 split).",
+      "lessons": [
+        {
+          "id": "lb-rr",
+          "title": "Round-robin and weighted",
+          "paragraphs": [
+            "Round-robin sends each new request to the next backend in turn — simple, even, and the default in most balancers. Weighted round-robin biases the rotation so more powerful backends receive proportionally more traffic.",
+            "Round-robin assumes requests cost about the same. When some requests are far heavier than others, an even rotation can still overload one backend."
+          ],
+          "example": "weight=3 on a server gives it roughly three times the share of a weight=1 peer.",
+          "pitfall": "Using plain round-robin when request costs vary wildly can pile expensive requests onto one node despite the even count.",
+          "question": {
+            "id": "lb-rr-q",
+            "prompt": "Weighted round-robin is used when backends:",
+            "options": [
+              {
+                "id": "a",
+                "text": "are identical"
+              },
+              {
+                "id": "b",
+                "text": "have different capacities"
+              },
+              {
+                "id": "c",
+                "text": "are all down"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Weights match capacity.",
+            "lessonId": "lb-rr"
+          }
+        },
+        {
+          "id": "lb-leastconn",
+          "title": "Least-connections and least-time",
+          "paragraphs": [
+            "Least-connections sends each request to the backend currently handling the fewest active connections, adapting to real load rather than assuming requests are equal. It suits workloads with varying request durations.",
+            "Variants like least-time (NGINX Plus/other proxies) also factor in response latency. These adaptive policies beat round-robin when request cost is uneven."
+          ],
+          "example": "least_conn routes to whichever backend has the fewest in-flight requests right now.",
+          "pitfall": "Least-connections across backends with very different capacities still needs weights, or the small node gets overwhelmed at equal connection counts.",
+          "question": {
+            "id": "lb-leastconn-q",
+            "prompt": "Least-connections adapts to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a fixed rotation"
+              },
+              {
+                "id": "b",
+                "text": "current active load per backend"
+              },
+              {
+                "id": "c",
+                "text": "the client IP"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It tracks in-flight connections.",
+            "lessonId": "lb-leastconn"
+          }
+        },
+        {
+          "id": "lb-hash",
+          "title": "Hashing and consistent hashing",
+          "paragraphs": [
+            "Hash-based policies route by hashing a key (client IP, URL, header) so the same key always lands on the same backend — useful for cache locality. Plain hash%N, though, reshuffles almost every key when the backend count changes.",
+            "Consistent hashing fixes this: adding or removing a backend remaps only a small fraction of keys, so a cache tier stays mostly warm during scaling. NGINX exposes it with `hash <key> consistent`."
+          ],
+          "example": "hash $request_uri consistent;  # same URL -> same backend, minimal remap on change",
+          "pitfall": "Using plain (non-consistent) hashing for a cache tier causes a near-total cache miss storm whenever you add or remove a node.",
+          "question": {
+            "id": "lb-hash-q",
+            "prompt": "Consistent hashing is preferred for caches because on scaling it:",
+            "options": [
+              {
+                "id": "a",
+                "text": "remaps all keys"
+              },
+              {
+                "id": "b",
+                "text": "remaps only a few keys"
+              },
+              {
+                "id": "c",
+                "text": "disables caching"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It keeps most keys (and caches) in place.",
+            "lessonId": "lb-hash"
+          }
+        },
+        {
+          "id": "lb-affinity",
+          "title": "Session affinity (sticky sessions)",
+          "paragraphs": [
+            "A stateful backend that keeps a user's session in local memory needs that user's requests to keep returning to it — session affinity. It is done by hashing the client IP (ip_hash) or by a cookie the balancer sets and reads.",
+            "Stickiness undermines even balancing and complicates failover (a dead backend loses its sessions). The better long-term fix is to make backends stateless by storing session state in a shared store (Redis, a database)."
+          ],
+          "example": "ip_hash or a sticky cookie pins a user to one backend; stateless backends avoid the need.",
+          "pitfall": "Relying on sticky sessions as your scaling strategy means a backend failure logs out everyone pinned to it.",
+          "question": {
+            "id": "lb-affinity-q",
+            "prompt": "The cleanest alternative to sticky sessions is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "more stickiness"
+              },
+              {
+                "id": "b",
+                "text": "stateless backends with shared session storage"
+              },
+              {
+                "id": "c",
+                "text": "fewer backends"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Externalize session state.",
+            "lessonId": "lb-affinity"
+          }
+        }
+      ],
+      "steps": [
+        "Save the downloaded lb-algorithms.conf and run nginx with it mounted at /etc/nginx/nginx.conf (`-v $PWD/lb-algorithms.conf:/etc/nginx/nginx.conf:ro`), behind two whoami backends (web1, web2) on a Docker network.",
+        "With the default (weighted round-robin), curl repeatedly and confirm web1 answers about 3x as often as web2.",
+        "Uncomment `ip_hash` and confirm one client keeps hitting the same backend.",
+        "Uncomment `hash $request_uri consistent` and confirm the same URL always goes to the same backend."
+      ],
+      "challenge": {
+        "task": "Compare at least three balancing policies on the same backend pool and describe when each is appropriate.",
+        "acceptance": [
+          "Demonstrate weighted round-robin ratios",
+          "Demonstrate affinity (ip_hash) pinning a client",
+          "Explain consistent hashing's advantage for caches"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "lb-a-e1",
+            "prompt": "The default balancing policy in most proxies is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "least-connections"
+              },
+              {
+                "id": "b",
+                "text": "round-robin"
+              },
+              {
+                "id": "c",
+                "text": "ip_hash"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Simple even rotation.",
+            "lessonId": "lb-rr"
+          },
+          {
+            "id": "lb-a-e2",
+            "prompt": "Least-connections suits workloads with:",
+            "options": [
+              {
+                "id": "a",
+                "text": "identical request costs"
+              },
+              {
+                "id": "b",
+                "text": "varying request durations"
+              },
+              {
+                "id": "c",
+                "text": "no traffic"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It adapts to real load.",
+            "lessonId": "lb-leastconn"
+          },
+          {
+            "id": "lb-a-e3",
+            "prompt": "Plain hash%N on scaling remaps:",
+            "options": [
+              {
+                "id": "a",
+                "text": "few keys"
+              },
+              {
+                "id": "b",
+                "text": "almost all keys"
+              },
+              {
+                "id": "c",
+                "text": "no keys"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A full reshuffle; use consistent hashing.",
+            "lessonId": "lb-hash"
+          },
+          {
+            "id": "lb-a-e4",
+            "prompt": "ip_hash provides:",
+            "options": [
+              {
+                "id": "a",
+                "text": "TLS"
+              },
+              {
+                "id": "b",
+                "text": "session affinity by client IP"
+              },
+              {
+                "id": "c",
+                "text": "compression"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Sticky routing per client.",
+            "lessonId": "lb-affinity"
+          },
+          {
+            "id": "lb-a-e5",
+            "prompt": "Sticky sessions complicate:",
+            "options": [
+              {
+                "id": "a",
+                "text": "failover and even balancing"
+              },
+              {
+                "id": "b",
+                "text": "TLS"
+              },
+              {
+                "id": "c",
+                "text": "logging"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "A dead backend loses its sessions.",
+            "lessonId": "lb-affinity"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "NGINX — HTTP load balancing",
+          "url": "https://nginx.org/en/docs/http/load_balancing.html"
+        },
+        {
+          "title": "HAProxy documentation",
+          "url": "https://docs.haproxy.org/"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "lb-health",
+      "version": 1,
+      "order": 3,
+      "title": "3. Health checks, timeouts and resilience",
+      "summary": "Active vs passive health checks, timeouts and retries, connection draining, and circuit breaking so one sick backend doesn't sink the service.",
+      "difficulty": "Intermediate",
+      "minutes": 26,
+      "code": "# nginx.conf -- resilience with OSS NGINX: PASSIVE health checks plus timeouts and\n# fail-over. (ACTIVE health checks via the `health_check` directive require NGINX\n# Plus or a third-party module; OSS ejects a backend only after real failures.)\nevents {}\n\nhttp {\n    upstream app {\n        server web1:80 max_fails=3 fail_timeout=30s;   # eject after 3 fails for 30s\n        server web2:80 max_fails=3 fail_timeout=30s;\n    }\n\n    server {\n        listen 80;\n        location / {\n            proxy_pass http://app;\n            proxy_connect_timeout 2s;                  # cap time to connect\n            proxy_read_timeout 5s;                     # cap time to first/next byte\n            proxy_next_upstream error timeout http_502 http_503;  # retry the next backend\n            proxy_next_upstream_tries 2;               # bound total retries\n        }\n    }\n}\n",
+      "codeExt": "conf",
+      "expected": "A backend that errors or times out is retried on another backend and, after 3 failures, ejected for 30s; healthy traffic keeps flowing without the client seeing the failure.",
+      "lessons": [
+        {
+          "id": "lb-health-checks",
+          "title": "Active vs passive health checks",
+          "paragraphs": [
+            "Passive health checks observe real traffic: if a backend returns errors or times out enough times, the balancer stops sending it requests for a while. NGINX open-source uses this model (max_fails / fail_timeout).",
+            "Active health checks probe each backend on a schedule (e.g. GET /healthz) regardless of traffic, so a dead backend is detected before a user hits it. HAProxy does this in open source; in NGINX it requires Plus or a module."
+          ],
+          "example": "Passive: learn from failed real requests. Active: probe /healthz on a timer.",
+          "pitfall": "Assuming open-source NGINX does active health checks is wrong — it only has passive; HAProxy OSS has active checks.",
+          "question": {
+            "id": "lb-health-checks-q",
+            "prompt": "Open-source NGINX health checking is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "active (scheduled probes)"
+              },
+              {
+                "id": "b",
+                "text": "passive (learned from failed traffic)"
+              },
+              {
+                "id": "c",
+                "text": "none"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Active checks need Plus/a module.",
+            "lessonId": "lb-health-checks"
+          }
+        },
+        {
+          "id": "lb-probes",
+          "title": "Readiness vs liveness",
+          "paragraphs": [
+            "A readiness check answers 'can this instance take traffic right now?' — fail it and the balancer stops routing, without killing the instance. A liveness check answers 'is this instance wedged and need restarting?'.",
+            "Separating them matters: a backend warming a cache should be not-ready (kept out of rotation) but still alive (not restarted). Conflating them causes needless restart loops."
+          ],
+          "example": "Readiness -> remove from rotation; liveness -> restart the instance.",
+          "pitfall": "Using a liveness check for a slow-starting app restarts it mid-warmup forever; it should fail readiness instead.",
+          "question": {
+            "id": "lb-probes-q",
+            "prompt": "A backend warming up should fail:",
+            "options": [
+              {
+                "id": "a",
+                "text": "liveness (restart it)"
+              },
+              {
+                "id": "b",
+                "text": "readiness (keep it out of rotation)"
+              },
+              {
+                "id": "c",
+                "text": "both"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Not ready, but still alive.",
+            "lessonId": "lb-probes"
+          }
+        },
+        {
+          "id": "lb-timeouts",
+          "title": "Timeouts and retries",
+          "paragraphs": [
+            "Every hop needs bounded timeouts: connect, send and read. Without them a single stuck backend ties up balancer resources until exhaustion. On a failed or timed-out request, the balancer can retry the next backend.",
+            "Retries must be bounded and, ideally, only for idempotent requests — blindly retrying a non-idempotent POST can double-submit. A retry budget prevents a retry storm from amplifying an outage."
+          ],
+          "example": "proxy_connect_timeout / proxy_read_timeout + a bounded proxy_next_upstream_tries.",
+          "pitfall": "Retrying non-idempotent requests (like a payment POST) on timeout can charge the customer twice.",
+          "question": {
+            "id": "lb-timeouts-q",
+            "prompt": "Automatic retries are safe mainly for:",
+            "options": [
+              {
+                "id": "a",
+                "text": "all requests"
+              },
+              {
+                "id": "b",
+                "text": "idempotent requests"
+              },
+              {
+                "id": "c",
+                "text": "no requests"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Non-idempotent retries can duplicate effects.",
+            "lessonId": "lb-timeouts"
+          }
+        },
+        {
+          "id": "lb-drain",
+          "title": "Draining and circuit breaking",
+          "paragraphs": [
+            "Connection draining removes a backend from rotation for new requests while letting in-flight requests finish, so a deploy or scale-down doesn't drop live connections. It is the graceful counterpart to adding a backend.",
+            "A circuit breaker trips when a backend's error rate is high, failing fast instead of hammering it, then probes for recovery. Together, draining and circuit breaking keep one sick backend from degrading the whole service."
+          ],
+          "example": "Drain = finish in-flight, accept no new; circuit breaker = fail fast on a sick backend.",
+          "pitfall": "Scaling down a backend without draining it kills every in-flight request on that instance.",
+          "question": {
+            "id": "lb-drain-q",
+            "prompt": "Connection draining lets a backend being removed:",
+            "options": [
+              {
+                "id": "a",
+                "text": "drop all connections"
+              },
+              {
+                "id": "b",
+                "text": "finish in-flight requests while taking no new ones"
+              },
+              {
+                "id": "c",
+                "text": "restart"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Graceful removal.",
+            "lessonId": "lb-drain"
+          }
+        }
+      ],
+      "steps": [
+        "Save the downloaded lb-health.conf and run nginx with it mounted at /etc/nginx/nginx.conf (`-v $PWD/lb-health.conf:/etc/nginx/nginx.conf:ro`), behind two whoami backends on a Docker network.",
+        "Stop web1 and confirm requests fail over to web2 and succeed (watch for no client errors).",
+        "Add an artificial delay to a backend and confirm proxy_read_timeout fails over before the client hangs.",
+        "Explain why only idempotent requests should be retried automatically."
+      ],
+      "challenge": {
+        "task": "Configure timeouts, bounded retries and passive health checks so a failed backend is bypassed transparently.",
+        "acceptance": [
+          "Timeouts cap connect and read",
+          "A failed backend is retried on another and ejected",
+          "Explain active vs passive and idempotent retries"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "lb-h-e1",
+            "prompt": "Active health checks probe backends:",
+            "options": [
+              {
+                "id": "a",
+                "text": "only on failure"
+              },
+              {
+                "id": "b",
+                "text": "on a schedule regardless of traffic"
+              },
+              {
+                "id": "c",
+                "text": "never"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Scheduled probes detect dead backends early.",
+            "lessonId": "lb-health-checks"
+          },
+          {
+            "id": "lb-h-e2",
+            "prompt": "Failing a readiness check causes the backend to be:",
+            "options": [
+              {
+                "id": "a",
+                "text": "restarted"
+              },
+              {
+                "id": "b",
+                "text": "removed from rotation"
+              },
+              {
+                "id": "c",
+                "text": "deleted"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Kept out of traffic, not killed.",
+            "lessonId": "lb-probes"
+          },
+          {
+            "id": "lb-h-e3",
+            "prompt": "A request with no timeout risks:",
+            "options": [
+              {
+                "id": "a",
+                "text": "faster responses"
+              },
+              {
+                "id": "b",
+                "text": "resource exhaustion from stuck requests"
+              },
+              {
+                "id": "c",
+                "text": "nothing"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Stuck requests tie up the LB.",
+            "lessonId": "lb-timeouts"
+          },
+          {
+            "id": "lb-h-e4",
+            "prompt": "Draining a backend means it:",
+            "options": [
+              {
+                "id": "a",
+                "text": "drops in-flight requests"
+              },
+              {
+                "id": "b",
+                "text": "finishes in-flight, accepts no new"
+              },
+              {
+                "id": "c",
+                "text": "doubles capacity"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Graceful removal.",
+            "lessonId": "lb-drain"
+          },
+          {
+            "id": "lb-h-e5",
+            "prompt": "HAProxy open source supports:",
+            "options": [
+              {
+                "id": "a",
+                "text": "no health checks"
+              },
+              {
+                "id": "b",
+                "text": "active health checks"
+              },
+              {
+                "id": "c",
+                "text": "only passive"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "`server ... check` is active in OSS.",
+            "lessonId": "lb-health-checks"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "NGINX — HTTP load balancing",
+          "url": "https://nginx.org/en/docs/http/load_balancing.html"
+        },
+        {
+          "title": "HAProxy documentation",
+          "url": "https://docs.haproxy.org/"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "lb-nginx",
+      "version": 1,
+      "order": 4,
+      "title": "4. Hands-on: NGINX reverse proxy and upstreams",
+      "summary": "Build a complete NGINX load balancer in Docker: an upstream group, proxy headers, timeouts and fail-over, tested against real backends.",
+      "difficulty": "Intermediate",
+      "minutes": 28,
+      "code": "# nginx.conf -- a complete reverse-proxy load balancer. Mount it at\n# /etc/nginx/nginx.conf and run the official nginx image on the same Docker\n# network as the backends (web1, web2). `events {}` is mandatory at the top level.\nevents {\n    worker_connections 1024;\n}\n\nhttp {\n    upstream backend {\n        least_conn;                                 # fewest active connections wins\n        server web1:80 max_fails=3 fail_timeout=30s;\n        server web2:80 max_fails=3 fail_timeout=30s;\n    }\n\n    server {\n        listen 80;\n        server_name _;\n\n        location / {\n            proxy_pass http://backend;\n            proxy_set_header Host $host;\n            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n            proxy_set_header X-Forwarded-Proto $scheme;\n            proxy_connect_timeout 2s;\n            proxy_read_timeout 5s;\n            proxy_next_upstream error timeout http_502 http_503;\n        }\n\n        location /healthz {\n            return 200 \"ok\\n\";                      # the LB's own liveness endpoint\n        }\n    }\n}\n",
+      "codeExt": "conf",
+      "expected": "`docker exec lb nginx -t` reports the config is valid; `curl localhost:8080` alternates between web1 and web2 by least-connections, and `curl localhost:8080/healthz` returns ok.",
+      "lessons": [
+        {
+          "id": "lb-nginx-structure",
+          "title": "The nginx.conf structure",
+          "paragraphs": [
+            "An NGINX config is a tree of directives and blocks. The top level needs an `events {}` block (connection processing) and an `http {}` block for web traffic. Inside http you define `upstream` groups and `server` blocks (virtual servers).",
+            "A `server` block listens on a port and contains `location` blocks that match request paths. Omitting the mandatory `events {}` block makes `nginx -t` reject the file."
+          ],
+          "example": "Top level: events { } and http { }; inside http: upstream { } and server { }.",
+          "pitfall": "A full nginx.conf without a top-level `events {}` block fails `nginx -t` with an 'events directive is not allowed / missing' style error.",
+          "question": {
+            "id": "lb-nginx-structure-q",
+            "prompt": "A complete nginx.conf must contain a top-level:",
+            "options": [
+              {
+                "id": "a",
+                "text": "database block"
+              },
+              {
+                "id": "b",
+                "text": "events {} block"
+              },
+              {
+                "id": "c",
+                "text": "main() function"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "events {} is mandatory.",
+            "lessonId": "lb-nginx-structure"
+          }
+        },
+        {
+          "id": "lb-nginx-upstream",
+          "title": "Upstream groups",
+          "paragraphs": [
+            "An `upstream` block names a pool of backends and sets the policy; `proxy_pass http://<name>` in a location forwards to that pool. Each `server` line can carry a weight, a backup flag and passive health parameters.",
+            "NGINX resolves upstream server hostnames when it loads the config, so on a Docker network the backend names must be resolvable (the containers must exist on the same network)."
+          ],
+          "example": "upstream backend { least_conn; server web1:80; server web2:80; }  proxy_pass http://backend;",
+          "pitfall": "Referencing a backend hostname that NGINX can't resolve at load time makes the whole config fail to start.",
+          "question": {
+            "id": "lb-nginx-upstream-q",
+            "prompt": "proxy_pass http://backend forwards to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a single server"
+              },
+              {
+                "id": "b",
+                "text": "the named upstream pool"
+              },
+              {
+                "id": "c",
+                "text": "the client"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The upstream group.",
+            "lessonId": "lb-nginx-upstream"
+          }
+        },
+        {
+          "id": "lb-nginx-headers",
+          "title": "Proxy headers",
+          "paragraphs": [
+            "When NGINX proxies a request it should pass through the information the backend needs: `Host` (the original hostname), `X-Forwarded-For` (the client's real IP, appended) and `X-Forwarded-Proto` (http/https). Without them, backends see the proxy, not the user.",
+            "These headers are how backends do correct logging, generate correct absolute URLs, and know whether the original request was HTTPS even after TLS was terminated at the proxy."
+          ],
+          "example": "proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;",
+          "pitfall": "Forgetting X-Forwarded-Proto makes an app behind a TLS-terminating proxy build http:// redirect URLs and create redirect loops.",
+          "question": {
+            "id": "lb-nginx-headers-q",
+            "prompt": "X-Forwarded-For carries the:",
+            "options": [
+              {
+                "id": "a",
+                "text": "proxy's IP"
+              },
+              {
+                "id": "b",
+                "text": "client's real IP"
+              },
+              {
+                "id": "c",
+                "text": "backend's IP"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The original client address.",
+            "lessonId": "lb-nginx-headers"
+          }
+        },
+        {
+          "id": "lb-nginx-run",
+          "title": "Running and testing it",
+          "paragraphs": [
+            "You run NGINX in Docker by mounting your nginx.conf into the official image on the same network as the backends: `-v $PWD/nginx.conf:/etc/nginx/nginx.conf:ro`. Always validate first with `nginx -t` before reloading.",
+            "`nginx -s reload` applies a new config without dropping connections. In production you change the config, test it, then reload — never restart under live traffic if a reload will do."
+          ],
+          "example": "docker run -v $PWD/nginx.conf:/etc/nginx/nginx.conf:ro nginx:1.27-alpine; nginx -t; nginx -s reload",
+          "pitfall": "Reloading a config you didn't `nginx -t` first can take the proxy down if the new file has a syntax error.",
+          "question": {
+            "id": "lb-nginx-run-q",
+            "prompt": "Before reloading NGINX you should run:",
+            "options": [
+              {
+                "id": "a",
+                "text": "nginx -s stop"
+              },
+              {
+                "id": "b",
+                "text": "nginx -t to validate"
+              },
+              {
+                "id": "c",
+                "text": "rm nginx.conf"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Validate the config first.",
+            "lessonId": "lb-nginx-run"
+          }
+        }
+      ],
+      "steps": [
+        "Create the network and backends: `docker network create lb`; run `web1` and `web2` from `traefik/whoami` on it.",
+        "Save the downloaded lb-nginx.conf and start NGINX: `docker run -d --name lb --network lb -p 8080:80 -v $PWD/lb-nginx.conf:/etc/nginx/nginx.conf:ro nginx:1.27-alpine`.",
+        "Validate and test: `docker exec lb nginx -t`, then `curl -s localhost:8080` repeatedly and `curl localhost:8080/healthz`.",
+        "Stop web1 and confirm fail-over to web2 with no client-visible errors."
+      ],
+      "challenge": {
+        "task": "Deploy a complete NGINX reverse-proxy load balancer in Docker with upstreams, proxy headers, timeouts and a health endpoint.",
+        "acceptance": [
+          "`nginx -t` passes",
+          "Requests are balanced across both backends",
+          "Fail-over works when one backend stops"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "lb-n-e1",
+            "prompt": "location blocks live inside a:",
+            "options": [
+              {
+                "id": "a",
+                "text": "server block"
+              },
+              {
+                "id": "b",
+                "text": "events block"
+              },
+              {
+                "id": "c",
+                "text": "upstream block"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "server { location { } }.",
+            "lessonId": "lb-nginx-structure"
+          },
+          {
+            "id": "lb-n-e2",
+            "prompt": "NGINX resolves upstream hostnames:",
+            "options": [
+              {
+                "id": "a",
+                "text": "per request"
+              },
+              {
+                "id": "b",
+                "text": "when it loads the config"
+              },
+              {
+                "id": "c",
+                "text": "never"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "They must resolve at load time.",
+            "lessonId": "lb-nginx-upstream"
+          },
+          {
+            "id": "lb-n-e3",
+            "prompt": "Preserving the original hostname uses the header:",
+            "options": [
+              {
+                "id": "a",
+                "text": "Host"
+              },
+              {
+                "id": "b",
+                "text": "User-Agent"
+              },
+              {
+                "id": "c",
+                "text": "Accept"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "proxy_set_header Host $host.",
+            "lessonId": "lb-nginx-headers"
+          },
+          {
+            "id": "lb-n-e4",
+            "prompt": "nginx -s reload is preferred over restart because it:",
+            "options": [
+              {
+                "id": "a",
+                "text": "is slower"
+              },
+              {
+                "id": "b",
+                "text": "applies config without dropping connections"
+              },
+              {
+                "id": "c",
+                "text": "deletes logs"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Graceful config reload.",
+            "lessonId": "lb-nginx-run"
+          },
+          {
+            "id": "lb-n-e5",
+            "prompt": "Omitting events {} causes:",
+            "options": [
+              {
+                "id": "a",
+                "text": "faster startup"
+              },
+              {
+                "id": "b",
+                "text": "nginx -t to fail"
+              },
+              {
+                "id": "c",
+                "text": "more workers"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It is a required block.",
+            "lessonId": "lb-nginx-structure"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "NGINX — HTTP load balancing",
+          "url": "https://nginx.org/en/docs/http/load_balancing.html"
+        },
+        {
+          "title": "HAProxy documentation",
+          "url": "https://docs.haproxy.org/"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "lb-haproxy",
+      "version": 1,
+      "order": 5,
+      "title": "5. Hands-on: HAProxy with active health checks",
+      "summary": "Build an HAProxy load balancer with a frontend/backend split, active health checks, balancing policy and a live stats page.",
+      "difficulty": "Intermediate",
+      "minutes": 26,
+      "code": "# haproxy.cfg -- frontend/backend load balancer with ACTIVE health checks (a\n# first-class open-source HAProxy feature). Mount at /usr/local/etc/haproxy/haproxy.cfg.\nglobal\n    log stdout format raw local0\n    maxconn 4096\n\ndefaults\n    mode http\n    log global\n    option httplog\n    timeout connect 5s\n    timeout client  30s\n    timeout server  30s\n    retries 2\n\nfrontend web\n    bind *:80\n    default_backend servers\n\nbackend servers\n    balance roundrobin\n    option httpchk GET /health            # the active health-check request\n    http-check expect status 200\n    server web1 web1:80 check inter 2s fall 3 rise 2   # check every 2s\n    server web2 web2:80 check inter 2s fall 3 rise 2\n\nlisten stats\n    bind *:8404\n    stats enable\n    stats uri /stats                      # live dashboard at :8404/stats\n",
+      "codeExt": "cfg",
+      "expected": "`haproxy -c -f haproxy.cfg` reports the config is valid; traffic round-robins across healthy backends, a failed backend is removed within a few check intervals, and :8404/stats shows live backend state.",
+      "lessons": [
+        {
+          "id": "lb-haproxy-structure",
+          "title": "global, defaults, frontend, backend",
+          "paragraphs": [
+            "An HAProxy config has sections: `global` (process-wide settings), `defaults` (inherited defaults), `frontend` (what to listen on and how to route), and `backend` (the server pool and policy). A `listen` section combines a frontend and backend in one.",
+            "This frontend/backend split is HAProxy's core model: a frontend accepts connections and selects a backend; the backend load-balances across its servers."
+          ],
+          "example": "frontend accepts + routes; backend holds the servers and the balance policy.",
+          "pitfall": "Putting server lines in a frontend instead of a backend is a structural error; servers belong in backend/listen sections.",
+          "question": {
+            "id": "lb-haproxy-structure-q",
+            "prompt": "HAProxy servers are declared in a:",
+            "options": [
+              {
+                "id": "a",
+                "text": "frontend"
+              },
+              {
+                "id": "b",
+                "text": "backend (or listen) section"
+              },
+              {
+                "id": "c",
+                "text": "global section"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Backends hold the server pool.",
+            "lessonId": "lb-haproxy-structure"
+          }
+        },
+        {
+          "id": "lb-haproxy-checks",
+          "title": "Active health checks",
+          "paragraphs": [
+            "Adding `check` to a server line turns on active health checking: HAProxy periodically probes the server and removes it from rotation when it fails. `inter` sets the interval, `fall` the failures before marking it down, `rise` the successes before marking it up again.",
+            "`option httpchk GET /health` plus `http-check expect status 200` makes the probe a real HTTP request against a health endpoint, catching an app that is listening but broken — not just a dead port."
+          ],
+          "example": "server web1 web1:80 check inter 2s fall 3 rise 2  # active HTTP health checks",
+          "pitfall": "Using only a TCP `check` (no httpchk) marks an app healthy as long as the port is open, even when it returns 500s.",
+          "question": {
+            "id": "lb-haproxy-checks-q",
+            "prompt": "`option httpchk GET /health` makes the health check:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a TCP port check"
+              },
+              {
+                "id": "b",
+                "text": "a real HTTP request"
+              },
+              {
+                "id": "c",
+                "text": "disabled"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It probes an HTTP endpoint.",
+            "lessonId": "lb-haproxy-checks"
+          }
+        },
+        {
+          "id": "lb-haproxy-balance",
+          "title": "Balance policies and timeouts",
+          "paragraphs": [
+            "`balance` sets the algorithm: roundrobin, leastconn, source (hash by client IP for affinity), uri (hash by URL), and more. Timeouts (`timeout connect/client/server`) and `retries` bound how long and how often HAProxy waits and retries.",
+            "Sensible timeouts are mandatory: HAProxy will warn loudly about a config with no timeouts, because an unbounded server timeout can exhaust connections."
+          ],
+          "example": "balance leastconn; timeout server 30s; retries 2",
+          "pitfall": "Omitting `timeout server`/`timeout client` makes HAProxy warn and risks hung connections piling up.",
+          "question": {
+            "id": "lb-haproxy-balance-q",
+            "prompt": "`balance source` provides:",
+            "options": [
+              {
+                "id": "a",
+                "text": "round-robin"
+              },
+              {
+                "id": "b",
+                "text": "affinity by client IP"
+              },
+              {
+                "id": "c",
+                "text": "no balancing"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Hash by source IP = stickiness.",
+            "lessonId": "lb-haproxy-balance"
+          }
+        },
+        {
+          "id": "lb-haproxy-stats",
+          "title": "The stats page and running it",
+          "paragraphs": [
+            "HAProxy's built-in stats page (a `listen stats` section with `stats enable` / `stats uri`) gives a live dashboard of every frontend, backend and server: state, sessions, bytes, health. It is invaluable for seeing balancing and failures in real time.",
+            "You run HAProxy in Docker by mounting the config into the official `haproxy` image and validate it with `haproxy -c -f /usr/local/etc/haproxy/haproxy.cfg` before starting."
+          ],
+          "example": "listen stats { bind *:8404; stats enable; stats uri /stats }  # live dashboard",
+          "pitfall": "Exposing the stats page on a public interface without auth leaks backend topology and metrics to anyone.",
+          "question": {
+            "id": "lb-haproxy-stats-q",
+            "prompt": "HAProxy configs are validated with:",
+            "options": [
+              {
+                "id": "a",
+                "text": "haproxy -c -f file"
+              },
+              {
+                "id": "b",
+                "text": "haproxy --run"
+              },
+              {
+                "id": "c",
+                "text": "nginx -t"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "`-c` checks the config.",
+            "lessonId": "lb-haproxy-stats"
+          }
+        }
+      ],
+      "steps": [
+        "Create the network and whoami backends (web1, web2) as in the NGINX lab.",
+        "Save the downloaded lb-haproxy.cfg and run `docker run -d --name hap --network lb -p 8081:80 -p 8404:8404 -v $PWD/lb-haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro haproxy:3.0` (host port 8081 avoids clashing with the NGINX lab).",
+        "Validate with `docker exec hap haproxy -c -f /usr/local/etc/haproxy/haproxy.cfg`, then curl :8081 and open :8404/stats.",
+        "Stop web1 and watch the stats page mark it DOWN within a few intervals while traffic continues on web2."
+      ],
+      "challenge": {
+        "task": "Deploy an HAProxy load balancer with active health checks, a balancing policy, timeouts and a live stats page.",
+        "acceptance": [
+          "`haproxy -c` passes",
+          "Active checks remove a failed backend",
+          "The stats page shows live backend state"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "lb-hp-e1",
+            "prompt": "A `listen` section combines:",
+            "options": [
+              {
+                "id": "a",
+                "text": "two backends"
+              },
+              {
+                "id": "b",
+                "text": "a frontend and a backend"
+              },
+              {
+                "id": "c",
+                "text": "global and defaults"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Frontend + backend in one.",
+            "lessonId": "lb-haproxy-structure"
+          },
+          {
+            "id": "lb-hp-e2",
+            "prompt": "`check` on a server line enables:",
+            "options": [
+              {
+                "id": "a",
+                "text": "logging"
+              },
+              {
+                "id": "b",
+                "text": "active health checking"
+              },
+              {
+                "id": "c",
+                "text": "TLS"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Scheduled probes.",
+            "lessonId": "lb-haproxy-checks"
+          },
+          {
+            "id": "lb-hp-e3",
+            "prompt": "`inter 2s` sets the:",
+            "options": [
+              {
+                "id": "a",
+                "text": "retry count"
+              },
+              {
+                "id": "b",
+                "text": "health-check interval"
+              },
+              {
+                "id": "c",
+                "text": "timeout"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Probe frequency.",
+            "lessonId": "lb-haproxy-checks"
+          },
+          {
+            "id": "lb-hp-e4",
+            "prompt": "`balance source` hashes by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "URL"
+              },
+              {
+                "id": "b",
+                "text": "client IP"
+              },
+              {
+                "id": "c",
+                "text": "header"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Source IP affinity.",
+            "lessonId": "lb-haproxy-balance"
+          },
+          {
+            "id": "lb-hp-e5",
+            "prompt": "The stats page shows:",
+            "options": [
+              {
+                "id": "a",
+                "text": "live backend/server state"
+              },
+              {
+                "id": "b",
+                "text": "the kernel log"
+              },
+              {
+                "id": "c",
+                "text": "DNS records"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Real-time LB metrics.",
+            "lessonId": "lb-haproxy-stats"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "HAProxy documentation",
+          "url": "https://docs.haproxy.org/"
+        },
+        {
+          "title": "NGINX — HTTP load balancing",
+          "url": "https://nginx.org/en/docs/http/load_balancing.html"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "lb-kubernetes",
+      "version": 1,
+      "order": 6,
+      "title": "6. Kubernetes load balancing: Services and MetalLB",
+      "summary": "How a Kubernetes Service load-balances across pods, the ClusterIP/NodePort/LoadBalancer types, kube-proxy, and MetalLB for bare-metal external IPs.",
+      "difficulty": "Advanced",
+      "minutes": 28,
+      "code": "# A Service load-balances across the pods matching its selector. type: LoadBalancer\n# asks the platform for an external IP; on bare metal or kind that needs MetalLB.\napiVersion: v1\nkind: Service\nmetadata:\n  name: web\nspec:\n  type: LoadBalancer        # <pending> until MetalLB (or a cloud LB) assigns an address\n  selector:\n    app: web                # routes to every pod labelled app=web\n  ports:\n    - port: 80              # the Service port\n      targetPort: 80        # the container port on the pods (traefik/whoami listens on 80)\n---\n# MetalLB gives type: LoadBalancer a real IP on bare metal / kind (metallb.io/v1beta1).\napiVersion: metallb.io/v1beta1\nkind: IPAddressPool\nmetadata:\n  name: pool\n  namespace: metallb-system\nspec:\n  addresses:\n    - 172.18.255.200-172.18.255.250   # MUST be inside the cluster node subnet\n---\napiVersion: metallb.io/v1beta1\nkind: L2Advertisement\nmetadata:\n  name: l2\n  namespace: metallb-system\nspec:\n  ipAddressPools:\n    - pool\n",
+      "codeExt": "yaml",
+      "expected": "With MetalLB installed, `kubectl get svc web` shows an EXTERNAL-IP from the pool (not <pending>), and requests to it are spread across the app=web pods.",
+      "lessons": [
+        {
+          "id": "lb-k8s-service",
+          "title": "The Service abstraction",
+          "paragraphs": [
+            "A Kubernetes Service is a stable virtual address in front of a set of pods chosen by a label selector. Pods are ephemeral — they come and go with changing IPs — so the Service gives clients one durable name and load-balances across the current healthy pods.",
+            "The Service's selector (e.g. app=web) must match the pods' labels. A Service with a selector that matches no pods has no endpoints and silently drops traffic."
+          ],
+          "example": "A Service load-balances to all pods whose labels match its selector.",
+          "pitfall": "A Service whose selector doesn't match any pod labels gets zero endpoints and quietly fails every request.",
+          "question": {
+            "id": "lb-k8s-service-q",
+            "prompt": "A Service selects its target pods by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "pod name"
+              },
+              {
+                "id": "b",
+                "text": "label selector"
+              },
+              {
+                "id": "c",
+                "text": "node IP"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Labels link Service to pods.",
+            "lessonId": "lb-k8s-service"
+          }
+        },
+        {
+          "id": "lb-k8s-types",
+          "title": "ClusterIP, NodePort, LoadBalancer",
+          "paragraphs": [
+            "ClusterIP (the default) gives a Service an internal-only virtual IP reachable from inside the cluster. NodePort additionally opens the same port on every node's IP. LoadBalancer asks the underlying platform for an external load balancer / IP that fronts the Service.",
+            "On a cloud provider, type LoadBalancer provisions a cloud LB automatically. On bare metal or a local kind cluster there is no cloud LB, so the Service stays <pending> until something like MetalLB provides the address."
+          ],
+          "example": "ClusterIP (internal) -> NodePort (node:port) -> LoadBalancer (external IP).",
+          "pitfall": "Expecting type: LoadBalancer to get an external IP on kind or bare metal without MetalLB leaves it stuck in <pending> forever.",
+          "question": {
+            "id": "lb-k8s-types-q",
+            "prompt": "On a local kind cluster, type: LoadBalancer without MetalLB stays:",
+            "options": [
+              {
+                "id": "a",
+                "text": "Active"
+              },
+              {
+                "id": "b",
+                "text": "<pending>"
+              },
+              {
+                "id": "c",
+                "text": "Running"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "No cloud LB to assign an IP.",
+            "lessonId": "lb-k8s-types"
+          }
+        },
+        {
+          "id": "lb-k8s-kubeproxy",
+          "title": "kube-proxy and EndpointSlices",
+          "paragraphs": [
+            "The control plane tracks which pods back a Service as EndpointSlices (updated as pods pass/fail readiness). kube-proxy on each node programs the data path (iptables or IPVS rules) so that traffic to the Service's ClusterIP is distributed across those endpoints.",
+            "This is L4 load balancing inside the cluster — connection-level, roughly even. It is not application-aware; path/host routing needs an L7 layer (next course)."
+          ],
+          "example": "EndpointSlices list healthy pods; kube-proxy programs the node to spread traffic to them.",
+          "pitfall": "Assuming a Service does L7 (path/host) routing is wrong — a Service is L4; use Gateway API/Ingress for L7.",
+          "question": {
+            "id": "lb-k8s-kubeproxy-q",
+            "prompt": "A Kubernetes Service load-balances at:",
+            "options": [
+              {
+                "id": "a",
+                "text": "layer 7"
+              },
+              {
+                "id": "b",
+                "text": "layer 4 (connection level)"
+              },
+              {
+                "id": "c",
+                "text": "the DNS layer"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "L4; not content-aware.",
+            "lessonId": "lb-k8s-kubeproxy"
+          }
+        },
+        {
+          "id": "lb-k8s-metallb",
+          "title": "MetalLB for bare metal",
+          "paragraphs": [
+            "MetalLB implements type: LoadBalancer for clusters without a cloud provider. You give it a pool of IP addresses (IPAddressPool) and an advertisement mode: L2 mode (L2Advertisement) answers ARP for the service IPs from one node, while BGP mode advertises routes to your network.",
+            "The pool must live in a routable range the cluster can own. On kind, that means an address range inside the Docker 'kind' network subnet (check `docker network inspect kind`)."
+          ],
+          "example": "IPAddressPool (the IPs) + L2Advertisement (announce them) = external IPs on bare metal.",
+          "pitfall": "Configuring a MetalLB pool outside the node network's subnet means the assigned IPs are never reachable.",
+          "question": {
+            "id": "lb-k8s-metallb-q",
+            "prompt": "A MetalLB IPAddressPool must contain addresses that are:",
+            "options": [
+              {
+                "id": "a",
+                "text": "any random range"
+              },
+              {
+                "id": "b",
+                "text": "within the cluster node network's subnet"
+              },
+              {
+                "id": "c",
+                "text": "public internet IPs only"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "They must be routable to the nodes.",
+            "lessonId": "lb-k8s-metallb"
+          }
+        }
+      ],
+      "steps": [
+        "Create a cluster (`kind create cluster`) or use k3d/k3s (which ships a built-in ServiceLB).",
+        "Install MetalLB, then apply an IPAddressPool whose range sits inside `docker network inspect kind` subnet, plus an L2Advertisement.",
+        "Apply this Service (with a Deployment labelled app=web behind it) and run `kubectl get svc web` to see the EXTERNAL-IP.",
+        "On Docker Desktop for Mac the IP may be unreachable from the host — curl it from a container on the kind network, or use `kubectl port-forward svc/web 8080:80`."
+      ],
+      "challenge": {
+        "task": "Expose a Deployment through a Service of type LoadBalancer and obtain a reachable external IP (via MetalLB on kind, or a cloud LB).",
+        "acceptance": [
+          "Service selector matches the pod labels",
+          "An EXTERNAL-IP is assigned (not <pending>)",
+          "Requests reach the pods (direct or via port-forward)"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "lb-k-e1",
+            "prompt": "Pods are ephemeral, so clients use a Service's:",
+            "options": [
+              {
+                "id": "a",
+                "text": "pod IP"
+              },
+              {
+                "id": "b",
+                "text": "stable virtual address"
+              },
+              {
+                "id": "c",
+                "text": "node name"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A durable front for changing pods.",
+            "lessonId": "lb-k8s-service"
+          },
+          {
+            "id": "lb-k-e2",
+            "prompt": "The default Service type is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "LoadBalancer"
+              },
+              {
+                "id": "b",
+                "text": "ClusterIP"
+              },
+              {
+                "id": "c",
+                "text": "NodePort"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Internal ClusterIP by default.",
+            "lessonId": "lb-k8s-types"
+          },
+          {
+            "id": "lb-k-e3",
+            "prompt": "kube-proxy programs the node using:",
+            "options": [
+              {
+                "id": "a",
+                "text": "iptables/IPVS rules"
+              },
+              {
+                "id": "b",
+                "text": "an HTTP parser"
+              },
+              {
+                "id": "c",
+                "text": "DNS zones"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Data-path rules for the ClusterIP.",
+            "lessonId": "lb-k8s-kubeproxy"
+          },
+          {
+            "id": "lb-k-e4",
+            "prompt": "MetalLB L2 mode announces service IPs via:",
+            "options": [
+              {
+                "id": "a",
+                "text": "BGP only"
+              },
+              {
+                "id": "b",
+                "text": "ARP from a node"
+              },
+              {
+                "id": "c",
+                "text": "DNS"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "L2/ARP advertisement.",
+            "lessonId": "lb-k8s-metallb"
+          },
+          {
+            "id": "lb-k-e5",
+            "prompt": "type: LoadBalancer on a cloud provider:",
+            "options": [
+              {
+                "id": "a",
+                "text": "stays pending"
+              },
+              {
+                "id": "b",
+                "text": "provisions a cloud load balancer"
+              },
+              {
+                "id": "c",
+                "text": "is invalid"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The cloud assigns an external LB.",
+            "lessonId": "lb-k8s-types"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Kubernetes — Service",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/service/"
+        },
+        {
+          "title": "MetalLB",
+          "url": "https://metallb.universe.tf/"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "lb-gateway",
+      "version": 1,
+      "order": 7,
+      "title": "7. Kubernetes L7 routing: the Gateway API",
+      "summary": "Layer-7 HTTP routing in Kubernetes with the modern Gateway API (HTTPRoute), and why Ingress is now feature-frozen after ingress-nginx's retirement.",
+      "difficulty": "Advanced",
+      "minutes": 28,
+      "code": "# Gateway API (gateway.networking.k8s.io/v1, GA) is the modern L7 routing standard,\n# the successor to Ingress. A Gateway defines a listener; HTTPRoute defines the rules.\napiVersion: gateway.networking.k8s.io/v1\nkind: Gateway\nmetadata:\n  name: web-gateway\nspec:\n  gatewayClassName: example-gateway-class   # provided by your installed Gateway controller\n  listeners:\n    - name: http\n      protocol: HTTP\n      port: 80\n---\napiVersion: gateway.networking.k8s.io/v1\nkind: HTTPRoute\nmetadata:\n  name: web-route\nspec:\n  parentRefs:\n    - name: web-gateway                     # attach this route to the Gateway above\n  hostnames:\n    - \"shop.example.com\"\n  rules:\n    - matches:\n        - path:\n            type: PathPrefix\n            value: /api                     # route /api/* to the api Service\n      backendRefs:\n        - name: api\n          port: 80\n    - matches:\n        - path:\n            type: PathPrefix\n            value: /                        # everything else to the web Service\n      backendRefs:\n        - name: web\n          port: 80\n",
+      "codeExt": "yaml",
+      "expected": "With a Gateway controller installed, requests to shop.example.com/api/* reach the api Service and all other paths reach the web Service, routed by the single Gateway address.",
+      "lessons": [
+        {
+          "id": "lb-gw-why",
+          "title": "Why L7 routing in the cluster",
+          "paragraphs": [
+            "A Service (L4) can expose one app, but real clusters host many services behind one address and route by hostname and path: shop.example.com to the shop, /api to the API. That is layer-7 routing, done by an in-cluster reverse proxy driven by Kubernetes objects.",
+            "Historically this was the Ingress resource plus an Ingress controller. The routing rules live in Kubernetes objects; a controller watches them and configures the underlying proxy (Envoy, NGINX, etc.)."
+          ],
+          "example": "One external address -> route by Host/path to many Services (L7).",
+          "pitfall": "Trying to do host/path routing with plain Services (L4) is impossible; you need an L7 layer.",
+          "question": {
+            "id": "lb-gw-why-q",
+            "prompt": "Routing by hostname and path in Kubernetes needs:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a plain Service"
+              },
+              {
+                "id": "b",
+                "text": "an L7 layer (Gateway API / Ingress)"
+              },
+              {
+                "id": "c",
+                "text": "a NodePort"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Services are L4 only.",
+            "lessonId": "lb-gw-why"
+          }
+        },
+        {
+          "id": "lb-gw-ingress",
+          "title": "Ingress is now feature-frozen",
+          "paragraphs": [
+            "The Ingress API still exists and works, but it is feature-frozen: active development has moved to the Gateway API. Importantly, the widely-used community ingress-nginx controller was retired and its repository archived read-only in March 2026 — no further releases or security fixes.",
+            "So for new clusters, prefer the Gateway API. If you must keep Ingress, use a maintained controller (for example F5's separate NGINX Ingress Controller, Traefik, or HAProxy), not the retired community ingress-nginx."
+          ],
+          "example": "Ingress = GA but frozen; community ingress-nginx retired (archived March 2026). Prefer Gateway API.",
+          "pitfall": "Standing up the community ingress-nginx controller on a new cluster in 2026 adopts an unmaintained, security-frozen project.",
+          "question": {
+            "id": "lb-gw-ingress-q",
+            "prompt": "The community ingress-nginx controller is, as of 2026:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the recommended default"
+              },
+              {
+                "id": "b",
+                "text": "retired/archived, no security fixes"
+              },
+              {
+                "id": "c",
+                "text": "part of the kernel"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It was retired in March 2026.",
+            "lessonId": "lb-gw-ingress"
+          }
+        },
+        {
+          "id": "lb-gw-model",
+          "title": "Gateway, GatewayClass and HTTPRoute",
+          "paragraphs": [
+            "The Gateway API splits responsibilities across roles. A GatewayClass is the installed implementation (like a StorageClass). A Gateway is an instance with listeners (ports/protocols), owned by the cluster operator. An HTTPRoute holds the routing rules and is owned by app teams, attaching to a Gateway via parentRefs.",
+            "This separation lets platform teams own the entry point while app teams own their own routes, and `backendRefs` points each rule at a Service and port."
+          ],
+          "example": "GatewayClass (implementation) -> Gateway (listeners) -> HTTPRoute (rules -> backendRefs).",
+          "pitfall": "Creating an HTTPRoute with no `parentRefs` to a Gateway leaves it attached to nothing and routing no traffic.",
+          "question": {
+            "id": "lb-gw-model-q",
+            "prompt": "An HTTPRoute attaches to a Gateway via:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a label selector"
+              },
+              {
+                "id": "b",
+                "text": "parentRefs"
+              },
+              {
+                "id": "c",
+                "text": "a NodePort"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "parentRefs binds route to Gateway.",
+            "lessonId": "lb-gw-model"
+          }
+        },
+        {
+          "id": "lb-gw-routing",
+          "title": "Routing rules and matches",
+          "paragraphs": [
+            "An HTTPRoute lists rules, each with matches (path prefix/exact, headers, methods, query params) and backendRefs (one or more Services, optionally weighted for canary/traffic-splitting). The controller programs the proxy to enforce them.",
+            "Weighted backendRefs make progressive delivery first-class: send 90% of traffic to v1 and 10% to v2, then shift. This was awkward with plain Ingress and is native to the Gateway API."
+          ],
+          "example": "Weighted backendRefs (90/10) enable canary releases natively in the Gateway API.",
+          "pitfall": "Assuming path matches are evaluated top-to-bottom like a script is wrong — Gateway API has defined precedence (e.g. longest prefix), so order the rules to match it.",
+          "question": {
+            "id": "lb-gw-routing-q",
+            "prompt": "Weighted backendRefs enable:",
+            "options": [
+              {
+                "id": "a",
+                "text": "TLS only"
+              },
+              {
+                "id": "b",
+                "text": "canary / traffic splitting"
+              },
+              {
+                "id": "c",
+                "text": "L4 routing"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Split traffic by weight across versions.",
+            "lessonId": "lb-gw-routing"
+          }
+        }
+      ],
+      "steps": [
+        "Install the Gateway API CRDs (standard channel) and a Gateway controller (e.g. an Envoy- or NGINX-based one) that provides a GatewayClass.",
+        "Set gatewayClassName to your installed class, then apply this Gateway and HTTPRoute.",
+        "Create the `web` and `api` Services (with pods behind them) referenced by backendRefs.",
+        "Send requests to the Gateway address with Host: shop.example.com and confirm /api/* and / route to different Services."
+      ],
+      "challenge": {
+        "task": "Route HTTP traffic to two Services by path using a Gateway and HTTPRoute, on a current Gateway API controller.",
+        "acceptance": [
+          "A Gateway with an HTTP listener and a matching GatewayClass",
+          "An HTTPRoute with two path-based rules and backendRefs",
+          "Requests reach the correct Service by path"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "lb-g-e1",
+            "prompt": "L7 routing in Kubernetes is driven by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "kernel modules"
+              },
+              {
+                "id": "b",
+                "text": "Kubernetes objects watched by a controller"
+              },
+              {
+                "id": "c",
+                "text": "DNS only"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A controller programs the proxy.",
+            "lessonId": "lb-gw-why"
+          },
+          {
+            "id": "lb-g-e2",
+            "prompt": "For new clusters in 2026 the recommended L7 API is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "Ingress"
+              },
+              {
+                "id": "b",
+                "text": "the Gateway API"
+              },
+              {
+                "id": "c",
+                "text": "NodePort"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Ingress is frozen; Gateway API is active.",
+            "lessonId": "lb-gw-ingress"
+          },
+          {
+            "id": "lb-g-e3",
+            "prompt": "A GatewayClass is analogous to a:",
+            "options": [
+              {
+                "id": "a",
+                "text": "StorageClass (the implementation)"
+              },
+              {
+                "id": "b",
+                "text": "pod"
+              },
+              {
+                "id": "c",
+                "text": "namespace"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "It names the installed implementation.",
+            "lessonId": "lb-gw-model"
+          },
+          {
+            "id": "lb-g-e4",
+            "prompt": "backendRefs in an HTTPRoute point to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "nodes"
+              },
+              {
+                "id": "b",
+                "text": "Services and ports"
+              },
+              {
+                "id": "c",
+                "text": "other Gateways"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The target Services.",
+            "lessonId": "lb-gw-model"
+          },
+          {
+            "id": "lb-g-e5",
+            "prompt": "Canary releases in the Gateway API use:",
+            "options": [
+              {
+                "id": "a",
+                "text": "weighted backendRefs"
+              },
+              {
+                "id": "b",
+                "text": "NodePorts"
+              },
+              {
+                "id": "c",
+                "text": "ClusterIP"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Weighted traffic splitting.",
+            "lessonId": "lb-gw-routing"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Kubernetes Gateway API",
+          "url": "https://gateway-api.sigs.k8s.io/"
+        },
+        {
+          "title": "Ingress NGINX Retirement (Kubernetes blog, 2025-11-11)",
+          "url": "https://kubernetes.io/blog/2025/11/11/ingress-nginx-retirement/"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "lb-capstone",
+      "version": 1,
+      "order": 8,
+      "title": "8. Capstone: a load-balanced, auto-scaling app",
+      "summary": "Combine a Deployment, a Service, health probes and a HorizontalPodAutoscaler into a resilient, self-scaling, load-balanced service.",
+      "difficulty": "Advanced",
+      "minutes": 30,
+      "code": "# A complete, load-balanced, self-scaling service: a Deployment of replicas with\n# health probes, a Service that load-balances across them, and an HPA that scales\n# the replica count on CPU. (Labels/selectors/ports are cross-consistent.)\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: web\nspec:\n  replicas: 2\n  selector:\n    matchLabels:\n      app: web                      # must equal the pod template labels below\n  template:\n    metadata:\n      labels:\n        app: web\n    spec:\n      containers:\n        - name: web\n          image: traefik/whoami:v1.10\n          ports:\n            - containerPort: 80     # matches the Service targetPort\n          readinessProbe:           # out of rotation until ready\n            httpGet: { path: /, port: 80 }\n            initialDelaySeconds: 2\n            periodSeconds: 5\n          livenessProbe:            # restart if wedged\n            httpGet: { path: /, port: 80 }\n            periodSeconds: 10\n          resources:\n            requests: { cpu: 100m } # the HPA scales against this request\n            limits:   { cpu: 250m }\n---\napiVersion: v1\nkind: Service\nmetadata:\n  name: web\nspec:\n  type: LoadBalancer\n  selector:\n    app: web                        # matches the pod labels\n  ports:\n    - port: 80\n      targetPort: 80                # matches containerPort\n---\napiVersion: autoscaling/v2\nkind: HorizontalPodAutoscaler\nmetadata:\n  name: web\nspec:\n  scaleTargetRef:\n    apiVersion: apps/v1\n    kind: Deployment\n    name: web\n  minReplicas: 2\n  maxReplicas: 10\n  metrics:\n    - type: Resource\n      resource:\n        name: cpu\n        target:\n          type: Utilization\n          averageUtilization: 70    # add pods when average CPU exceeds 70%\n",
+      "codeExt": "yaml",
+      "expected": "`kubectl apply` creates a 2-replica Deployment behind a load-balancing Service; under load the HPA raises replicas toward 10 (CPU > 70%), and the Service immediately balances across the new, ready pods.",
+      "lessons": [
+        {
+          "id": "lb-cap-deploy",
+          "title": "The Deployment and its pods",
+          "paragraphs": [
+            "A Deployment manages a replica set of identical pods, recreating them if they die and rolling them out on updates. Its selector.matchLabels must equal the pod template's labels, or the API rejects it.",
+            "Those same labels are what the Service selects, so the three label sets — Deployment selector, pod template, Service selector — must agree. A mismatch gives you pods with no Service, or a Service with no pods."
+          ],
+          "example": "Deployment selector.matchLabels == pod template labels == Service selector.",
+          "pitfall": "A Service selector that doesn't match the Deployment's pod labels yields an endpointless Service that drops all traffic.",
+          "question": {
+            "id": "lb-cap-deploy-q",
+            "prompt": "A Deployment's selector.matchLabels must equal:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the namespace"
+              },
+              {
+                "id": "b",
+                "text": "the pod template labels"
+              },
+              {
+                "id": "c",
+                "text": "the image name"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Otherwise the Deployment is rejected.",
+            "lessonId": "lb-cap-deploy"
+          }
+        },
+        {
+          "id": "lb-cap-probes",
+          "title": "Health probes in the loop",
+          "paragraphs": [
+            "Readiness and liveness probes make load balancing safe. A pod that fails readiness is removed from the Service's endpoints (no traffic) without being killed; a pod that fails liveness is restarted. The Service only ever sends traffic to ready pods.",
+            "This is what makes zero-downtime rollouts work: a new pod joins the Service only once it passes readiness, and an old pod is drained before termination."
+          ],
+          "example": "Service endpoints = only pods passing readiness; failed liveness -> restart.",
+          "pitfall": "Skipping a readiness probe sends traffic to pods that are still starting up, causing errors during every rollout.",
+          "question": {
+            "id": "lb-cap-probes-q",
+            "prompt": "A pod failing its readiness probe is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "restarted"
+              },
+              {
+                "id": "b",
+                "text": "removed from Service endpoints"
+              },
+              {
+                "id": "c",
+                "text": "deleted"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Taken out of rotation, not killed.",
+            "lessonId": "lb-cap-probes"
+          }
+        },
+        {
+          "id": "lb-cap-hpa",
+          "title": "Horizontal Pod Autoscaler",
+          "paragraphs": [
+            "The HorizontalPodAutoscaler (autoscaling/v2) watches a metric — here average CPU utilization against the pods' CPU requests — and adjusts the Deployment's replica count between minReplicas and maxReplicas to hold the target.",
+            "It needs the metrics-server (or a custom metrics source) installed to read pod metrics, and it needs the container to declare resource requests, because utilization is measured relative to the request."
+          ],
+          "example": "HPA scales replicas to keep average CPU near 70% of the request; needs metrics-server.",
+          "pitfall": "An HPA on CPU utilization with no CPU request set on the container cannot compute utilization and will not scale.",
+          "question": {
+            "id": "lb-cap-hpa-q",
+            "prompt": "A CPU-utilization HPA requires the container to declare:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a liveness probe"
+              },
+              {
+                "id": "b",
+                "text": "a CPU resource request"
+              },
+              {
+                "id": "c",
+                "text": "a NodePort"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Utilization is relative to the request.",
+            "lessonId": "lb-cap-hpa"
+          }
+        },
+        {
+          "id": "lb-cap-together",
+          "title": "The pieces working together",
+          "paragraphs": [
+            "Under load: CPU rises, the HPA adds pods, the Deployment schedules them, each new pod passes readiness and is added to the Service's endpoints, and kube-proxy immediately balances traffic to it. When load falls, the HPA scales back down and pods are drained.",
+            "This closed loop — Deployment for lifecycle, Service for balancing, probes for health, HPA for scale — is the standard pattern for a resilient Kubernetes workload."
+          ],
+          "example": "Load up -> HPA adds pods -> readiness passes -> Service balances to them -> load down -> scale in.",
+          "pitfall": "Setting maxReplicas without cluster capacity (or a cluster autoscaler) leaves new pods Pending and the service still overloaded.",
+          "question": {
+            "id": "lb-cap-together-q",
+            "prompt": "A new pod starts receiving balanced traffic once it:",
+            "options": [
+              {
+                "id": "a",
+                "text": "is scheduled"
+              },
+              {
+                "id": "b",
+                "text": "passes readiness and joins the Service endpoints"
+              },
+              {
+                "id": "c",
+                "text": "is deleted"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Readiness gates endpoint membership.",
+            "lessonId": "lb-cap-together"
+          }
+        }
+      ],
+      "steps": [
+        "Apply the manifest to a cluster that has metrics-server (and MetalLB or a cloud LB for the external IP).",
+        "Confirm two ready pods, a Service with endpoints, and `kubectl get hpa web` showing the current/target CPU.",
+        "Generate load, e.g. `kubectl run -it --rm --restart=Never load --image=busybox -- /bin/sh -c 'while true; do wget -q -O- http://web; done'`, and watch replicas rise.",
+        "Stop the load and confirm the HPA scales back toward minReplicas, with the Service always balancing across ready pods."
+      ],
+      "challenge": {
+        "task": "Deploy a load-balanced service that scales itself on CPU with health probes and consistent labels/selectors/ports.",
+        "acceptance": [
+          "Consistent Deployment/pod/Service labels and matching ports",
+          "Readiness and liveness probes present",
+          "The HPA changes replica count under load"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "lb-c-e1",
+            "prompt": "A Deployment recreates pods that:",
+            "options": [
+              {
+                "id": "a",
+                "text": "pass readiness"
+              },
+              {
+                "id": "b",
+                "text": "die, keeping the desired replica count"
+              },
+              {
+                "id": "c",
+                "text": "are ready"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It maintains the replica set.",
+            "lessonId": "lb-cap-deploy"
+          },
+          {
+            "id": "lb-c-e2",
+            "prompt": "Only pods passing readiness receive:",
+            "options": [
+              {
+                "id": "a",
+                "text": "restarts"
+              },
+              {
+                "id": "b",
+                "text": "Service traffic"
+              },
+              {
+                "id": "c",
+                "text": "deletion"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Readiness gates endpoints.",
+            "lessonId": "lb-cap-probes"
+          },
+          {
+            "id": "lb-c-e3",
+            "prompt": "The HPA adjusts the:",
+            "options": [
+              {
+                "id": "a",
+                "text": "node count"
+              },
+              {
+                "id": "b",
+                "text": "Deployment's replica count"
+              },
+              {
+                "id": "c",
+                "text": "container image"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It scales pods horizontally.",
+            "lessonId": "lb-cap-hpa"
+          },
+          {
+            "id": "lb-c-e4",
+            "prompt": "CPU-utilization scaling needs:",
+            "options": [
+              {
+                "id": "a",
+                "text": "no configuration"
+              },
+              {
+                "id": "b",
+                "text": "metrics-server and a CPU request"
+              },
+              {
+                "id": "c",
+                "text": "a LoadBalancer only"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Metrics source + request baseline.",
+            "lessonId": "lb-cap-hpa"
+          },
+          {
+            "id": "lb-c-e5",
+            "prompt": "If maxReplicas exceeds cluster capacity, new pods are:",
+            "options": [
+              {
+                "id": "a",
+                "text": "Running"
+              },
+              {
+                "id": "b",
+                "text": "Pending (unscheduled)"
+              },
+              {
+                "id": "c",
+                "text": "Ready"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "No room without a cluster autoscaler.",
+            "lessonId": "lb-cap-together"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Kubernetes — Service",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/service/"
+        },
+        {
+          "title": "Kubernetes Gateway API",
+          "url": "https://gateway-api.sigs.k8s.io/"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    }
+  ],
+  "reviewedAt": "2026-10-12"
+}

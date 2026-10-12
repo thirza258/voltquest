@@ -1,12 +1,58 @@
 # PRD implementation verification
 
+### CUDA track expanded to 10 advanced courses (2026-10-12)
+
+The CUDA C++ track grew from eight to ten courses to match the PyTorch track's depth with more advanced
+material. Two new courses were inserted before the capstone: **`cuda-libraries`** (Thrust and cuBLAS — use
+NVIDIA's tuned libraries instead of hand-writing kernels, with a runnable Thrust map+reduce program) and
+**`cuda-multigpu`** (device enumeration, per-device work splitting, peer-to-peer copies and NCCL collectives,
+with a program that splits an array across every visible GPU). Streams stays course 7; the capstone is
+renumbered to 10. `ReadingTrack` already supported this; only content and counts changed.
+
+Both new programs are complete, self-contained `.cu` units, and all ten CUDA programs were **compiled with
+`nvcc` 12.6 in an `nvidia/cuda` devel container (10/10, no errors)** during authoring (compiling needs no GPU;
+running does, so they are not executed, and the browser never builds or runs them). Both new course
+pages were rendered in Chromium (hub shows "10 courses found"; each course shows its four lessons, guided
+lab, downloadable `.cu`, exam and certificate) with no console errors. Full suite **1,803 frontend tests in
+107 files / 123 backend tests pass**; the certificate catalogue is now **214** courses (`test_certificates.py`
+updated); the sitemap has **506 URLs**; `eslint src` is unchanged. Hub metrics, the `/courses` directory card,
+Indonesian chrome and `docs/CUDA.md` were updated to ten courses.
+
+### Kernel, load-balancing and distributed-systems tracks (2026-10-12)
+
+Feature requests beyond the PRD: three reading-only tracks on the shared `features/courses/ReadingTrack.jsx`
+shell. **`/kernel`** (8 courses) teaches Linux kernel-module programming; **`/loadbalancer`** (8 courses)
+covers NGINX, HAProxy and Kubernetes (Services + MetalLB for L4, the Gateway API for L7 — the community
+ingress-nginx controller retired in March 2026); **`/distributed`** (10 courses) teaches distributed systems
+with runnable Python simulations. Each course has four checkpointed sections, a guided lab, one downloadable
+artifact, a challenge and a five-question 80% exam; progress, rewards, localization and certificates reuse
+the existing systems, and a new `systems` domain groups all three in the `/courses` directory. See
+[KERNEL.md](KERNEL.md), [LOADBALANCER.md](LOADBALANCER.md) and [DISTRIBUTED.md](DISTRIBUTED.md).
+
+Artifacts were verified with the real tools, not by inspection alone: all **8 kernel modules compiled**
+out-of-tree against Linux 6.8 headers in a container (8 `.ko`, no errors); the **NGINX and HAProxy configs
+load and balance** across `traefik/whoami` backends in Docker (`nginx -t` passes for every config including
+all four algorithm variants; curl alternates backends); the built-in **Kubernetes** capstone manifest passes
+`kubectl apply --dry-run=client`, while the MetalLB and Gateway API manifests (custom resources, CRDs not
+installed) are YAML-parsed and structurally checked (selector/label/port consistency); and
+`backend/tests/test_distributed_content.py` **executes all ten Python programs** (clean exit,
+standard-library-only, deterministic output). Nothing is built or run in the browser; the hub
+disclosures state the Linux-VM, Docker/cluster and macOS-reachability requirements, and lab checkboxes verify
+nothing.
+
+**1,803 frontend tests in 107 files / 123 backend tests pass**, `eslint src` is clean apart from the
+pre-existing `qt/samples.js` errors, the production build is **615.6 KiB** eager gzip (the three new routes
+stay lazy) and the sitemap has **504 URLs**. Backend issues and parses original certificate PDFs for all
+**212** courses. Other browsers, touch and screen readers remain release checks. See AGENTS.md §3 and
+CONTRACTS.md §27.
+
 ### AVR assembly track and CUDA / PyTorch reading tracks (2026-10-11)
 
 Feature requests beyond the PRD. Three new learning tracks:
 - **`/avr`** — eight 8-bit AVR assembly courses on an in-browser teaching-subset assembler and a
   deterministic ATmega simulator (`engine/avr/`), with the Computer Architecture sandbox retrofitted to
   the same assembler IDE at `/sandbox?bench=computer&asm=1`. See [AVR.md](AVR.md).
-- **`/cuda`** — eight reading-only CUDA C++ GPU courses. See [CUDA.md](CUDA.md).
+- **`/cuda`** — ten reading-only CUDA C++ GPU courses (incl. Thrust/cuBLAS libraries and multi-GPU). See [CUDA.md](CUDA.md).
 - **`/pytorch`** — ten reading-only PyTorch deep-learning courses, from basics to a full ML pipeline. See
   [PYTORCH.md](PYTORCH.md).
 
