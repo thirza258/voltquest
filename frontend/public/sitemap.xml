@@ -365,6 +365,8 @@
   <url><loc>https://pcb.nevatal.id/cuda/cuda-shared</loc></url>
   <url><loc>https://pcb.nevatal.id/cuda/cuda-reduction</loc></url>
   <url><loc>https://pcb.nevatal.id/cuda/cuda-streams</loc></url>
+  <url><loc>https://pcb.nevatal.id/cuda/cuda-libraries</loc></url>
+  <url><loc>https://pcb.nevatal.id/cuda/cuda-multigpu</loc></url>
   <url><loc>https://pcb.nevatal.id/cuda/cuda-capstone</loc></url>
   <url><loc>https://pcb.nevatal.id/pytorch</loc></url>
   <url><loc>https://pcb.nevatal.id/pytorch/torch-tensors</loc></url>
@@ -377,6 +379,35 @@
   <url><loc>https://pcb.nevatal.id/pytorch/torch-cnn</loc></url>
   <url><loc>https://pcb.nevatal.id/pytorch/torch-eval</loc></url>
   <url><loc>https://pcb.nevatal.id/pytorch/torch-capstone</loc></url>
+  <url><loc>https://pcb.nevatal.id/kernel</loc></url>
+  <url><loc>https://pcb.nevatal.id/kernel/kern-intro</loc></url>
+  <url><loc>https://pcb.nevatal.id/kernel/kern-params</loc></url>
+  <url><loc>https://pcb.nevatal.id/kernel/kern-chardev</loc></url>
+  <url><loc>https://pcb.nevatal.id/kernel/kern-memory</loc></url>
+  <url><loc>https://pcb.nevatal.id/kernel/kern-concurrency</loc></url>
+  <url><loc>https://pcb.nevatal.id/kernel/kern-interrupts</loc></url>
+  <url><loc>https://pcb.nevatal.id/kernel/kern-procfs</loc></url>
+  <url><loc>https://pcb.nevatal.id/kernel/kern-capstone</loc></url>
+  <url><loc>https://pcb.nevatal.id/loadbalancer</loc></url>
+  <url><loc>https://pcb.nevatal.id/loadbalancer/lb-fundamentals</loc></url>
+  <url><loc>https://pcb.nevatal.id/loadbalancer/lb-algorithms</loc></url>
+  <url><loc>https://pcb.nevatal.id/loadbalancer/lb-health</loc></url>
+  <url><loc>https://pcb.nevatal.id/loadbalancer/lb-nginx</loc></url>
+  <url><loc>https://pcb.nevatal.id/loadbalancer/lb-haproxy</loc></url>
+  <url><loc>https://pcb.nevatal.id/loadbalancer/lb-kubernetes</loc></url>
+  <url><loc>https://pcb.nevatal.id/loadbalancer/lb-gateway</loc></url>
+  <url><loc>https://pcb.nevatal.id/loadbalancer/lb-capstone</loc></url>
+  <url><loc>https://pcb.nevatal.id/distributed</loc></url>
+  <url><loc>https://pcb.nevatal.id/distributed/ds-foundations</loc></url>
+  <url><loc>https://pcb.nevatal.id/distributed/ds-clocks</loc></url>
+  <url><loc>https://pcb.nevatal.id/distributed/ds-replication</loc></url>
+  <url><loc>https://pcb.nevatal.id/distributed/ds-consistency</loc></url>
+  <url><loc>https://pcb.nevatal.id/distributed/ds-consensus</loc></url>
+  <url><loc>https://pcb.nevatal.id/distributed/ds-partitioning</loc></url>
+  <url><loc>https://pcb.nevatal.id/distributed/ds-faults</loc></url>
+  <url><loc>https://pcb.nevatal.id/distributed/ds-transactions</loc></url>
+  <url><loc>https://pcb.nevatal.id/distributed/ds-coordination</loc></url>
+  <url><loc>https://pcb.nevatal.id/distributed/ds-capstone</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=cybersecurity</loc></url>

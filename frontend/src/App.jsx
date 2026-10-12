@@ -17,6 +17,9 @@ const ComputerPage = lazy(() => import('./features/computer/ComputerPage.jsx'))
 const AvrPage = lazy(() => import('./features/computer/AvrPage.jsx'))
 const CudaPage = lazy(() => import('./features/cuda/CudaPage.jsx'))
 const PytorchPage = lazy(() => import('./features/pytorch/PytorchPage.jsx'))
+const KernelPage = lazy(() => import('./features/kernel/KernelPage.jsx'))
+const LoadBalancerPage = lazy(() => import('./features/loadbalancer/LoadBalancerPage.jsx'))
+const DistributedPage = lazy(() => import('./features/distributed/DistributedPage.jsx'))
 const QtPage = lazy(() => import('./features/qt/QtPage.jsx'))
 const WinuiPage = lazy(() => import('./features/winui/WinuiPage.jsx'))
 const CybersecurityPage = lazy(() => import('./features/cybersecurity/CybersecurityPage.jsx'))
@@ -75,6 +78,12 @@ export default function App() {
       <Route path="/cuda/:lessonId" element={<CudaPage />} />
       <Route path="/pytorch" element={<PytorchPage />} />
       <Route path="/pytorch/:lessonId" element={<PytorchPage />} />
+      <Route path="/kernel" element={<KernelPage />} />
+      <Route path="/kernel/:lessonId" element={<KernelPage />} />
+      <Route path="/loadbalancer" element={<LoadBalancerPage />} />
+      <Route path="/loadbalancer/:lessonId" element={<LoadBalancerPage />} />
+      <Route path="/distributed" element={<DistributedPage />} />
+      <Route path="/distributed/:lessonId" element={<DistributedPage />} />
       <Route path="/qt" element={<QtPage />} />
       <Route path="/qt/:lessonId" element={<QtPage />} />
       <Route path="/winui" element={<WinuiPage />} />

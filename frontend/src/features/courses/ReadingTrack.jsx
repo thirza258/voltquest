@@ -67,6 +67,7 @@ function TrackCourse({ track, course, previous, next }) {
   const [storageFailed, setStorageFailed] = useState(false)
   const [steps, setSteps] = useState([])
   const [notice, setNotice] = useState('')
+  const codeFile = `${course.id}.${course.codeExt ?? track.codeExt}`
   useEffect(() => {
     if (hash) document.getElementById(hash.slice(1))?.scrollIntoView?.({ block: 'start' })
     else heading.current?.focus()
@@ -133,10 +134,10 @@ function TrackCourse({ track, course, previous, next }) {
         </section>
         <section id="source" className={`${panelClass} scroll-mt-6`}>
           <h2 className="text-xl font-semibold">{t('Downloadable source')}</h2>
-          <p className="mt-3 text-sm leading-6 text-slate-600">{t('Read, copy or download this complete program, then compile and run it in your own environment. VoltQuest does not compile or run it in the browser.')}</p>
+          <p className="mt-3 text-sm leading-6 text-slate-600">{t(track.codeNote ?? 'Read, copy or download this complete program, then compile and run it in your own environment. VoltQuest does not compile or run it in the browser.')}</p>
           <div className="mt-4 flex flex-wrap gap-2">
             <button type="button" className="rounded-md border border-brand-600 px-3 py-1.5 text-sm font-semibold text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500" onClick={copySource}>{t('Copy source')}</button>
-            <button type="button" className="rounded-md border border-brand-600 px-3 py-1.5 text-sm font-semibold text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500" onClick={() => { if (!downloadText(course.code, `${course.id}.${track.codeExt}`)) setNotice('Download is unavailable. Select and copy the source below.') }}>{t('Download {file}', { file: `${course.id}.${track.codeExt}` })}</button>
+            <button type="button" className="rounded-md border border-brand-600 px-3 py-1.5 text-sm font-semibold text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500" onClick={() => { if (!downloadText(course.code, codeFile)) setNotice('Download is unavailable. Select and copy the source below.') }}>{t('Download {file}', { file: codeFile })}</button>
           </div>
           <p role="status" className="mt-2 text-sm text-brand-700">{notice && t(notice)}</p>
           <pre className={`${codeClass} mt-3 max-h-[32rem] overflow-auto`} tabIndex={0} aria-label={t('Lesson source code')}><code>{course.code}</code></pre>

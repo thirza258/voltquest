@@ -26,6 +26,9 @@ CATALOGUES = (
     ("avr.json", "courses", "/avr"),
     ("cuda.json", "courses", "/cuda"),
     ("pytorch.json", "courses", "/pytorch"),
+    ("kernel.json", "courses", "/kernel"),
+    ("loadbalancer.json", "courses", "/loadbalancer"),
+    ("distributed.json", "courses", "/distributed"),
 )
 
 

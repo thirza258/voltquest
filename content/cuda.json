@@ -8,7 +8,7 @@
       "summary": "Understand host vs device, write and launch your first kernel, and compile with nvcc.",
       "difficulty": "Fundamental",
       "minutes": 24,
-      "code": "#include <cstdio>\n#include <cuda_runtime.h>\n\n__global__ void hello() {\n  printf(\"hello from thread %d\\n\", threadIdx.x);\n}\n\nint main() {\n  hello<<<1, 4>>>();\n  cudaDeviceSynchronize();\n  return 0;\n}",
+      "code": "#include <cstdio>\n#include <cuda_runtime.h>\n\n__global__ void hello() {\n  printf(\"hello from thread %d\\n\", threadIdx.x);\n}\n\nint main() {\n  hello<<<1, 4>>>();\n  cudaDeviceSynchronize();\n  return 0;\n}\n",
       "expected": "Compiled with `nvcc cuda-intro.cu -o cuda-intro`, this launches four GPU threads, each printing its index; the order is not guaranteed.",
       "lessons": [
         {
@@ -280,7 +280,7 @@
       "summary": "Index data with threadIdx, blockIdx and blockDim, and size a grid to cover an array.",
       "difficulty": "Fundamental",
       "minutes": 24,
-      "code": "#include <cstdio>\n#include <cuda_runtime.h>\n\n__global__ void fill(float* a, int n) {\n  int i = blockIdx.x * blockDim.x + threadIdx.x;\n  if (i < n) a[i] = i;\n}\n\nint main() {\n  int n = 1000;\n  float h[1000];\n  float* d;\n  cudaMalloc(&d, n * sizeof(float));\n  int T = 256;\n  fill<<<(n + T - 1) / T, T>>>(d, n);\n  cudaMemcpy(h, d, n * sizeof(float), cudaMemcpyDeviceToHost);\n  printf(\"a[0]=%.0f a[999]=%.0f\\n\", h[0], h[999]);  // 0 and 999\n  cudaFree(d);\n  return 0;\n}",
+      "code": "#include <cstdio>\n#include <cuda_runtime.h>\n\n__global__ void fill(float* a, int n) {\n  int i = blockIdx.x * blockDim.x + threadIdx.x;\n  if (i < n) a[i] = i;\n}\n\nint main() {\n  int n = 1000;\n  float h[1000];\n  float* d;\n  cudaMalloc(&d, n * sizeof(float));\n  int T = 256;\n  fill<<<(n + T - 1) / T, T>>>(d, n);\n  cudaMemcpy(h, d, n * sizeof(float), cudaMemcpyDeviceToHost);\n  printf(\"a[0]=%.0f a[999]=%.0f\\n\", h[0], h[999]);  // 0 and 999\n  cudaFree(d);\n  return 0;\n}\n",
       "expected": "Each thread computes a unique global index i and writes a[i]=i; the guard i<n protects the tail.",
       "lessons": [
         {
@@ -552,7 +552,7 @@
       "summary": "Allocate device memory, move data with cudaMemcpy, and understand the memory spaces.",
       "difficulty": "Fundamental",
       "minutes": 26,
-      "code": "#include <cstdio>\n#include <cuda_runtime.h>\n\n__global__ void scale(float* a, int n, float k) {\n  int i = blockIdx.x * blockDim.x + threadIdx.x;\n  if (i < n) a[i] *= k;\n}\n\nint main() {\n  int n = 256;\n  size_t bytes = n * sizeof(float);\n  float h[256];\n  for (int i = 0; i < n; i++) h[i] = 1.0f;\n  float* d;\n  cudaMalloc(&d, bytes);\n  cudaMemcpy(d, h, bytes, cudaMemcpyHostToDevice);\n  int T = 128;\n  scale<<<(n + T - 1) / T, T>>>(d, n, 3.0f);\n  cudaMemcpy(h, d, bytes, cudaMemcpyDeviceToHost);\n  printf(\"h[0]=%.1f\\n\", h[0]);  // 3.0\n  cudaFree(d);\n  return 0;\n}",
+      "code": "#include <cstdio>\n#include <cuda_runtime.h>\n\n__global__ void scale(float* a, int n, float k) {\n  int i = blockIdx.x * blockDim.x + threadIdx.x;\n  if (i < n) a[i] *= k;\n}\n\nint main() {\n  int n = 256;\n  size_t bytes = n * sizeof(float);\n  float h[256];\n  for (int i = 0; i < n; i++) h[i] = 1.0f;\n  float* d;\n  cudaMalloc(&d, bytes);\n  cudaMemcpy(d, h, bytes, cudaMemcpyHostToDevice);\n  int T = 128;\n  scale<<<(n + T - 1) / T, T>>>(d, n, 3.0f);\n  cudaMemcpy(h, d, bytes, cudaMemcpyDeviceToHost);\n  printf(\"h[0]=%.1f\\n\", h[0]);  // 3.0\n  cudaFree(d);\n  return 0;\n}\n",
       "expected": "Host data is copied to the device, processed by a kernel, copied back, and the device buffer is freed.",
       "lessons": [
         {
@@ -824,7 +824,7 @@
       "summary": "Write the canonical data-parallel kernel and scale it with a grid-stride loop.",
       "difficulty": "Intermediate",
       "minutes": 24,
-      "code": "#include <cstdio>\n#include <cstdlib>\n#include <cuda_runtime.h>\n\n__global__ void vadd(const float* a, const float* b, float* c, int n) {\n  for (int i = blockIdx.x * blockDim.x + threadIdx.x; i < n; i += blockDim.x * gridDim.x)\n    c[i] = a[i] + b[i];\n}\n\nint main() {\n  int n = 1 << 20;\n  size_t bytes = n * sizeof(float);\n  float *ha = (float*)malloc(bytes), *hb = (float*)malloc(bytes), *hc = (float*)malloc(bytes);\n  for (int i = 0; i < n; i++) { ha[i] = 1.0f; hb[i] = 2.0f; }\n  float *da, *db, *dc;\n  cudaMalloc(&da, bytes); cudaMalloc(&db, bytes); cudaMalloc(&dc, bytes);\n  cudaMemcpy(da, ha, bytes, cudaMemcpyHostToDevice);\n  cudaMemcpy(db, hb, bytes, cudaMemcpyHostToDevice);\n  int T = 256;\n  vadd<<<(n + T - 1) / T, T>>>(da, db, dc, n);\n  cudaMemcpy(hc, dc, bytes, cudaMemcpyDeviceToHost);\n  printf(\"c[0]=%.1f c[n-1]=%.1f\\n\", hc[0], hc[n - 1]);  // 3.0 3.0\n  cudaFree(da); cudaFree(db); cudaFree(dc);\n  free(ha); free(hb); free(hc);\n  return 0;\n}",
+      "code": "#include <cstdio>\n#include <cstdlib>\n#include <cuda_runtime.h>\n\n__global__ void vadd(const float* a, const float* b, float* c, int n) {\n  for (int i = blockIdx.x * blockDim.x + threadIdx.x; i < n; i += blockDim.x * gridDim.x)\n    c[i] = a[i] + b[i];\n}\n\nint main() {\n  int n = 1 << 20;\n  size_t bytes = n * sizeof(float);\n  float *ha = (float*)malloc(bytes), *hb = (float*)malloc(bytes), *hc = (float*)malloc(bytes);\n  for (int i = 0; i < n; i++) { ha[i] = 1.0f; hb[i] = 2.0f; }\n  float *da, *db, *dc;\n  cudaMalloc(&da, bytes); cudaMalloc(&db, bytes); cudaMalloc(&dc, bytes);\n  cudaMemcpy(da, ha, bytes, cudaMemcpyHostToDevice);\n  cudaMemcpy(db, hb, bytes, cudaMemcpyHostToDevice);\n  int T = 256;\n  vadd<<<(n + T - 1) / T, T>>>(da, db, dc, n);\n  cudaMemcpy(hc, dc, bytes, cudaMemcpyDeviceToHost);\n  printf(\"c[0]=%.1f c[n-1]=%.1f\\n\", hc[0], hc[n - 1]);  // 3.0 3.0\n  cudaFree(da); cudaFree(db); cudaFree(dc);\n  free(ha); free(hb); free(hc);\n  return 0;\n}\n",
       "expected": "Each thread adds one or more elements via the grid-stride loop, covering any n with any launch size.",
       "lessons": [
         {
@@ -1096,7 +1096,7 @@
       "summary": "Use __shared__ memory and __syncthreads to tile a matrix multiply and cut global traffic.",
       "difficulty": "Intermediate",
       "minutes": 28,
-      "code": "#include <cstdio>\n#include <cstdlib>\n#include <cuda_runtime.h>\n#define TILE 16\n\n__global__ void matmul(const float* A, const float* B, float* C, int N) {\n  __shared__ float As[TILE][TILE], Bs[TILE][TILE];\n  int r = blockIdx.y * TILE + threadIdx.y, c = blockIdx.x * TILE + threadIdx.x;\n  float s = 0;\n  for (int t = 0; t < N / TILE; t++) {\n    As[threadIdx.y][threadIdx.x] = A[r * N + t * TILE + threadIdx.x];\n    Bs[threadIdx.y][threadIdx.x] = B[(t * TILE + threadIdx.y) * N + c];\n    __syncthreads();\n    for (int k = 0; k < TILE; k++) s += As[threadIdx.y][k] * Bs[k][threadIdx.x];\n    __syncthreads();\n  }\n  C[r * N + c] = s;\n}\n\nint main() {\n  int N = 64;\n  size_t bytes = N * N * sizeof(float);\n  float *hA = (float*)malloc(bytes), *hB = (float*)malloc(bytes), *hC = (float*)malloc(bytes);\n  for (int i = 0; i < N * N; i++) { hA[i] = 1.0f; hB[i] = 1.0f; }\n  float *dA, *dB, *dC;\n  cudaMalloc(&dA, bytes); cudaMalloc(&dB, bytes); cudaMalloc(&dC, bytes);\n  cudaMemcpy(dA, hA, bytes, cudaMemcpyHostToDevice);\n  cudaMemcpy(dB, hB, bytes, cudaMemcpyHostToDevice);\n  dim3 block(TILE, TILE), grid(N / TILE, N / TILE);\n  matmul<<<grid, block>>>(dA, dB, dC, N);\n  cudaMemcpy(hC, dC, bytes, cudaMemcpyDeviceToHost);\n  printf(\"C[0]=%.0f\\n\", hC[0]);  // 64\n  cudaFree(dA); cudaFree(dB); cudaFree(dC);\n  free(hA); free(hB); free(hC);\n  return 0;\n}",
+      "code": "#include <cstdio>\n#include <cstdlib>\n#include <cuda_runtime.h>\n#define TILE 16\n\n__global__ void matmul(const float* A, const float* B, float* C, int N) {\n  __shared__ float As[TILE][TILE], Bs[TILE][TILE];\n  int r = blockIdx.y * TILE + threadIdx.y, c = blockIdx.x * TILE + threadIdx.x;\n  float s = 0;\n  for (int t = 0; t < N / TILE; t++) {\n    As[threadIdx.y][threadIdx.x] = A[r * N + t * TILE + threadIdx.x];\n    Bs[threadIdx.y][threadIdx.x] = B[(t * TILE + threadIdx.y) * N + c];\n    __syncthreads();\n    for (int k = 0; k < TILE; k++) s += As[threadIdx.y][k] * Bs[k][threadIdx.x];\n    __syncthreads();\n  }\n  C[r * N + c] = s;\n}\n\nint main() {\n  int N = 64;\n  size_t bytes = N * N * sizeof(float);\n  float *hA = (float*)malloc(bytes), *hB = (float*)malloc(bytes), *hC = (float*)malloc(bytes);\n  for (int i = 0; i < N * N; i++) { hA[i] = 1.0f; hB[i] = 1.0f; }\n  float *dA, *dB, *dC;\n  cudaMalloc(&dA, bytes); cudaMalloc(&dB, bytes); cudaMalloc(&dC, bytes);\n  cudaMemcpy(dA, hA, bytes, cudaMemcpyHostToDevice);\n  cudaMemcpy(dB, hB, bytes, cudaMemcpyHostToDevice);\n  dim3 block(TILE, TILE), grid(N / TILE, N / TILE);\n  matmul<<<grid, block>>>(dA, dB, dC, N);\n  cudaMemcpy(hC, dC, bytes, cudaMemcpyDeviceToHost);\n  printf(\"C[0]=%.0f\\n\", hC[0]);  // 64\n  cudaFree(dA); cudaFree(dB); cudaFree(dC);\n  free(hA); free(hB); free(hC);\n  return 0;\n}\n",
       "expected": "Each 16×16 block cooperatively loads tiles into shared memory and accumulates, reusing each loaded value 16 times.",
       "lessons": [
         {
@@ -1368,7 +1368,7 @@
       "summary": "Sum an array in parallel with a tree reduction, warp shuffles and atomics.",
       "difficulty": "Advanced",
       "minutes": 28,
-      "code": "#include <cstdio>\n#include <cstdlib>\n#include <cuda_runtime.h>\n#define T 256\n\n__global__ void reduce(const float* x, float* out, int n) {\n  __shared__ float s[T];\n  int i = blockIdx.x * blockDim.x + threadIdx.x, t = threadIdx.x;\n  s[t] = (i < n) ? x[i] : 0.0f;\n  __syncthreads();\n  for (int d = blockDim.x / 2; d > 0; d >>= 1) {\n    if (t < d) s[t] += s[t + d];\n    __syncthreads();\n  }\n  if (t == 0) atomicAdd(out, s[0]);\n}\n\nint main() {\n  int n = 1 << 20;\n  size_t bytes = n * sizeof(float);\n  float* hx = (float*)malloc(bytes);\n  for (int i = 0; i < n; i++) hx[i] = 1.0f;\n  float *dx, *dout;\n  cudaMalloc(&dx, bytes); cudaMalloc(&dout, sizeof(float));\n  cudaMemset(dout, 0, sizeof(float));\n  cudaMemcpy(dx, hx, bytes, cudaMemcpyHostToDevice);\n  reduce<<<(n + T - 1) / T, T>>>(dx, dout, n);\n  float sum = 0;\n  cudaMemcpy(&sum, dout, sizeof(float), cudaMemcpyDeviceToHost);\n  printf(\"sum=%.0f\\n\", sum);  // 1048576\n  cudaFree(dx); cudaFree(dout); free(hx);\n  return 0;\n}",
+      "code": "#include <cstdio>\n#include <cstdlib>\n#include <cuda_runtime.h>\n#define T 256\n\n__global__ void reduce(const float* x, float* out, int n) {\n  __shared__ float s[T];\n  int i = blockIdx.x * blockDim.x + threadIdx.x, t = threadIdx.x;\n  s[t] = (i < n) ? x[i] : 0.0f;\n  __syncthreads();\n  for (int d = blockDim.x / 2; d > 0; d >>= 1) {\n    if (t < d) s[t] += s[t + d];\n    __syncthreads();\n  }\n  if (t == 0) atomicAdd(out, s[0]);\n}\n\nint main() {\n  int n = 1 << 20;\n  size_t bytes = n * sizeof(float);\n  float* hx = (float*)malloc(bytes);\n  for (int i = 0; i < n; i++) hx[i] = 1.0f;\n  float *dx, *dout;\n  cudaMalloc(&dx, bytes); cudaMalloc(&dout, sizeof(float));\n  cudaMemset(dout, 0, sizeof(float));\n  cudaMemcpy(dx, hx, bytes, cudaMemcpyHostToDevice);\n  reduce<<<(n + T - 1) / T, T>>>(dx, dout, n);\n  float sum = 0;\n  cudaMemcpy(&sum, dout, sizeof(float), cudaMemcpyDeviceToHost);\n  printf(\"sum=%.0f\\n\", sum);  // 1048576\n  cudaFree(dx); cudaFree(dout); free(hx);\n  return 0;\n}\n",
       "expected": "Each block reduces its slice in shared memory with a halving tree, then atomically adds its partial sum to the global result.",
       "lessons": [
         {
@@ -1640,7 +1640,7 @@
       "summary": "Overlap copies and compute with streams, time kernels with events, and prefetch unified memory.",
       "difficulty": "Advanced",
       "minutes": 26,
-      "code": "#include <cstdio>\n#include <cuda_runtime.h>\n\n__global__ void scale(float* a, int n, float k) {\n  int i = blockIdx.x * blockDim.x + threadIdx.x;\n  if (i < n) a[i] *= k;\n}\n\nint main() {\n  int n = 1 << 20;\n  size_t bytes = n * sizeof(float);\n  float* h;\n  cudaMallocHost(&h, bytes);          // pinned host memory enables async copies\n  for (int i = 0; i < n; i++) h[i] = 1.0f;\n  float* d;\n  cudaMalloc(&d, bytes);\n  cudaStream_t s;\n  cudaStreamCreate(&s);\n  int T = 256;\n  cudaMemcpyAsync(d, h, bytes, cudaMemcpyHostToDevice, s);\n  scale<<<(n + T - 1) / T, T, 0, s>>>(d, n, 2.0f);\n  cudaMemcpyAsync(h, d, bytes, cudaMemcpyDeviceToHost, s);\n  cudaStreamSynchronize(s);\n  printf(\"h[0]=%.1f\\n\", h[0]);  // 2.0\n  cudaStreamDestroy(s); cudaFree(d); cudaFreeHost(h);\n  return 0;\n}",
+      "code": "#include <cstdio>\n#include <cuda_runtime.h>\n\n__global__ void scale(float* a, int n, float k) {\n  int i = blockIdx.x * blockDim.x + threadIdx.x;\n  if (i < n) a[i] *= k;\n}\n\nint main() {\n  int n = 1 << 20;\n  size_t bytes = n * sizeof(float);\n  float* h;\n  cudaMallocHost(&h, bytes);          // pinned host memory enables async copies\n  for (int i = 0; i < n; i++) h[i] = 1.0f;\n  float* d;\n  cudaMalloc(&d, bytes);\n  cudaStream_t s;\n  cudaStreamCreate(&s);\n  int T = 256;\n  cudaMemcpyAsync(d, h, bytes, cudaMemcpyHostToDevice, s);\n  scale<<<(n + T - 1) / T, T, 0, s>>>(d, n, 2.0f);\n  cudaMemcpyAsync(h, d, bytes, cudaMemcpyDeviceToHost, s);\n  cudaStreamSynchronize(s);\n  printf(\"h[0]=%.1f\\n\", h[0]);  // 2.0\n  cudaStreamDestroy(s); cudaFree(d); cudaFreeHost(h);\n  return 0;\n}\n",
       "expected": "Work issued to a stream runs in order but can overlap with other streams; async copies need pinned host memory to overlap.",
       "lessons": [
         {
@@ -1905,14 +1905,560 @@
       "reviewedAt": "2026-10-11"
     },
     {
-      "id": "cuda-capstone",
+      "id": "cuda-libraries",
       "version": 1,
       "order": 8,
-      "title": "8. Capstone: a tuned, verified kernel",
+      "title": "8. CUDA libraries: Thrust and cuBLAS",
+      "summary": "Stop hand-writing kernels for standard work: use NVIDIA's tuned libraries — Thrust for STL-style parallel algorithms and cuBLAS for dense linear algebra.",
+      "difficulty": "Advanced",
+      "minutes": 26,
+      "code": "#include <cstdio>\n#include <thrust/device_vector.h>\n#include <thrust/transform.h>\n#include <thrust/reduce.h>\n#include <thrust/functional.h>\n\n// Thrust ships with the CUDA Toolkit and provides tested, tuned parallel\n// primitives, so you rarely hand-write a kernel for standard map/reduce work.\nint main() {\n    const int n = 1 << 20;\n    thrust::device_vector<float> x(n, 1.0f);   // n ones, allocated in device memory\n    thrust::device_vector<float> y(n, 2.0f);\n    thrust::device_vector<float> z(n);\n\n    // z = x + y, element-wise -- a tuned library kernel, no custom code\n    thrust::transform(x.begin(), x.end(), y.begin(), z.begin(), thrust::plus<float>());\n\n    // parallel reduction, also from the library\n    float total = thrust::reduce(z.begin(), z.end(), 0.0f, thrust::plus<float>());\n    printf(\"sum of z = %.0f (expected %d)\\n\", total, 3 * n);   // 3 * 2^20 = 3145728\n    return 0;\n}\n",
+      "codeExt": "cu",
+      "expected": "Compiled with `nvcc libraries.cu -o libraries`, it adds two device vectors and reduces the result entirely through Thrust, printing 3145728 — no custom kernel written.",
+      "lessons": [
+        {
+          "id": "cuda-lib-why",
+          "title": "Don't reinvent the wheel",
+          "paragraphs": [
+            "NVIDIA ships a deep library ecosystem that is tuned per GPU architecture and usually beats hand-written kernels: Thrust and CUB (parallel algorithms), cuBLAS (dense linear algebra), cuFFT (FFTs), cuSPARSE (sparse), cuRAND (random numbers) and cuDNN (deep learning).",
+            "The first question for any standard operation — a reduction, a sort, a matrix multiply, an FFT — is 'is there a library for this?'. Reaching for a custom kernel first wastes effort and usually underperforms."
+          ],
+          "example": "reduction/sort -> Thrust/CUB; GEMM -> cuBLAS; FFT -> cuFFT; conv -> cuDNN.",
+          "pitfall": "Hand-writing a matrix multiply or FFT and expecting to beat cuBLAS/cuFFT almost always loses; the libraries are heavily tuned.",
+          "question": {
+            "id": "cuda-lib-why-q",
+            "prompt": "For a standard dense matrix multiply you should first reach for:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a custom kernel"
+              },
+              {
+                "id": "b",
+                "text": "cuBLAS"
+              },
+              {
+                "id": "c",
+                "text": "the CPU"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "cuBLAS is tuned for GEMM.",
+            "lessonId": "cuda-lib-why"
+          }
+        },
+        {
+          "id": "cuda-lib-thrust",
+          "title": "Thrust: STL-style parallelism",
+          "paragraphs": [
+            "Thrust is a header-only C++ template library (shipped with CUDA) modeled on the STL. `thrust::device_vector` manages device memory with RAII, and host-side calls like `transform`, `reduce`, `sort`, `inclusive_scan` and `count_if` launch tuned kernels for you.",
+            "You write familiar, high-level C++ and Thrust picks an efficient implementation. It is the fastest way to get correct, reasonably fast GPU code for common data-parallel patterns."
+          ],
+          "example": "thrust::reduce(v.begin(), v.end(), 0.0f, thrust::plus<float>());",
+          "pitfall": "Dereferencing a device_vector element on the host (v[i]) triggers a hidden device-to-host copy each time — fine for debugging, disastrous in a loop.",
+          "question": {
+            "id": "cuda-lib-thrust-q",
+            "prompt": "thrust::device_vector manages:",
+            "options": [
+              {
+                "id": "a",
+                "text": "host memory"
+              },
+              {
+                "id": "b",
+                "text": "device memory with RAII"
+              },
+              {
+                "id": "c",
+                "text": "disk files"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It owns a device allocation.",
+            "lessonId": "cuda-lib-thrust"
+          }
+        },
+        {
+          "id": "cuda-lib-cublas",
+          "title": "cuBLAS for linear algebra",
+          "paragraphs": [
+            "cuBLAS implements the BLAS routines (SAXPY, SGEMM, ...) on the GPU. You create a handle, pass device pointers, and link with `-lcublas`. For big matrices it reaches a large fraction of the GPU's peak FLOPS — far beyond a naive custom kernel.",
+            "The classic gotcha: cuBLAS is column-major (Fortran order), while C/C++ arrays are row-major, so you often compute the transposed problem or set the transpose flags accordingly."
+          ],
+          "example": "cublasSgemm(handle, ...);  // link: nvcc app.cu -lcublas",
+          "pitfall": "Passing row-major C arrays to cuBLAS without accounting for its column-major convention silently computes the wrong (transposed) result.",
+          "question": {
+            "id": "cuda-lib-cublas-q",
+            "prompt": "A classic cuBLAS gotcha is that it expects matrices in:",
+            "options": [
+              {
+                "id": "a",
+                "text": "row-major order"
+              },
+              {
+                "id": "b",
+                "text": "column-major order"
+              },
+              {
+                "id": "c",
+                "text": "sparse format"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "cuBLAS is column-major.",
+            "lessonId": "cuda-lib-cublas"
+          }
+        },
+        {
+          "id": "cuda-lib-interop",
+          "title": "Interop with your own kernels",
+          "paragraphs": [
+            "Libraries and hand-written kernels mix freely because they all operate on device pointers. `thrust::raw_pointer_cast(v.data())` gives the raw pointer of a device_vector to pass into your own kernel or a cuBLAS call, and a bare `cudaMalloc` pointer can be wrapped for Thrust with `thrust::device_ptr`.",
+            "The practical rule: use a library for the standard pieces and hand-write only the custom step that no library covers, keeping the data on the device throughout."
+          ],
+          "example": "my_kernel<<<g,b>>>(thrust::raw_pointer_cast(v.data()), n);",
+          "pitfall": "Copying data back to the host between a Thrust call and your own kernel throws away the whole point — keep it resident on the device.",
+          "question": {
+            "id": "cuda-lib-interop-q",
+            "prompt": "To pass a device_vector to your own kernel you use:",
+            "options": [
+              {
+                "id": "a",
+                "text": "thrust::raw_pointer_cast"
+              },
+              {
+                "id": "b",
+                "text": "cudaMemcpy to host"
+              },
+              {
+                "id": "c",
+                "text": "std::vector"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "It yields the raw device pointer.",
+            "lessonId": "cuda-lib-interop"
+          }
+        }
+      ],
+      "steps": [
+        "Save as libraries.cu and build it with `nvcc libraries.cu -o libraries` (Thrust needs no extra flags).",
+        "Run it and confirm the sum is 3145728.",
+        "Replace the transform with `thrust::sort` on a randomized device_vector and confirm it sorts on the GPU.",
+        "Rewrite the element-wise add as cuBLAS `cublasSaxpy` (remember `-lcublas`) and compare effort."
+      ],
+      "challenge": {
+        "task": "Implement a standard operation (map+reduce, sort, or GEMM) using a CUDA library instead of a hand-written kernel.",
+        "acceptance": [
+          "Use Thrust and/or cuBLAS",
+          "Keep the data resident on the device",
+          "Explain why a library beats a naive custom kernel"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "cuda-lib-e1",
+            "prompt": "cuDNN is the library for:",
+            "options": [
+              {
+                "id": "a",
+                "text": "FFTs"
+              },
+              {
+                "id": "b",
+                "text": "deep-learning primitives"
+              },
+              {
+                "id": "c",
+                "text": "sorting"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Convolutions and other DL ops.",
+            "lessonId": "cuda-lib-why"
+          },
+          {
+            "id": "cuda-lib-e2",
+            "prompt": "Thrust is distributed as:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a separate download"
+              },
+              {
+                "id": "b",
+                "text": "a header-only library with the CUDA Toolkit"
+              },
+              {
+                "id": "c",
+                "text": "a Python package"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It ships with CUDA.",
+            "lessonId": "cuda-lib-thrust"
+          },
+          {
+            "id": "cuda-lib-e3",
+            "prompt": "thrust::transform and thrust::reduce are called from:",
+            "options": [
+              {
+                "id": "a",
+                "text": "inside a kernel"
+              },
+              {
+                "id": "b",
+                "text": "host code"
+              },
+              {
+                "id": "c",
+                "text": "the shell"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Host-driven algorithm calls.",
+            "lessonId": "cuda-lib-thrust"
+          },
+          {
+            "id": "cuda-lib-e4",
+            "prompt": "cuBLAS code must be linked with:",
+            "options": [
+              {
+                "id": "a",
+                "text": "-lcudart only"
+              },
+              {
+                "id": "b",
+                "text": "-lcublas"
+              },
+              {
+                "id": "c",
+                "text": "nothing"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The cuBLAS library.",
+            "lessonId": "cuda-lib-cublas"
+          },
+          {
+            "id": "cuda-lib-e5",
+            "prompt": "Mixing a library with your own kernel works because both use:",
+            "options": [
+              {
+                "id": "a",
+                "text": "host arrays"
+              },
+              {
+                "id": "b",
+                "text": "device pointers"
+              },
+              {
+                "id": "c",
+                "text": "files"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "They share device memory.",
+            "lessonId": "cuda-lib-interop"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "Thrust (NVIDIA CCCL)",
+          "url": "https://nvidia.github.io/cccl/thrust/"
+        },
+        {
+          "title": "cuBLAS (NVIDIA)",
+          "url": "https://docs.nvidia.com/cuda/cublas/"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "cuda-multigpu",
+      "version": 1,
+      "order": 9,
+      "title": "9. Multi-GPU programming",
+      "summary": "Scale beyond one GPU: enumerate devices, split work across them, use peer-to-peer copies, and reach for NCCL collectives at cluster scale.",
+      "difficulty": "Advanced",
+      "minutes": 28,
+      "code": "#include <cstdio>\n#include <cuda_runtime.h>\n\n__global__ void addScalar(float* a, int n, float s) {\n    for (int i = blockIdx.x * blockDim.x + threadIdx.x; i < n; i += blockDim.x * gridDim.x)\n        a[i] += s;\n}\n\nint main() {\n    int devices = 0;\n    cudaGetDeviceCount(&devices);\n    printf(\"found %d GPU(s)\\n\", devices);\n    if (devices < 1) return 0;\n\n    const int n = 1 << 20;\n    const int chunk = (n + devices - 1) / devices;   // split the array across GPUs\n    size_t bytes = (size_t)n * sizeof(float);\n    float* h = (float*)malloc(bytes);\n    for (int i = 0; i < n; i++) h[i] = 1.0f;\n\n    for (int d = 0; d < devices; d++) {\n        cudaSetDevice(d);                            // all later calls target GPU d\n        int start = d * chunk;\n        int len = (start + chunk <= n) ? chunk : n - start;\n        if (len <= 0) continue;\n        float* dptr;\n        cudaMalloc(&dptr, (size_t)len * sizeof(float));\n        cudaMemcpy(dptr, h + start, (size_t)len * sizeof(float), cudaMemcpyHostToDevice);\n        int T = 256;\n        addScalar<<<(len + T - 1) / T, T>>>(dptr, len, (float)(d + 1));   // GPU d adds d+1\n        cudaMemcpy(h + start, dptr, (size_t)len * sizeof(float), cudaMemcpyDeviceToHost);\n        cudaFree(dptr);\n    }\n    for (int d = 0; d < devices; d++) { cudaSetDevice(d); cudaDeviceSynchronize(); }\n    printf(\"h[0]=%.0f h[n-1]=%.0f\\n\", h[0], h[n - 1]);   // slice 0 -> 2, last slice -> 1+devices\n    free(h);\n    return 0;\n}\n",
+      "codeExt": "cu",
+      "expected": "Prints the GPU count, then splits a million-element array across every GPU so each adds a different scalar; on a single-GPU machine the whole array gets +1 (h[0]=2).",
+      "lessons": [
+        {
+          "id": "cuda-mg-why",
+          "title": "Why go multi-GPU",
+          "paragraphs": [
+            "A single GPU has a fixed memory capacity and throughput ceiling. Big models and datasets exceed one GPU, so you spread the work across several GPUs in a node (and across nodes). `cudaGetDeviceCount` reports how many are visible and `cudaSetDevice(d)` selects the active one.",
+            "Almost every CUDA runtime call — allocations, copies, launches — applies to the currently selected device, so multi-GPU code is organized as 'select a device, then issue its work'."
+          ],
+          "example": "cudaGetDeviceCount(&n); for (d..) { cudaSetDevice(d); /* work on GPU d */ }",
+          "pitfall": "Allocating on one device and launching a kernel on another (forgetting cudaSetDevice) gives an invalid-device-pointer error.",
+          "question": {
+            "id": "cuda-mg-why-q",
+            "prompt": "cudaSetDevice(d) selects the GPU for:",
+            "options": [
+              {
+                "id": "a",
+                "text": "only the next kernel"
+              },
+              {
+                "id": "b",
+                "text": "subsequent runtime calls on that host thread"
+              },
+              {
+                "id": "c",
+                "text": "all GPUs at once"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It sets the current device.",
+            "lessonId": "cuda-mg-why"
+          }
+        },
+        {
+          "id": "cuda-mg-split",
+          "title": "Splitting the work",
+          "paragraphs": [
+            "The simplest multi-GPU pattern is data parallelism: partition the data into one slice per GPU, give each device its own buffer and stream, and run the same kernel on each slice independently. Throughput scales with the number of GPUs when the work is embarrassingly parallel.",
+            "Each device needs its own allocations and its own stream; work on different devices runs concurrently. You synchronize each device before using its results."
+          ],
+          "example": "per device d: cudaSetDevice(d); cudaMalloc; copy slice; launch; copy back.",
+          "pitfall": "Reusing one device pointer across GPUs fails — each device has a separate address space; allocate per device.",
+          "question": {
+            "id": "cuda-mg-split-q",
+            "prompt": "Data-parallel multi-GPU gives each device:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a shared buffer"
+              },
+              {
+                "id": "b",
+                "text": "its own slice and buffers"
+              },
+              {
+                "id": "c",
+                "text": "the whole dataset copied everywhere"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Partition the data per device.",
+            "lessonId": "cuda-mg-split"
+          }
+        },
+        {
+          "id": "cuda-mg-p2p",
+          "title": "Peer-to-peer access",
+          "paragraphs": [
+            "GPUs in the same node can often read each other's memory directly. `cudaDeviceCanAccessPeer` checks it and `cudaDeviceEnablePeerAccess` turns it on, letting `cudaMemcpyPeer` copy GPU-to-GPU over NVLink or PCIe without bouncing through host memory.",
+            "Peer access cuts latency and frees host bandwidth for exchanges between devices, which matters a lot for algorithms that must share partial results each step (halo exchange, all-reduce)."
+          ],
+          "example": "cudaDeviceEnablePeerAccess(peer, 0); cudaMemcpyPeer(dst, dstDev, src, srcDev, bytes);",
+          "pitfall": "Doing GPU-to-GPU transfers via a host staging buffer when peer access is available wastes PCIe bandwidth and latency.",
+          "question": {
+            "id": "cuda-mg-p2p-q",
+            "prompt": "Peer-to-peer access lets one GPU:",
+            "options": [
+              {
+                "id": "a",
+                "text": "run the CPU"
+              },
+              {
+                "id": "b",
+                "text": "read another GPU's memory directly"
+              },
+              {
+                "id": "c",
+                "text": "resize its memory"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Direct GPU-to-GPU copies.",
+            "lessonId": "cuda-mg-p2p"
+          }
+        },
+        {
+          "id": "cuda-mg-nccl",
+          "title": "Collectives with NCCL",
+          "paragraphs": [
+            "At cluster scale, you don't hand-code GPU-to-GPU communication — you use NCCL, NVIDIA's collective communications library. It implements topology-aware all-reduce, broadcast, all-gather and reduce-scatter across many GPUs and nodes, over NVLink, PCIe and InfiniBand.",
+            "NCCL all-reduce is exactly what data-parallel training frameworks (such as PyTorch DistributedDataParallel) use to average gradients across GPUs. The art is overlapping that communication with computation so the network is not a bottleneck."
+          ],
+          "example": "ncclAllReduce(sendbuf, recvbuf, count, ncclFloat, ncclSum, comm, stream);",
+          "pitfall": "Running a communication collective without overlapping it with compute leaves GPUs idle waiting on the network, destroying scaling efficiency.",
+          "question": {
+            "id": "cuda-mg-nccl-q",
+            "prompt": "NCCL provides:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a single-GPU profiler"
+              },
+              {
+                "id": "b",
+                "text": "multi-GPU/-node collective communication (all-reduce, broadcast)"
+              },
+              {
+                "id": "c",
+                "text": "a math library"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Topology-aware collectives.",
+            "lessonId": "cuda-mg-nccl"
+          }
+        }
+      ],
+      "steps": [
+        "Save as multigpu.cu, build with `nvcc multigpu.cu -o multigpu`, and run it; note how many GPUs it finds.",
+        "On a single-GPU machine confirm h[0]=2 (the whole array got +1); reason about what a 2-GPU run would print.",
+        "Add `cudaDeviceCanAccessPeer` checks and print which device pairs support peer access.",
+        "Describe where an NCCL all-reduce would replace your manual per-device copies in a training loop."
+      ],
+      "challenge": {
+        "task": "Split a data-parallel workload across all visible GPUs and combine the results correctly.",
+        "acceptance": [
+          "Enumerate devices and set the active device per slice",
+          "Per-device buffers (no pointer shared across devices)",
+          "Explain where peer-to-peer or NCCL would help"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "cuda-mg-e1",
+            "prompt": "The number of visible GPUs comes from:",
+            "options": [
+              {
+                "id": "a",
+                "text": "cudaGetDeviceCount"
+              },
+              {
+                "id": "b",
+                "text": "cudaMalloc"
+              },
+              {
+                "id": "c",
+                "text": "threadIdx"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "It reports device count.",
+            "lessonId": "cuda-mg-why"
+          },
+          {
+            "id": "cuda-mg-e2",
+            "prompt": "In data-parallel multi-GPU, each device gets:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the full dataset"
+              },
+              {
+                "id": "b",
+                "text": "its own slice and allocations"
+              },
+              {
+                "id": "c",
+                "text": "no data"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Partition per device.",
+            "lessonId": "cuda-mg-split"
+          },
+          {
+            "id": "cuda-mg-e3",
+            "prompt": "Most CUDA runtime calls act on the:",
+            "options": [
+              {
+                "id": "a",
+                "text": "currently selected device"
+              },
+              {
+                "id": "b",
+                "text": "first device always"
+              },
+              {
+                "id": "c",
+                "text": "CPU"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Set by cudaSetDevice.",
+            "lessonId": "cuda-mg-why"
+          },
+          {
+            "id": "cuda-mg-e4",
+            "prompt": "cudaMemcpyPeer copies:",
+            "options": [
+              {
+                "id": "a",
+                "text": "host to host"
+              },
+              {
+                "id": "b",
+                "text": "directly GPU to GPU"
+              },
+              {
+                "id": "c",
+                "text": "GPU to disk"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Peer-to-peer device copy.",
+            "lessonId": "cuda-mg-p2p"
+          },
+          {
+            "id": "cuda-mg-e5",
+            "prompt": "Data-parallel training averages gradients across GPUs with:",
+            "options": [
+              {
+                "id": "a",
+                "text": "an NCCL all-reduce"
+              },
+              {
+                "id": "b",
+                "text": "a single thread"
+              },
+              {
+                "id": "c",
+                "text": "cudaMalloc"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "All-reduce sums/averages across GPUs.",
+            "lessonId": "cuda-mg-nccl"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "CUDA C++ Programming Guide (NVIDIA)",
+          "url": "https://docs.nvidia.com/cuda/cuda-c-programming-guide/"
+        },
+        {
+          "title": "NCCL — NVIDIA Collective Communications Library",
+          "url": "https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/"
+        }
+      ],
+      "reviewedAt": "2026-10-12"
+    },
+    {
+      "id": "cuda-capstone",
+      "version": 1,
+      "order": 10,
+      "title": "10. Capstone: a tuned, verified kernel",
       "summary": "Combine indexing, memory, shared tiling, timing and verification into one small project.",
       "difficulty": "Advanced",
       "minutes": 30,
-      "code": "#include <cstdio>\n#include <cmath>\n#include <cstdlib>\n#include <cuda_runtime.h>\n\n__global__ void saxpy(int n, float a, const float* x, float* y) {\n  for (int i = blockIdx.x * blockDim.x + threadIdx.x; i < n; i += blockDim.x * gridDim.x)\n    y[i] = a * x[i] + y[i];\n}\n\nint main() {\n  int n = 1 << 20;\n  size_t bytes = n * sizeof(float);\n  float *hx = (float*)malloc(bytes), *hy = (float*)malloc(bytes);\n  for (int i = 0; i < n; i++) { hx[i] = 1.0f; hy[i] = 2.0f; }\n  float *dx, *dy;\n  cudaMalloc(&dx, bytes); cudaMalloc(&dy, bytes);\n  cudaMemcpy(dx, hx, bytes, cudaMemcpyHostToDevice);\n  cudaMemcpy(dy, hy, bytes, cudaMemcpyHostToDevice);\n  cudaEvent_t start, stop;\n  cudaEventCreate(&start); cudaEventCreate(&stop);\n  int T = 256;\n  cudaEventRecord(start);\n  saxpy<<<(n + T - 1) / T, T>>>(n, 3.0f, dx, dy);\n  cudaEventRecord(stop);\n  cudaEventSynchronize(stop);\n  float ms = 0;\n  cudaEventElapsedTime(&ms, start, stop);\n  cudaMemcpy(hy, dy, bytes, cudaMemcpyDeviceToHost);\n  float maxErr = 0;\n  for (int i = 0; i < n; i++) maxErr = fmaxf(maxErr, fabsf(hy[i] - 5.0f));  // 3*1+2\n  printf(\"max error %.1f in %.3f ms\\n\", maxErr, ms);\n  cudaFree(dx); cudaFree(dy); free(hx); free(hy);\n  return 0;\n}",
+      "code": "#include <cstdio>\n#include <cmath>\n#include <cstdlib>\n#include <cuda_runtime.h>\n\n__global__ void saxpy(int n, float a, const float* x, float* y) {\n  for (int i = blockIdx.x * blockDim.x + threadIdx.x; i < n; i += blockDim.x * gridDim.x)\n    y[i] = a * x[i] + y[i];\n}\n\nint main() {\n  int n = 1 << 20;\n  size_t bytes = n * sizeof(float);\n  float *hx = (float*)malloc(bytes), *hy = (float*)malloc(bytes);\n  for (int i = 0; i < n; i++) { hx[i] = 1.0f; hy[i] = 2.0f; }\n  float *dx, *dy;\n  cudaMalloc(&dx, bytes); cudaMalloc(&dy, bytes);\n  cudaMemcpy(dx, hx, bytes, cudaMemcpyHostToDevice);\n  cudaMemcpy(dy, hy, bytes, cudaMemcpyHostToDevice);\n  cudaEvent_t start, stop;\n  cudaEventCreate(&start); cudaEventCreate(&stop);\n  int T = 256;\n  cudaEventRecord(start);\n  saxpy<<<(n + T - 1) / T, T>>>(n, 3.0f, dx, dy);\n  cudaEventRecord(stop);\n  cudaEventSynchronize(stop);\n  float ms = 0;\n  cudaEventElapsedTime(&ms, start, stop);\n  cudaMemcpy(hy, dy, bytes, cudaMemcpyDeviceToHost);\n  float maxErr = 0;\n  for (int i = 0; i < n; i++) maxErr = fmaxf(maxErr, fabsf(hy[i] - 5.0f));  // 3*1+2\n  printf(\"max error %.1f in %.3f ms\\n\", maxErr, ms);\n  cudaFree(dx); cudaFree(dy); free(hx); free(hy);\n  return 0;\n}\n",
       "expected": "The capstone assembles a correct, timed, verified SAXPY and a short performance write-up.",
       "lessons": [
         {

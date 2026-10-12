@@ -694,21 +694,26 @@ last opened or saved, which drives per-file modified markers and the unsaved-wor
 editor is `features/sandbox/ide/CodeEditor.jsx`: a labelled native textarea over a highlighted copy,
 with the tokenizers in `tokenizers.js` and `matlabSyntax.js`.
 
-## 27. AVR assembly and reading-only CUDA / PyTorch tracks
+## 27. AVR assembly and the reading-only tracks
 
 The AVR assembly track (`/avr`, in-browser assembler + ATmega simulator and a retrofit of the Computer
-Architecture sandbox at `/sandbox?bench=computer&asm=1`) follows [AVR.md](AVR.md). The CUDA C++
-(`/cuda`) and PyTorch (`/pytorch`) tracks follow [CUDA.md](CUDA.md) and [PYTORCH.md](PYTORCH.md): eight
-and ten reading-only courses in `content/cuda.json` and `content/pytorch.json`.
+Architecture sandbox at `/sandbox?bench=computer&asm=1`) follows [AVR.md](AVR.md). Five reading-only tracks
+share one shell: CUDA C++ (`/cuda`), PyTorch (`/pytorch`), Linux kernel (`/kernel`), load balancing
+(`/loadbalancer`) and distributed systems (`/distributed`), in `content/{cuda,pytorch,kernel,loadbalancer,
+distributed}.json` and documented in [CUDA.md](CUDA.md), [PYTORCH.md](PYTORCH.md), [KERNEL.md](KERNEL.md),
+[LOADBALANCER.md](LOADBALANCER.md) and [DISTRIBUTED.md](DISTRIBUTED.md).
 
 `features/courses/ReadingTrack.jsx` is a shared, content-driven hub/course shell for reading-only tracks.
-A `track` config object carries the route `base`, the `courses` array, a `tag`, a `codeExt`, the search
-`haystack`, the `difficulties`, and the translated hub chrome (`eyebrow`, `title`, `intro`, `metrics`,
-`continueLabel`, `capstoneId`, `capstoneLabel`, `allLabel`, `searchLabel`, `disclosure`, `langNote`,
-`reviewedNote`). Each course supplies four `lessons` (each with a `question`), guided `steps`, an
-`expected` result, a single self-contained `code` program (copied or downloaded as `<id>.<codeExt>`, never
-executed in the browser), a `challenge` and a five-question 80% `exam`. Progress, rewards and certificates
-reuse the existing `vq.courses.v1` system; the certificate catalogue adds `cuda.json` and `pytorch.json`
-(and `avr.json`). `CudaPage.jsx` and `PytorchPage.jsx` are thin wrappers that import their JSON and render
-`ReadingTrack`. No board, simulation, sandbox, assistant, MCP or showcase contract is extended; the course
-discovery API is unchanged.
+A `track` config object carries the route `base`, the `courses` array, a `tag`, a default `codeExt`, an
+optional `codeNote`, the search `haystack`, the `difficulties`, and the translated hub chrome (`eyebrow`,
+`title`, `intro`, `metrics`, `continueLabel`, `capstoneId`, `capstoneLabel`, `allLabel`, `searchLabel`,
+`disclosure`, `langNote`, `reviewedNote`). Each course supplies four `lessons` (each with a `question`),
+guided `steps`, an `expected` result, a single self-contained `code` artifact, a `challenge` and a
+five-question 80% `exam`. The download filename is `<id>.<course.codeExt ?? track.codeExt>`, so a track whose
+courses mix file types (load balancing: `conf`/`cfg`/`yaml`) sets `codeExt` per course; the artifact is never
+executed in the browser. Progress, rewards and certificates reuse the existing `vq.courses.v1` system; the
+certificate catalogue adds `avr.json`, `cuda.json`, `pytorch.json`, `kernel.json`, `loadbalancer.json` and
+`distributed.json`. `CudaPage.jsx`, `PytorchPage.jsx`, `KernelPage.jsx`, `LoadBalancerPage.jsx` and
+`DistributedPage.jsx` are thin wrappers that import their JSON and render `ReadingTrack`; a `systems` domain
+in `coursesDirectory.js` groups the kernel/load-balancing/distributed cards. No board, simulation, sandbox,
+assistant, MCP or showcase contract is extended; the course discovery API is unchanged.
