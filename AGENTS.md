@@ -18,6 +18,8 @@ and what to do next. The specifications in `docs/` remain binding.
 | `docs/MATLAB.md` | Before editing MATLAB courses, the numerical script interpreter, function reference or notebooks. |
 | `docs/AI_AGENTS.md` | Before editing AI agent courses, harness experiments, skills/MCP fixtures or companion CLIs. |
 | `docs/WINUI.md` | Before editing C++ / WinUI desktop courses, native source packs or their verification. |
+| `docs/AVR.md` | Before editing the AVR assembly track, the assembler/simulator engine or the AVR IDE. |
+| `docs/CUDA.md`, `docs/PYTORCH.md` | Before editing the CUDA/PyTorch reading tracks or the shared `ReadingTrack` shell. |
 | `docs/COMMUNITY.md` | Before editing community discussions, their moderation limits or post rendering. |
 
 ## 1. Current build, not the target product
@@ -52,6 +54,17 @@ a guided Windows lab, XAML/C++ source ZIP and an applied challenge, ending in a 
 notebook with local JSON save/load. Existing course progress, rewards and certificates
 apply through the shared certificate flow. Native labs require Windows; VoltQuest does not
 compile or simulate WinUI. Read `docs/WINUI.md` for source and verification boundaries.
+
+The course directory (shown on both Courses and Tutorials), the home footer (CUDA, PyTorch) and the
+sitemap link to three tracks added on 2026-10-11: **`/avr`**
+(eight 8-bit AVR assembly courses on an in-browser assembler + ATmega simulator, with the Computer
+Architecture sandbox retrofitted to the same IDE at `/sandbox?bench=computer&asm=1`), **`/cuda`**
+(eight reading-only CUDA C++ GPU courses) and **`/pytorch`** (ten reading-only PyTorch courses, basics
+to a full ML pipeline). CUDA and PyTorch share the content-driven `features/courses/ReadingTrack.jsx`
+hub/course shell; each course has four checkpointed sections, a guided lab, one complete self-contained
+program (copied or downloaded, never run in the browser), a challenge and a five-question 80% exam.
+Progress, rewards, localization and certificates reuse the existing systems. There is no GPU, Python or
+AVR hardware in the browser. Read `docs/AVR.md`, `docs/CUDA.md` and `docs/PYTORCH.md` for boundaries.
 
 There are **41 firmware tutorials**, ordered Easy → Intermediate → Hard, with editable code,
 real simulation, explanations of program and hardware concepts, exact breadboard placement,
@@ -147,6 +160,34 @@ their explanation or timing is correct. `features/tutorials/programming.test.js`
 numeric output, command dispatch and LED state transitions on all four C++ boards.
 
 ## 3. Completed in this continuation
+
+### AVR assembly track and CUDA / PyTorch reading tracks (2026-10-11)
+
+Three new learning tracks, all beyond the PRD. **`/avr`** is eight 8-bit AVR assembly courses on an
+in-browser teaching-subset assembler and deterministic ATmega simulator (`engine/avr/`), plus a retrofit
+of the Computer Architecture sandbox into that assembler IDE at `/sandbox?bench=computer&asm=1`
+(`docs/AVR.md`). **`/cuda`** (eight courses) and **`/pytorch`** (ten courses, tensors → autograd →
+`nn.Module` → training loop → datasets → regression → MLP → CNN → eval/save → full pipeline) are
+reading-only tracks sharing one content-driven `features/courses/ReadingTrack.jsx` hub/course shell, wrapped
+by thin `CudaPage.jsx`/`PytorchPage.jsx` (`docs/CUDA.md`, `docs/PYTORCH.md`).
+
+Each course has four checkpointed sections with questions, a guided lab with an expected result, a complete
+self-contained program copied or downloaded as `<id>.cu`/`.py` (never run in the browser), an applied
+challenge and a five-question 80% exam. torch and `nvcc` are not available in this repo, so nothing is
+executed or compiled: each PyTorch program is parsed and checked for undefined names with `ast` + `symtable`
+by `backend/tests/test_pytorch_content.py` (not run), and each CUDA program is a complete `nvcc` unit
+reviewed by hand (not compiled). Progress, rewards,
+localization and certificates reuse the existing systems; the certificate catalogue adds `avr.json`,
+`cuda.json` and `pytorch.json`, and the three tracks were added to the `/courses` directory
+(`coursesDirectory.js`), the nav section map and the sitemap. 40 Indonesian chrome strings were added.
+
+Honesty is preserved: there is no GPU, Python or AVR hardware in the browser; the hub disclosures state
+the NVIDIA GPU + CUDA Toolkit and Python 3 + torch requirements, and lab checkboxes record the learner's
+own observations only. Full suite **1,787 frontend tests in 104 files / 122 backend tests pass**; `eslint
+src` is clean apart from the pre-existing `qt/samples.js` errors; the production build is **613.0 KiB**
+eager gzip (new routes lazy) and the sitemap has **475 URLs**. Backend issues and parses original
+certificate PDFs for all **186** courses. Chromium at 1280 px verified both hubs and course pages. See
+CONTRACTS.md §27 and IMPLEMENTATION_STATUS.md.
 
 ### Cybersecurity security console (2026-09-28)
 

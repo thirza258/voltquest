@@ -1008,6 +1008,8 @@ export function LandingPage() {
               <Link to="/computer-architecture" className="py-1 hover:text-brand-600">{t('Computer architecture & assembly')}</Link>
               <Link to="/qt" className="py-1 hover:text-brand-600">{t('Qt / C++ desktop apps')}</Link>
               <Link to="/winui" className="py-1 hover:text-brand-600">{t('C++ / WinUI desktop apps')}</Link>
+              <Link to="/cuda" className="py-1 hover:text-brand-600">{t('CUDA C++ GPU programming')}</Link>
+              <Link to="/pytorch" className="py-1 hover:text-brand-600">{t('PyTorch deep learning')}</Link>
               <Link to="/sandbox" className="py-1 hover:text-brand-600">{t("Sandbox")}</Link>
               <Link to="/showcase" className="py-1 hover:text-brand-600">{t("Showcase")}</Link>
               <Link to="/community" className="py-1 hover:text-brand-600">{t("Community")}</Link>

@@ -91,4 +91,21 @@ export const tokenizeC = scanner([
   [/\s+/y, ''],
 ])
 
-export const TOKENIZERS = { c: tokenizeC, json: tokenizeJson, javascript: tokenizeJavascript, python: tokenizePython, markdown: tokenizeMarkdown }
+import { MNEMONICS, IO_NAMES, DIRECTIVES } from '../../../engine/avr/model.js'
+const AVR_MNEMONICS = new Set(MNEMONICS)
+const AVR_IO = new Set(IO_NAMES.map(n => n.toUpperCase()))
+const AVR_DIRECTIVES = new Set(DIRECTIVES.map(d => d.toLowerCase()))
+
+/** AVR assembly: comments, labels, directives, mnemonics, registers, I/O names and numbers. */
+export const tokenizeAvr = scanner([
+  [/;[^\n]*/y, 'comment'],
+  [/^[ \t]*[A-Za-z_]\w*:/my, 'heading'],
+  [/\.[A-Za-z]+/y, t => AVR_DIRECTIVES.has(t.toLowerCase()) ? 'keyword' : ''],
+  [/\b(?:0x[0-9a-fA-F]+|0b[01]+|\d+)\b/y, 'number'],
+  [/'.'/y, 'string'],
+  [/\b[rR]\d{1,2}\b/y, 'literal'],
+  [/\b[A-Za-z_]\w*\b/y, t => AVR_MNEMONICS.has(t.toLowerCase()) ? 'keyword' : AVR_IO.has(t.toUpperCase()) ? 'literal' : ''],
+  [/\s+/y, ''],
+])
+
+export const TOKENIZERS = { avr: tokenizeAvr, c: tokenizeC, json: tokenizeJson, javascript: tokenizeJavascript, python: tokenizePython, markdown: tokenizeMarkdown }

@@ -132,3 +132,27 @@ tests cover ids, grading, real routing, filters, persistence, imports, reports a
 The sitemap derives the hub and all ten courses. Model/page chunks stay lazy and are forbidden in
 the initial bundle by `scripts/check.sh`. See [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md)
 for current full-gate/browser evidence. Other browsers and real devices remain release checks.
+
+## Sandbox security console (2026-10-05)
+
+`/sandbox?bench=cybersecurity` renders `CyberConsole.jsx`, a security workbench combining three
+familiar tools over the same model and defenses as the course lab:
+
+- **Packet Tracer-style topology** (`CyberTopology.jsx`, `topology.js`): the fixed VoltShop network
+  (browser, app, accounts/sessions, products DB, file store, the allowed news origin and the
+  internal inventory service). The last request's path is highlighted, a blocked hop is dashed red,
+  and nodes a finding implicates turn red. The animated dot is illustration only; no packet is sent.
+- **curl terminal** (`curl.js`): a bounded curl parser (`-X`, `-H`, `-d/--data`, `-b/--cookie` and a
+  shop-host or local path) feeds the existing request pipeline. Non-shop hosts and unknown flags are
+  rejected. The terminal is ephemeral scrollback and does not change the saved notebook.
+- **DevTools-style inspector**: a Network list plus Headers, Response, Preview, Elements, Security
+  and Trace tabs, and the fixture account state under Application. The **Elements** tab parses the
+  HTML response with `inspectHtml.js` into an inert node tree rendered as spans, flagging `on*`
+  handlers — so the XSS lesson shows injected markup as element nodes without ever creating a real
+  element or running a script.
+
+`useCyberNotebook.js` holds the shared state; `CyberLab` (course pages) and `CyberConsole` (sandbox)
+are two views on it. The console uses the shared dark/light workbench (`features/sandbox/ide/`). All
+existing boundaries hold: fictional local fixtures, inert HTML, no network, no code execution. Pure
+modules are unit-tested (`console.test.js`) and the sandbox UI tests drive the terminal and DevTools.
+

@@ -23,6 +23,9 @@ CATALOGUES = (
     ("ai-agents.json", "courses", "/ai-agents"), ("computer-architecture.json", "courses", "/computer-architecture"),
     ("winui.json", "courses", "/winui"),
     ("qt.json", "courses", "/qt"),
+    ("avr.json", "courses", "/avr"),
+    ("cuda.json", "courses", "/cuda"),
+    ("pytorch.json", "courses", "/pytorch"),
 )
 
 

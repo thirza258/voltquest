@@ -14,6 +14,9 @@ const HpcPage = lazy(() => import('./features/hpc/HpcPage.jsx'))
 const MatlabPage = lazy(() => import('./features/matlab/MatlabPage.jsx'))
 const AgentsPage = lazy(() => import('./features/agents/AgentsPage.jsx'))
 const ComputerPage = lazy(() => import('./features/computer/ComputerPage.jsx'))
+const AvrPage = lazy(() => import('./features/computer/AvrPage.jsx'))
+const CudaPage = lazy(() => import('./features/cuda/CudaPage.jsx'))
+const PytorchPage = lazy(() => import('./features/pytorch/PytorchPage.jsx'))
 const QtPage = lazy(() => import('./features/qt/QtPage.jsx'))
 const WinuiPage = lazy(() => import('./features/winui/WinuiPage.jsx'))
 const CybersecurityPage = lazy(() => import('./features/cybersecurity/CybersecurityPage.jsx'))
@@ -66,6 +69,12 @@ export default function App() {
       <Route path="/certificates/:certificateId" element={<CertificatesPage />} />
       <Route path="/computer-architecture" element={<ComputerPage />} />
       <Route path="/computer-architecture/:lessonId" element={<ComputerPage />} />
+      <Route path="/avr" element={<AvrPage />} />
+      <Route path="/avr/:lessonId" element={<AvrPage />} />
+      <Route path="/cuda" element={<CudaPage />} />
+      <Route path="/cuda/:lessonId" element={<CudaPage />} />
+      <Route path="/pytorch" element={<PytorchPage />} />
+      <Route path="/pytorch/:lessonId" element={<PytorchPage />} />
       <Route path="/qt" element={<QtPage />} />
       <Route path="/qt/:lessonId" element={<QtPage />} />
       <Route path="/winui" element={<WinuiPage />} />

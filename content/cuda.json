@@ -1,0 +1,2181 @@
+{
+  "courses": [
+    {
+      "id": "cuda-intro",
+      "version": 1,
+      "order": 1,
+      "title": "1. CUDA C++ and the GPU model",
+      "summary": "Understand host vs device, write and launch your first kernel, and compile with nvcc.",
+      "difficulty": "Fundamental",
+      "minutes": 24,
+      "code": "#include <cstdio>\n#include <cuda_runtime.h>\n\n__global__ void hello() {\n  printf(\"hello from thread %d\\n\", threadIdx.x);\n}\n\nint main() {\n  hello<<<1, 4>>>();\n  cudaDeviceSynchronize();\n  return 0;\n}",
+      "expected": "Compiled with `nvcc cuda-intro.cu -o cuda-intro`, this launches four GPU threads, each printing its index; the order is not guaranteed.",
+      "lessons": [
+        {
+          "id": "cuda-why-gpu",
+          "title": "Why GPUs, and the host/device split",
+          "paragraphs": [
+            "A GPU runs thousands of lightweight threads in parallel, trading single-thread speed for massive throughput on data-parallel work. In CUDA C++ the CPU is the host and the GPU is the device; the host launches kernels that run on the device.",
+            "Host and device have separate memories, so data is explicitly transferred between them. This separation is the mental model behind every CUDA program."
+          ],
+          "example": "// host code runs on the CPU; __global__ functions run on the GPU",
+          "pitfall": "The GPU cannot read host (CPU) memory directly; you must allocate device memory and copy data over.",
+          "question": {
+            "id": "cuda-why-q",
+            "prompt": "In CUDA, the 'host' refers to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the GPU"
+              },
+              {
+                "id": "b",
+                "text": "the CPU"
+              },
+              {
+                "id": "c",
+                "text": "shared memory"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The host is the CPU; the device is the GPU.",
+            "lessonId": "cuda-why-gpu"
+          }
+        },
+        {
+          "id": "cuda-kernel",
+          "title": "Kernels and __global__",
+          "paragraphs": [
+            "A kernel is a function marked `__global__` that runs on the device and is called from the host with the launch syntax `kernel<<<blocks, threads>>>(args)`. Every thread executes the same kernel body.",
+            "Kernel launches are asynchronous: the host continues immediately, so you synchronize with `cudaDeviceSynchronize()` before using results."
+          ],
+          "example": "__global__ void k(){ /* one thread's work */ }\nk<<<1, 256>>>();",
+          "pitfall": "Forgetting cudaDeviceSynchronize (or an error check) hides kernel errors and races with later host code.",
+          "question": {
+            "id": "cuda-kernel-q",
+            "prompt": "Which qualifier marks a GPU kernel callable from the host?",
+            "options": [
+              {
+                "id": "a",
+                "text": "__device__"
+              },
+              {
+                "id": "b",
+                "text": "__host__"
+              },
+              {
+                "id": "c",
+                "text": "__global__"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "__global__ functions are kernels launched from the host.",
+            "lessonId": "cuda-kernel"
+          }
+        },
+        {
+          "id": "cuda-compile",
+          "title": "Compiling with nvcc",
+          "paragraphs": [
+            "`nvcc` splits a .cu file into host code (handed to the host compiler) and device code (compiled to PTX/SASS for the GPU). You build with `nvcc file.cu -o file` and can target an architecture with `-arch=sm_80`.",
+            "nvcc links the CUDA runtime so the launch syntax and `cuda*` API calls resolve."
+          ],
+          "example": "nvcc vectoradd.cu -O3 -arch=sm_80 -o vectoradd",
+          "pitfall": "Plain g++ cannot compile .cu kernels; use nvcc (or clang with CUDA support).",
+          "question": {
+            "id": "cuda-compile-q",
+            "prompt": "What compiles CUDA device code?",
+            "options": [
+              {
+                "id": "a",
+                "text": "gcc"
+              },
+              {
+                "id": "b",
+                "text": "nvcc"
+              },
+              {
+                "id": "c",
+                "text": "make"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "nvcc compiles .cu files, host and device.",
+            "lessonId": "cuda-compile"
+          }
+        },
+        {
+          "id": "cuda-errors",
+          "title": "Checking for errors",
+          "paragraphs": [
+            "CUDA API calls return a `cudaError_t`; kernels report launch and runtime errors through `cudaGetLastError()` and `cudaDeviceSynchronize()`. Production code wraps calls in a macro that checks and reports.",
+            "Silent failures are the most common beginner trap, so check every call while learning."
+          ],
+          "example": "cudaError_t e = cudaGetLastError();\nif (e) printf(\"%s\\n\", cudaGetErrorString(e));",
+          "pitfall": "A kernel that 'does nothing' is often a launch that failed; always check cudaGetLastError after launch.",
+          "question": {
+            "id": "cuda-err-q",
+            "prompt": "Kernel launch errors are retrieved with:",
+            "options": [
+              {
+                "id": "a",
+                "text": "errno"
+              },
+              {
+                "id": "b",
+                "text": "cudaGetLastError()"
+              },
+              {
+                "id": "c",
+                "text": "try/catch"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "CUDA reports errors via cudaGetLastError and the returned codes.",
+            "lessonId": "cuda-errors"
+          }
+        }
+      ],
+      "steps": [
+        "Read the kernel and predict how many lines it prints.",
+        "Note that print order across threads is not deterministic.",
+        "Compile locally with nvcc and run it on your GPU.",
+        "Add cudaGetLastError after the launch and print any message."
+      ],
+      "challenge": {
+        "task": "Write and launch a kernel that prints its global thread index for 8 threads.",
+        "acceptance": [
+          "Use <<<blocks, threads>>> totaling 8",
+          "Synchronize before exiting",
+          "Check cudaGetLastError"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "cuda-intro-e1",
+            "prompt": "GPUs are optimized for:",
+            "options": [
+              {
+                "id": "a",
+                "text": "low-latency single threads"
+              },
+              {
+                "id": "b",
+                "text": "high-throughput parallelism"
+              },
+              {
+                "id": "c",
+                "text": "disk I/O"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Thousands of threads give throughput.",
+            "lessonId": "cuda-why-gpu"
+          },
+          {
+            "id": "cuda-intro-e2",
+            "prompt": "Kernel launches are:",
+            "options": [
+              {
+                "id": "a",
+                "text": "synchronous"
+              },
+              {
+                "id": "b",
+                "text": "asynchronous"
+              },
+              {
+                "id": "c",
+                "text": "compiled at runtime"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The host continues; synchronize to wait.",
+            "lessonId": "cuda-kernel"
+          },
+          {
+            "id": "cuda-intro-e3",
+            "prompt": "`k<<<2,128>>>()` launches how many threads?",
+            "options": [
+              {
+                "id": "a",
+                "text": "128"
+              },
+              {
+                "id": "b",
+                "text": "256"
+              },
+              {
+                "id": "c",
+                "text": "2"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "2 blocks × 128 threads = 256.",
+            "lessonId": "cuda-kernel"
+          },
+          {
+            "id": "cuda-intro-e4",
+            "prompt": "-arch=sm_80 selects:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the host OS"
+              },
+              {
+                "id": "b",
+                "text": "a GPU architecture"
+              },
+              {
+                "id": "c",
+                "text": "the optimizer level"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It targets a GPU compute capability.",
+            "lessonId": "cuda-compile"
+          },
+          {
+            "id": "cuda-intro-e5",
+            "prompt": "After a kernel launch you should:",
+            "options": [
+              {
+                "id": "a",
+                "text": "ignore errors"
+              },
+              {
+                "id": "b",
+                "text": "check cudaGetLastError and synchronize"
+              },
+              {
+                "id": "c",
+                "text": "call free()"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Check and synchronize to surface errors.",
+            "lessonId": "cuda-errors"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "CUDA C++ Programming Guide (NVIDIA)",
+          "url": "https://docs.nvidia.com/cuda/cuda-c-programming-guide/"
+        },
+        {
+          "title": "CUDA C++ Best Practices Guide (NVIDIA)",
+          "url": "https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/"
+        }
+      ],
+      "reviewedAt": "2026-10-11"
+    },
+    {
+      "id": "cuda-threads",
+      "version": 1,
+      "order": 2,
+      "title": "2. Threads, blocks and grids",
+      "summary": "Index data with threadIdx, blockIdx and blockDim, and size a grid to cover an array.",
+      "difficulty": "Fundamental",
+      "minutes": 24,
+      "code": "#include <cstdio>\n#include <cuda_runtime.h>\n\n__global__ void fill(float* a, int n) {\n  int i = blockIdx.x * blockDim.x + threadIdx.x;\n  if (i < n) a[i] = i;\n}\n\nint main() {\n  int n = 1000;\n  float h[1000];\n  float* d;\n  cudaMalloc(&d, n * sizeof(float));\n  int T = 256;\n  fill<<<(n + T - 1) / T, T>>>(d, n);\n  cudaMemcpy(h, d, n * sizeof(float), cudaMemcpyDeviceToHost);\n  printf(\"a[0]=%.0f a[999]=%.0f\\n\", h[0], h[999]);  // 0 and 999\n  cudaFree(d);\n  return 0;\n}",
+      "expected": "Each thread computes a unique global index i and writes a[i]=i; the guard i<n protects the tail.",
+      "lessons": [
+        {
+          "id": "cuda-hierarchy",
+          "title": "The thread hierarchy",
+          "paragraphs": [
+            "CUDA threads are grouped into blocks, and blocks form a grid. Within a kernel, `threadIdx` gives the thread's position in its block, `blockIdx` the block's position in the grid, and `blockDim` the block size.",
+            "Blocks run independently and may execute in any order, which is why they must not depend on each other."
+          ],
+          "example": "int i = blockIdx.x * blockDim.x + threadIdx.x;",
+          "pitfall": "Blocks cannot assume an execution order or communicate globally mid-kernel; design them independent.",
+          "question": {
+            "id": "cuda-hier-q",
+            "prompt": "blockDim.x is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the number of blocks"
+              },
+              {
+                "id": "b",
+                "text": "the threads per block"
+              },
+              {
+                "id": "c",
+                "text": "the grid size"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "blockDim is the block's thread count.",
+            "lessonId": "cuda-hierarchy"
+          }
+        },
+        {
+          "id": "cuda-index",
+          "title": "Computing a global index",
+          "paragraphs": [
+            "The canonical 1-D global index is `blockIdx.x*blockDim.x + threadIdx.x`. It maps each thread to one element so the kernel is just the serial body with the loop replaced by the index.",
+            "Always compare the index against n before touching memory."
+          ],
+          "example": "if (i < n) y[i] = a[i] + b[i];",
+          "pitfall": "An out-of-bounds thread writing past the array corrupts memory; the i<n guard is mandatory.",
+          "question": {
+            "id": "cuda-index-q",
+            "prompt": "Why guard with `if (i < n)`?",
+            "options": [
+              {
+                "id": "a",
+                "text": "to speed up"
+              },
+              {
+                "id": "b",
+                "text": "to avoid out-of-bounds access"
+              },
+              {
+                "id": "c",
+                "text": "to synchronize"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The last block may have extra threads beyond n.",
+            "lessonId": "cuda-index"
+          }
+        },
+        {
+          "id": "cuda-gridsize",
+          "title": "Sizing the grid",
+          "paragraphs": [
+            "To cover n elements with T threads per block you need ceil(n/T) blocks, written `(n + T - 1) / T`. Picking T as a multiple of 32 (the warp size), often 128 or 256, keeps the hardware busy.",
+            "The guard then handles the few extra threads in the final block."
+          ],
+          "example": "int T = 256, blocks = (n + T - 1) / T;",
+          "pitfall": "Using n/T (integer division) under-launches and skips the tail elements; use the ceiling form.",
+          "question": {
+            "id": "cuda-grid-q",
+            "prompt": "Blocks needed to cover n with T threads each:",
+            "options": [
+              {
+                "id": "a",
+                "text": "n / T"
+              },
+              {
+                "id": "b",
+                "text": "(n + T - 1) / T"
+              },
+              {
+                "id": "c",
+                "text": "n * T"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Ceiling division covers the remainder.",
+            "lessonId": "cuda-gridsize"
+          }
+        },
+        {
+          "id": "cuda-warps",
+          "title": "Warps and divergence",
+          "paragraphs": [
+            "Threads execute in warps of 32 in lockstep. When threads in a warp take different branch paths the warp serializes the paths, called divergence, which costs performance.",
+            "Keeping branches aligned to warp boundaries, or branchless, avoids most divergence."
+          ],
+          "example": "// divergent: if (threadIdx.x % 2) ...  (splits the warp)",
+          "pitfall": "Heavy per-thread branching inside a warp silently halves throughput; measure before and after.",
+          "question": {
+            "id": "cuda-warp-q",
+            "prompt": "A warp is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "32 threads in lockstep"
+              },
+              {
+                "id": "b",
+                "text": "a block of shared memory"
+              },
+              {
+                "id": "c",
+                "text": "a CUDA stream"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Warps are 32 threads scheduled together.",
+            "lessonId": "cuda-warps"
+          }
+        }
+      ],
+      "steps": [
+        "Trace the global index for block 1, thread 5 with blockDim 256.",
+        "Explain why the i<n guard is required for the last block.",
+        "Compute the block count for n=1000, T=256.",
+        "Describe one case of warp divergence in the kernel."
+      ],
+      "challenge": {
+        "task": "Index a 2-D array using blockIdx/threadIdx in x and y.",
+        "acceptance": [
+          "Compute row and col from the 2-D indices",
+          "Guard both against the bounds",
+          "Explain the grid dimensions chosen"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "cuda-th-e1",
+            "prompt": "threadIdx is the thread's index within:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the grid"
+              },
+              {
+                "id": "b",
+                "text": "its block"
+              },
+              {
+                "id": "c",
+                "text": "the warp"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "threadIdx is block-local.",
+            "lessonId": "cuda-hierarchy"
+          },
+          {
+            "id": "cuda-th-e2",
+            "prompt": "The 1-D global index is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "threadIdx.x only"
+              },
+              {
+                "id": "b",
+                "text": "blockIdx.x*blockDim.x+threadIdx.x"
+              },
+              {
+                "id": "c",
+                "text": "blockIdx.x+threadIdx.x"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "That maps one thread to one element.",
+            "lessonId": "cuda-index"
+          },
+          {
+            "id": "cuda-th-e3",
+            "prompt": "For n=1000, T=256, blocks =",
+            "options": [
+              {
+                "id": "a",
+                "text": "3"
+              },
+              {
+                "id": "b",
+                "text": "4"
+              },
+              {
+                "id": "c",
+                "text": "256"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "ceil(1000/256)=4.",
+            "lessonId": "cuda-gridsize"
+          },
+          {
+            "id": "cuda-th-e4",
+            "prompt": "Warp divergence happens when:",
+            "options": [
+              {
+                "id": "a",
+                "text": "blocks finish early"
+              },
+              {
+                "id": "b",
+                "text": "threads in a warp take different branches"
+              },
+              {
+                "id": "c",
+                "text": "memory is uncoalesced"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Divergent branches serialize the warp.",
+            "lessonId": "cuda-warps"
+          },
+          {
+            "id": "cuda-th-e5",
+            "prompt": "A good block size is usually a multiple of:",
+            "options": [
+              {
+                "id": "a",
+                "text": "10"
+              },
+              {
+                "id": "b",
+                "text": "32"
+              },
+              {
+                "id": "c",
+                "text": "7"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Warp size is 32.",
+            "lessonId": "cuda-gridsize"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "CUDA C++ Programming Guide (NVIDIA)",
+          "url": "https://docs.nvidia.com/cuda/cuda-c-programming-guide/"
+        },
+        {
+          "title": "CUDA C++ Best Practices Guide (NVIDIA)",
+          "url": "https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/"
+        }
+      ],
+      "reviewedAt": "2026-10-11"
+    },
+    {
+      "id": "cuda-memory",
+      "version": 1,
+      "order": 3,
+      "title": "3. Memory: allocate, copy, and coalesce",
+      "summary": "Allocate device memory, move data with cudaMemcpy, and understand the memory spaces.",
+      "difficulty": "Fundamental",
+      "minutes": 26,
+      "code": "#include <cstdio>\n#include <cuda_runtime.h>\n\n__global__ void scale(float* a, int n, float k) {\n  int i = blockIdx.x * blockDim.x + threadIdx.x;\n  if (i < n) a[i] *= k;\n}\n\nint main() {\n  int n = 256;\n  size_t bytes = n * sizeof(float);\n  float h[256];\n  for (int i = 0; i < n; i++) h[i] = 1.0f;\n  float* d;\n  cudaMalloc(&d, bytes);\n  cudaMemcpy(d, h, bytes, cudaMemcpyHostToDevice);\n  int T = 128;\n  scale<<<(n + T - 1) / T, T>>>(d, n, 3.0f);\n  cudaMemcpy(h, d, bytes, cudaMemcpyDeviceToHost);\n  printf(\"h[0]=%.1f\\n\", h[0]);  // 3.0\n  cudaFree(d);\n  return 0;\n}",
+      "expected": "Host data is copied to the device, processed by a kernel, copied back, and the device buffer is freed.",
+      "lessons": [
+        {
+          "id": "cuda-spaces",
+          "title": "Memory spaces",
+          "paragraphs": [
+            "A GPU has global memory (large, high-latency, visible to all threads), shared memory (small, fast, per-block), registers (fastest, per-thread) and constant memory. Choosing the right space is the core of CUDA performance.",
+            "Most data lives in global memory; shared memory is an explicitly managed cache."
+          ],
+          "example": "__shared__ float tile[256]; // per-block fast memory",
+          "pitfall": "Treating global memory like registers (many repeated loads) wastes bandwidth; stage reuse in shared memory.",
+          "question": {
+            "id": "cuda-space-q",
+            "prompt": "Shared memory is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "global and slow"
+              },
+              {
+                "id": "b",
+                "text": "per-block and fast"
+              },
+              {
+                "id": "c",
+                "text": "per-thread registers"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Shared memory is fast and block-scoped.",
+            "lessonId": "cuda-spaces"
+          }
+        },
+        {
+          "id": "cuda-malloc",
+          "title": "cudaMalloc and cudaMemcpy",
+          "paragraphs": [
+            "`cudaMalloc(&ptr, bytes)` allocates device memory; `cudaMemcpy(dst, src, bytes, kind)` transfers data with a direction such as `cudaMemcpyHostToDevice`. Device pointers must not be dereferenced on the host.",
+            "Free device memory with `cudaFree` to avoid leaks across many iterations."
+          ],
+          "example": "cudaMemcpy(d, h, bytes, cudaMemcpyHostToDevice);",
+          "pitfall": "Passing the wrong copy direction, or a host pointer where a device pointer is expected, corrupts data silently.",
+          "question": {
+            "id": "cuda-malloc-q",
+            "prompt": "cudaMalloc returns memory that is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "on the host"
+              },
+              {
+                "id": "b",
+                "text": "on the device"
+              },
+              {
+                "id": "c",
+                "text": "shared per block"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "cudaMalloc allocates global device memory.",
+            "lessonId": "cuda-malloc"
+          }
+        },
+        {
+          "id": "cuda-coalesce",
+          "title": "Coalesced access",
+          "paragraphs": [
+            "Global memory is fastest when consecutive threads read consecutive addresses, so a warp's 32 accesses merge into few transactions. This is coalescing, and it often dominates kernel speed.",
+            "Row-major arrays indexed by the global thread index coalesce naturally."
+          ],
+          "example": "y[i] = a[i]; // thread i touches element i -> coalesced",
+          "pitfall": "Strided or transposed access (thread i touches a[i*stride]) breaks coalescing and can be many times slower.",
+          "question": {
+            "id": "cuda-coal-q",
+            "prompt": "Coalesced access means a warp's threads touch:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the same address"
+              },
+              {
+                "id": "b",
+                "text": "consecutive addresses"
+              },
+              {
+                "id": "c",
+                "text": "random addresses"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Consecutive addresses merge into few transactions.",
+            "lessonId": "cuda-coalesce"
+          }
+        },
+        {
+          "id": "cuda-unified",
+          "title": "Unified memory",
+          "paragraphs": [
+            "`cudaMallocManaged` allocates memory accessible from host and device, migrated on demand by the driver. It simplifies code and is great for learning, though explicit copies can be faster for tuned kernels.",
+            "Unified memory still benefits from prefetch hints on large working sets."
+          ],
+          "example": "float* a; cudaMallocManaged(&a, bytes); // use on host and device",
+          "pitfall": "Unified memory is convenient but not automatically optimal; measure against explicit copies for hot paths.",
+          "question": {
+            "id": "cuda-uni-q",
+            "prompt": "cudaMallocManaged memory is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "host-only"
+              },
+              {
+                "id": "b",
+                "text": "accessible from host and device"
+              },
+              {
+                "id": "c",
+                "text": "read-only"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Managed memory migrates between host and device.",
+            "lessonId": "cuda-unified"
+          }
+        }
+      ],
+      "steps": [
+        "Allocate, copy, and free a device buffer on paper.",
+        "Explain which copy direction each cudaMemcpy uses.",
+        "Describe a coalesced vs a strided access pattern.",
+        "Rewrite the example using cudaMallocManaged."
+      ],
+      "challenge": {
+        "task": "Copy an array to the device, double it in a kernel, and copy it back.",
+        "acceptance": [
+          "Use cudaMalloc/cudaMemcpy/cudaFree",
+          "Guard the kernel index",
+          "Verify the host array doubled"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "cuda-mem-e1",
+            "prompt": "The fastest per-thread storage is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "global memory"
+              },
+              {
+                "id": "b",
+                "text": "registers"
+              },
+              {
+                "id": "c",
+                "text": "constant memory"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Registers are fastest and per-thread.",
+            "lessonId": "cuda-spaces"
+          },
+          {
+            "id": "cuda-mem-e2",
+            "prompt": "Device memory is released with:",
+            "options": [
+              {
+                "id": "a",
+                "text": "free()"
+              },
+              {
+                "id": "b",
+                "text": "cudaFree()"
+              },
+              {
+                "id": "c",
+                "text": "delete"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "cudaFree releases cudaMalloc memory.",
+            "lessonId": "cuda-malloc"
+          },
+          {
+            "id": "cuda-mem-e3",
+            "prompt": "Coalescing improves:",
+            "options": [
+              {
+                "id": "a",
+                "text": "branch divergence"
+              },
+              {
+                "id": "b",
+                "text": "global memory bandwidth"
+              },
+              {
+                "id": "c",
+                "text": "register use"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Merged transactions use bandwidth well.",
+            "lessonId": "cuda-coalesce"
+          },
+          {
+            "id": "cuda-mem-e4",
+            "prompt": "A device pointer dereferenced on the host:",
+            "options": [
+              {
+                "id": "a",
+                "text": "works fine"
+              },
+              {
+                "id": "b",
+                "text": "is invalid"
+              },
+              {
+                "id": "c",
+                "text": "is faster"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Host code cannot read device pointers.",
+            "lessonId": "cuda-malloc"
+          },
+          {
+            "id": "cuda-mem-e5",
+            "prompt": "cudaMallocManaged is best described as:",
+            "options": [
+              {
+                "id": "a",
+                "text": "explicit copies"
+              },
+              {
+                "id": "b",
+                "text": "driver-migrated unified memory"
+              },
+              {
+                "id": "c",
+                "text": "shared memory"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It is unified, on-demand migrated memory.",
+            "lessonId": "cuda-unified"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "CUDA C++ Programming Guide (NVIDIA)",
+          "url": "https://docs.nvidia.com/cuda/cuda-c-programming-guide/"
+        },
+        {
+          "title": "CUDA C++ Best Practices Guide (NVIDIA)",
+          "url": "https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/"
+        }
+      ],
+      "reviewedAt": "2026-10-11"
+    },
+    {
+      "id": "cuda-vectoradd",
+      "version": 1,
+      "order": 4,
+      "title": "4. Vector addition and grid-stride loops",
+      "summary": "Write the canonical data-parallel kernel and scale it with a grid-stride loop.",
+      "difficulty": "Intermediate",
+      "minutes": 24,
+      "code": "#include <cstdio>\n#include <cstdlib>\n#include <cuda_runtime.h>\n\n__global__ void vadd(const float* a, const float* b, float* c, int n) {\n  for (int i = blockIdx.x * blockDim.x + threadIdx.x; i < n; i += blockDim.x * gridDim.x)\n    c[i] = a[i] + b[i];\n}\n\nint main() {\n  int n = 1 << 20;\n  size_t bytes = n * sizeof(float);\n  float *ha = (float*)malloc(bytes), *hb = (float*)malloc(bytes), *hc = (float*)malloc(bytes);\n  for (int i = 0; i < n; i++) { ha[i] = 1.0f; hb[i] = 2.0f; }\n  float *da, *db, *dc;\n  cudaMalloc(&da, bytes); cudaMalloc(&db, bytes); cudaMalloc(&dc, bytes);\n  cudaMemcpy(da, ha, bytes, cudaMemcpyHostToDevice);\n  cudaMemcpy(db, hb, bytes, cudaMemcpyHostToDevice);\n  int T = 256;\n  vadd<<<(n + T - 1) / T, T>>>(da, db, dc, n);\n  cudaMemcpy(hc, dc, bytes, cudaMemcpyDeviceToHost);\n  printf(\"c[0]=%.1f c[n-1]=%.1f\\n\", hc[0], hc[n - 1]);  // 3.0 3.0\n  cudaFree(da); cudaFree(db); cudaFree(dc);\n  free(ha); free(hb); free(hc);\n  return 0;\n}",
+      "expected": "Each thread adds one or more elements via the grid-stride loop, covering any n with any launch size.",
+      "lessons": [
+        {
+          "id": "cuda-vadd",
+          "title": "The vector-add kernel",
+          "paragraphs": [
+            "Vector addition is the 'hello world' of data parallelism: element i of c is a[i]+b[i], and each thread does one element. It shows the index-then-guard pattern with real work.",
+            "The host allocates, copies inputs, launches, and copies the result back."
+          ],
+          "example": "c[i] = a[i] + b[i];",
+          "pitfall": "Launching fewer threads than n without a loop leaves the tail unprocessed.",
+          "question": {
+            "id": "cuda-vadd-q",
+            "prompt": "Vector add assigns each thread:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the whole array"
+              },
+              {
+                "id": "b",
+                "text": "one element (or a strided set)"
+              },
+              {
+                "id": "c",
+                "text": "a random element"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "One element per thread, or a strided set with a loop.",
+            "lessonId": "cuda-vadd"
+          }
+        },
+        {
+          "id": "cuda-gridstride",
+          "title": "Grid-stride loops",
+          "paragraphs": [
+            "A grid-stride loop lets a fixed-size grid process arrays larger than the launch: each thread steps by `blockDim.x*gridDim.x` until it runs off the end. This decouples the launch configuration from n.",
+            "It also improves reuse and makes kernels robust to any input size."
+          ],
+          "example": "for (int i=start; i<n; i += blockDim.x*gridDim.x) c[i]=a[i]+b[i];",
+          "pitfall": "Hard-coding one element per thread ties the grid to n and breaks for larger inputs.",
+          "question": {
+            "id": "cuda-gs-q",
+            "prompt": "A grid-stride loop steps by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "1"
+              },
+              {
+                "id": "b",
+                "text": "blockDim.x*gridDim.x"
+              },
+              {
+                "id": "c",
+                "text": "warpSize"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The total thread count is the stride.",
+            "lessonId": "cuda-gridstride"
+          }
+        },
+        {
+          "id": "cuda-launchcfg",
+          "title": "Choosing a launch configuration",
+          "paragraphs": [
+            "A common choice is 256 threads per block and enough blocks to saturate the GPU, often a multiple of the SM count. With a grid-stride loop, correctness no longer depends on the exact numbers.",
+            "Occupancy tools and `cudaOccupancyMaxPotentialBlockSize` can suggest good sizes."
+          ],
+          "example": "int T=256, blocks=min( (n+T-1)/T, 65535 );",
+          "pitfall": "Oversizing the grid wastes nothing with a stride loop, but undersizing without a loop drops work.",
+          "question": {
+            "id": "cuda-cfg-q",
+            "prompt": "With a grid-stride loop, correctness depends on:",
+            "options": [
+              {
+                "id": "a",
+                "text": "exact block count"
+              },
+              {
+                "id": "b",
+                "text": "the loop and bounds, not the exact launch"
+              },
+              {
+                "id": "c",
+                "text": "shared memory size"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The loop covers any size regardless of launch.",
+            "lessonId": "cuda-launchcfg"
+          }
+        },
+        {
+          "id": "cuda-verify",
+          "title": "Verifying results",
+          "paragraphs": [
+            "Always validate a kernel against a CPU reference on small inputs before trusting it at scale. Compare with a tolerance for floating point and check a few boundary indices.",
+            "Correctness first, then measure and optimize."
+          ],
+          "example": "for (int i=0;i<n;i++) assert(fabs(c[i]-(a[i]+b[i]))<1e-5f);",
+          "pitfall": "A fast kernel that is wrong is worthless; verify against a reference before optimizing.",
+          "question": {
+            "id": "cuda-ver-q",
+            "prompt": "Before optimizing a kernel you should:",
+            "options": [
+              {
+                "id": "a",
+                "text": "increase the grid"
+              },
+              {
+                "id": "b",
+                "text": "verify against a CPU reference"
+              },
+              {
+                "id": "c",
+                "text": "remove the bounds check"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Confirm correctness first.",
+            "lessonId": "cuda-verify"
+          }
+        }
+      ],
+      "steps": [
+        "Write the vector-add body with the index-and-guard pattern.",
+        "Convert it to a grid-stride loop.",
+        "Pick a launch configuration and justify it.",
+        "Describe how you would verify the output."
+      ],
+      "challenge": {
+        "task": "Implement SAXPY (y = a*x + y) as a grid-stride kernel.",
+        "acceptance": [
+          "Use a grid-stride loop",
+          "Verify against a CPU reference",
+          "Report the configuration used"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "cuda-va-e1",
+            "prompt": "Vector add is an example of:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a reduction"
+              },
+              {
+                "id": "b",
+                "text": "element-wise data parallelism"
+              },
+              {
+                "id": "c",
+                "text": "a scan"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Each output depends on one input pair.",
+            "lessonId": "cuda-vadd"
+          },
+          {
+            "id": "cuda-va-e2",
+            "prompt": "Grid-stride loops let a fixed grid:",
+            "options": [
+              {
+                "id": "a",
+                "text": "skip the guard"
+              },
+              {
+                "id": "b",
+                "text": "process arrays larger than the launch"
+              },
+              {
+                "id": "c",
+                "text": "avoid memory copies"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Each thread handles multiple elements.",
+            "lessonId": "cuda-gridstride"
+          },
+          {
+            "id": "cuda-va-e3",
+            "prompt": "A typical threads-per-block value is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "7"
+              },
+              {
+                "id": "b",
+                "text": "256"
+              },
+              {
+                "id": "c",
+                "text": "1000"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "256 (a multiple of 32) is common.",
+            "lessonId": "cuda-launchcfg"
+          },
+          {
+            "id": "cuda-va-e4",
+            "prompt": "Floating-point results are compared with:",
+            "options": [
+              {
+                "id": "a",
+                "text": "exact equality"
+              },
+              {
+                "id": "b",
+                "text": "a tolerance"
+              },
+              {
+                "id": "c",
+                "text": "string compare"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Use an epsilon tolerance.",
+            "lessonId": "cuda-verify"
+          },
+          {
+            "id": "cuda-va-e5",
+            "prompt": "The index-then-guard pattern prevents:",
+            "options": [
+              {
+                "id": "a",
+                "text": "divergence"
+              },
+              {
+                "id": "b",
+                "text": "out-of-bounds writes"
+              },
+              {
+                "id": "c",
+                "text": "slow copies"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The guard stops out-of-bounds access.",
+            "lessonId": "cuda-vadd"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "CUDA C++ Programming Guide (NVIDIA)",
+          "url": "https://docs.nvidia.com/cuda/cuda-c-programming-guide/"
+        },
+        {
+          "title": "CUDA C++ Best Practices Guide (NVIDIA)",
+          "url": "https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/"
+        }
+      ],
+      "reviewedAt": "2026-10-11"
+    },
+    {
+      "id": "cuda-shared",
+      "version": 1,
+      "order": 5,
+      "title": "5. Shared memory and tiled matrix multiply",
+      "summary": "Use __shared__ memory and __syncthreads to tile a matrix multiply and cut global traffic.",
+      "difficulty": "Intermediate",
+      "minutes": 28,
+      "code": "#include <cstdio>\n#include <cstdlib>\n#include <cuda_runtime.h>\n#define TILE 16\n\n__global__ void matmul(const float* A, const float* B, float* C, int N) {\n  __shared__ float As[TILE][TILE], Bs[TILE][TILE];\n  int r = blockIdx.y * TILE + threadIdx.y, c = blockIdx.x * TILE + threadIdx.x;\n  float s = 0;\n  for (int t = 0; t < N / TILE; t++) {\n    As[threadIdx.y][threadIdx.x] = A[r * N + t * TILE + threadIdx.x];\n    Bs[threadIdx.y][threadIdx.x] = B[(t * TILE + threadIdx.y) * N + c];\n    __syncthreads();\n    for (int k = 0; k < TILE; k++) s += As[threadIdx.y][k] * Bs[k][threadIdx.x];\n    __syncthreads();\n  }\n  C[r * N + c] = s;\n}\n\nint main() {\n  int N = 64;\n  size_t bytes = N * N * sizeof(float);\n  float *hA = (float*)malloc(bytes), *hB = (float*)malloc(bytes), *hC = (float*)malloc(bytes);\n  for (int i = 0; i < N * N; i++) { hA[i] = 1.0f; hB[i] = 1.0f; }\n  float *dA, *dB, *dC;\n  cudaMalloc(&dA, bytes); cudaMalloc(&dB, bytes); cudaMalloc(&dC, bytes);\n  cudaMemcpy(dA, hA, bytes, cudaMemcpyHostToDevice);\n  cudaMemcpy(dB, hB, bytes, cudaMemcpyHostToDevice);\n  dim3 block(TILE, TILE), grid(N / TILE, N / TILE);\n  matmul<<<grid, block>>>(dA, dB, dC, N);\n  cudaMemcpy(hC, dC, bytes, cudaMemcpyDeviceToHost);\n  printf(\"C[0]=%.0f\\n\", hC[0]);  // 64\n  cudaFree(dA); cudaFree(dB); cudaFree(dC);\n  free(hA); free(hB); free(hC);\n  return 0;\n}",
+      "expected": "Each 16×16 block cooperatively loads tiles into shared memory and accumulates, reusing each loaded value 16 times.",
+      "lessons": [
+        {
+          "id": "cuda-shmem",
+          "title": "Shared memory as a cache",
+          "paragraphs": [
+            "Shared memory is a small, fast, per-block scratchpad you manage by hand. By staging reused data there, a block avoids repeated slow global loads, which is the key to compute-bound kernels.",
+            "Declare it with `__shared__` inside the kernel."
+          ],
+          "example": "__shared__ float tile[16][16];",
+          "pitfall": "Shared memory is tiny (tens of KB per block); oversizing it reduces occupancy or fails to launch.",
+          "question": {
+            "id": "cuda-sh-q",
+            "prompt": "Shared memory is shared among:",
+            "options": [
+              {
+                "id": "a",
+                "text": "all threads in the grid"
+              },
+              {
+                "id": "b",
+                "text": "threads in one block"
+              },
+              {
+                "id": "c",
+                "text": "one warp only"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It is per-block.",
+            "lessonId": "cuda-shmem"
+          }
+        },
+        {
+          "id": "cuda-sync",
+          "title": "__syncthreads barriers",
+          "paragraphs": [
+            "`__syncthreads()` is a barrier: every thread in the block waits until all arrive, guaranteeing shared-memory writes are visible before reads. Tiled algorithms sync after loading a tile and after consuming it.",
+            "All threads must reach the same `__syncthreads`, so it cannot sit inside a divergent branch."
+          ],
+          "example": "As[ty][tx]=...; __syncthreads(); // now safe to read As",
+          "pitfall": "Calling __syncthreads in a branch only some threads take deadlocks the block.",
+          "question": {
+            "id": "cuda-sync-q",
+            "prompt": "__syncthreads() guarantees:",
+            "options": [
+              {
+                "id": "a",
+                "text": "global memory order"
+              },
+              {
+                "id": "b",
+                "text": "all block threads reached the barrier"
+              },
+              {
+                "id": "c",
+                "text": "warp divergence"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It is a block-wide barrier.",
+            "lessonId": "cuda-sync"
+          }
+        },
+        {
+          "id": "cuda-tiling",
+          "title": "Tiling for reuse",
+          "paragraphs": [
+            "Tiling splits the matrices into sub-blocks that fit in shared memory; each tile is loaded once and reused by every thread in the block. This turns an O(N) memory-per-output kernel into far fewer global loads.",
+            "The arithmetic intensity rises, moving the kernel from memory-bound toward compute-bound."
+          ],
+          "example": "// load a 16x16 tile, multiply-accumulate, advance",
+          "pitfall": "Tiling without the barriers reads stale or partially-written tiles and produces wrong results.",
+          "question": {
+            "id": "cuda-tile-q",
+            "prompt": "Tiling mainly reduces:",
+            "options": [
+              {
+                "id": "a",
+                "text": "register use"
+              },
+              {
+                "id": "b",
+                "text": "global memory traffic"
+              },
+              {
+                "id": "c",
+                "text": "kernel launches"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Reuse cuts repeated global loads.",
+            "lessonId": "cuda-tiling"
+          }
+        },
+        {
+          "id": "cuda-bank",
+          "title": "Bank conflicts",
+          "paragraphs": [
+            "Shared memory is divided into banks; if threads in a warp access the same bank (but different words) the accesses serialize, a bank conflict. Padding arrays or changing access patterns avoids it.",
+            "For many tiled kernels the default layout is already conflict-free."
+          ],
+          "example": "__shared__ float tile[16][17]; // +1 padding avoids conflicts",
+          "pitfall": "A transposed shared-memory access can hit one bank repeatedly; pad the inner dimension to spread it.",
+          "question": {
+            "id": "cuda-bank-q",
+            "prompt": "A bank conflict causes shared accesses to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "coalesce"
+              },
+              {
+                "id": "b",
+                "text": "serialize"
+              },
+              {
+                "id": "c",
+                "text": "diverge"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Same-bank accesses serialize.",
+            "lessonId": "cuda-bank"
+          }
+        }
+      ],
+      "steps": [
+        "Trace which global elements a 16×16 tile loads.",
+        "Explain why two __syncthreads calls are needed per tile.",
+        "Estimate the reduction in global loads from tiling.",
+        "Describe one way to avoid a bank conflict."
+      ],
+      "challenge": {
+        "task": "Add padding to the shared tiles and explain the effect on bank conflicts.",
+        "acceptance": [
+          "Describe the barrier placement",
+          "Explain the reuse factor",
+          "State the padding rationale"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "cuda-sm-e1",
+            "prompt": "Shared memory is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "large and slow"
+              },
+              {
+                "id": "b",
+                "text": "small and fast, per block"
+              },
+              {
+                "id": "c",
+                "text": "per thread"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A fast per-block scratchpad.",
+            "lessonId": "cuda-shmem"
+          },
+          {
+            "id": "cuda-sm-e2",
+            "prompt": "__syncthreads must be reached by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "one thread"
+              },
+              {
+                "id": "b",
+                "text": "all threads in the block"
+              },
+              {
+                "id": "c",
+                "text": "all blocks"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Every block thread, or it deadlocks.",
+            "lessonId": "cuda-sync"
+          },
+          {
+            "id": "cuda-sm-e3",
+            "prompt": "Tiling raises:",
+            "options": [
+              {
+                "id": "a",
+                "text": "arithmetic intensity"
+              },
+              {
+                "id": "b",
+                "text": "launch latency"
+              },
+              {
+                "id": "c",
+                "text": "divergence"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "More compute per byte loaded.",
+            "lessonId": "cuda-tiling"
+          },
+          {
+            "id": "cuda-sm-e4",
+            "prompt": "Bank conflicts are avoided by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "more blocks"
+              },
+              {
+                "id": "b",
+                "text": "padding or better access patterns"
+              },
+              {
+                "id": "c",
+                "text": "larger grids"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Padding spreads accesses across banks.",
+            "lessonId": "cuda-bank"
+          },
+          {
+            "id": "cuda-sm-e5",
+            "prompt": "__syncthreads inside a divergent branch:",
+            "options": [
+              {
+                "id": "a",
+                "text": "is fine"
+              },
+              {
+                "id": "b",
+                "text": "can deadlock the block"
+              },
+              {
+                "id": "c",
+                "text": "speeds things up"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Not all threads reach it.",
+            "lessonId": "cuda-sync"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "CUDA C++ Programming Guide (NVIDIA)",
+          "url": "https://docs.nvidia.com/cuda/cuda-c-programming-guide/"
+        },
+        {
+          "title": "CUDA C++ Best Practices Guide (NVIDIA)",
+          "url": "https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/"
+        }
+      ],
+      "reviewedAt": "2026-10-11"
+    },
+    {
+      "id": "cuda-reduction",
+      "version": 1,
+      "order": 6,
+      "title": "6. Parallel reductions and atomics",
+      "summary": "Sum an array in parallel with a tree reduction, warp shuffles and atomics.",
+      "difficulty": "Advanced",
+      "minutes": 28,
+      "code": "#include <cstdio>\n#include <cstdlib>\n#include <cuda_runtime.h>\n#define T 256\n\n__global__ void reduce(const float* x, float* out, int n) {\n  __shared__ float s[T];\n  int i = blockIdx.x * blockDim.x + threadIdx.x, t = threadIdx.x;\n  s[t] = (i < n) ? x[i] : 0.0f;\n  __syncthreads();\n  for (int d = blockDim.x / 2; d > 0; d >>= 1) {\n    if (t < d) s[t] += s[t + d];\n    __syncthreads();\n  }\n  if (t == 0) atomicAdd(out, s[0]);\n}\n\nint main() {\n  int n = 1 << 20;\n  size_t bytes = n * sizeof(float);\n  float* hx = (float*)malloc(bytes);\n  for (int i = 0; i < n; i++) hx[i] = 1.0f;\n  float *dx, *dout;\n  cudaMalloc(&dx, bytes); cudaMalloc(&dout, sizeof(float));\n  cudaMemset(dout, 0, sizeof(float));\n  cudaMemcpy(dx, hx, bytes, cudaMemcpyHostToDevice);\n  reduce<<<(n + T - 1) / T, T>>>(dx, dout, n);\n  float sum = 0;\n  cudaMemcpy(&sum, dout, sizeof(float), cudaMemcpyDeviceToHost);\n  printf(\"sum=%.0f\\n\", sum);  // 1048576\n  cudaFree(dx); cudaFree(dout); free(hx);\n  return 0;\n}",
+      "expected": "Each block reduces its slice in shared memory with a halving tree, then atomically adds its partial sum to the global result.",
+      "lessons": [
+        {
+          "id": "cuda-tree",
+          "title": "Tree reduction",
+          "paragraphs": [
+            "A reduction combines many values into one (sum, max, …). In parallel it is a binary tree: at each step half the threads add a partner, halving the active set until one value remains.",
+            "It runs in log2(n) steps instead of n."
+          ],
+          "example": "for(d=blockDim.x/2; d>0; d>>=1){ if(t<d) s[t]+=s[t+d]; __syncthreads(); }",
+          "pitfall": "Reducing in global memory without shared staging is far slower and often races.",
+          "question": {
+            "id": "cuda-tree-q",
+            "prompt": "A parallel reduction takes how many steps?",
+            "options": [
+              {
+                "id": "a",
+                "text": "n"
+              },
+              {
+                "id": "b",
+                "text": "log2(n)"
+              },
+              {
+                "id": "c",
+                "text": "n^2"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Halving each step gives log2(n).",
+            "lessonId": "cuda-tree"
+          }
+        },
+        {
+          "id": "cuda-atomic",
+          "title": "Atomics",
+          "paragraphs": [
+            "When many threads update one location, an atomic like `atomicAdd` serializes those updates so none are lost. Blocks use one atomic for their partial sum rather than atomics per element.",
+            "Atomics are correct but contended; minimize how often you use them."
+          ],
+          "example": "if (threadIdx.x==0) atomicAdd(out, s[0]);",
+          "pitfall": "Using atomicAdd per element instead of per block creates massive contention and is slow.",
+          "question": {
+            "id": "cuda-atomic-q",
+            "prompt": "atomicAdd prevents:",
+            "options": [
+              {
+                "id": "a",
+                "text": "divergence"
+              },
+              {
+                "id": "b",
+                "text": "lost updates under concurrency"
+              },
+              {
+                "id": "c",
+                "text": "bank conflicts"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It serializes concurrent updates.",
+            "lessonId": "cuda-atomic"
+          }
+        },
+        {
+          "id": "cuda-shuffle",
+          "title": "Warp shuffles",
+          "paragraphs": [
+            "Within a warp, `__shfl_down_sync` exchanges registers directly without shared memory, giving a fast final reduction step. Modern reductions do the last 32 elements with shuffles.",
+            "This avoids shared-memory traffic and extra barriers for the warp-level part."
+          ],
+          "example": "for(int o=16;o>0;o>>=1) v += __shfl_down_sync(0xffffffff, v, o);",
+          "pitfall": "Using the wrong active mask in a *_sync shuffle gives undefined results on divergent warps.",
+          "question": {
+            "id": "cuda-shfl-q",
+            "prompt": "Warp shuffles exchange data via:",
+            "options": [
+              {
+                "id": "a",
+                "text": "global memory"
+              },
+              {
+                "id": "b",
+                "text": "registers within a warp"
+              },
+              {
+                "id": "c",
+                "text": "the host"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Registers, directly between warp lanes.",
+            "lessonId": "cuda-shuffle"
+          }
+        },
+        {
+          "id": "cuda-twopass",
+          "title": "Two-pass vs atomic finalize",
+          "paragraphs": [
+            "Reductions either write one partial per block and launch a second kernel to combine them, or finalize with a single atomic per block. The two-pass version avoids atomics; the atomic version avoids a second launch.",
+            "Both are common; choose based on contention and problem size."
+          ],
+          "example": "// pass 1: per-block partials; pass 2: reduce the partials",
+          "pitfall": "Forgetting to initialize the output to zero before an atomic-finalize kernel corrupts the sum.",
+          "question": {
+            "id": "cuda-2p-q",
+            "prompt": "A two-pass reduction avoids:",
+            "options": [
+              {
+                "id": "a",
+                "text": "shared memory"
+              },
+              {
+                "id": "b",
+                "text": "a global atomic"
+              },
+              {
+                "id": "c",
+                "text": "the guard"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It combines partials in a second kernel instead.",
+            "lessonId": "cuda-twopass"
+          }
+        }
+      ],
+      "steps": [
+        "Trace the halving tree for 8 values.",
+        "Explain why __syncthreads is inside the loop.",
+        "Describe when atomics become a bottleneck.",
+        "Sketch a warp-shuffle final step."
+      ],
+      "challenge": {
+        "task": "Reduce an array to its maximum instead of its sum.",
+        "acceptance": [
+          "Use a shared-memory tree",
+          "Handle the n<blockDim tail",
+          "Verify against a CPU max"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "cuda-rd-e1",
+            "prompt": "Each reduction step halves:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the array size in memory"
+              },
+              {
+                "id": "b",
+                "text": "the number of active threads"
+              },
+              {
+                "id": "c",
+                "text": "the block count"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Half the threads work each step.",
+            "lessonId": "cuda-tree"
+          },
+          {
+            "id": "cuda-rd-e2",
+            "prompt": "Atomics should be used:",
+            "options": [
+              {
+                "id": "a",
+                "text": "per element"
+              },
+              {
+                "id": "b",
+                "text": "sparingly (e.g. per block)"
+              },
+              {
+                "id": "c",
+                "text": "never"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Minimize contention.",
+            "lessonId": "cuda-atomic"
+          },
+          {
+            "id": "cuda-rd-e3",
+            "prompt": "__shfl_down_sync works within:",
+            "options": [
+              {
+                "id": "a",
+                "text": "a block"
+              },
+              {
+                "id": "b",
+                "text": "a warp"
+              },
+              {
+                "id": "c",
+                "text": "the grid"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It is warp-scoped.",
+            "lessonId": "cuda-shuffle"
+          },
+          {
+            "id": "cuda-rd-e4",
+            "prompt": "The barrier in the loop ensures:",
+            "options": [
+              {
+                "id": "a",
+                "text": "coalescing"
+              },
+              {
+                "id": "b",
+                "text": "partial sums are visible before the next step"
+              },
+              {
+                "id": "c",
+                "text": "divergence"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Shared writes complete before reads.",
+            "lessonId": "cuda-tree"
+          },
+          {
+            "id": "cuda-rd-e5",
+            "prompt": "An atomic-finalize reduction requires the output to be:",
+            "options": [
+              {
+                "id": "a",
+                "text": "random"
+              },
+              {
+                "id": "b",
+                "text": "zero-initialized"
+              },
+              {
+                "id": "c",
+                "text": "negative"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Initialize to the identity (0 for sum).",
+            "lessonId": "cuda-twopass"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "CUDA C++ Programming Guide (NVIDIA)",
+          "url": "https://docs.nvidia.com/cuda/cuda-c-programming-guide/"
+        },
+        {
+          "title": "CUDA C++ Best Practices Guide (NVIDIA)",
+          "url": "https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/"
+        }
+      ],
+      "reviewedAt": "2026-10-11"
+    },
+    {
+      "id": "cuda-streams",
+      "version": 1,
+      "order": 7,
+      "title": "7. Streams, events and overlap",
+      "summary": "Overlap copies and compute with streams, time kernels with events, and prefetch unified memory.",
+      "difficulty": "Advanced",
+      "minutes": 26,
+      "code": "#include <cstdio>\n#include <cuda_runtime.h>\n\n__global__ void scale(float* a, int n, float k) {\n  int i = blockIdx.x * blockDim.x + threadIdx.x;\n  if (i < n) a[i] *= k;\n}\n\nint main() {\n  int n = 1 << 20;\n  size_t bytes = n * sizeof(float);\n  float* h;\n  cudaMallocHost(&h, bytes);          // pinned host memory enables async copies\n  for (int i = 0; i < n; i++) h[i] = 1.0f;\n  float* d;\n  cudaMalloc(&d, bytes);\n  cudaStream_t s;\n  cudaStreamCreate(&s);\n  int T = 256;\n  cudaMemcpyAsync(d, h, bytes, cudaMemcpyHostToDevice, s);\n  scale<<<(n + T - 1) / T, T, 0, s>>>(d, n, 2.0f);\n  cudaMemcpyAsync(h, d, bytes, cudaMemcpyDeviceToHost, s);\n  cudaStreamSynchronize(s);\n  printf(\"h[0]=%.1f\\n\", h[0]);  // 2.0\n  cudaStreamDestroy(s); cudaFree(d); cudaFreeHost(h);\n  return 0;\n}",
+      "expected": "Work issued to a stream runs in order but can overlap with other streams; async copies need pinned host memory to overlap.",
+      "lessons": [
+        {
+          "id": "cuda-streams-basic",
+          "title": "Streams",
+          "paragraphs": [
+            "A stream is an ordered queue of GPU work; operations in one stream run in issue order, but different streams can run concurrently. Using multiple streams overlaps data transfer with computation.",
+            "The default stream (0) synchronizes with others unless you opt out."
+          ],
+          "example": "k<<<blocks, T, 0, stream>>>(args);",
+          "pitfall": "Async copies only overlap when the host memory is pinned (cudaHostAlloc); pageable memory serializes.",
+          "question": {
+            "id": "cuda-st-q",
+            "prompt": "Operations within one stream run:",
+            "options": [
+              {
+                "id": "a",
+                "text": "in parallel"
+              },
+              {
+                "id": "b",
+                "text": "in issue order"
+              },
+              {
+                "id": "c",
+                "text": "randomly"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A stream is ordered; streams overlap each other.",
+            "lessonId": "cuda-streams-basic"
+          }
+        },
+        {
+          "id": "cuda-events",
+          "title": "Events and timing",
+          "paragraphs": [
+            "CUDA events mark points in a stream; `cudaEventRecord` then `cudaEventElapsedTime` measures GPU time accurately, unlike CPU timers around async launches. Events also express cross-stream dependencies.",
+            "Time the kernel region, not the one-time setup, and warm up first."
+          ],
+          "example": "cudaEventRecord(a); k<<<...>>>(); cudaEventRecord(b);\ncudaEventSynchronize(b); cudaEventElapsedTime(&ms,a,b);",
+          "pitfall": "Timing an async kernel with a CPU clock measures launch overhead, not execution; use events.",
+          "question": {
+            "id": "cuda-ev-q",
+            "prompt": "CUDA events are used to:",
+            "options": [
+              {
+                "id": "a",
+                "text": "allocate memory"
+              },
+              {
+                "id": "b",
+                "text": "time GPU work accurately"
+              },
+              {
+                "id": "c",
+                "text": "compile kernels"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Events measure device time.",
+            "lessonId": "cuda-events"
+          }
+        },
+        {
+          "id": "cuda-overlap",
+          "title": "Overlapping transfer and compute",
+          "paragraphs": [
+            "Splitting data into chunks and pipelining copy-in, compute and copy-out across streams hides transfer latency behind computation. This can approach the GPU's compute roofline for transfer-heavy workloads.",
+            "Pinned memory and enough chunks make the overlap effective."
+          ],
+          "example": "// chunk i: HtoD(i) | kernel(i) | DtoH(i) across streams",
+          "pitfall": "Too few chunks or pageable memory leaves gaps; profile to confirm real overlap.",
+          "question": {
+            "id": "cuda-ov-q",
+            "prompt": "Overlapping copy and compute requires:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the default stream only"
+              },
+              {
+                "id": "b",
+                "text": "multiple streams and pinned memory"
+              },
+              {
+                "id": "c",
+                "text": "more registers"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Concurrent streams over pinned buffers overlap.",
+            "lessonId": "cuda-overlap"
+          }
+        },
+        {
+          "id": "cuda-prefetch",
+          "title": "Prefetching unified memory",
+          "paragraphs": [
+            "With unified memory, `cudaMemPrefetchAsync` moves pages to the GPU before a kernel so it does not fault on first touch. Prefetch hints recover much of the performance of explicit copies.",
+            "`cudaMemAdvise` can further tune placement for read-mostly data."
+          ],
+          "example": "cudaMemPrefetchAsync(a, bytes, deviceId, stream);",
+          "pitfall": "Relying on first-touch migration inside a hot kernel causes page-fault stalls; prefetch beforehand.",
+          "question": {
+            "id": "cuda-pf-q",
+            "prompt": "cudaMemPrefetchAsync helps by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "freeing memory"
+              },
+              {
+                "id": "b",
+                "text": "moving pages before the kernel needs them"
+              },
+              {
+                "id": "c",
+                "text": "compiling PTX"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "It avoids on-demand fault stalls.",
+            "lessonId": "cuda-prefetch"
+          }
+        }
+      ],
+      "steps": [
+        "Explain why one stream's operations cannot overlap each other.",
+        "Time a kernel with events and report the milliseconds.",
+        "Sketch a two-stream copy/compute pipeline.",
+        "Add a prefetch for a managed buffer."
+      ],
+      "challenge": {
+        "task": "Time a kernel with events and overlap one copy with compute using two streams.",
+        "acceptance": [
+          "Use pinned host memory",
+          "Measure with CUDA events",
+          "Describe the overlap you observed"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "cuda-sr-e1",
+            "prompt": "Different streams can:",
+            "options": [
+              {
+                "id": "a",
+                "text": "never overlap"
+              },
+              {
+                "id": "b",
+                "text": "run concurrently"
+              },
+              {
+                "id": "c",
+                "text": "only copy"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Streams overlap each other.",
+            "lessonId": "cuda-streams-basic"
+          },
+          {
+            "id": "cuda-sr-e2",
+            "prompt": "Accurate GPU timing uses:",
+            "options": [
+              {
+                "id": "a",
+                "text": "clock()"
+              },
+              {
+                "id": "b",
+                "text": "CUDA events"
+              },
+              {
+                "id": "c",
+                "text": "printf"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Events measure device time.",
+            "lessonId": "cuda-events"
+          },
+          {
+            "id": "cuda-sr-e3",
+            "prompt": "Async copy overlap needs host memory that is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "pageable"
+              },
+              {
+                "id": "b",
+                "text": "pinned"
+              },
+              {
+                "id": "c",
+                "text": "read-only"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Pinned memory enables overlap.",
+            "lessonId": "cuda-overlap"
+          },
+          {
+            "id": "cuda-sr-e4",
+            "prompt": "Prefetching unified memory avoids:",
+            "options": [
+              {
+                "id": "a",
+                "text": "bank conflicts"
+              },
+              {
+                "id": "b",
+                "text": "page-fault stalls"
+              },
+              {
+                "id": "c",
+                "text": "divergence"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Pages arrive before first touch.",
+            "lessonId": "cuda-prefetch"
+          },
+          {
+            "id": "cuda-sr-e5",
+            "prompt": "The default stream:",
+            "options": [
+              {
+                "id": "a",
+                "text": "always overlaps"
+              },
+              {
+                "id": "b",
+                "text": "synchronizes with others by default"
+              },
+              {
+                "id": "c",
+                "text": "is fastest"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Stream 0 synchronizes unless configured otherwise.",
+            "lessonId": "cuda-streams-basic"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "CUDA C++ Programming Guide (NVIDIA)",
+          "url": "https://docs.nvidia.com/cuda/cuda-c-programming-guide/"
+        },
+        {
+          "title": "CUDA C++ Best Practices Guide (NVIDIA)",
+          "url": "https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/"
+        }
+      ],
+      "reviewedAt": "2026-10-11"
+    },
+    {
+      "id": "cuda-capstone",
+      "version": 1,
+      "order": 8,
+      "title": "8. Capstone: a tuned, verified kernel",
+      "summary": "Combine indexing, memory, shared tiling, timing and verification into one small project.",
+      "difficulty": "Advanced",
+      "minutes": 30,
+      "code": "#include <cstdio>\n#include <cmath>\n#include <cstdlib>\n#include <cuda_runtime.h>\n\n__global__ void saxpy(int n, float a, const float* x, float* y) {\n  for (int i = blockIdx.x * blockDim.x + threadIdx.x; i < n; i += blockDim.x * gridDim.x)\n    y[i] = a * x[i] + y[i];\n}\n\nint main() {\n  int n = 1 << 20;\n  size_t bytes = n * sizeof(float);\n  float *hx = (float*)malloc(bytes), *hy = (float*)malloc(bytes);\n  for (int i = 0; i < n; i++) { hx[i] = 1.0f; hy[i] = 2.0f; }\n  float *dx, *dy;\n  cudaMalloc(&dx, bytes); cudaMalloc(&dy, bytes);\n  cudaMemcpy(dx, hx, bytes, cudaMemcpyHostToDevice);\n  cudaMemcpy(dy, hy, bytes, cudaMemcpyHostToDevice);\n  cudaEvent_t start, stop;\n  cudaEventCreate(&start); cudaEventCreate(&stop);\n  int T = 256;\n  cudaEventRecord(start);\n  saxpy<<<(n + T - 1) / T, T>>>(n, 3.0f, dx, dy);\n  cudaEventRecord(stop);\n  cudaEventSynchronize(stop);\n  float ms = 0;\n  cudaEventElapsedTime(&ms, start, stop);\n  cudaMemcpy(hy, dy, bytes, cudaMemcpyDeviceToHost);\n  float maxErr = 0;\n  for (int i = 0; i < n; i++) maxErr = fmaxf(maxErr, fabsf(hy[i] - 5.0f));  // 3*1+2\n  printf(\"max error %.1f in %.3f ms\\n\", maxErr, ms);\n  cudaFree(dx); cudaFree(dy); free(hx); free(hy);\n  return 0;\n}",
+      "expected": "The capstone assembles a correct, timed, verified SAXPY and a short performance write-up.",
+      "lessons": [
+        {
+          "id": "cuda-plan",
+          "title": "Plan and correctness",
+          "paragraphs": [
+            "Start from a correct CPU reference, port it to a straightforward kernel, and verify with a tolerance on small sizes. Only then scale up and optimize.",
+            "A clear acceptance test makes optimization safe."
+          ],
+          "example": "for(int i=0;i<n;i++) ref[i]=a*x[i]+y0[i];",
+          "pitfall": "Optimizing before you have a passing reference test hides regressions.",
+          "question": {
+            "id": "cuda-plan-q",
+            "prompt": "The first step of a CUDA project is:",
+            "options": [
+              {
+                "id": "a",
+                "text": "tune occupancy"
+              },
+              {
+                "id": "b",
+                "text": "a correct reference and test"
+              },
+              {
+                "id": "c",
+                "text": "use atomics"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Correctness and a test come first.",
+            "lessonId": "cuda-plan"
+          }
+        },
+        {
+          "id": "cuda-measure",
+          "title": "Measure, then optimize",
+          "paragraphs": [
+            "Measure a baseline with events, identify whether the kernel is memory- or compute-bound, then apply the matching optimization (coalescing, tiling, occupancy). Re-measure after each change.",
+            "Report GB/s or GFLOP/s against the device's peak to know when to stop."
+          ],
+          "example": "cudaEventElapsedTime(&ms,a,b); // bytes/ms -> GB/s",
+          "pitfall": "Guessing the bottleneck wastes effort; measure before changing anything.",
+          "question": {
+            "id": "cuda-meas-q",
+            "prompt": "You decide which optimization to apply by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "guessing"
+              },
+              {
+                "id": "b",
+                "text": "measuring the baseline and bottleneck"
+              },
+              {
+                "id": "c",
+                "text": "adding atomics"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Measure first, then target the bottleneck.",
+            "lessonId": "cuda-measure"
+          }
+        },
+        {
+          "id": "cuda-occupancy",
+          "title": "Occupancy and limits",
+          "paragraphs": [
+            "Occupancy is the ratio of active warps to the hardware maximum, limited by registers and shared memory per block. Higher occupancy hides latency but is not always the top priority.",
+            "The occupancy API and profiler reports guide block-size choices."
+          ],
+          "example": "cudaOccupancyMaxPotentialBlockSize(&grid,&block,saxpy,0,0);",
+          "pitfall": "Chasing 100% occupancy can hurt if it forces register spills; balance it with per-thread work.",
+          "question": {
+            "id": "cuda-occ-q",
+            "prompt": "Occupancy is limited by:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the file size"
+              },
+              {
+                "id": "b",
+                "text": "registers and shared memory per block"
+              },
+              {
+                "id": "c",
+                "text": "the host OS"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Per-block resources cap active warps.",
+            "lessonId": "cuda-occupancy"
+          }
+        },
+        {
+          "id": "cuda-report",
+          "title": "Writing it up",
+          "paragraphs": [
+            "A good capstone reports the hardware, the method, the measured throughput versus peak, and the correctness test used. Reproducibility matters as much as the number.",
+            "State clearly what was and was not optimized."
+          ],
+          "example": "// Report: device, ms, GB/s, % of peak, test passed",
+          "pitfall": "A speedup with no correctness test or hardware context is not a credible result.",
+          "question": {
+            "id": "cuda-rep-q",
+            "prompt": "A credible kernel result includes:",
+            "options": [
+              {
+                "id": "a",
+                "text": "only the time"
+              },
+              {
+                "id": "b",
+                "text": "hardware, throughput vs peak and a passing test"
+              },
+              {
+                "id": "c",
+                "text": "the source size"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Context, throughput and correctness.",
+            "lessonId": "cuda-report"
+          }
+        }
+      ],
+      "steps": [
+        "Write the CPU reference and the kernel.",
+        "Verify on a small size with a tolerance.",
+        "Time with events and compute GB/s.",
+        "Write a short report with device and % of peak."
+      ],
+      "challenge": {
+        "task": "Deliver a verified, timed SAXPY with a one-paragraph performance report.",
+        "acceptance": [
+          "Grid-stride kernel with bounds",
+          "CPU-reference verification",
+          "Event timing and a throughput figure"
+        ]
+      },
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "cuda-cap-e1",
+            "prompt": "Correctness is established:",
+            "options": [
+              {
+                "id": "a",
+                "text": "after optimizing"
+              },
+              {
+                "id": "b",
+                "text": "before optimizing"
+              },
+              {
+                "id": "c",
+                "text": "never"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Verify first.",
+            "lessonId": "cuda-plan"
+          },
+          {
+            "id": "cuda-cap-e2",
+            "prompt": "Throughput is reported as:",
+            "options": [
+              {
+                "id": "a",
+                "text": "lines of code"
+              },
+              {
+                "id": "b",
+                "text": "GB/s or GFLOP/s vs peak"
+              },
+              {
+                "id": "c",
+                "text": "thread count"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Rates against peak are meaningful.",
+            "lessonId": "cuda-measure"
+          },
+          {
+            "id": "cuda-cap-e3",
+            "prompt": "Occupancy trades off against:",
+            "options": [
+              {
+                "id": "a",
+                "text": "per-thread registers/work"
+              },
+              {
+                "id": "b",
+                "text": "file size"
+              },
+              {
+                "id": "c",
+                "text": "the host clock"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "More warps vs more per-thread resources.",
+            "lessonId": "cuda-occupancy"
+          },
+          {
+            "id": "cuda-cap-e4",
+            "prompt": "After each optimization you should:",
+            "options": [
+              {
+                "id": "a",
+                "text": "stop"
+              },
+              {
+                "id": "b",
+                "text": "re-measure"
+              },
+              {
+                "id": "c",
+                "text": "remove tests"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Re-measure to confirm the effect.",
+            "lessonId": "cuda-measure"
+          },
+          {
+            "id": "cuda-cap-e5",
+            "prompt": "Reproducibility requires reporting:",
+            "options": [
+              {
+                "id": "a",
+                "text": "the weather"
+              },
+              {
+                "id": "b",
+                "text": "hardware and method"
+              },
+              {
+                "id": "c",
+                "text": "nothing"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "State the device and method.",
+            "lessonId": "cuda-report"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "CUDA C++ Programming Guide (NVIDIA)",
+          "url": "https://docs.nvidia.com/cuda/cuda-c-programming-guide/"
+        },
+        {
+          "title": "CUDA C++ Best Practices Guide (NVIDIA)",
+          "url": "https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/"
+        }
+      ],
+      "reviewedAt": "2026-10-11"
+    }
+  ],
+  "reviewedAt": "2026-10-11"
+}
