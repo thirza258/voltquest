@@ -40,6 +40,7 @@ _cosmetics: dict[str, list] = {"skins": [], "wirePalettes": []}
 _tutorials: list[dict] = []
 _courses: list[dict] = []
 _course_tracks: list[dict] = []
+_showcase: list[dict] = []
 _loaded = False
 
 
@@ -118,21 +119,41 @@ def _load_cosmetics(root: Path) -> dict[str, list]:
     return {"skins": skins, "wirePalettes": palettes}
 
 
+def _load_showcase(root: Path) -> list[dict]:
+    data = _read_json(root / "showcase.json")
+    if not isinstance(data, dict):
+        return []
+    items = data.get("projects", [])
+    if not isinstance(items, list):
+        return []
+    return [
+        p
+        for p in items
+        if isinstance(p, dict)
+        and p.get("name")
+        and p.get("share_slug")
+        and p.get("board")
+        and isinstance(p.get("circuit"), dict)
+    ]
+
+
 def load_content(content_dir: str | Path | None = None) -> None:
     """(Re)load every content file from ``content_dir`` (default: CONTENT_DIR)."""
-    global _worlds, _levels, _catalog, _cosmetics, _tutorials, _courses, _course_tracks, _loaded
+    global _worlds, _levels, _catalog, _cosmetics, _tutorials, _courses, _course_tracks, _showcase, _loaded
     root = Path(content_dir) if content_dir else get_settings().content_path
     if not root.is_dir():
         log.warning("content: CONTENT_DIR %s does not exist - serving empty content", root)
         _worlds, _levels, _catalog, _cosmetics = [], {}, {}, {"skins": [], "wirePalettes": []}
         _tutorials = []
         _courses, _course_tracks = [], []
+        _showcase = []
         _loaded = True
         return
     _worlds = _load_worlds(root)
     _levels = _load_levels(root)
     _catalog = _load_catalog(root)
     _cosmetics = _load_cosmetics(root)
+    _showcase = _load_showcase(root)
     tutorial_data = _read_json(root / "tutorials.json")
     entries = tutorial_data.get("tutorials", []) if isinstance(tutorial_data, dict) else []
     _tutorials = (
@@ -218,6 +239,12 @@ def get_courses() -> list[dict]:
 def get_course_tracks() -> list[dict]:
     ensure_loaded()
     return _course_tracks
+
+
+def get_showcase() -> list[dict]:
+    """Seeded showcase projects from showcase.json."""
+    ensure_loaded()
+    return _showcase
 
 
 def level_summary(level: dict) -> dict:

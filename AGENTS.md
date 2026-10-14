@@ -27,12 +27,13 @@ and what to do next. The specifications in `docs/` remain binding.
 
 The main entry points are **`/`** (32 campaign quests), **`/sandbox`** (freeform projects), and **`/tutorials`** (guided lessons).
 
-The sandbox has nine benches with one shell: header, bench rail, body and footer.
+The sandbox has ten benches with one shell: header, bench rail, body and footer.
 - **Names and descriptions:** each bench's name, title, description and save mode live in
   `features/sandbox/sandboxDirectory.js`. Descriptions state only what the bench executes.
 - **Unsaved work:** the rail asks before leaving explicit-save work; only circuit and drone autosave
   drafts.
-- **IDE benches:** MATLAB, AI agents, HPC and cybersecurity look like the tools they teach:
+- **IDE benches:** MATLAB, AI agents, HPC, cybersecurity and AVR look like the tools they teach:
+  - AVR is an AVR assembler IDE (Editor + Opcode listing + Machine state: registers, SREG, memory, stack, PORTB output).
   - MATLAB is a MATLAB-style desktop.
   - AI agents is an Antigravity-style agent IDE (Editor + Agent Manager).
   - HPC is a VS Code-style C/C++ workbench.
@@ -171,6 +172,24 @@ their explanation or timing is correct. `features/tutorials/programming.test.js`
 numeric output, command dispatch and LED state transitions on all four C++ boards.
 
 ## 3. Completed in this continuation
+
+### Seeded showcase projects (2026-10-14)
+
+Added eight rich, interactive seeded projects to `content/showcase.json` for the community showcase (`/showcase`),
+covering Arduino Uno, Arduino Nano, ESP32, and Raspberry Pi 4:
+- **Smart Crosswalk Controller** (`crosswalk`, Uno): intersection traffic signal and pedestrian crossing state machine.
+- **IoT Climate & Weather Station** (`greenhouse`, ESP32): DHT22 temperature telemetry with WiFi/MQTT and LCD output.
+- **Acro QuadX Racing Drone** (`quadxflight`, ESP32 drone): tuned 5-inch aerobatics quadcopter with MPU6050 and VoltFlight.
+- **Night Owl Light-Activated Lamp** (`nightowl`, Uno): LDR photoresistor divider with analog reading and PWM drive.
+- **Simon Says Memory Challenge** (`simongame`, Uno): three-color LED and pushbutton sequence memory game.
+- **Capacitive Touch Lamp** (`touchlamp`, ESP32): capacitive touch input driving a desk lamp.
+- **Python Traffic Signal Controller** (`pitraffic`, Raspberry Pi 4): UK/European traffic sequence using Python + gpiozero.
+- **Morse Code Optical Beacon** (`nanomorse`, Nano): optical Morse code transmitter with timed dot/dash pulses.
+
+Automatic idempotent database seeding runs during application startup (`app/main.py:lifespan` via
+`seed_showcase_projects(db)`). All 8 projects pass both backend `validate_board` checks and frontend `validateProject`
+rules, support direct fork and inspection, and can be linked to `/community` discussions.
+Backend tests add `test_showcase_seed.py` (3/3 pass), frontend adds showcase sandbox assertions (3/3 pass).
 
 ### CUDA track expanded to 10 courses (2026-10-12)
 

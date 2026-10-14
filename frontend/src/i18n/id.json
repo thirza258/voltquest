@@ -5992,6 +5992,8 @@
   "Circuit sandbox": "Sandbox sirkuit",
   "Custom drone sandbox": "Sandbox drone kustom",
   "Computer architecture sandbox": "Sandbox arsitektur komputer",
+  "AVR assembler sandbox": "Sandbox assembler AVR",
+  "A real AVR assembler IDE: edit AVR assembly, read opcode listings, and step or run the ATmega simulator with live registers, SREG flags and memory.": "IDE assembler AVR sungguhan: sunting assembly AVR, baca daftar opcode, dan jalankan simulator ATmega langkah demi langkah atau terus-menerus dengan register, flag SREG, serta memori langsung.",
   "Quad-X builder with typed ESC, IMU and barometer wiring, flight firmware, PID gains, blackbox plots and a 1 kHz rigid-body model.": "Perakit quad-X dengan kabel ESC, IMU, dan barometer bertipe, firmware penerbangan, gain PID, grafik blackbox, dan model benda kaku 1 kHz.",
   "Editable gate circuits with truth tables, an SR latch and flip-flops, then VQ4 assembly stepped through registers and RAM.": "Rangkaian gerbang yang dapat diedit dengan tabel kebenaran, latch SR, dan flip-flop, lalu assembly VQ4 yang dijalankan langkah demi langkah melalui register dan RAM.",
   "Agent-first IDE with a scripted model: tool calls on fictional fixtures, approvals, questions, context and cost ledgers, skills and an MCP fixture.": "IDE berpusat agen dengan model tertulis: panggilan alat pada fixture fiktif, persetujuan, pertanyaan, catatan konteks dan biaya, skill, serta fixture MCP.",

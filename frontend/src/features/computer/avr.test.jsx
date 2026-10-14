@@ -62,3 +62,21 @@ describe('AVR track page', () => {
     expect(screen.getByRole('heading', { name: 'Course not found' })).toBeTruthy()
   })
 })
+
+describe('AVR sandbox', () => {
+  it('renders the AVR IDE inside SandboxBenchLayout when visited at /sandbox?bench=avr', () => {
+    render(
+      <LocaleProvider>
+        <MemoryRouter initialEntries={['/sandbox?bench=avr']}>
+          <Routes>
+            <Route path="/sandbox" element={<AvrPage sandbox />} />
+          </Routes>
+        </MemoryRouter>
+      </LocaleProvider>
+    )
+    expect(screen.getByRole('complementary', { name: 'All available sandboxes' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'AVR assembler sandbox' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Assemble & run' })).toBeTruthy()
+  })
+})
+

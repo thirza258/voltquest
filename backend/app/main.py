@@ -13,9 +13,9 @@ from app.api.errors import service_error_response
 from app.api.router import api_router
 from app.api.mcp import create_mcp
 from app.core.config import get_settings
-from app.db.session import create_all
+from app.db.session import create_all, session_scope
 from app.domain.errors import ServiceError
-from app.services import content
+from app.services import content, showcase
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 log = logging.getLogger("voltquest")
@@ -29,6 +29,8 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     create_all()
     content.load_content()
     log.info("VoltQuest %s ready (%d levels)", settings.app_version, len(content.get_levels()))
+    with session_scope() as db:
+        showcase.seed_showcase_projects(db)
     async with _app.state.mcp.session_manager.run():
         yield
 

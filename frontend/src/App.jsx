@@ -38,6 +38,7 @@ const LeaderboardPage = lazy(() => import('./features/profile/LeaderboardPage.js
 
 function SandboxRoute() {
   const [search] = useSearchParams()
+  if (search.get('bench') === 'avr' || (search.get('bench') === 'computer' && search.get('asm'))) return <AvrPage sandbox />
   if (search.get('bench') === 'computer') return <ComputerPage sandbox />
   if (search.get('bench') === 'ai-agents') return <AgentsPage sandbox />
   if (search.get('bench') === 'matlab') return <MatlabPage sandbox />

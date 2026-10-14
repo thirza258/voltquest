@@ -81,3 +81,57 @@ def fork_showcase_project(slug: str, player: Player, db: Session) -> ProjectOut:
     db.commit()
     db.refresh(fork)
     return ProjectOut(**project_payload(fork, player.display_name))
+
+
+def seed_showcase_projects(db: Session) -> int:
+    """Seed initial showcase projects from content/showcase.json if not already present."""
+    from app.services import content
+
+    seeded = content.get_showcase()
+    if not seeded:
+        return 0
+
+    inserted = 0
+    for item in seeded:
+        slug = item.get("share_slug")
+        if not slug:
+            continue
+        existing = db.scalar(select(Project.id).where(Project.share_slug == slug))
+        if existing is not None:
+            continue
+
+        owner_name = item.get("owner_name") or "VoltQuest Creator"
+        username = item.get("owner_username") or f"author_{slug}"[:24]
+
+        owner = db.scalar(select(Player).where(Player.username == username))
+        if owner is None:
+            owner = Player(
+                display_name=owner_name[:48],
+                username=username,
+                xp=1000,
+            )
+            db.add(owner)
+            db.flush()
+
+        project = Project(
+            owner_id=owner.id,
+            name=item["name"][:80],
+            description=item.get("description", ""),
+            board=item["board"],
+            board_mode=item.get("board_mode", "half"),
+            circuit=item["circuit"],
+            code=item.get("code", ""),
+            blockly_xml=item.get("blockly_xml"),
+            editor_mode=item.get("editor_mode", "text"),
+            thumbnail=item.get("thumbnail"),
+            is_public=True,
+            share_slug=slug,
+            views=int(item.get("views", 0)),
+            forks=int(item.get("forks", 0)),
+        )
+        db.add(project)
+        inserted += 1
+
+    if inserted > 0:
+        db.commit()
+    return inserted

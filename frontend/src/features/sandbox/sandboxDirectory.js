@@ -45,6 +45,16 @@ export const ALL_SANDBOXES = [
     saving: 'manual',
   },
   {
+    id: 'avr',
+    name: 'AVR assembler IDE',
+    title: 'AVR assembler sandbox',
+    description: 'A real AVR assembler IDE: edit AVR assembly, read opcode listings, and step or run the ATmega simulator with live registers, SREG flags and memory.',
+    path: '/sandbox?bench=avr',
+    bench: 'avr',
+    icon: 'Terminal',
+    saving: 'manual',
+  },
+  {
     id: 'ai-agents',
     name: 'AI agents',
     title: 'AI agent sandbox',

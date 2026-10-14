@@ -3,11 +3,11 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useI18n } from '../../i18n/index.jsx'
 import { ALL_SANDBOXES } from './sandboxDirectory.js'
 import { unsavedBenchWork } from './benchGuard.js'
-import { Activity, Binary, Bot, Boxes, ChevronDown, ChevronLeft, ChevronRight, Compass, Cpu, Eye, Plane, Shield, Zap } from 'lucide-react'
+import { Activity, Binary, Bot, Boxes, ChevronDown, ChevronLeft, ChevronRight, Compass, Cpu, Eye, Plane, Shield, Terminal, Zap } from 'lucide-react'
 import { useWorkspaceStore } from '../../store/workspaceStore.js'
 import { Button, Modal } from '../../ui/index.js'
 
-const ICONS = { Cpu, Plane, Binary, Bot, Activity, Shield, Zap, Eye, Compass }
+const ICONS = { Cpu, Plane, Binary, Bot, Activity, Shield, Zap, Eye, Compass, Terminal }
 
 /**
  * The one navigation rail between sandbox benches (desktop rail at xl, a disclosure list below).

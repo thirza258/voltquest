@@ -17,7 +17,7 @@ export default function LogicDiagram({ circuit, result }) {
   const width = (result.depth + 2) * 172 + 24, height = Math.max(...groups.values()) * 70 + 28
   return <>
     <p className="mb-3 text-xs leading-6 text-slate-600">{t('Wires show their current bit: teal is 1, gray is 0. Rectangles are named logic blocks. Layout shows dependencies, not physical placement or timing.')}</p>
-    {circuit.nodes.length <= 80 ? <div className="max-h-[28rem] overflow-auto rounded-md border border-line bg-slate-50" tabIndex={0} aria-label={t('Scrollable logic diagram')}><svg width={width} height={height} role="img" aria-label={t('Live gate connections and values')}>
+    {circuit.nodes.length <= 80 ? <div className="max-h-80 overflow-auto rounded-md border border-line bg-slate-50" tabIndex={0} aria-label={t('Scrollable logic diagram')}><svg width={width} height={height} role="img" aria-label={t('Live gate connections and values')}>
       {nodes.flatMap(node => (node.args ?? []).map((arg, index) => {
         const from = positions.get(arg), to = positions.get(node.id), y = to.y + 12 + index * 12
         return <path key={`${node.id}-${index}`} d={`M ${from.x + 128} ${from.y + 24} C ${from.x + 152} ${from.y + 24}, ${to.x - 24} ${y}, ${to.x} ${y}`} fill="none" stroke={result.signals[arg] ? '#0d9488' : '#94a3b8'} strokeWidth={result.signals[arg] ? 2 : 1} />

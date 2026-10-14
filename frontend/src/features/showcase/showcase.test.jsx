@@ -5,6 +5,8 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { MemoryRouter } from 'react-router-dom'
 import ShowcasePage from './ShowcasePage.jsx'
 import { api } from '../../api/client.js'
+import showcaseData from '@content/showcase.json'
+import { validateProject, seedFromProject } from '../sandbox/projectFile.js'
 
 afterEach(() => { cleanup(); vi.restoreAllMocks() })
 it('filters the public gallery through the real API helper contract', async () => {
@@ -23,4 +25,22 @@ it('recovers from a gallery request error', async () => {
   expect((await screen.findByRole('alert')).textContent).toBe('Offline')
   fireEvent.click(screen.getByRole('button', { name: 'Try again' }))
   await screen.findByRole('heading', { name: 'No projects found' })
+})
+it('validates every seeded showcase project against the project sandbox rules', () => {
+  expect(showcaseData.projects.length).toBeGreaterThanOrEqual(6)
+  for (const item of showcaseData.projects) {
+    const validated = validateProject({
+      ...item,
+      boardMode: item.board_mode,
+      editorMode: item.editor_mode || 'text',
+      blocklyXml: item.blockly_xml || null,
+    })
+    expect(validated.name).toBe(item.name)
+    expect(validated.board).toBe(item.board)
+
+    const seed = seedFromProject(item)
+    expect(seed.board).toBe(item.board)
+    expect(seed.starterCircuit).toBeDefined()
+    expect(seed.starterCode).toBeDefined()
+  }
 })

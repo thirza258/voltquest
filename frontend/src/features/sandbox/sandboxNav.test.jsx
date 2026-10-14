@@ -75,12 +75,13 @@ describe('Course catalog consistency', () => {
 })
 
 describe('Sandbox sidebar navigation', () => {
-  it('lists nine benches with canonical names and counts checked against the real content', () => {
-    expect(ALL_SANDBOXES).toHaveLength(9)
+  it('lists ten benches with canonical names and counts checked against the real content', () => {
+    expect(ALL_SANDBOXES).toHaveLength(10)
     expect(getSandbox('circuit').name).toBe('Circuit & breadboard')
+    expect(getSandboxByBench('avr')).toMatchObject({ name: 'AVR assembler IDE', title: 'AVR assembler sandbox', saving: 'manual' })
     expect(getSandboxByBench('matlab')).toMatchObject({ name: 'MATLAB', title: 'MATLAB sandbox', saving: 'manual' })
     expect(getSandboxByBench('drone').saving).toBe('draft')
-    expect(new Set(ALL_SANDBOXES.map(item => item.title)).size).toBe(9)
+    expect(new Set(ALL_SANDBOXES.map(item => item.title)).size).toBe(10)
     expect(CIRCUIT_PART_TYPES).toBe(listDefs().length)
     expect(MATLAB_BROWSER_FUNCTIONS).toBe(matlabReference.functions.filter(item => item.scope === 'browser').length)
     expect(CYBER_DEFENSES).toBe(Object.keys(CONTROLS).length)

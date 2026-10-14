@@ -3,9 +3,9 @@
 `/avr` and `/avr/:lessonId` provide eight AVR 8-bit assembly courses (`content/avr.json`), each with four
 sections, a practice question per section, a guided starter, an applied challenge and a five-question
 80% exam using the shared `vq.courses.v1` progress and the certificate system (added to the
-certificate `CATALOGUES` in `backend/app/services/certificates.py`). The Computer Architecture bench is
-retrofitted: `/sandbox?bench=computer&asm=1` opens the AVR assembler IDE, and the computer hub links to
-both the track and the IDE.
+certificate `CATALOGUES` in `backend/app/services/certificates.py`). The AVR assembler IDE is
+available directly as a sandbox bench at `/sandbox?bench=avr` (with `/sandbox?bench=computer&asm=1`
+preserved as a compatible route), and the computer hub links to both the track and the IDE.
 
 ## Engine (`engine/avr/`)
 
