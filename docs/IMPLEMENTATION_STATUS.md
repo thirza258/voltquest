@@ -18,6 +18,23 @@ lab, downloadable `.cu`, exam and certificate) with no console errors. Full suit
 updated); the sitemap has **506 URLs**; `eslint src` is unchanged. Hub metrics, the `/courses` directory card,
 Indonesian chrome and `docs/CUDA.md` were updated to ten courses.
 
+### Kubernetes reading track (2026-10-20)
+
+Feature request beyond the PRD: a dedicated reading track for **Kubernetes** (`/kubernetes`, `content/kubernetes.json`)
+on the shared `features/courses/ReadingTrack.jsx` shell and configured by `features/kubernetes/KubernetesPage.jsx`.
+**10 courses** cover the spectrum from core control plane architecture, Pods/ReplicaSets/Deployments, ConfigMaps/Secrets,
+and Services/CoreDNS networking to the Gateway API (addressing the March 2026 retirement of community ingress-nginx),
+persistent storage (PV/PVC/StorageClass), StatefulSets/DaemonSets/Jobs, scheduling resilience (affinity, taints/tolerations,
+probes, QoS), enterprise security (RBAC, ServiceAccounts, NetworkPolicies, Restricted PSS, securityContext), and a
+production capstone (PDB, HPA v2, Helm, CRDs/Operators, GitOps).
+
+Each course supplies four checkpointed sections, a guided lab, one downloadable `.yaml` manifest, a challenge and a
+five-question 80% exam; progress, rewards, localization and certificates reuse the existing systems. Manifests were
+verified with PyYAML in `backend/tests/test_kubernetes_content.py` (all multi-document YAML manifests parsed, structural
+integrity checked, label/selector alignment and container specs asserted). The certificate catalogue expands to **224
+courses** with `kubernetes.json`, and the sitemap grows to **517 URLs**. See [KUBERNETES.md](KUBERNETES.md) and
+CONTRACTS.md §27.
+
 ### Kernel, load-balancing and distributed-systems tracks (2026-10-12)
 
 Feature requests beyond the PRD: three reading-only tracks on the shared `features/courses/ReadingTrack.jsx`

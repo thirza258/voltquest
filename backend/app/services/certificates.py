@@ -29,6 +29,7 @@ CATALOGUES = (
     ("kernel.json", "courses", "/kernel"),
     ("loadbalancer.json", "courses", "/loadbalancer"),
     ("distributed.json", "courses", "/distributed"),
+    ("kubernetes.json", "courses", "/kubernetes"),
 )
 
 

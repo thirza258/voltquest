@@ -408,6 +408,17 @@
   <url><loc>https://pcb.nevatal.id/distributed/ds-transactions</loc></url>
   <url><loc>https://pcb.nevatal.id/distributed/ds-coordination</loc></url>
   <url><loc>https://pcb.nevatal.id/distributed/ds-capstone</loc></url>
+  <url><loc>https://pcb.nevatal.id/kubernetes</loc></url>
+  <url><loc>https://pcb.nevatal.id/kubernetes/k8s-architecture</loc></url>
+  <url><loc>https://pcb.nevatal.id/kubernetes/k8s-pods-workloads</loc></url>
+  <url><loc>https://pcb.nevatal.id/kubernetes/k8s-config-secrets</loc></url>
+  <url><loc>https://pcb.nevatal.id/kubernetes/k8s-services-networking</loc></url>
+  <url><loc>https://pcb.nevatal.id/kubernetes/k8s-ingress-gateway</loc></url>
+  <url><loc>https://pcb.nevatal.id/kubernetes/k8s-storage-persistence</loc></url>
+  <url><loc>https://pcb.nevatal.id/kubernetes/k8s-statefulsets-daemonsets</loc></url>
+  <url><loc>https://pcb.nevatal.id/kubernetes/k8s-scheduling-resilience</loc></url>
+  <url><loc>https://pcb.nevatal.id/kubernetes/k8s-security-rbac</loc></url>
+  <url><loc>https://pcb.nevatal.id/kubernetes/k8s-capstone</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=cybersecurity</loc></url>

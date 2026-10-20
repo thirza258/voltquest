@@ -697,11 +697,12 @@ with the tokenizers in `tokenizers.js` and `matlabSyntax.js`.
 ## 27. AVR assembly and the reading-only tracks
 
 The AVR assembly track (`/avr`, in-browser assembler + ATmega simulator and a retrofit of the Computer
-Architecture sandbox at `/sandbox?bench=computer&asm=1`) follows [AVR.md](AVR.md). Five reading-only tracks
+Architecture sandbox at `/sandbox?bench=computer&asm=1`) follows [AVR.md](AVR.md). Six reading-only tracks
 share one shell: CUDA C++ (`/cuda`), PyTorch (`/pytorch`), Linux kernel (`/kernel`), load balancing
-(`/loadbalancer`) and distributed systems (`/distributed`), in `content/{cuda,pytorch,kernel,loadbalancer,
-distributed}.json` and documented in [CUDA.md](CUDA.md), [PYTORCH.md](PYTORCH.md), [KERNEL.md](KERNEL.md),
-[LOADBALANCER.md](LOADBALANCER.md) and [DISTRIBUTED.md](DISTRIBUTED.md).
+(`/loadbalancer`), distributed systems (`/distributed`) and Kubernetes (`/kubernetes`), in
+`content/{cuda,pytorch,kernel,loadbalancer,distributed,kubernetes}.json` and documented in [CUDA.md](CUDA.md),
+[PYTORCH.md](PYTORCH.md), [KERNEL.md](KERNEL.md), [LOADBALANCER.md](LOADBALANCER.md), [DISTRIBUTED.md](DISTRIBUTED.md)
+and [KUBERNETES.md](KUBERNETES.md).
 
 `features/courses/ReadingTrack.jsx` is a shared, content-driven hub/course shell for reading-only tracks.
 A `track` config object carries the route `base`, the `courses` array, a `tag`, a default `codeExt`, an
@@ -712,8 +713,9 @@ guided `steps`, an `expected` result, a single self-contained `code` artifact, a
 five-question 80% `exam`. The download filename is `<id>.<course.codeExt ?? track.codeExt>`, so a track whose
 courses mix file types (load balancing: `conf`/`cfg`/`yaml`) sets `codeExt` per course; the artifact is never
 executed in the browser. Progress, rewards and certificates reuse the existing `vq.courses.v1` system; the
-certificate catalogue adds `avr.json`, `cuda.json`, `pytorch.json`, `kernel.json`, `loadbalancer.json` and
-`distributed.json`. `CudaPage.jsx`, `PytorchPage.jsx`, `KernelPage.jsx`, `LoadBalancerPage.jsx` and
-`DistributedPage.jsx` are thin wrappers that import their JSON and render `ReadingTrack`; a `systems` domain
-in `coursesDirectory.js` groups the kernel/load-balancing/distributed cards. No board, simulation, sandbox,
+certificate catalogue adds `avr.json`, `cuda.json`, `pytorch.json`, `kernel.json`, `loadbalancer.json`,
+`distributed.json` and `kubernetes.json`. `CudaPage.jsx`, `PytorchPage.jsx`, `KernelPage.jsx`,
+`LoadBalancerPage.jsx`, `DistributedPage.jsx` and `KubernetesPage.jsx` are thin wrappers that import their
+JSON and render `ReadingTrack`; a `systems` domain in `coursesDirectory.js` groups the
+kernel/load-balancing/distributed/kubernetes cards. No board, simulation, sandbox,
 assistant, MCP or showcase contract is extended; the course discovery API is unchanged.

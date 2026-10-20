@@ -20,7 +20,7 @@ and what to do next. The specifications in `docs/` remain binding.
 | `docs/WINUI.md` | Before editing C++ / WinUI desktop courses, native source packs or their verification. |
 | `docs/AVR.md` | Before editing the AVR assembly track, the assembler/simulator engine or the AVR IDE. |
 | `docs/CUDA.md`, `docs/PYTORCH.md` | Before editing the CUDA/PyTorch reading tracks or the shared `ReadingTrack` shell. |
-| `docs/KERNEL.md`, `docs/LOADBALANCER.md`, `docs/DISTRIBUTED.md` | Before editing the Linux-kernel, load-balancing or distributed-systems reading tracks. |
+| `docs/KERNEL.md`, `docs/LOADBALANCER.md`, `docs/DISTRIBUTED.md`, `docs/KUBERNETES.md` | Before editing the Linux-kernel, load-balancing, distributed-systems or Kubernetes reading tracks. |
 | `docs/COMMUNITY.md` | Before editing community discussions, their moderation limits or post rendering. |
 
 ## 1. Current build, not the target product
@@ -172,6 +172,31 @@ their explanation or timing is correct. `features/tutorials/programming.test.js`
 numeric output, command dispatch and LED state transitions on all four C++ boards.
 
 ## 3. Completed in this continuation
+
+### Kubernetes reading track (2026-10-20)
+
+Added a comprehensive ten-course **Kubernetes track** (`/kubernetes`, `content/kubernetes.json`) rendered on the
+shared `features/courses/ReadingTrack.jsx` shell and configured by `features/kubernetes/KubernetesPage.jsx`:
+- **10 courses**: `k8s-architecture` (control plane, node agents, reconciliation, quotas), `k8s-pods-workloads`
+  (pod lifecycle, init/sidecar containers, ReplicaSets, rolling updates), `k8s-config-secrets` (ConfigMaps, Secrets,
+  volume mounts vs env, immutability), `k8s-services-networking` (IP-per-pod, ClusterIP/NodePort/LB, Headless, CoreDNS,
+  EndpointSlices), `k8s-ingress-gateway` (L7 routing, Ingress retirement, Gateway API with weighted canary splitting),
+  `k8s-storage-persistence` (emptyDir/hostPath, PV/PVC, StorageClasses, WaitForFirstConsumer), `k8s-statefulsets-daemonsets`
+  (StatefulSets, volumeClaimTemplates, DaemonSets, batch Jobs/CronJobs), `k8s-scheduling-resilience` (scheduler filtering/scoring,
+  affinity/anti-affinity, taints/tolerations, startup/liveness/readiness probes, QoS, OOMKilled), `k8s-security-rbac` (least-privilege
+  RBAC, ServiceAccounts, default-deny NetworkPolicies, Restricted PSS, securityContext), and `k8s-capstone` (production microservice
+  architecture with PDB, HPA v2 autoscaling, Helm packaging, and GitOps workflows).
+- **Curriculum structure**: 40 checkpointed lessons (each with a 3-choice practice question), 10 guided setup labs with expected
+  results, 10 complete self-contained YAML manifests (downloadable as `<id>.yaml`), 10 applied challenges, and 10 five-question
+  80% exams (90 questions total, all IDs unique).
+- **Verification**: `backend/tests/test_kubernetes_content.py` parses all YAML documents across all 10 courses with PyYAML,
+  asserting valid `apiVersion`, `kind`, `metadata.name`, selector-to-label consistency, valid container and port structures,
+  and proper probe configurations. Frontend tests in `kubernetes.test.jsx` (6/6 pass) verify hub rendering, manifest downloads,
+  exam submission, and 404 handling.
+- **Wiring & Integration**: Route in `App.jsx`, nav section in `AppHeader.jsx`, course directory card in `coursesDirectory.js`
+  (`systems` domain, `ALL_COURSES` count bumped to 17), landing footer link, sitemap updated (517 URLs, `vite-sitemap.test.js` passes),
+  backend certificate catalogue updated (`kubernetes.json`, total certificate courses bumped from 214 to 224, `test_certificates.py` passes),
+  and 20+ Indonesian localization entries in `i18n/id.json`. Read `docs/KUBERNETES.md`.
 
 ### Seeded showcase projects (2026-10-14)
 

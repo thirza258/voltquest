@@ -90,6 +90,7 @@ export function collectRoutes(contentDir) {
   const kernelCourses = (fs.existsSync(path.join(contentDir, 'kernel.json')) ? readJson(path.join(contentDir, 'kernel.json')).courses ?? [] : []).map(item => item.id)
   const loadbalancerCourses = (fs.existsSync(path.join(contentDir, 'loadbalancer.json')) ? readJson(path.join(contentDir, 'loadbalancer.json')).courses ?? [] : []).map(item => item.id)
   const distributedCourses = (fs.existsSync(path.join(contentDir, 'distributed.json')) ? readJson(path.join(contentDir, 'distributed.json')).courses ?? [] : []).map(item => item.id)
+  const kubernetesCourses = (fs.existsSync(path.join(contentDir, 'kubernetes.json')) ? readJson(path.join(contentDir, 'kubernetes.json')).courses ?? [] : []).map(item => item.id)
 
   const sandboxBenches = ['matlab', 'cybersecurity', 'hpc', 'vision', 'robotics', 'ai-agents', 'computer'].map(bench => `/sandbox?bench=${bench}`)
   const sandboxPresets = [
@@ -142,6 +143,7 @@ export function collectRoutes(contentDir) {
     ...(kernelCourses.length ? ['/kernel', ...kernelCourses.map(id => `/kernel/${id}`)] : []),
     ...(loadbalancerCourses.length ? ['/loadbalancer', ...loadbalancerCourses.map(id => `/loadbalancer/${id}`)] : []),
     ...(distributedCourses.length ? ['/distributed', ...distributedCourses.map(id => `/distributed/${id}`)] : []),
+    ...(kubernetesCourses.length ? ['/kubernetes', ...kubernetesCourses.map(id => `/kubernetes/${id}`)] : []),
     '/sandbox',
     ...sandboxBenches,
     ...sandboxPresets,

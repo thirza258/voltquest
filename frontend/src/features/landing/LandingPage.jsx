@@ -1013,6 +1013,7 @@ export function LandingPage() {
               <Link to="/kernel" className="py-1 hover:text-brand-600">{t('Linux kernel programming')}</Link>
               <Link to="/loadbalancer" className="py-1 hover:text-brand-600">{t('Load balancing & traffic management')}</Link>
               <Link to="/distributed" className="py-1 hover:text-brand-600">{t('Distributed systems')}</Link>
+              <Link to="/kubernetes" className="py-1 hover:text-brand-600">{t('Kubernetes cloud-native orchestration')}</Link>
               <Link to="/sandbox" className="py-1 hover:text-brand-600">{t("Sandbox")}</Link>
               <Link to="/showcase" className="py-1 hover:text-brand-600">{t("Showcase")}</Link>
               <Link to="/community" className="py-1 hover:text-brand-600">{t("Community")}</Link>
