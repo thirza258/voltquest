@@ -12,6 +12,8 @@
  */
 import fs from 'node:fs'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { prerenderRoutes } from './vite-prerender.js'
 
 /** The one deployed origin. `public/robots.txt` repeats it; a test holds the two in step. */
 export const SITE_ORIGIN = 'https://pcb.nevatal.id'
@@ -190,6 +192,13 @@ export function sitemapPlugin({ contentDir, origin = SITE_ORIGIN }) {
         fileName: 'sitemap.xml',
         source: renderSitemap(collectRoutes(contentDir), origin),
       })
+    },
+    closeBundle() {
+      const here = path.dirname(fileURLToPath(import.meta.url))
+      const distDir = path.resolve(here, 'dist')
+      if (fs.existsSync(path.join(distDir, 'index.html'))) {
+        prerenderRoutes({ contentDir, distDir, origin })
+      }
     },
   }
 }

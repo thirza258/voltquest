@@ -33,6 +33,7 @@ const CertificatesPage = lazy(() => import('./features/courses/CertificatesPage.
 const WorkspacePage = lazy(() => import('./features/workspace/WorkspacePage.jsx'))
 const SandboxPage = lazy(() => import('./features/sandbox/SandboxPage.jsx'))
 const CommunityPage = lazy(() => import('./features/community/CommunityPage.jsx'))
+import SeoManager from './ui/SeoManager.jsx'
 const ThreadPage = lazy(() => import('./features/community/ThreadPage.jsx'))
 const ShowcasePage = lazy(() => import('./features/showcase/ShowcasePage.jsx'))
 const ShowcaseProjectPage = lazy(() => import('./features/showcase/ShowcaseProjectPage.jsx'))
@@ -65,7 +66,9 @@ export default function App() {
   useEffect(() => { void usePlayerStore.getState().ensureGuest() }, [])
   const expired = usePlayerStore(s => s.authExpired)
   return (
-    <AppErrorBoundary>{expired && <div role="alert" className="bg-amber-50 p-2 text-center text-sm">{t("Your session expired. ")}<Link className="underline" to="/profile#account">{t("Log in to sync your progress.")}</Link></div>}<Suspense fallback={<p role="status" className="p-8 text-slate-600">{t("Loading the lab…")}</p>}><Routes>
+    <AppErrorBoundary>
+      <SeoManager />
+      {expired && <div role="alert" className="bg-amber-50 p-2 text-center text-sm">{t("Your session expired. ")}<Link className="underline" to="/profile#account">{t("Log in to sync your progress.")}</Link></div>}<Suspense fallback={<p role="status" className="p-8 text-slate-600">{t("Loading the lab…")}</p>}><Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/campaign" element={<CampaignPage />} />
       <Route path="/tutorials" element={<TutorialsPage />} />
