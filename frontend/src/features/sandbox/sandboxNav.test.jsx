@@ -36,8 +36,8 @@ afterEach(() => {
 })
 
 describe('Course catalog consistency', () => {
-  it('contains all 17 specialized courses with consistent metadata', () => {
-    expect(ALL_COURSES).toHaveLength(17)
+  it('contains all 19 specialized courses with consistent metadata', () => {
+    expect(ALL_COURSES).toHaveLength(19)
     for (const course of ALL_COURSES) {
       expect(course.id).toBeTruthy()
       expect(course.title).toBeTruthy()
@@ -59,17 +59,18 @@ describe('Course catalog consistency', () => {
     )
 
     expect(screen.getByRole('heading', { level: 2, name: 'All Courses & Learning Tracks' })).toBeTruthy()
-    // All 17 courses rendered as h4 titles
+    // All 19 courses rendered as h4 titles
     const courseHeadings = screen.getAllByRole('heading', { level: 4 })
-    expect(courseHeadings.length).toBe(17)
+    expect(courseHeadings.length).toBe(19)
 
-    // Filter by domain button: Desktop & Systems (2 tracks: Qt & WinUI)
+    // Filter by domain button: Desktop & Systems (3 tracks: Qt, WinUI & Game Modding)
     fireEvent.click(screen.getByRole('button', { name: /Desktop & Systems/ }))
     const filteredHeadings = screen.getAllByRole('heading', { level: 4 })
-    expect(filteredHeadings.length).toBe(2)
+    expect(filteredHeadings.length).toBe(3)
     expect(filteredHeadings.map(h => h.textContent)).toEqual([
       'Qt 6 / C++ Desktop Development',
       'C++ / WinUI 3 Desktop Development',
+      'Game Modding & Reverse Engineering',
     ])
   })
 })

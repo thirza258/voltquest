@@ -20,6 +20,7 @@ def request_body(**patch):
 @pytest.fixture
 def provider(monkeypatch):
     monkeypatch.setattr(get_settings(), "ai_api_key", SecretStr("test-provider-secret"))
+    monkeypatch.setattr(get_settings(), "ai_model", "openai/gpt-4.1-mini")
     monkeypatch.setattr(assistant, "budget", assistant.RequestBudget())
     seen = []
     response = {"status": 200, "body": {"id": "test", "object": "chat.completion", "created": 1, "model": "openai/gpt-4.1-mini", "choices": [{"index": 0, "finish_reason": "stop", "message": {"role": "assistant", "content": "Periksa anode LED di bb1:e20."}}]}}

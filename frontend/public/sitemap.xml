@@ -419,6 +419,28 @@
   <url><loc>https://pcb.nevatal.id/kubernetes/k8s-scheduling-resilience</loc></url>
   <url><loc>https://pcb.nevatal.id/kubernetes/k8s-security-rbac</loc></url>
   <url><loc>https://pcb.nevatal.id/kubernetes/k8s-capstone</loc></url>
+  <url><loc>https://pcb.nevatal.id/game-modding</loc></url>
+  <url><loc>https://pcb.nevatal.id/game-modding/mod-architecture</loc></url>
+  <url><loc>https://pcb.nevatal.id/game-modding/mod-memory-internals</loc></url>
+  <url><loc>https://pcb.nevatal.id/game-modding/mod-reverse-engineering</loc></url>
+  <url><loc>https://pcb.nevatal.id/game-modding/mod-native-hooking</loc></url>
+  <url><loc>https://pcb.nevatal.id/game-modding/mod-unity-bepinex</loc></url>
+  <url><loc>https://pcb.nevatal.id/game-modding/mod-harmony-patching</loc></url>
+  <url><loc>https://pcb.nevatal.id/game-modding/mod-unreal-engine</loc></url>
+  <url><loc>https://pcb.nevatal.id/game-modding/mod-lua-scripting</loc></url>
+  <url><loc>https://pcb.nevatal.id/game-modding/mod-assets-savefiles</loc></url>
+  <url><loc>https://pcb.nevatal.id/game-modding/mod-capstone</loc></url>
+  <url><loc>https://pcb.nevatal.id/iot-c</loc></url>
+  <url><loc>https://pcb.nevatal.id/iot-c/iot-c-architecture</loc></url>
+  <url><loc>https://pcb.nevatal.id/iot-c/iot-c-peripherals</loc></url>
+  <url><loc>https://pcb.nevatal.id/iot-c/iot-c-buses</loc></url>
+  <url><loc>https://pcb.nevatal.id/iot-c/iot-c-rtos</loc></url>
+  <url><loc>https://pcb.nevatal.id/iot-c/iot-c-networking</loc></url>
+  <url><loc>https://pcb.nevatal.id/iot-c/iot-c-mqtt</loc></url>
+  <url><loc>https://pcb.nevatal.id/iot-c/iot-c-security</loc></url>
+  <url><loc>https://pcb.nevatal.id/iot-c/iot-c-power</loc></url>
+  <url><loc>https://pcb.nevatal.id/iot-c/iot-c-ota</loc></url>
+  <url><loc>https://pcb.nevatal.id/iot-c/iot-c-capstone</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=cybersecurity</loc></url>

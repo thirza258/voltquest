@@ -30,6 +30,8 @@ CATALOGUES = (
     ("loadbalancer.json", "courses", "/loadbalancer"),
     ("distributed.json", "courses", "/distributed"),
     ("kubernetes.json", "courses", "/kubernetes"),
+    ("gamemodding.json", "courses", "/game-modding"),
+    ("iot-c.json", "courses", "/iot-c"),
 )
 
 

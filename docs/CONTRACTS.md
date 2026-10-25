@@ -697,12 +697,13 @@ with the tokenizers in `tokenizers.js` and `matlabSyntax.js`.
 ## 27. AVR assembly and the reading-only tracks
 
 The AVR assembly track (`/avr`, in-browser assembler + ATmega simulator and a retrofit of the Computer
-Architecture sandbox at `/sandbox?bench=computer&asm=1`) follows [AVR.md](AVR.md). Six reading-only tracks
+Architecture sandbox at `/sandbox?bench=computer&asm=1`) follows [AVR.md](AVR.md). Eight reading-only tracks
 share one shell: CUDA C++ (`/cuda`), PyTorch (`/pytorch`), Linux kernel (`/kernel`), load balancing
-(`/loadbalancer`), distributed systems (`/distributed`) and Kubernetes (`/kubernetes`), in
-`content/{cuda,pytorch,kernel,loadbalancer,distributed,kubernetes}.json` and documented in [CUDA.md](CUDA.md),
-[PYTORCH.md](PYTORCH.md), [KERNEL.md](KERNEL.md), [LOADBALANCER.md](LOADBALANCER.md), [DISTRIBUTED.md](DISTRIBUTED.md)
-and [KUBERNETES.md](KUBERNETES.md).
+(`/loadbalancer`), distributed systems (`/distributed`), Kubernetes (`/kubernetes`), Game Modding
+(`/game-modding`), and Embedded IoT in C (`/iot-c`), in `content/{cuda,pytorch,kernel,loadbalancer,distributed,kubernetes,gamemodding,iot-c}.json`
+and documented in [CUDA.md](CUDA.md), [PYTORCH.md](PYTORCH.md), [KERNEL.md](KERNEL.md),
+[LOADBALANCER.md](LOADBALANCER.md), [DISTRIBUTED.md](DISTRIBUTED.md), [KUBERNETES.md](KUBERNETES.md),
+[GAMEMODDING.md](GAMEMODDING.md) and [IOT_C.md](IOT_C.md).
 
 `features/courses/ReadingTrack.jsx` is a shared, content-driven hub/course shell for reading-only tracks.
 A `track` config object carries the route `base`, the `courses` array, a `tag`, a default `codeExt`, an
@@ -714,8 +715,7 @@ five-question 80% `exam`. The download filename is `<id>.<course.codeExt ?? trac
 courses mix file types (load balancing: `conf`/`cfg`/`yaml`) sets `codeExt` per course; the artifact is never
 executed in the browser. Progress, rewards and certificates reuse the existing `vq.courses.v1` system; the
 certificate catalogue adds `avr.json`, `cuda.json`, `pytorch.json`, `kernel.json`, `loadbalancer.json`,
-`distributed.json` and `kubernetes.json`. `CudaPage.jsx`, `PytorchPage.jsx`, `KernelPage.jsx`,
-`LoadBalancerPage.jsx`, `DistributedPage.jsx` and `KubernetesPage.jsx` are thin wrappers that import their
-JSON and render `ReadingTrack`; a `systems` domain in `coursesDirectory.js` groups the
-kernel/load-balancing/distributed/kubernetes cards. No board, simulation, sandbox,
+`distributed.json`, `kubernetes.json`, `gamemodding.json` and `iot-c.json`. `CudaPage.jsx`, `PytorchPage.jsx`, `KernelPage.jsx`,
+`LoadBalancerPage.jsx`, `DistributedPage.jsx`, `KubernetesPage.jsx`, `GameModdingPage.jsx` and `IotCPage.jsx` are thin wrappers that import their
+JSON and render `ReadingTrack`; a `hardware` domain in `coursesDirectory.js` hosts the Embedded IoT in C card. No board, simulation, sandbox,
 assistant, MCP or showcase contract is extended; the course discovery API is unchanged.

@@ -91,6 +91,8 @@ export function collectRoutes(contentDir) {
   const loadbalancerCourses = (fs.existsSync(path.join(contentDir, 'loadbalancer.json')) ? readJson(path.join(contentDir, 'loadbalancer.json')).courses ?? [] : []).map(item => item.id)
   const distributedCourses = (fs.existsSync(path.join(contentDir, 'distributed.json')) ? readJson(path.join(contentDir, 'distributed.json')).courses ?? [] : []).map(item => item.id)
   const kubernetesCourses = (fs.existsSync(path.join(contentDir, 'kubernetes.json')) ? readJson(path.join(contentDir, 'kubernetes.json')).courses ?? [] : []).map(item => item.id)
+  const gamemoddingCourses = (fs.existsSync(path.join(contentDir, 'gamemodding.json')) ? readJson(path.join(contentDir, 'gamemodding.json')).courses ?? [] : []).map(item => item.id)
+  const iotCCourses = (fs.existsSync(path.join(contentDir, 'iot-c.json')) ? readJson(path.join(contentDir, 'iot-c.json')).courses ?? [] : []).map(item => item.id)
 
   const sandboxBenches = ['matlab', 'cybersecurity', 'hpc', 'vision', 'robotics', 'ai-agents', 'computer'].map(bench => `/sandbox?bench=${bench}`)
   const sandboxPresets = [
@@ -144,6 +146,8 @@ export function collectRoutes(contentDir) {
     ...(loadbalancerCourses.length ? ['/loadbalancer', ...loadbalancerCourses.map(id => `/loadbalancer/${id}`)] : []),
     ...(distributedCourses.length ? ['/distributed', ...distributedCourses.map(id => `/distributed/${id}`)] : []),
     ...(kubernetesCourses.length ? ['/kubernetes', ...kubernetesCourses.map(id => `/kubernetes/${id}`)] : []),
+    ...(gamemoddingCourses.length ? ['/game-modding', ...gamemoddingCourses.map(id => `/game-modding/${id}`)] : []),
+    ...(iotCCourses.length ? ['/iot-c', ...iotCCourses.map(id => `/iot-c/${id}`)] : []),
     '/sandbox',
     ...sandboxBenches,
     ...sandboxPresets,

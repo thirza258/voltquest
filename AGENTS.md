@@ -20,7 +20,7 @@ and what to do next. The specifications in `docs/` remain binding.
 | `docs/WINUI.md` | Before editing C++ / WinUI desktop courses, native source packs or their verification. |
 | `docs/AVR.md` | Before editing the AVR assembly track, the assembler/simulator engine or the AVR IDE. |
 | `docs/CUDA.md`, `docs/PYTORCH.md` | Before editing the CUDA/PyTorch reading tracks or the shared `ReadingTrack` shell. |
-| `docs/KERNEL.md`, `docs/LOADBALANCER.md`, `docs/DISTRIBUTED.md`, `docs/KUBERNETES.md` | Before editing the Linux-kernel, load-balancing, distributed-systems or Kubernetes reading tracks. |
+| `docs/KERNEL.md`, `docs/LOADBALANCER.md`, `docs/DISTRIBUTED.md`, `docs/KUBERNETES.md`, `docs/GAMEMODDING.md`, `docs/IOT_C.md` | Before editing the Linux-kernel, load-balancing, distributed-systems, Kubernetes, Game Modding, or Embedded IoT in C reading tracks. |
 | `docs/COMMUNITY.md` | Before editing community discussions, their moderation limits or post rendering. |
 
 ## 1. Current build, not the target product
@@ -172,6 +172,46 @@ their explanation or timing is correct. `features/tutorials/programming.test.js`
 numeric output, command dispatch and LED state transitions on all four C++ boards.
 
 ## 3. Completed in this continuation
+
+### Embedded IoT in C reading track (2026-10-22)
+
+Added a comprehensive ten-course **Embedded IoT in C track** (`/iot-c`, `content/iot-c.json`) rendered on the shared `features/courses/ReadingTrack.jsx` shell and configured by `features/iot-c/IotCPage.jsx`:
+- **10 courses**: `iot-c-architecture` (microcontroller Flash/RAM memory layout, cross-compilation toolchains, fixed-width types, bit manipulation, and non-blocking SysTick event loop scheduler),
+  `iot-c-peripherals` (memory-mapped I/O, volatile pointers, GPIO push-pull vs open-drain, atomic BSRR bit set/reset, hardware ISR vector tables, and timer PWM generation),
+  `iot-c-buses` (UART framing, lock-free single-producer single-consumer circular FIFO ring buffers, I2C master register read/write state machines with ACK/NACK, full-duplex SPI shift registers, and polynomial CRC-8 packet framing),
+  `iot-c-rtos` (FreeRTOS preemptive priority scheduling, PendSV context switching, stack sizing, high-watermark monitoring, thread-safe message queues, binary/counting semaphores, and Priority Inheritance mutexes),
+  `iot-c-networking` (lwIP lightweight TCP/IP stack, zero-copy chained packet buffers (pbufs), BSD sockets API, partial send loops, non-blocking I/O multiplexing with select(), and SNTP time synchronization over UDP),
+  `iot-c-mqtt` (MQTT v3.1.1 binary packet framing, Variable Byte Integer length encoding, QoS 0/1 state machines with PUBACK tracking, Keep-Alive ping timers, Last Will and Testament, topic wildcard matching with + and #, and CoAP RFC 7252 4-byte binary headers over UDP),
+  `iot-c-security` (IoT threat models, Hardware Root of Trust, Secure Boot, AES-128/256-GCM, HMAC-SHA256 message authentication, memory-constrained TLS 1.3 with mbedTLS, X.509 certificate validation, and anti-replay sequence number tracking),
+  `iot-c-power` (microcontroller sleep modes: Active, Modem-sleep, Light-sleep, Deep-sleep, CMOS leakage currents, pin isolation, low-power RTC slow memory persistence across hardware resets, duty-cycle energy budgets, Coulomb counting, and Brown-Out Detection),
+  `iot-c-ota` (Flash partition tables, dual-bank A/B partitioning (ota_0, ota_1, otadata), binary image headers with magic words, streaming SHA-256 verification, bootloader rollback guards with PENDING_VERIFY, and log-structured NVS wear leveling),
+  and `iot-c-capstone` (production edge IoT firmware suite architecture: HAL/BSP layered design, multi-task watchdog supervision preventing deadlocks, naked assembly/C HardFault handlers with stacked register capture, telemetry circular queuing, and remote diagnostics).
+- **Curriculum structure**: 40 checkpointed lessons (each with a 3-choice practice question), 10 guided setup labs with expected results, 10 complete self-contained C programs (downloadable as `<id>.c`), 10 applied challenges, and 10 five-question 80% exams (90 questions total, all IDs unique).
+- **Verification**: `backend/tests/test_iot_c_content.py` parses the JSON, compiles all 10 C programs with `gcc -std=c11 -Wall -Wextra`, executes each binary ensuring exit code 0, asserts lesson/exam question structure and ensures all 90 question IDs and 40 lesson IDs are globally unique. Frontend tests in `iotC.test.jsx` (6/6 pass) verify hub rendering, C code downloads, exam submission, and 404 handling.
+- **Wiring & Integration**: Route in `App.jsx`, nav active section in `AppHeader.jsx`, course directory card in `coursesDirectory.js` (`hardware` domain, `ALL_COURSES` count bumped to 19), landing footer link, sitemap updated (539 URLs, `vite-sitemap.test.js` passes), backend certificate catalogue updated (`iot-c.json`, total certificate courses bumped from 234 to 244, `test_certificates.py` passes), and 20+ Indonesian localization entries in `i18n/id.json`. Read `docs/IOT_C.md`.
+
+### Game modding & reverse engineering reading track (2026-10-20)
+
+Added a comprehensive ten-course **Game Modding & Reverse Engineering track** (`/game-modding`, `content/gamemodding.json`) rendered on the
+shared `features/courses/ReadingTrack.jsx` shell and configured by `features/gamemodding/GameModdingPage.jsx`:
+- **10 courses**: `mod-architecture` (game loops, fixed timesteps, ECS vs OOP, modding taxonomy, user/kernel anti-cheat boundaries),
+  `mod-memory-internals` (process virtual memory, ASLR rebasing, multi-level pointer chains, memory scanning algorithms),
+  `mod-reverse-engineering` (x86-64 assembly, calling conventions, VMT layout, shadow vtables, AoB wildcard signatures),
+  `mod-native-hooking` (DLL injection, 64-bit far jumps, trampolines, `FlushInstructionCache`, DirectX `Present` hooks),
+  `mod-unity-bepinex` (Mono vs IL2CPP, `Assembly-CSharp.dll` decompilation with dnSpy, BepInEx 5 plugins, `ConfigEntry`, IMGUI),
+  `mod-harmony-patching` (dynamic runtime patching, Prefix short-circuiting, Postfix return modification with `__result`, CIL Transpilers),
+  `mod-unreal-engine` (UE4/5 reflection, `UObject`, `GUObjectArray` iteration, universal `UObject::ProcessEvent` hooking, UE4SS),
+  `mod-lua-scripting` (embedded Lua C API, virtual stack, C++ host function bindings, sandboxing unsafe packages, event dispatching),
+  `mod-assets-savefiles` (asset virtual filesystems, PAK archive parsing/compression, binary save file serialization, CRC32 checksum recalculation),
+  and `mod-capstone` (production mod suite architecture, Dear ImGui in-game menu overlay, thread-safe command queues, SEH exception safety, Thunderstore/Nexus packaging).
+- **Curriculum structure**: 40 checkpointed lessons (each with a 3-choice practice question), 10 guided setup labs with expected
+  results, 10 complete self-contained code artifacts in C++, C#, or Python (downloadable as `<id>.<ext>`), 10 applied challenges, and 10 five-question
+  80% exams (90 questions total, all IDs unique).
+- **Verification**: `backend/tests/test_gamemodding_content.py` parses the JSON, validates all multi-language code artifacts (syntax-checking all C++ code with `g++ -std=c++17 -fsyntax-only` and Python code with `ast.parse`), asserts lesson/exam question structure and ensures all 90 question IDs and 40 lesson IDs are unique. Frontend tests in `gamemodding.test.jsx` (6/6 pass) verify hub rendering, code downloads, exam submission, and 404 handling.
+- **Wiring & Integration**: Route in `App.jsx`, nav section in `AppHeader.jsx`, course directory card in `coursesDirectory.js`
+  (`desktop` domain, `ALL_COURSES` count bumped from 17 to 18), landing footer link, sitemap updated (528 URLs, `vite-sitemap.test.js` passes),
+  backend certificate catalogue updated (`gamemodding.json`, total certificate courses bumped from 224 to 234, `test_certificates.py` passes),
+  and 20+ Indonesian localization entries in `i18n/id.json`. Read `docs/GAMEMODDING.md`.
 
 ### Kubernetes reading track (2026-10-20)
 

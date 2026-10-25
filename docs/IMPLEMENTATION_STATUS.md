@@ -18,6 +18,41 @@ lab, downloadable `.cu`, exam and certificate) with no console errors. Full suit
 updated); the sitemap has **506 URLs**; `eslint src` is unchanged. Hub metrics, the `/courses` directory card,
 Indonesian chrome and `docs/CUDA.md` were updated to ten courses.
 
+### Embedded IoT in C reading track (2026-10-22)
+
+Feature request beyond the PRD: a dedicated reading track for **Embedded IoT in C** (`/iot-c`, `content/iot-c.json`)
+on the shared `features/courses/ReadingTrack.jsx` shell and configured by `features/iot-c/IotCPage.jsx`.
+**10 courses** cover the spectrum from microcontroller memory architecture (Flash/SRAM, stack/heap, linkerscripts, crt0)
+and peripheral register abstraction (MMIO, volatile, atomic BSRR, hardware ISRs, PWM), to serial bus drivers (UART with lock-free SPSC ring buffers,
+I2C master register transactions, SPI full-duplex transfers, and polynomial CRC-8 packet framing), FreeRTOS real-time multitasking
+(preemptive priority scheduling, task stack watermarks, thread-safe message queues, semaphores, Priority Inheritance mutexes),
+embedded networking via lwIP (chained pbufs, BSD sockets API, partial send loops, non-blocking select(), SNTP time synchronization),
+IoT telemetry protocols (MQTT v3.1.1 packet framing, Variable Byte Integer length encoding, QoS 0/1 state machines, keep-alive ping timers,
+topic wildcards, and CoAP RFC 7252 binary headers), embedded cryptography with mbedTLS (Hardware Root of Trust, Secure Boot, AES-GCM, HMAC-SHA256,
+MFL-bounded TLS 1.3, X.509 certificate validation, anti-replay nonces), low-power IoT design (Active/Light/Deep sleep, leakage mitigation,
+RTC slow memory persistence across resets, duty-cycle math, Coulomb counting, brownout early warnings), dual-bank (A/B) OTA firmware updates
+(partition tables, image headers, SHA-256 verification, bootloader rollback guards with PENDING_VERIFY, log-structured NVS wear leveling),
+ending in an industrial edge IoT firmware suite capstone with multi-task watchdog supervision, HardFault stacked register capture, and telemetry queuing.
+
+Artifacts were verified with the real tools: all 10 C programs compile with `gcc -std=c11 -Wall -Wextra` (zero errors, zero warnings)
+and execute cleanly (exit code 0); `backend/tests/test_iot_c_content.py` asserts structural integrity and 90 unique question IDs.
+The certificate catalogue adds `iot-c.json` (now **244** total courses across 19 tracks); sitemap updated to **539 URLs**; 20+ Indonesian strings added.
+See [IOT_C.md](IOT_C.md) and CONTRACTS.md §27.
+
+### Game modding & reverse engineering reading track (2026-10-20)
+
+Feature request beyond the PRD: a dedicated reading track for **Game Modding & Reverse Engineering** (`/game-modding`, `content/gamemodding.json`)
+on the shared `features/courses/ReadingTrack.jsx` shell and configured by `features/gamemodding/GameModdingPage.jsx`.
+**10 courses** cover the spectrum from engine architectures and game loops, process virtual memory and pointer chains, x86-64 disassembly
+and VMT shadow hooking, native 64-bit detour hooks and DirectX `Present` interception, Unity C# modding with BepInEx 5 and decompilation (dnSpy),
+dynamic runtime method patching with Harmony (Prefix short-circuiting, Postfix, and CIL Transpilers), Unreal Engine 4/5 reflection traversal
+and `UObject::ProcessEvent` hooking, embedded Lua C API bridges and sandboxing, asset pipelines (Unreal PAK repacking) and binary save game CRC32
+engineering, ending in a production mod capstone with thread-safe queues, Dear ImGui overlays, and SEH crash handling.
+
+Artifacts were verified with the real tools: all C++ programs compile with `g++ -std=c++17 -fsyntax-only` (zero errors), the Python asset/save
+engine parses cleanly with `ast.parse`, and `backend/tests/test_gamemodding_content.py` asserts structural integrity and 90 unique question IDs.
+The certificate catalogue adds `gamemodding.json` (now **234** total courses across 18 tracks); sitemap updated to **528 URLs**; 20+ Indonesian strings added.
+
 ### Kubernetes reading track (2026-10-20)
 
 Feature request beyond the PRD: a dedicated reading track for **Kubernetes** (`/kubernetes`, `content/kubernetes.json`)

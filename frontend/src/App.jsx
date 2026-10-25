@@ -21,6 +21,8 @@ const KernelPage = lazy(() => import('./features/kernel/KernelPage.jsx'))
 const LoadBalancerPage = lazy(() => import('./features/loadbalancer/LoadBalancerPage.jsx'))
 const DistributedPage = lazy(() => import('./features/distributed/DistributedPage.jsx'))
 const KubernetesPage = lazy(() => import('./features/kubernetes/KubernetesPage.jsx'))
+const GameModdingPage = lazy(() => import('./features/gamemodding/GameModdingPage.jsx'))
+const IotCPage = lazy(() => import('./features/iot-c/IotCPage.jsx'))
 const QtPage = lazy(() => import('./features/qt/QtPage.jsx'))
 const WinuiPage = lazy(() => import('./features/winui/WinuiPage.jsx'))
 const CybersecurityPage = lazy(() => import('./features/cybersecurity/CybersecurityPage.jsx'))
@@ -88,6 +90,10 @@ export default function App() {
       <Route path="/distributed/:lessonId" element={<DistributedPage />} />
       <Route path="/kubernetes" element={<KubernetesPage />} />
       <Route path="/kubernetes/:lessonId" element={<KubernetesPage />} />
+      <Route path="/game-modding" element={<GameModdingPage />} />
+      <Route path="/game-modding/:lessonId" element={<GameModdingPage />} />
+      <Route path="/iot-c" element={<IotCPage />} />
+      <Route path="/iot-c/:lessonId" element={<IotCPage />} />
       <Route path="/qt" element={<QtPage />} />
       <Route path="/qt/:lessonId" element={<QtPage />} />
       <Route path="/winui" element={<WinuiPage />} />
