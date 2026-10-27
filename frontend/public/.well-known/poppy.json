@@ -1,0 +1,46 @@
+{
+  "protocol_version": "0.1",
+  "organization": {
+    "name": "Nevatal",
+    "domain": "pcb.nevatal.id"
+  },
+  "auth": {
+    "issuer": "https://pcb.nevatal.id",
+    "direct": {
+      "scopes": [
+        "poppy:read",
+        "poppy:write"
+      ]
+    },
+    "device": {
+      "scopes": [
+        "poppy:read",
+        "poppy:write"
+      ]
+    }
+  },
+  "agent": {
+    "protocols": [
+      {
+        "type": "poppy",
+        "endpoint": "https://pcb.nevatal.id/api"
+      }
+    ]
+  },
+  "apis": [
+    {
+      "type": "openapi",
+      "url": "https://pcb.nevatal.id/api/openapi.json",
+      "description": "VoltQuest API"
+    },
+    {
+      "type": "mcp",
+      "url": "https://pcb.nevatal.id/mcp",
+      "description": "VoltQuest MCP server"
+    }
+  ],
+  "web": {
+    "browser_session_endpoint": "https://pcb.nevatal.id/"
+  },
+  "extensions": {}
+}

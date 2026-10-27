@@ -1,0 +1,45 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "VoltQuest",
+    "identifier": "did:web:pcb.nevatal.id"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:pcb.nevatal.id:server:mcp",
+      "displayName": "VoltQuest MCP Server",
+      "type": "application/mcp-server-card+json",
+      "url": "https://pcb.nevatal.id/.well-known/mcp/server-card.json",
+      "representativeQueries": [
+        "explore VoltQuest",
+        "discover VoltQuest capabilities",
+        "use circuit simulation",
+        "use pcb layout verification"
+      ]
+    },
+    {
+      "identifier": "urn:air:pcb.nevatal.id:agent:a2a",
+      "displayName": "VoltQuest A2A Agent",
+      "type": "application/json",
+      "url": "https://pcb.nevatal.id/.well-known/agent-card.json",
+      "representativeQueries": [
+        "explore VoltQuest",
+        "discover VoltQuest capabilities",
+        "use circuit simulation",
+        "use pcb layout verification"
+      ]
+    },
+    {
+      "identifier": "urn:air:pcb.nevatal.id:api:v1",
+      "displayName": "VoltQuest API",
+      "type": "application/json",
+      "url": "https://pcb.nevatal.id/api",
+      "representativeQueries": [
+        "explore VoltQuest",
+        "discover VoltQuest capabilities",
+        "use circuit simulation",
+        "use pcb layout verification"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+# VoltQuest Agent
+
+> Interactive electronics, circuit simulation, and PCB design assistant.
+
+- Site: https://pcb.nevatal.id/
+- Agent card: https://pcb.nevatal.id/.well-known/agent-card.json
+- MCP server card: https://pcb.nevatal.id/.well-known/mcp/server-card.json
+- API catalog: https://pcb.nevatal.id/.well-known/api-catalog
+- API docs: https://pcb.nevatal.id/api/docs
