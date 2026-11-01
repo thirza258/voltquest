@@ -719,3 +719,29 @@ certificate catalogue adds `avr.json`, `cuda.json`, `pytorch.json`, `kernel.json
 `LoadBalancerPage.jsx`, `DistributedPage.jsx`, `KubernetesPage.jsx`, `GameModdingPage.jsx` and `IotCPage.jsx` are thin wrappers that import their
 JSON and render `ReadingTrack`; a `hardware` domain in `coursesDirectory.js` hosts the Embedded IoT in C card. No board, simulation, sandbox,
 assistant, MCP or showcase contract is extended; the course discovery API is unchanged.
+
+
+## 28. Microsoft Excel & Data Analytics track and spreadsheet simulator (2026-10-29)
+
+`/excel` and `/excel/:lessonId` follow [EXCEL.md](EXCEL.md). Ten comprehensive courses provide forty
+substantive lessons with section questions, ten guided business dataset labs, applied challenges, and ten
+five-question 80% certification exams issuing verifiable server-signed PDF certificates. Existing course
+progress, learning rewards (`vq.learning.v1`), and certificate issuance apply. The certificate catalogue
+adds `excel.json` (`CATALOGUES` in `backend/app/services/certificates.py`, total certificate courses bumped from 244 to 254).
+
+`engine/excel/` implements a complete in-browser spreadsheet calculation engine:
+- `formulaParser.js` tokenizes literals, cell references (`A1`, `$A$1`), ranges (`A1:C10`), operators,
+  and built-in Excel functions for Math, Statistics, Logic, Lookup (`VLOOKUP`, `INDEX/MATCH`, `XLOOKUP`),
+  Text (`TRIM`, `CONCAT`, `TEXTJOIN`), Date/Time (`DATEDIF`, `EDATE`), and Analytics (`CORREL`, `PERCENTILE`).
+  It performs topological calculation with cycle detection returning `#CIRCULAR!`.
+- `sheetModel.js` manages a 2D sparse cell grid with formatting (`currency`, `percent`, `number`, `integer`),
+  styling, CSV import/export, descriptive statistics profiling (`computeDescriptiveStats`), and pivot table
+  cross-tabulation (`computePivotTable`).
+- `features/excel/` provides the interactive Excel simulator IDE: `ExcelRibbon`, `ExcelFormulaBar`,
+  `ExcelGrid` (sticky headers, inline cell editing, range selection, keyboard navigation), `ExcelStatusBar`,
+  `ExcelPivotModal`, `ExcelStatsModal`, `ExcelChartModal` (SVG Column, Line, and Pie charts), and
+  `ExcelFunctionDirectoryModal`.
+- `/sandbox?bench=excel` opens the standalone Microsoft Excel IDE in `SandboxBenchLayout`, registered as
+  the eleventh sandbox bench in `sandboxDirectory.js`. An `ai-math` domain in `coursesDirectory.js` hosts the
+  course card (total courses bumped from 19 to 20). No external runtime, Python environment, or Microsoft Office
+  software is required; all evaluations execute deterministically in the client browser.

@@ -41,7 +41,7 @@ qt_standard_project_setup(REQUIRES 6.5)
 include(CTest)
 
 qt_add_executable(${app} main.cpp ${headers})
-target_include_directories(${app} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(${app} PRIVATE \${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${app} PRIVATE ${runtime.map(module => `Qt6::${module}`).join(' ')})
 set_target_properties(${app} PROPERTIES
     WIN32_EXECUTABLE ON MACOSX_BUNDLE ON
@@ -56,7 +56,7 @@ endif()
 if(BUILD_TESTING)
     find_package(Qt6 6.5 REQUIRED COMPONENTS Test)
     qt_add_executable(${app}_tests tests.cpp ${headers})
-    target_include_directories(${app}_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    target_include_directories(${app}_tests PRIVATE \${CMAKE_CURRENT_SOURCE_DIR})
     target_link_libraries(${app}_tests PRIVATE Qt6::Test ${runtime.map(module => `Qt6::${module}`).join(' ')})
     if(MSVC)
         target_compile_options(${app}_tests PRIVATE /utf-8)
@@ -68,43 +68,43 @@ endif()
 `
   if (slug === 'qml') source += `
 foreach(target IN ITEMS ${app} ${app}_tests)
-    if(TARGET ${target})
-        qt_add_qml_module(${target}
+    if(TARGET \${target})
+        qt_add_qml_module(\${target}
             URI VoltQuest.Lesson VERSION 1.0
-            OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${target}_qml
+            OUTPUT_DIRECTORY \${CMAKE_CURRENT_BINARY_DIR}/\${target}_qml
             QML_FILES Main.qml
             SOURCES CounterBackend.h)
     endif()
 endforeach()
 `
   if (slug === 'localization') source += `
-set(qm_file ${CMAKE_CURRENT_BINARY_DIR}/lesson_id.qm)
-add_custom_command(OUTPUT ${qm_file}
-    COMMAND Qt6::lrelease ${CMAKE_CURRENT_SOURCE_DIR}/lesson_id.ts -qm ${qm_file}
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/lesson_id.ts VERBATIM)
+set(qm_file \${CMAKE_CURRENT_BINARY_DIR}/lesson_id.qm)
+add_custom_command(OUTPUT \${qm_file}
+    COMMAND Qt6::lrelease \${CMAKE_CURRENT_SOURCE_DIR}/lesson_id.ts -qm \${qm_file}
+    DEPENDS \${CMAKE_CURRENT_SOURCE_DIR}/lesson_id.ts VERBATIM)
 foreach(target IN ITEMS ${app} ${app}_tests)
-    if(TARGET ${target})
-        qt_add_resources(${target} "translations" PREFIX "/i18n"
-            BASE ${CMAKE_CURRENT_BINARY_DIR} FILES ${qm_file})
+    if(TARGET \${target})
+        qt_add_resources(\${target} "translations" PREFIX "/i18n"
+            BASE \${CMAKE_CURRENT_BINARY_DIR} FILES \${qm_file})
     endif()
 endforeach()
 `
   if (slug === 'deployment') source += `
 foreach(target IN ITEMS ${app} ${app}_tests)
-    if(TARGET ${target})
-        qt_add_resources(${target} "lesson_data" PREFIX "/lesson" FILES about.txt)
+    if(TARGET \${target})
+        qt_add_resources(\${target} "lesson_data" PREFIX "/lesson" FILES about.txt)
     endif()
 endforeach()
 `
   source += `
 install(TARGETS ${app}
     BUNDLE DESTINATION .
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    RUNTIME DESTINATION \${CMAKE_INSTALL_BINDIR})
 option(VQ_DEPLOY "Collect Qt runtime dependencies during installation" OFF)
 if(VQ_DEPLOY)
     ${slug === 'qml' ? 'qt_generate_deploy_qml_app_script' : 'qt_generate_deploy_app_script'}(
         TARGET ${app} OUTPUT_SCRIPT deploy_script)
-    install(SCRIPT ${deploy_script})
+    install(SCRIPT \${deploy_script})
 endif()
 `
   return source

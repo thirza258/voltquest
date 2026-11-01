@@ -21,6 +21,7 @@ and what to do next. The specifications in `docs/` remain binding.
 | `docs/AVR.md` | Before editing the AVR assembly track, the assembler/simulator engine or the AVR IDE. |
 | `docs/CUDA.md`, `docs/PYTORCH.md` | Before editing the CUDA/PyTorch reading tracks or the shared `ReadingTrack` shell. |
 | `docs/KERNEL.md`, `docs/LOADBALANCER.md`, `docs/DISTRIBUTED.md`, `docs/KUBERNETES.md`, `docs/GAMEMODDING.md`, `docs/IOT_C.md` | Before editing the Linux-kernel, load-balancing, distributed-systems, Kubernetes, Game Modding, or Embedded IoT in C reading tracks. |
+| `docs/EXCEL.md` | Before editing Microsoft Excel courses, the spreadsheet simulator engine, or the Excel IDE. |
 | `docs/COMMUNITY.md` | Before editing community discussions, their moderation limits or post rendering. |
 
 ## 1. Current build, not the target product
@@ -172,6 +173,26 @@ their explanation or timing is correct. `features/tutorials/programming.test.js`
 numeric output, command dispatch and LED state transitions on all four C++ boards.
 
 ## 3. Completed in this continuation
+
+### Microsoft Excel & Data Analytics track and spreadsheet simulator (2026-10-29)
+
+Added a comprehensive ten-course **Microsoft Excel & Data Analytics track** (`/excel`, `content/excel.json`) with an interactive in-browser **Excel Simulator IDE** (`/sandbox?bench=excel`, `frontend/src/features/excel/` and `frontend/src/engine/excel/`):
+- **10 courses**: `excel-foundations` (grid coordinates, cell data types, relative vs absolute $A$1 references, SUM/AVERAGE/COUNT, currency/percentage number formatting),
+  `excel-logical-text` (logical tests with IF, comparison operators, compound multi-condition logic with AND/OR/IFS, IFERROR graceful fallbacks, and text cleaning with TRIM/PROPER/CONCAT/TEXTJOIN/MID/SUBSTITUTE),
+  `excel-lookups` (VLOOKUP exact vs approximate matching, column index fragility, HLOOKUP, two-way INDEX and MATCH left-lookups, and modern XLOOKUP with missing value defaults and multi-column arrays),
+  `excel-conditional-aggregation` (single-criterion SUMIF/COUNTIF, multi-criteria SUMIFS/COUNTIFS/AVERAGEIFS, text pattern wildcards * and ?, and dynamic date-bounded KPI aggregations),
+  `excel-dates-times` (Excel serial date-time architecture, calendar component extraction with DATE/YEAR/MONTH/DAY/WEEKDAY/TODAY, duration analytics with DATEDIF/EDATE/EOMONTH, and working business days with NETWORKDAYS/WORKDAY),
+  `excel-data-wrangling` (tidy tabular data design, eliminating destructive merged cells, deduplication workflows, dynamic arrays UNIQUE/SORT, in-cell Data Validation dropdown lists, and conditional formatting rules),
+  `excel-pivot-tables` (pivot table architecture, source ranges, in-memory Pivot Cache, field placement in Rows/Columns/Values/Filters, custom value field summaries with % of Grand Total, and multi-table interactive Slicers),
+  `excel-charts-visualization` (visual communication taxonomy matching chart type to data shape, zero-baseline integrity on bar/column charts, time-series line trends, Edward Tufte's data-ink ratio, and executive KPI dashboard hierarchy),
+  `excel-statistical-analysis` (central tendency mean/median/mode, skewness, dispersion sample standard deviation STDEV.S and variance VAR.S, percentiles, Tukey's IQR outlier detection fences, and bivariate Pearson correlation CORREL),
+  and `excel-analytics-capstone` (production analytics pipeline architecture: raw ingestion, transformation hygiene, relational star schema fact/dimension modeling, unit economics margin analysis/CAC/LTV, and executive synthesis reporting).
+- **Curriculum structure**: 40 checkpointed lessons (each with a 3-choice practice question), 10 guided setup labs with expected results, 10 complete business datasets (downloadable as `<id>.csv`), 10 applied challenges, and 10 five-question 80% certification exams (90 questions total, all IDs unique).
+- **In-browser Excel simulator engine & IDE**:
+  - `engine/excel/formulaParser.js`: full formula lexer, recursive-descent expression evaluator, dependency tracking, cycle detection returning `#CIRCULAR!`, and built-in functions for math, conditional math, lookups, logic, text, date/time, and analytics.
+  - `engine/excel/sheetModel.js`: 2D sparse cell grid model with formatting, styling, CSV import/export, descriptive statistics profiling (`computeDescriptiveStats`), and pivot cross-tabulation (`computePivotTable`).
+  - `features/excel/`: Ribbon bar (`ExcelRibbon`), Formula Bar (`ExcelFormulaBar`), interactive table canvas (`ExcelGrid` with sticky headers, inline editing, selection highlight, keyboard navigation), status bar (`ExcelStatusBar` with real-time Average/Count/Sum), `ExcelPivotModal`, `ExcelStatsModal`, `ExcelChartModal` (SVG Column, Line, and Pie charts), and `ExcelFunctionDirectoryModal`.
+- **Wiring & Integration**: Route in `App.jsx`, nav section in `AppHeader.jsx`, eleventh sandbox bench in `sandboxDirectory.js`, course directory card in `coursesDirectory.js` (`ai-math` domain, `ALL_COURSES` count bumped from 19 to 20), landing footer link, sitemap updated (561 URLs, `vite-sitemap.test.js` passes), backend certificate catalogue updated (`excel.json`, total certificate courses bumped from 244 to 254, `test_certificates.py` passes), and 20+ Indonesian localization entries in `i18n/id.json`. Read `docs/EXCEL.md`.
 
 ### Embedded IoT in C reading track (2026-10-22)
 

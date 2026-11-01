@@ -23,6 +23,7 @@ const DistributedPage = lazy(() => import('./features/distributed/DistributedPag
 const KubernetesPage = lazy(() => import('./features/kubernetes/KubernetesPage.jsx'))
 const GameModdingPage = lazy(() => import('./features/gamemodding/GameModdingPage.jsx'))
 const IotCPage = lazy(() => import('./features/iot-c/IotCPage.jsx'))
+const ExcelPage = lazy(() => import('./features/excel/ExcelPage.jsx'))
 const QtPage = lazy(() => import('./features/qt/QtPage.jsx'))
 const WinuiPage = lazy(() => import('./features/winui/WinuiPage.jsx'))
 const CybersecurityPage = lazy(() => import('./features/cybersecurity/CybersecurityPage.jsx'))
@@ -46,6 +47,7 @@ function SandboxRoute() {
   if (search.get('bench') === 'computer') return <ComputerPage sandbox />
   if (search.get('bench') === 'ai-agents') return <AgentsPage sandbox />
   if (search.get('bench') === 'matlab') return <MatlabPage sandbox />
+  if (search.get('bench') === 'excel') return <ExcelPage sandbox />
   if (search.get('bench') === 'cybersecurity') return <CybersecurityPage sandbox />
   if (search.get('bench') === 'hpc') return <HpcPage sandbox />
   if (search.get('bench') === 'vision') return <VisionPage sandbox />
@@ -97,6 +99,8 @@ export default function App() {
       <Route path="/game-modding/:lessonId" element={<GameModdingPage />} />
       <Route path="/iot-c" element={<IotCPage />} />
       <Route path="/iot-c/:lessonId" element={<IotCPage />} />
+      <Route path="/excel" element={<ExcelPage />} />
+      <Route path="/excel/:lessonId" element={<ExcelPage />} />
       <Route path="/qt" element={<QtPage />} />
       <Route path="/qt/:lessonId" element={<QtPage />} />
       <Route path="/winui" element={<WinuiPage />} />

@@ -441,6 +441,17 @@
   <url><loc>https://pcb.nevatal.id/iot-c/iot-c-power</loc></url>
   <url><loc>https://pcb.nevatal.id/iot-c/iot-c-ota</loc></url>
   <url><loc>https://pcb.nevatal.id/iot-c/iot-c-capstone</loc></url>
+  <url><loc>https://pcb.nevatal.id/excel</loc></url>
+  <url><loc>https://pcb.nevatal.id/excel/excel-foundations</loc></url>
+  <url><loc>https://pcb.nevatal.id/excel/excel-logical-text</loc></url>
+  <url><loc>https://pcb.nevatal.id/excel/excel-lookups</loc></url>
+  <url><loc>https://pcb.nevatal.id/excel/excel-conditional-aggregation</loc></url>
+  <url><loc>https://pcb.nevatal.id/excel/excel-dates-times</loc></url>
+  <url><loc>https://pcb.nevatal.id/excel/excel-data-wrangling</loc></url>
+  <url><loc>https://pcb.nevatal.id/excel/excel-pivot-tables</loc></url>
+  <url><loc>https://pcb.nevatal.id/excel/excel-charts-visualization</loc></url>
+  <url><loc>https://pcb.nevatal.id/excel/excel-statistical-analysis</loc></url>
+  <url><loc>https://pcb.nevatal.id/excel/excel-analytics-capstone</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=cybersecurity</loc></url>
@@ -449,6 +460,7 @@
   <url><loc>https://pcb.nevatal.id/sandbox?bench=robotics</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=computer</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=excel</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=opencv-foundations</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=opencv-drone</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=opencv-robotics</loc></url>
@@ -536,6 +548,16 @@
   <url><loc>https://pcb.nevatal.id/sandbox?bench=computer&amp;lesson=assembly-loops</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=computer&amp;lesson=assembly-real-isas</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=computer&amp;lesson=computer-capstone</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=excel&amp;lesson=excel-foundations</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=excel&amp;lesson=excel-logical-text</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=excel&amp;lesson=excel-lookups</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=excel&amp;lesson=excel-conditional-aggregation</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=excel&amp;lesson=excel-dates-times</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=excel&amp;lesson=excel-data-wrangling</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=excel&amp;lesson=excel-pivot-tables</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=excel&amp;lesson=excel-charts-visualization</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=excel&amp;lesson=excel-statistical-analysis</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=excel&amp;lesson=excel-analytics-capstone</loc></url>
   <url><loc>https://pcb.nevatal.id/showcase</loc></url>
   <url><loc>https://pcb.nevatal.id/community</loc></url>
   <url><loc>https://pcb.nevatal.id/leaderboard</loc></url>

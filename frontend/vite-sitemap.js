@@ -95,8 +95,9 @@ export function collectRoutes(contentDir) {
   const kubernetesCourses = (fs.existsSync(path.join(contentDir, 'kubernetes.json')) ? readJson(path.join(contentDir, 'kubernetes.json')).courses ?? [] : []).map(item => item.id)
   const gamemoddingCourses = (fs.existsSync(path.join(contentDir, 'gamemodding.json')) ? readJson(path.join(contentDir, 'gamemodding.json')).courses ?? [] : []).map(item => item.id)
   const iotCCourses = (fs.existsSync(path.join(contentDir, 'iot-c.json')) ? readJson(path.join(contentDir, 'iot-c.json')).courses ?? [] : []).map(item => item.id)
+  const excelCourses = (fs.existsSync(path.join(contentDir, 'excel.json')) ? readJson(path.join(contentDir, 'excel.json')).courses ?? [] : []).map(item => item.id)
 
-  const sandboxBenches = ['matlab', 'cybersecurity', 'hpc', 'vision', 'robotics', 'ai-agents', 'computer'].map(bench => `/sandbox?bench=${bench}`)
+  const sandboxBenches = ['matlab', 'cybersecurity', 'hpc', 'vision', 'robotics', 'ai-agents', 'computer', 'excel'].map(bench => `/sandbox?bench=${bench}`)
   const sandboxPresets = [
     ...visionLessons.map(id => `/sandbox?bench=vision&lesson=${id}`),
     ...roboticsLessons.map(id => `/sandbox?bench=robotics&lesson=${id}`),
@@ -105,6 +106,7 @@ export function collectRoutes(contentDir) {
     ...cyberCourses.map(id => `/sandbox?bench=cybersecurity&lesson=${id}`),
     ...agentCourses.map(id => `/sandbox?bench=ai-agents&lesson=${id}`),
     ...computerCourses.map(id => `/sandbox?bench=computer&lesson=${id}`),
+    ...excelCourses.map(id => `/sandbox?bench=excel&lesson=${id}`),
   ]
 
   return [
@@ -150,6 +152,7 @@ export function collectRoutes(contentDir) {
     ...(kubernetesCourses.length ? ['/kubernetes', ...kubernetesCourses.map(id => `/kubernetes/${id}`)] : []),
     ...(gamemoddingCourses.length ? ['/game-modding', ...gamemoddingCourses.map(id => `/game-modding/${id}`)] : []),
     ...(iotCCourses.length ? ['/iot-c', ...iotCCourses.map(id => `/iot-c/${id}`)] : []),
+    ...(excelCourses.length ? ['/excel', ...excelCourses.map(id => `/excel/${id}`)] : []),
     '/sandbox',
     ...sandboxBenches,
     ...sandboxPresets,

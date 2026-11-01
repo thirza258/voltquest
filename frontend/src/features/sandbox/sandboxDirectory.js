@@ -117,6 +117,16 @@ export const ALL_SANDBOXES = [
     icon: 'Compass',
     saving: 'manual',
   },
+  {
+    id: 'excel',
+    name: 'Microsoft Excel',
+    title: 'Microsoft Excel sandbox',
+    description: 'An interactive Excel spreadsheet IDE: formulas, cell ranges, VLOOKUP/XLOOKUP, pivot summaries, descriptive stats and charts.',
+    path: '/sandbox?bench=excel',
+    bench: 'excel',
+    icon: 'Table',
+    saving: 'manual',
+  },
 ]
 
 export function getSandbox(id) {

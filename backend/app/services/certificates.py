@@ -32,6 +32,7 @@ CATALOGUES = (
     ("kubernetes.json", "courses", "/kubernetes"),
     ("gamemodding.json", "courses", "/game-modding"),
     ("iot-c.json", "courses", "/iot-c"),
+    ("excel.json", "courses", "/excel"),
 )
 
 

@@ -101,6 +101,13 @@ describe('collectRoutes', () => {
     expect(routes.filter(route => route.startsWith('/matlab/'))).toEqual(expected)
   })
 
+  it('includes the Excel track and every course', () => {
+    const expected = readJson(path.join(contentDir, 'excel.json')).courses.map(course => `/excel/${course.id}`)
+    expect(expected).toHaveLength(10)
+    expect(routes).toContain('/excel')
+    expect(routes.filter(route => route.startsWith('/excel/'))).toEqual(expected)
+  })
+
   it('skips level ids that no quest file backs', () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'voltquest-sitemap-'))
     try {
@@ -161,6 +168,7 @@ describe('collectRoutes', () => {
         '/sandbox?bench=robotics',
         '/sandbox?bench=ai-agents',
         '/sandbox?bench=computer',
+        '/sandbox?bench=excel',
         '/sandbox?bench=vision&lesson=opencv-foundations',
         '/sandbox?bench=robotics&lesson=robot-motion',
         '/sandbox?bench=hpc&lesson=hpc-correctness',

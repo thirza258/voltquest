@@ -39,6 +39,7 @@ export function loadContentCatalog(contentDir) {
     kubernetes: mapById(read('kubernetes.json')?.courses),
     gamemodding: mapById(read('gamemodding.json')?.courses),
     iotC: mapById(read('iot-c.json')?.courses),
+    excel: mapById(read('excel.json')?.courses),
     avr: mapById(read('avr.json')?.courses),
     quests,
   }
@@ -74,6 +75,7 @@ const STATIC_ROUTES = {
   '/kubernetes': { title: 'Kubernetes Architecture — VoltQuest', description: 'Control plane, pods, services, ingress, and container orchestration.' },
   '/game-modding': { title: 'Game Architecture & Modding — VoltQuest', description: 'Memory manipulation, reverse engineering, hooks, and game engines.' },
   '/iot-c': { title: 'Embedded C for IoT — VoltQuest', description: 'Low-level C programming, memory constraints, and IoT protocols.' },
+  '/excel': { title: 'Microsoft Excel & Data Analytics — VoltQuest', description: 'Formulas, VLOOKUP/XLOOKUP, pivot tables, statistical EDA, and executive dashboards with an in-browser Excel simulator.' },
   '/avr': { title: 'AVR Assembly & Architecture — VoltQuest', description: 'AVR registers, assembly instructions, timers, and bare-metal programming.' },
 }
 
@@ -97,6 +99,7 @@ const SECTION_PREFIXES = [
   { prefix: '/kubernetes/', catalog: 'kubernetes', suffix: ' — Kubernetes — VoltQuest' },
   { prefix: '/game-modding/', catalog: 'gamemodding', suffix: ' — Game Modding — VoltQuest' },
   { prefix: '/iot-c/', catalog: 'iotC', suffix: ' — Embedded C — VoltQuest' },
+  { prefix: '/excel/', catalog: 'excel', suffix: ' — Microsoft Excel — VoltQuest' },
   { prefix: '/avr/', catalog: 'avr', suffix: ' — AVR — VoltQuest' },
 ]
 
