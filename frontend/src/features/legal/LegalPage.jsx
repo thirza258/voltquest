@@ -131,6 +131,16 @@ export function LegalPage() {
                 all stored data. Deleting accounts or resetting project volumes permanently purges records from the server storage.
               </p>
             </section>
+
+            <section className="bg-slate-800/40 p-6 rounded-xl border border-slate-700/50">
+              <h2 className="text-lg font-semibold text-white mb-3">5. Privacy Contact</h2>
+              <p>
+                For any privacy inquiries, data questions, or support, please contact us at:{" "}
+                <a href="mailto:nevatalapp@gmail.com" className="text-cyan-400 hover:underline font-mono">
+                  nevatalapp@gmail.com
+                </a>
+              </p>
+            </section>
           </div>
         ) : (
           <div className="space-y-8 text-slate-300 leading-relaxed text-sm">
@@ -178,6 +188,16 @@ export function LegalPage() {
               <p>
                 In no event shall the maintainers or hosts of VoltQuest be liable for any indirect, incidental, special,
                 consequential, or punitive damages arising from the use of or inability to use this software.
+              </p>
+            </section>
+
+            <section className="bg-slate-800/40 p-6 rounded-xl border border-slate-700/50">
+              <h2 className="text-lg font-semibold text-white mb-3">6. Terms Contact</h2>
+              <p>
+                For questions regarding these Terms of Service, contact:{" "}
+                <a href="mailto:nevatalapp@gmail.com" className="text-cyan-400 hover:underline font-mono">
+                  nevatalapp@gmail.com
+                </a>
               </p>
             </section>
           </div>
