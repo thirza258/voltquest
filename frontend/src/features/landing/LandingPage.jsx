@@ -1027,8 +1027,9 @@ export function LandingPage() {
             </nav>
           </div>
 
-          <div className="mt-6 border-t border-line pt-4 text-center text-xxs text-slate-400">
-            {t("VoltQuest • Built with deterministic simulation, cooperative VM runtime, and MCP coding agent tools.")}
+          <div className="mt-6 border-t border-line pt-4 text-center text-xxs text-slate-400 space-y-1">
+            <p>{t("VoltQuest • Built with deterministic simulation, cooperative VM runtime, and MCP coding agent tools.")}</p>
+            <p>{t("This project is under nevatal.id for educational purposes.")}</p>
           </div>
         </div>
       </footer>

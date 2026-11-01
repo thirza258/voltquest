@@ -204,8 +204,9 @@ export function LegalPage() {
         )}
       </main>
 
-      <footer className="border-t border-slate-800 bg-slate-950 py-6 text-center text-xs text-slate-500">
+      <footer className="border-t border-slate-800 bg-slate-950 py-6 text-center text-xs text-slate-500 space-y-1">
         <p>VoltQuest · Self-Hosted Laboratory · Privacy &amp; Terms</p>
+        <p>This project is under nevatal.id for educational purposes.</p>
       </footer>
     </div>
   );
