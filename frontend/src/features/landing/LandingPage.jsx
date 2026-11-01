@@ -1022,6 +1022,8 @@ export function LandingPage() {
               <Link to="/community" className="py-1 hover:text-brand-600">{t("Community")}</Link>
               <Link to="/leaderboard" className="py-1 hover:text-brand-600">{t("Leaderboard")}</Link>
               <Link to="/profile" className="py-1 hover:text-brand-600">{t("Profile")}</Link>
+              <Link to="/privacy" className="py-1 text-slate-400 hover:text-brand-600">{t("Privacy Policy")}</Link>
+              <Link to="/terms" className="py-1 text-slate-400 hover:text-brand-600">{t("Terms of Service")}</Link>
             </nav>
           </div>
 

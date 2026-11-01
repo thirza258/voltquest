@@ -27,6 +27,7 @@ const ExcelPage = lazy(() => import('./features/excel/ExcelPage.jsx'))
 const QtPage = lazy(() => import('./features/qt/QtPage.jsx'))
 const WinuiPage = lazy(() => import('./features/winui/WinuiPage.jsx'))
 const CybersecurityPage = lazy(() => import('./features/cybersecurity/CybersecurityPage.jsx'))
+const LegalPage = lazy(() => import('./features/legal/LegalPage.jsx'))
 const RoboticsPage = lazy(() => import('./features/robotics/RoboticsPage.jsx'))
 const CoursesPage = lazy(() => import('./features/courses/CoursesPage.jsx'))
 const CoursePage = lazy(() => import('./features/courses/CoursePage.jsx'))
@@ -127,6 +128,8 @@ export default function App() {
       <Route path="/community/:threadId" element={<ThreadPage />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/leaderboard" element={<LeaderboardPage />} />
+      <Route path="/privacy" element={<LegalPage />} />
+      <Route path="/terms" element={<LegalPage />} />
       <Route path="*" element={<div><AppHeader /><main className="p-8"><h1 className="text-xl font-semibold">{t("Page not found")}</h1><Link className="mt-4 inline-block text-brand-700 underline" to="/">{t("Back to the campaign")}</Link></main></div>} />
     </Routes></Suspense><Toaster /></AppErrorBoundary>
   )
