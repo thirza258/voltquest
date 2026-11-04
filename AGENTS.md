@@ -174,6 +174,26 @@ numeric output, command dispatch and LED state transitions on all four C++ board
 
 ## 3. Completed in this continuation
 
+### Connected electronics → robotics → vision path (2026-11-04)
+
+`features/courses/learningPath.js` is the single ordered source for the three stages (electrical
+engineering foundations on `/courses?track=electrical` → robotics & ROS 2 on `/robotics` → computer
+vision on `/vision`), with each stage's start course, sandbox bench and prerequisite derived from
+the order. `features/courses/ConnectedPath.jsx` renders the combined view — stage number, title,
+prerequisite, start and bench links, the current stage marked `aria-current="step"`, and a
+next-step link (the last stage shows the capstone note instead) — and is mounted once on each hub
+(`/courses` marks electronics, `/robotics` marks robotics, `/vision` marks vision).
+
+Navigation only: no route, progress store, exam, certificate, reward or sandbox preset changed, so
+the existing per-track records stay independent. Stage titles reuse the already-translated track
+names; 17 new Indonesian strings cover the card chrome and stage summaries.
+`features/courses/learningPath.test.jsx` (7 tests) checks the prerequisite chain, unique targets,
+that every linked start course/lesson exists in `content/`, the rendered marks and next step, and
+the card on all three hubs. The courses hub gained level-3 stage headings, so two level-3 heading
+assertions in `courses.test.jsx` now scope to anchored course cards. Targeted
+`features/courses`, `features/robotics` and `features/vision` suites: **220 tests pass**; ESLint
+clean on every changed file. Not checked in a browser yet.
+
 ### Microsoft Excel & Data Analytics track and spreadsheet simulator (2026-10-29)
 
 Added a comprehensive ten-course **Microsoft Excel & Data Analytics track** (`/excel`, `content/excel.json`) with an interactive in-browser **Excel Simulator IDE** (`/sandbox?bench=excel`, `frontend/src/features/excel/` and `frontend/src/engine/excel/`):

@@ -216,12 +216,15 @@ it('finds related courses by a tutorial name and handles an invalid tutorial fil
 
 it('discovers the ordered programming path and filters its intermediate courses', () => {
   page('/courses?track=programming')
+  // Course cards are the anchored level-3 headings; the connected-path stages are not.
+  const courseHeadings = () => screen.getAllByRole('heading', { level: 3 }).filter(heading => heading.closest('a'))
   expect(screen.getByRole('status').textContent).toBe('12 courses found')
-  expect(screen.getAllByRole('heading', { level: 3 })[0].textContent).toBe(getCourse('programming-start').title)
+  expect(courseHeadings()[0].textContent).toBe(getCourse('programming-start').title)
   fireEvent.change(screen.getByLabelText('Course level'), { target: { value: 'Intermediate' } })
   expect(screen.getByRole('status').textContent).toBe('7 courses found')
   fireEvent.change(screen.getByLabelText('Search courses'), { target: { value: 'mqtt' } })
-  expect(screen.getByRole('heading', { level: 3 }).textContent).toBe(getCourse('programming-mqtt').title)
+  expect(courseHeadings()).toHaveLength(1)
+  expect(courseHeadings()[0].textContent).toBe(getCourse('programming-mqtt').title)
 })
 
 it('copies the exact sketch and keeps the experiment board, code and assessment choices across translation', async () => {

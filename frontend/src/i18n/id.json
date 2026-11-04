@@ -6329,5 +6329,22 @@
   "Course certification exam": "Ujian sertifikasi kursus",
   "Take 5-Question Certification Exam": "Ikuti Ujian Sertifikasi 5 Pertanyaan",
   "Exam passed & certified": "Ujian lulus & tersertifikasi",
-  "Return to Excel & Analytics Track": "Kembali ke Jalur Excel & Analisis"
+  "Return to Excel & Analytics Track": "Kembali ke Jalur Excel & Analisis",
+  "Connected learning path": "Jalur belajar terhubung",
+  "Electronics → robotics → vision. Each stage builds on the one before it.": "Elektronika → robotika → visi komputer. Setiap tahap dibangun di atas tahap sebelumnya.",
+  "Stage {number}": "Tahap {number}",
+  "You are here": "Anda di sini",
+  "Open stage": "Buka tahap",
+  "Prerequisite: {stage}": "Prasyarat: {stage}",
+  "Starting point": "Titik awal",
+  "Resources for {stage}": "Sumber untuk {stage}",
+  "Start with circuits": "Mulai dengan rangkaian",
+  "Start with robot motion": "Mulai dengan gerak robot",
+  "Start with OpenCV foundations": "Mulai dengan dasar OpenCV",
+  "Vision sandbox": "Sandbox visi komputer",
+  "Next step": "Langkah berikutnya",
+  "End of the connected path. The vision capstone combines all three stages.": "Akhir jalur terhubung. Proyek akhir visi komputer menggabungkan ketiga tahap.",
+  "Circuits, Ohm’s law, power, measurement and motor drivers: the hardware layer the robot and its camera are built on.": "Rangkaian, hukum Ohm, daya, pengukuran, dan penggerak motor: lapisan perangkat keras tempat robot dan kameranya dibangun.",
+  "Differential drive, nodes and topics, frames and odometry, then services, parameters and waypoint actions.": "Penggerak diferensial, node dan topik, kerangka serta odometri, lalu layanan, parameter, dan aksi waypoint.",
+  "OpenCV filtering and contours, drone markers, ROS 2 steering, patch attention, then the multi-device capstone.": "Penyaringan dan kontur OpenCV, penanda drone, kemudi ROS 2, atensi patch, lalu proyek akhir multi-perangkat."
 }

@@ -159,3 +159,24 @@ on reload, retained answers/read checks/board across Indonesian switching, exact
 and the copied Nano sketch running in a real Worker. ESP32-S3 HTTP and ESP32 MQTT examples drive
 the prepared LED with matching reported state and command expiry. Desktop/390 px views fit with
 no browser application errors. Cross-browser and real-device verification remains a release check.
+
+## Connected electronics → robotics → vision path (2026-11-04)
+
+`features/courses/learningPath.js` holds the only ordered copy of the three stages — electrical
+engineering foundations (`/courses?track=electrical`), robotics & ROS 2 (`/robotics`), computer
+vision (`/vision`) — with each stage's start course, sandbox bench and prerequisite derived from
+the order. `ConnectedPath.jsx` renders the combined view: every stage with its number, title,
+prerequisite, start link and bench link, the current stage marked `aria-current="step"`, and a
+next-step link to the following stage (the last stage shows the capstone note instead). The card is
+mounted once on each of the three hubs; the electronics stage is marked on the courses hub that
+already owns `?track=electrical`.
+
+This is navigation only. It adds no route, does not chain progress, exams, certificates or rewards
+across tracks, and does not change the sandbox presets it links to. Stage titles reuse the existing
+translated track names; the new chrome and the three stage summaries have Indonesian entries.
+`learningPath.test.jsx` checks the prerequisite chain, that targets are unique, that every linked
+start course/lesson exists in `content/`, the rendered marks and next step, and the card on all
+three hubs. Because the courses hub gained level-3 stage headings, two existing assertions in
+`courses.test.jsx` now scope their level-3 query to anchored course cards. Targeted
+`features/courses`, `features/robotics` and `features/vision` suites pass (**220 tests**); the
+component is not yet checked in a real browser.
