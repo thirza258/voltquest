@@ -4,6 +4,7 @@ import { useI18n } from '../../i18n/index.jsx'
 import Assessment from '../courses/Assessment.jsx'
 import { readCourseProgress, saveCourseProgress } from '../courses/progress.js'
 import CyberLab from './CyberLab.jsx'
+import LessonConnections from '../courses/LessonConnections.jsx'
 import { linkClass, panelClass } from './styles.js'
 
 export default function CyberCourse({ course, previous, next }) {
@@ -33,6 +34,7 @@ export default function CyberCourse({ course, previous, next }) {
     </div>
     <section id="interactive-lab" className="mt-8 scroll-mt-6"><div className={`${panelClass} mb-4`}><p className="text-xs font-semibold uppercase tracking-wide text-brand-700">{t('Learn by investigating')}</p><h2 className="mt-2 text-2xl font-semibold">{t('Guided vulnerability tutorial')}</h2><ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-6 text-ink-secondary">{course.steps.map(step => <li key={step}>{t(step)}</li>)}</ol><Link to={`/sandbox?bench=cybersecurity&lesson=${course.id}`} className={`${linkClass} mt-4 inline-block text-sm`} target="_blank" rel="noopener noreferrer">{t('Open a sandbox copy in a new tab')}</Link><p className="mt-2 text-xs leading-5 text-slate-600">{t('The separate tab starts this lesson’s preset. Your answers and current investigation stay in this tab; use notebook export/import to transfer edits.')}</p></div><CyberLab initialLab={course.lab} /></section>
     <section id="challenge" className={`${panelClass} mt-6 scroll-mt-6`}><h2 className="text-xl font-semibold">{t('Applied challenge')}</h2><p className="mt-3 leading-7 text-ink-secondary">{t(course.challenge)}</p></section>
+    <LessonConnections href={`/cybersecurity/${course.id}`} className="mt-6" />
     <div className="mt-6 grid items-start gap-6 lg:grid-cols-2"><section id="practice" className={`${panelClass} scroll-mt-6`}><h2 className="mb-4 text-xl font-semibold">{t('Practice questions')}</h2><Assessment questions={course.practice} /></section><section id="exam" className={`${panelClass} scroll-mt-6`}><h2 className="mb-4 text-xl font-semibold">{t('Course exam')}</h2><Assessment exam course={course} questions={course.exam.questions} passPercent={course.exam.passPercent} onResult={examResult} /></section></div>
     <p className="mt-5 text-sm leading-6 text-slate-600">{t('Section checks and exam scores are saved in this browser. Unsubmitted answers last for this visit. Self-study exams do not award campaign XP.')}</p>
     <section className={`${panelClass} mt-6`}><h2 className="text-lg font-semibold">{t('Reference reading')}</h2><ul className="mt-3 space-y-3 text-sm">{course.sources.map(source => <li key={source.url}><a href={source.url} className={linkClass} target="_blank" rel="noopener noreferrer">{source.title}</a></li>)}</ul></section>

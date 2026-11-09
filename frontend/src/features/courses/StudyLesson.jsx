@@ -4,6 +4,7 @@ import { useI18n } from '../../i18n/index.jsx'
 import { readCourseProgress, saveCourseProgress } from './progress.js'
 import Assessment from './Assessment.jsx'
 import FundamentalsGuide from './FundamentalsGuide.jsx'
+import LessonConnections from './LessonConnections.jsx'
 
 /** Shared self-study shell for sandbox curricula. Key by lesson id, never by locale. */
 export default function StudyLesson({ lesson, children, next, basePath, sandboxLink }) {
@@ -23,6 +24,7 @@ export default function StudyLesson({ lesson, children, next, basePath, sandboxL
     <section className="my-6 rounded-lg border border-line bg-white p-5"><h2 className="font-semibold">{t('Guided experiment')}</h2><ol className="mt-3 list-decimal space-y-3 pl-5 text-sm leading-relaxed text-ink-secondary">{lesson.steps.map(step => <li key={step}>{t(step)}</li>)}</ol></section>
     <div id="interactive-lab" className="scroll-mt-6">{children}</div>
     <p className="my-4 text-sm"><Link className="text-brand-700 underline" to={sandboxLink} target="_blank" rel="noopener noreferrer">{t('Open a sandbox copy in a new tab')}</Link></p>
+    <LessonConnections href={`${basePath}/${lesson.id}`} className="my-6" />
     <div className="mt-8 grid items-start gap-6 lg:grid-cols-2"><section><h2 className="mb-4 text-xl font-semibold">{t('Practice questions')}</h2><Assessment questions={lesson.practice} /></section><section><h2 className="mb-4 text-xl font-semibold">{t('Course exam')}</h2><p className="mb-4 text-sm text-slate-600">{t('Best exam score')}: {progress.bestPercent == null ? '—' : `${progress.bestPercent}%`} · {t('Attempts')}: {progress.attempts}</p><Assessment exam course={lesson} questions={lesson.exam.questions} passPercent={lesson.exam.passPercent} onResult={result => persist({ ...progress, attempts: progress.attempts + 1, bestPercent: Math.max(progress.bestPercent ?? 0, result.percent), lastPercent: result.percent })} /></section></div>
     <p className="mt-6 text-sm text-slate-600">{t('Section checks and exam scores are saved in this browser. Unsubmitted answers last for this visit. Self-study exams do not award campaign XP.')}</p>
     {storageError && <p role="alert" className="mt-2 text-sm text-amber-800">{t('Browser storage is unavailable. Progress will last only for this visit.')}</p>}

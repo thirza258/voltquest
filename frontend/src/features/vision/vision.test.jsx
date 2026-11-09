@@ -25,8 +25,9 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals() })
 const lab = props => render(<LocaleProvider><VisionLab {...props} /></LocaleProvider>)
 
-it('provides six complete courses, a distinct integration capstone, and valid companion examples', () => {
-  expect(VISION_TUTORIALS).toHaveLength(6); expect(VISION_TUTORIALS.filter(l => l.integrated)).toHaveLength(1)
+it('provides twelve complete courses, a distinct integration capstone last, and valid companion examples', () => {
+  expect(VISION_TUTORIALS).toHaveLength(12); expect(VISION_TUTORIALS.filter(l => l.integrated)).toHaveLength(1)
+  expect(VISION_TUTORIALS.at(-1).id).toBe('vision-integration')
   for (const [i, lesson] of VISION_TUTORIALS.entries()) {
     expect(lesson.order).toBe(i + 1); expect(validateVision(lesson.config)).toEqual(lesson.config)
     expect(lesson.lessons).toHaveLength(3); expect(lesson.formulas).toHaveLength(2); expect(lesson.practice).toHaveLength(2); expect(lesson.exam.questions).toHaveLength(5)

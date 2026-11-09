@@ -507,6 +507,11 @@ offer six computer-vision courses/labs. `/sandbox?bench=robotics|vision` routes 
 browser sandboxes; optional `lesson` selects a preset. These formats do not extend CircuitDoc or the
 six supported board ids, backend project records, MCP project API, firmware language support or showcase.
 
+Since 2026-11-09 the vision catalogue has twelve courses, and `processOpenCv` adds six classical modes:
+morphology, contours, histogram (Otsu), perspective, hough and template. Each returns a mask, metrics,
+an RGBA frame and mode `details`. Version-1 settings files written before the extra keys still load,
+because `VISION_V1_ADDITIONS` supplies the defaults.
+
 `engine/robotics/model.js` and `engine/vision/{model,opencv}.js` run in plain Node with no DOM/timers.
 Robotics scheduling and OpenCV script loading belong to feature UI adapters. The vision integration bench
 uses the existing simulation Worker for its IoT/drone devices and the same deterministic robot model.
@@ -745,3 +750,60 @@ adds `excel.json` (`CATALOGUES` in `backend/app/services/certificates.py`, total
   the eleventh sandbox bench in `sandboxDirectory.js`. An `ai-math` domain in `coursesDirectory.js` hosts the
   course card (total courses bumped from 19 to 20). No external runtime, Python environment, or Microsoft Office
   software is required; all evaluations execute deterministically in the client browser.
+
+## 29. Connected learning map (2026-11-09)
+
+`frontend/src/features/courses/learningMap.js` owns the cross-track connections of the hardware family
+(see COURSES.md, "Connected learning map"). Exports:
+- `MAP_TOPICS`, each `{ id, layer, title, short, hub, start, bench, benchLabel, deeper? }`. `layer` is
+  `'applied'` (robotics, vision, iot, drone), `'foundation'` (electronics, programming) or
+  `'security'` (networking, cybersecurity; not drawn on the hardware square).
+- `SECURITY_BRIDGES`, with the same shape as `MAP_BRIDGES`. They link networking and web-security
+  courses course by course; all have `joined: false`.
+- `MAP_BRIDGES`, each `{ id, between: [a, b], joined, title, flow, summary, steps, tryIt }`.
+- `FOUNDATION_LINKS`, each `{ foundation, topic, course, lesson, note }`.
+- `STEP_KIND_LABELS`.
+- Helpers: `getTopic`, `isAppliedTopic`, `otherEnd`, `bridgesOf`, `bridgeBetween`, `foundationLinksOf`,
+  `topicForTrack`, `connectionsAt(route)` → `{ bridges, usedIn, builtOn }`, and `hasConnections(route)`.
+
+A step or lesson reference is `{ kind: 'course'|'robotics'|'vision'|'tutorial'|'networking'|'cyber', id, title, href }`.
+`connectionsAt` covers both bridge lists.
+`title` must equal the authored content title, so hubs never import each other's curricula. Every pair
+of applied topics has exactly one bridge. `joined` is true only where one lab passes data from one side into the
+other; today that is `vision-integration`. `ConnectedMap` (hubs) and `LessonConnections` (lesson pages) are views on
+this module. They change no route, progress, exam, certificate, reward or sandbox contract.
+
+## 30. Networking track and network simulator (2026-11-09)
+
+`/networking` and `/networking/:lessonId` follow [NETWORKING.md](NETWORKING.md). They use `ReadingTrack`
+with these optional slots, which every other reading track simply omits:
+- `track.Lab` renders inside the guided-lab section;
+- `track.hubExtra` renders below the disclosure;
+- `track.benchHref` and `track.benchLabel` add a hub button;
+- `track.labNote` replaces the default note in the guided-lab section;
+- the source section renders only when the course has `code`.
+
+`ReadingTrack` also mounts `LessonConnections` for every course; it renders nothing for courses off the map.
+
+`/sandbox?bench=network` is the twelfth bench (`saving: 'manual'`, `vq.network.project.v1`).
+`content/networking.json` is `{ reviewedAt, courses }`. Its course shape:
+- the reading-track fields;
+- `lessons[].exampleDevice` (`router|switch|pc|none`);
+- `lab: { title, brief, topology, goals, solution }`.
+
+The certificate catalogue adds `networking.json` (`CATALOGUES`; 270 certificate courses).
+
+`engine/network/` is plain JavaScript (no DOM, timers or randomness). Its exports:
+- `addr.js`: IPv4 and MAC helpers.
+- `model.js`: `DEVICE_TYPES`, `validateProject`, `parseProject`, the editing helpers and `hostAddressing`.
+- `sim.js`: `buildNetwork`, `routingTable`, `ospfNeighbors`, `ping`, `traceroute`, `httpGet`, `nslookup`,
+  `dhcpRenew` and `emptyState`.
+- `cli.js`: `createSession`, `execute → { project, session, output, events }`, `promptFor`, `cliError`
+  and `runningConfig`.
+- `desktop.js`: `runDesktop` and `browse`.
+- `checks.js`: `checkGoals` and `applySolution`.
+- `lab.js`: `labProject`.
+
+Every operation returns its event list for the step-by-step view. Runtime tables (`arp`, `mac`, `nat`,
+`hits`, `bindings`) live in a separate state object that is never saved. Projects do not extend
+CircuitDoc, the saved-circuit API, showcase or campaign contracts.

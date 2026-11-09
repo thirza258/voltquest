@@ -73,7 +73,7 @@ describe('collectRoutes', () => {
     for (const bench of benches) {
       expect(routes).toContain(bench)
     }
-    expect(routes.filter(route => route.startsWith('/sandbox?bench=vision&lesson='))).toHaveLength(6)
+    expect(routes.filter(route => route.startsWith('/sandbox?bench=vision&lesson='))).toHaveLength(12)
     expect(routes.filter(route => route.startsWith('/sandbox?bench=robotics&lesson='))).toHaveLength(5)
     expect(routes.filter(route => route.startsWith('/sandbox?bench=hpc&lesson='))).toHaveLength(10)
     expect(routes.filter(route => route.startsWith('/sandbox?bench=matlab&lesson='))).toHaveLength(18)
@@ -179,6 +179,8 @@ describe('collectRoutes', () => {
         '/showcase',
         '/community',
         '/leaderboard',
+        '/privacy',
+        '/terms',
       ])
     } finally {
       fs.rmSync(dir, { recursive: true, force: true })

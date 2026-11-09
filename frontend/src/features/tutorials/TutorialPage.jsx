@@ -13,6 +13,7 @@ import { WiringGuide } from './WiringGuide.jsx'
 import AssistantPanel from '../assistant/AssistantPanel.jsx'
 import Inspector from '../workspace/Inspector.jsx'
 import FundamentalsGuide from '../courses/FundamentalsGuide.jsx'
+import LessonConnections from '../courses/LessonConnections.jsx'
 const DroneLessonBench = lazy(() => import('./DroneLessonBench.jsx'))
 
 function TutorialLab({ tutorial, boardId }) {
@@ -86,6 +87,7 @@ function TutorialLab({ tutorial, boardId }) {
       <div className="mt-6 grid gap-5 lg:grid-cols-2">{[['Hardware concepts', tutorial.hardwareConcepts], ['Program concepts', tutorial.programConcepts]].map(([title, concepts]) => <section key={title} className="rounded-lg border border-line bg-white p-5"><h2 className="mb-4 text-lg font-semibold">{t(title)}</h2><div className="space-y-5">{concepts?.map((concept) => <div key={concept.title}><h3 className="mb-2 text-sm font-semibold text-brand-700">{t(concept.title)}</h3><p className="text-sm leading-relaxed text-ink-secondary">{t(concept.text)}</p></div>)}</div></section>)}</div>
       {tutorial.kind !== 'drone' && <WiringGuide doc={doc} selectedWire={selectedWire} onSelectWire={(id) => { setSelectedWire(id); document.getElementById('tutorial-circuit')?.scrollIntoView?.({ behavior: 'auto', block: 'center' }) }} />}
       {tutorial.language === 'python' && <div className="mt-5"><Callout tone="info" title={t("Raspberry Pi GPIO learning environment")}>{t("Supports the Python and GPIO calls used in these tutorials. Linux, external Python packages, arbitrary functions, and camera or network emulation are not available.")}</Callout></div>}
+      <LessonConnections href={`/tutorials/${tutorial.id}`} className="mt-6" />
     </>
   )
 }

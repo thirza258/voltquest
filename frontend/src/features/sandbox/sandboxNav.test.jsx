@@ -37,7 +37,7 @@ afterEach(() => {
 
 describe('Course catalog consistency', () => {
   it('contains all 20 specialized courses with consistent metadata', () => {
-    expect(ALL_COURSES).toHaveLength(20)
+    expect(ALL_COURSES).toHaveLength(21)
     for (const course of ALL_COURSES) {
       expect(course.id).toBeTruthy()
       expect(course.title).toBeTruthy()
@@ -61,7 +61,7 @@ describe('Course catalog consistency', () => {
     expect(screen.getByRole('heading', { level: 2, name: 'All Courses & Learning Tracks' })).toBeTruthy()
     // All 20 courses rendered as h4 titles
     const courseHeadings = screen.getAllByRole('heading', { level: 4 })
-    expect(courseHeadings.length).toBe(20)
+    expect(courseHeadings.length).toBe(21)
 
     // Filter by domain button: Desktop & Systems (3 tracks: Qt, WinUI & Game Modding)
     fireEvent.click(screen.getByRole('button', { name: /Desktop & Systems/ }))
@@ -77,13 +77,13 @@ describe('Course catalog consistency', () => {
 
 describe('Sandbox sidebar navigation', () => {
   it('lists eleven benches with canonical names and counts checked against the real content', () => {
-    expect(ALL_SANDBOXES).toHaveLength(11)
+    expect(ALL_SANDBOXES).toHaveLength(12)
     expect(getSandbox('circuit').name).toBe('Circuit & breadboard')
     expect(getSandboxByBench('avr')).toMatchObject({ name: 'AVR assembler IDE', title: 'AVR assembler sandbox', saving: 'manual' })
     expect(getSandboxByBench('matlab')).toMatchObject({ name: 'MATLAB', title: 'MATLAB sandbox', saving: 'manual' })
     expect(getSandboxByBench('excel')).toMatchObject({ name: 'Microsoft Excel', title: 'Microsoft Excel sandbox', saving: 'manual' })
     expect(getSandboxByBench('drone').saving).toBe('draft')
-    expect(new Set(ALL_SANDBOXES.map(item => item.title)).size).toBe(11)
+    expect(new Set(ALL_SANDBOXES.map(item => item.title)).size).toBe(12)
     expect(CIRCUIT_PART_TYPES).toBe(listDefs().length)
     expect(MATLAB_BROWSER_FUNCTIONS).toBe(matlabReference.functions.filter(item => item.scope === 'browser').length)
     expect(CYBER_DEFENSES).toBe(Object.keys(CONTROLS).length)

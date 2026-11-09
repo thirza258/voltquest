@@ -40,6 +40,7 @@ export function loadContentCatalog(contentDir) {
     gamemodding: mapById(read('gamemodding.json')?.courses),
     iotC: mapById(read('iot-c.json')?.courses),
     excel: mapById(read('excel.json')?.courses),
+    networking: mapById(read('networking.json')?.courses),
     avr: mapById(read('avr.json')?.courses),
     quests,
   }
@@ -76,6 +77,7 @@ const STATIC_ROUTES = {
   '/game-modding': { title: 'Game Architecture & Modding — VoltQuest', description: 'Memory manipulation, reverse engineering, hooks, and game engines.' },
   '/iot-c': { title: 'Embedded C for IoT — VoltQuest', description: 'Low-level C programming, memory constraints, and IoT protocols.' },
   '/excel': { title: 'Microsoft Excel & Data Analytics — VoltQuest', description: 'Formulas, VLOOKUP/XLOOKUP, pivot tables, statistical EDA, and executive dashboards with an in-browser Excel simulator.' },
+  '/networking': { title: 'Computer Networking & Network Simulator — VoltQuest', description: 'Subnetting, switching and ARP, VLANs, static and OSPF routing, DHCP, DNS, access lists and NAT, practised in an in-browser network simulator.' },
   '/avr': { title: 'AVR Assembly & Architecture — VoltQuest', description: 'AVR registers, assembly instructions, timers, and bare-metal programming.' },
 }
 
@@ -100,6 +102,7 @@ const SECTION_PREFIXES = [
   { prefix: '/game-modding/', catalog: 'gamemodding', suffix: ' — Game Modding — VoltQuest' },
   { prefix: '/iot-c/', catalog: 'iotC', suffix: ' — Embedded C — VoltQuest' },
   { prefix: '/excel/', catalog: 'excel', suffix: ' — Microsoft Excel — VoltQuest' },
+  { prefix: '/networking/', catalog: 'networking', suffix: ' — Networking — VoltQuest' },
   { prefix: '/avr/', catalog: 'avr', suffix: ' — AVR — VoltQuest' },
 ]
 

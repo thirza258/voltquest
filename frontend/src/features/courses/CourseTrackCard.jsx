@@ -10,6 +10,7 @@ import {
   Eye,
   Layout,
   Monitor,
+  Network,
   Shield,
   Zap,
 } from 'lucide-react'
@@ -26,6 +27,7 @@ const ICONS = {
   Bot,
   Compass,
   Eye,
+  Network,
 }
 
 const TONE_CLASSES = {

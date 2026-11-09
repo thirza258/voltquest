@@ -205,6 +205,12 @@
   <url><loc>https://pcb.nevatal.id/vision/opencv-foundations</loc></url>
   <url><loc>https://pcb.nevatal.id/vision/opencv-drone</loc></url>
   <url><loc>https://pcb.nevatal.id/vision/opencv-robotics</loc></url>
+  <url><loc>https://pcb.nevatal.id/vision/opencv-morphology</loc></url>
+  <url><loc>https://pcb.nevatal.id/vision/opencv-contours</loc></url>
+  <url><loc>https://pcb.nevatal.id/vision/opencv-histograms</loc></url>
+  <url><loc>https://pcb.nevatal.id/vision/opencv-perspective</loc></url>
+  <url><loc>https://pcb.nevatal.id/vision/opencv-hough</loc></url>
+  <url><loc>https://pcb.nevatal.id/vision/opencv-template</loc></url>
   <url><loc>https://pcb.nevatal.id/vision/vision-transformers</loc></url>
   <url><loc>https://pcb.nevatal.id/vision/vision-deployment</loc></url>
   <url><loc>https://pcb.nevatal.id/vision/vision-integration</loc></url>
@@ -452,6 +458,17 @@
   <url><loc>https://pcb.nevatal.id/excel/excel-charts-visualization</loc></url>
   <url><loc>https://pcb.nevatal.id/excel/excel-statistical-analysis</loc></url>
   <url><loc>https://pcb.nevatal.id/excel/excel-analytics-capstone</loc></url>
+  <url><loc>https://pcb.nevatal.id/networking</loc></url>
+  <url><loc>https://pcb.nevatal.id/networking/net-foundations</loc></url>
+  <url><loc>https://pcb.nevatal.id/networking/net-addressing</loc></url>
+  <url><loc>https://pcb.nevatal.id/networking/net-switching</loc></url>
+  <url><loc>https://pcb.nevatal.id/networking/net-routing</loc></url>
+  <url><loc>https://pcb.nevatal.id/networking/net-vlans</loc></url>
+  <url><loc>https://pcb.nevatal.id/networking/net-intervlan</loc></url>
+  <url><loc>https://pcb.nevatal.id/networking/net-ospf</loc></url>
+  <url><loc>https://pcb.nevatal.id/networking/net-services</loc></url>
+  <url><loc>https://pcb.nevatal.id/networking/net-acl</loc></url>
+  <url><loc>https://pcb.nevatal.id/networking/net-nat</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=matlab</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=cybersecurity</loc></url>
@@ -461,9 +478,16 @@
   <url><loc>https://pcb.nevatal.id/sandbox?bench=ai-agents</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=computer</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=excel</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=network</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=opencv-foundations</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=opencv-drone</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=opencv-robotics</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=opencv-morphology</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=opencv-contours</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=opencv-histograms</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=opencv-perspective</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=opencv-hough</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=opencv-template</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=vision-transformers</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=vision-deployment</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=vision&amp;lesson=vision-integration</loc></url>
@@ -558,6 +582,16 @@
   <url><loc>https://pcb.nevatal.id/sandbox?bench=excel&amp;lesson=excel-charts-visualization</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=excel&amp;lesson=excel-statistical-analysis</loc></url>
   <url><loc>https://pcb.nevatal.id/sandbox?bench=excel&amp;lesson=excel-analytics-capstone</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=network&amp;lesson=net-foundations</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=network&amp;lesson=net-addressing</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=network&amp;lesson=net-switching</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=network&amp;lesson=net-routing</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=network&amp;lesson=net-vlans</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=network&amp;lesson=net-intervlan</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=network&amp;lesson=net-ospf</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=network&amp;lesson=net-services</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=network&amp;lesson=net-acl</loc></url>
+  <url><loc>https://pcb.nevatal.id/sandbox?bench=network&amp;lesson=net-nat</loc></url>
   <url><loc>https://pcb.nevatal.id/showcase</loc></url>
   <url><loc>https://pcb.nevatal.id/community</loc></url>
   <url><loc>https://pcb.nevatal.id/leaderboard</loc></url>

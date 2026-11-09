@@ -10,7 +10,8 @@ import { fundamentalsForCourse } from './fundamentals.js'
 import { getLearningTutorial } from './learningCatalog.js'
 import FundamentalsExplorer from './FundamentalsExplorer.jsx'
 import AllCoursesSection from './AllCoursesSection.jsx'
-import ConnectedPath from './ConnectedPath.jsx'
+import ConnectedMap from './ConnectedMap.jsx'
+import { topicForTrack } from './learningMap.js'
 
 const fieldClass = 'h-10 w-full rounded-md border border-line-strong bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500'
 export const courseLinkClass = 'inline-flex items-center gap-2 rounded-md font-medium text-brand-700 underline-offset-4 hover:underline focus:outline-none focus:ring-2 focus:ring-brand-500'
@@ -48,7 +49,7 @@ export default function CoursesPage() {
         <p className="mt-4 text-sm text-slate-600">{t('Progress is saved in this browser, shared by people using it. These self-study exams do not award campaign XP or certification.')}</p>
       </div>
       <nav className="mb-6 flex flex-wrap gap-4" aria-label={t('Continue your learning path')}><Link to="/courses?track=programming" className={courseLinkClass}>{t('C, C++ & Arduino / ESP32 programming')}</Link><Link to="/robotics" className={courseLinkClass}>{t('Robotics & ROS 2 learning path')}</Link><Link to="/vision" className={courseLinkClass}>{t('Computer vision: OpenCV, transformers & integration')}</Link></nav>
-      <ConnectedPath current="electronics" />
+      <ConnectedMap key={track || 'all'} current={topicForTrack(track)} initial="electronics" />
       <AllCoursesSection className="mb-8" />
       <FundamentalsExplorer />
       <div className="mb-7 grid gap-4 rounded-lg border border-line bg-white p-4 md:grid-cols-3">

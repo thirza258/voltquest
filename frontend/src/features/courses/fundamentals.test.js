@@ -5,7 +5,7 @@ import { fundamentalsForCourse, getTutorialFundamentals, TUTORIAL_FUNDAMENTALS }
 import { getFundamentalReading, getLearningTutorial, LEARNING_TUTORIALS } from './learningCatalog.js'
 
 it('gives every firmware, robotics and vision tutorial exactly one substantive, translated guide', () => {
-  expect(LEARNING_TUTORIALS).toHaveLength(52)
+  expect(LEARNING_TUTORIALS).toHaveLength(58)
   expect(TUTORIAL_FUNDAMENTALS.map(guide => guide.tutorialId).sort()).toEqual(LEARNING_TUTORIALS.map(tutorial => tutorial.id).sort())
   expect(new Set(TUTORIAL_FUNDAMENTALS.map(guide => guide.tutorialId)).size).toBe(TUTORIAL_FUNDAMENTALS.length)
   for (const tutorial of TUTORIALS) for (const board of tutorial.boards) {

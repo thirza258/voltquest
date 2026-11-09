@@ -15,6 +15,8 @@ VoltQuest is an interactive educational workspace and circuit playground designe
 - **Computer Architecture & Assembly**: Logic gates, Boolean algebra, adders, multiplexers, ALUs, memory latches, and an interactive 4-bit CPU sandbox.
 - **High-Performance Computing (HPC)**: C17/C++17 performance engineering, SIMD vectorization, cache tiling, OpenMP multithreading, and MPI distributed stencil algorithms.
 - **Cybersecurity in Hardware & IoT**: Embedded communication vulnerabilities, protocol fuzzing, secure boot principles, and firmware defense mechanisms.
+- **Computer Vision & OpenCV**: Twelve courses running real OpenCV 4.12 in the browser: thresholds and color masks, morphology, contours, histograms and Otsu, perspective correction, Hough lines and circles, template matching, vision-transformer attention, and an IoT/drone/robot integration capstone.
+- **Computer Networking & Network Simulator**: Ten courses with an in-browser network simulator: IPv4 subnetting, switching and ARP, VLANs and trunks, static and OSPF routing, DHCP and DNS, access lists and NAT, each linked to the web-security courses.
 
 ## Interactive Tools & Sandboxes
 

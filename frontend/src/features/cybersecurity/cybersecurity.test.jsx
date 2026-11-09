@@ -27,7 +27,8 @@ const termLog = () => screen.getByLabelText('Security terminal output').textCont
 
 it('offers all ten courses with progressive levels, URL filters and navigation', () => {
   page()
-  expect(screen.getAllByRole('link').filter(link => /\/cybersecurity\/cyber-/.test(link.getAttribute('href')))).toHaveLength(11)
+  // Course cards plus the continue link; the networking bridges panel links lessons separately.
+  expect(screen.getAllByRole('link').filter(link => /\/cybersecurity\/cyber-/.test(link.getAttribute('href')) && !link.closest('#security-bridges'))).toHaveLength(11)
   change('Search cybersecurity courses', 'SQL')
   expect(screen.getByRole('status').textContent).toContain('1 courses found')
   expect(screen.getByRole('heading', { name: /04\. Find and repair SQL injection/ })).toBeTruthy()

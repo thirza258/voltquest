@@ -160,23 +160,76 @@ and the copied Nano sketch running in a real Worker. ESP32-S3 HTTP and ESP32 MQT
 the prepared LED with matching reported state and command expiry. Desktop/390 px views fit with
 no browser application errors. Cross-browser and real-device verification remains a release check.
 
-## Connected electronics → robotics → vision path (2026-11-04)
+## Connected learning map (2026-11-09)
 
-`features/courses/learningPath.js` holds the only ordered copy of the three stages — electrical
-engineering foundations (`/courses?track=electrical`), robotics & ROS 2 (`/robotics`), computer
-vision (`/vision`) — with each stage's start course, sandbox bench and prerequisite derived from
-the order. `ConnectedPath.jsx` renders the combined view: every stage with its number, title,
-prerequisite, start link and bench link, the current stage marked `aria-current="step"`, and a
-next-step link to the following stage (the last stage shows the capstone note instead). The card is
-mounted once on each of the three hubs; the electronics stage is marked on the courses hub that
-already owns `?track=electrical`.
+Replaces the 2026-11-04 linear electronics → robotics → vision path. `features/courses/learningMap.js`
+is the only copy of the connections in the hardware family. Robotics & ROS 2, computer vision, drones
+and IoT each connect to the other three through one **bridge**. Electronics and C/C++ programming sit
+under all four as **foundation links**. A bridge names the two topics and what passes between them.
+It explains the connection and gives an ordered route of existing lessons and labs from both sides,
+plus a "try it" exercise.
 
-This is navigation only. It adds no route, does not chain progress, exams, certificates or rewards
-across tracks, and does not change the sandbox presets it links to. Stage titles reuse the existing
-translated track names; the new chrome and the three stage summaries have Indonesian entries.
-`learningPath.test.jsx` checks the prerequisite chain, that targets are unique, that every linked
-start course/lesson exists in `content/`, the rendered marks and next step, and the card on all
-three hubs. Because the courses hub gained level-3 stage headings, two existing assertions in
-`courses.test.jsx` now scope their level-3 query to anchored course cards. Targeted
-`features/courses`, `features/robotics` and `features/vision` suites pass (**220 tests**); the
-component is not yet checked in a real browser.
+| Bridge | Passes between them | Lab that passes the data |
+| --- | --- | --- |
+| Robotics ↔ vision: camera-guided steering | line offset → `Twist` on `/cmd_vel` | Vision capstone |
+| Vision ↔ IoT: a camera as an IoT sensor | detected event → `GET /on` / `/off` | Vision capstone |
+| Vision ↔ drones: visual landing-pad alignment | HSV offset → serial L/C/R → 1150/1200/1250 µs | Vision capstone |
+| Robotics ↔ IoT: telemetry and remote commands | ROS 2 topic ⇄ MQTT topic; 1 s timeout ⇄ 2 s lease | None |
+| Robotics ↔ drones: two robots, one feedback loop | pose ⇄ attitude; heading gain ⇄ height hold | None |
+| Drones ↔ IoT: a connected aircraft | ESP32 controller, radio link, regulated power | None |
+
+`joined` is true only where `vision-integration` passes data from one side into the other. The capstone
+also runs robot, drone and IoT side by side, but nothing passes between them, so the other three bridges
+say that no lab passes messages between the two topics. Their exercise is a written comparison across
+each side's own labs, not a combined simulation. Thirteen foundation links tie one electrical or
+programming course to the applied lesson that uses it. Examples: `ee-drivers` → robot motion,
+`ee-logic` → the drone IMU on I2C, `programming-serial` → the props-off ESC test. Each topic
+may name a "go deeper" track: IoT in C, AVR, computer architecture or PyTorch.
+
+`ConnectedMap.jsx` draws the map on three hubs:
+- `/courses`, which marks the topic of its `?track=` filter. The unfiltered page marks electronics; the
+  ethics track marks nothing and starts on electronics;
+- `/robotics`, after the tutorial grid, with a `#connected-map` jump link at the top;
+- `/vision`, placed the same way as robotics.
+
+The diagram shows the four applied topics as a fully connected square, with the two foundations in a
+base row. Solid lines mean one lab passes data between the two topics; dashed lines mean "compare". The learner selects
+any topic without leaving the page. Each bridge shows its flow, route, kind of lesson and exercise, and
+its foundation list reads either "built on" or "used in". `LessonConnections.jsx` is the same data from
+one lesson page, through `connectionsAt(route)`. It lists the bridges the lesson is a step of, with
+the previous and next steps, and the foundation courses it is built on or used in. It is mounted on
+`CoursePage` (with an outline link), the robotics/vision `StudyLesson` shell and `TutorialPage`. Its
+links open in a new tab, so unsaved lab code and exam choices survive. It renders nothing for lessons
+that are not on the map, such as the ethics courses.
+
+This is navigation only. It adds no route and does not chain progress, exams, certificates or rewards
+across tracks. Sandbox presets are unchanged. Step titles repeat the authored content titles, so no
+hub imports another hub's curriculum.
+
+`learningMap.test.jsx` (16 tests) checks:
+- exactly one bridge for each pair of applied topics, and foundations linked to all four;
+- `joined` only where the capstone passes data between the two sides;
+- that every step, hub, bench and "go deeper" link exists with its authored title;
+- the reverse index, the marked topic on each hub, the lesson panels, and that unrelated lessons are unchanged;
+- an Indonesian entry for every authored string, keeping code, numbers, units and placeholders.
+
+### Networking ↔ cybersecurity (2026-11-09)
+
+A `security` layer adds the topics `networking` and `cybersecurity`, which are not drawn on the hardware
+square. `SECURITY_BRIDGES` link the two tracks course by course:
+
+| Bridge | Courses |
+| --- | --- |
+| From packets to requests | Layers and DNS/HTTP → reading HTTP |
+| Filter who connects, fix what they can do | Access lists → SQL injection, hardening |
+| Segmentation limits what a tricked server can reach | VLANs and access lists → SSRF |
+| Names, addresses and the parsed origin | DNS → SSRF |
+| NAT hides addresses, not authorization | PAT → object authorization |
+
+The network simulator and the security console never exchange traffic, so every security bridge has
+`joined: false`. Its exercise compares what each layer can and cannot see. The **Networking ↔
+cybersecurity** panel (`SecurityBridges.jsx`) appears on `/networking` and `/cybersecurity`. Course
+pages in both tracks show the Connected courses panel through `ReadingTrack` and `CyberCourse`.
+
+Vision lesson titles have no Indonesian entries yet, so they keep their existing English fallback.
+Thirteen strings used only by the removed linear path were deleted from `id.json`.

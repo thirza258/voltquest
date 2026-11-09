@@ -1017,6 +1017,7 @@ export function LandingPage() {
               <Link to="/game-modding" className="py-1 hover:text-brand-600">{t('Game modding & reverse engineering')}</Link>
               <Link to="/iot-c" className="py-1 hover:text-brand-600">{t('Embedded IoT in C')}</Link>
               <Link to="/excel" className="py-1 hover:text-brand-600">{t('Microsoft Excel & Data Analytics')}</Link>
+              <Link to="/networking" className="py-1 hover:text-brand-600">{t('Computer networking & network simulator')}</Link>
               <Link to="/sandbox" className="py-1 hover:text-brand-600">{t("Sandbox")}</Link>
               <Link to="/showcase" className="py-1 hover:text-brand-600">{t("Showcase")}</Link>
               <Link to="/community" className="py-1 hover:text-brand-600">{t("Community")}</Link>

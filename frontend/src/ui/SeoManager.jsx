@@ -21,6 +21,7 @@ const HUB_TITLES = {
   '/ai-agents': 'AI Agents & Systems — VoltQuest',
   '/computer-architecture': 'Computer Architecture & Assembly — VoltQuest',
   '/vision': 'Computer Vision & OpenCV — VoltQuest',
+  '/networking': 'Computer Networking & Network Simulator — VoltQuest',
   '/robotics': 'Robotics & ROS 2 — VoltQuest',
   '/cuda': 'CUDA C++ & GPU Computing — VoltQuest',
   '/pytorch': 'PyTorch Deep Learning — VoltQuest',
@@ -54,6 +55,7 @@ const SECTION_LABELS = {
   'game-modding': 'Game Modding',
   'iot-c': 'Embedded C',
   avr: 'AVR',
+  networking: 'Networking',
 }
 
 function formatSlug(slug) {

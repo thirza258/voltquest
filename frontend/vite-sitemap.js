@@ -96,8 +96,9 @@ export function collectRoutes(contentDir) {
   const gamemoddingCourses = (fs.existsSync(path.join(contentDir, 'gamemodding.json')) ? readJson(path.join(contentDir, 'gamemodding.json')).courses ?? [] : []).map(item => item.id)
   const iotCCourses = (fs.existsSync(path.join(contentDir, 'iot-c.json')) ? readJson(path.join(contentDir, 'iot-c.json')).courses ?? [] : []).map(item => item.id)
   const excelCourses = (fs.existsSync(path.join(contentDir, 'excel.json')) ? readJson(path.join(contentDir, 'excel.json')).courses ?? [] : []).map(item => item.id)
+  const networkingCourses = (fs.existsSync(path.join(contentDir, 'networking.json')) ? readJson(path.join(contentDir, 'networking.json')).courses ?? [] : []).map(item => item.id)
 
-  const sandboxBenches = ['matlab', 'cybersecurity', 'hpc', 'vision', 'robotics', 'ai-agents', 'computer', 'excel'].map(bench => `/sandbox?bench=${bench}`)
+  const sandboxBenches = ['matlab', 'cybersecurity', 'hpc', 'vision', 'robotics', 'ai-agents', 'computer', 'excel', ...(networkingCourses.length ? ['network'] : [])].map(bench => `/sandbox?bench=${bench}`)
   const sandboxPresets = [
     ...visionLessons.map(id => `/sandbox?bench=vision&lesson=${id}`),
     ...roboticsLessons.map(id => `/sandbox?bench=robotics&lesson=${id}`),
@@ -107,6 +108,7 @@ export function collectRoutes(contentDir) {
     ...agentCourses.map(id => `/sandbox?bench=ai-agents&lesson=${id}`),
     ...computerCourses.map(id => `/sandbox?bench=computer&lesson=${id}`),
     ...excelCourses.map(id => `/sandbox?bench=excel&lesson=${id}`),
+    ...networkingCourses.map(id => `/sandbox?bench=network&lesson=${id}`),
   ]
 
   return [
@@ -153,12 +155,15 @@ export function collectRoutes(contentDir) {
     ...(gamemoddingCourses.length ? ['/game-modding', ...gamemoddingCourses.map(id => `/game-modding/${id}`)] : []),
     ...(iotCCourses.length ? ['/iot-c', ...iotCCourses.map(id => `/iot-c/${id}`)] : []),
     ...(excelCourses.length ? ['/excel', ...excelCourses.map(id => `/excel/${id}`)] : []),
+    ...(networkingCourses.length ? ['/networking', ...networkingCourses.map(id => `/networking/${id}`)] : []),
     '/sandbox',
     ...sandboxBenches,
     ...sandboxPresets,
     '/showcase',
     '/community',
     '/leaderboard',
+    '/privacy',
+    '/terms',
   ]
 }
 

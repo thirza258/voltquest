@@ -32,7 +32,7 @@ def request_body(course, wrong=0):
 
 def test_issues_and_parses_exact_pdfs_for_all_160_courses(client, guest, courses):
     headers, player = guest
-    assert len(courses) == 254
+    assert len(courses) == 270
     for course in courses.values():
         response = client.post("/api/certificates", headers=headers, json=request_body(course, wrong=1))
         assert response.status_code == 200, (course["id"], response.text)
@@ -56,7 +56,7 @@ def test_issues_and_parses_exact_pdfs_for_all_160_courses(client, guest, courses
         assert "Unproctored self-study exam" in text
         assert page["/Annots"][0].get_object()["/A"]["/URI"] == certificate["verification_url"]
         assert certificate["verification_url"].startswith("https://learn.example.test/certificates/")
-    assert len(client.get("/api/certificates/mine", headers=headers).json()["certificates"]) == 254
+    assert len(client.get("/api/certificates/mine", headers=headers).json()["certificates"]) == 270
     assert client.get("/api/players/me", headers=headers).json()["xp"] == player["xp"]
 
 

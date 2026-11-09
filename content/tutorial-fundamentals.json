@@ -1005,6 +1005,138 @@
       ]
     },
     {
+      "tutorialId": "opencv-morphology",
+      "topic": "Opening removes what the kernel cannot fit",
+      "explanation": "A threshold keeps every bright pixel, including single-pixel specks. Erosion keeps a pixel only when the whole kernel fits inside white, so specks vanish and real shapes shrink; dilation then regrows the survivors. Opening does both in that order and cleans the mask, while closing fills dark holes but keeps white specks. A larger kernel removes more noise and also trims the target.",
+      "observation": "Compare pixels and connected components before and after opening, then try closing and a larger kernel and watch the IoU.",
+      "readings": [
+        {
+          "courseId": "opencv-foundations",
+          "lessonId": "threshold"
+        },
+        {
+          "courseId": "opencv-morphology",
+          "lessonId": "kernels"
+        },
+        {
+          "courseId": "opencv-morphology",
+          "lessonId": "open-close"
+        }
+      ]
+    },
+    {
+      "tutorialId": "opencv-contours",
+      "topic": "An outline can be measured, simplified and labelled",
+      "explanation": "findContours turns each white region of a mask into an outline of points. Area and perimeter come from that outline, and circularity 4πA/P² compares the shape with a circle. approxPolyDP simplifies the outline to a few corners within a tolerance, so corner counts and roundness together give a label. A minimum area keeps noise specks from becoming objects.",
+      "observation": "Read each shape's area, perimeter, corners and circularity, then add specks and raise the minimum area until only the real shapes remain.",
+      "readings": [
+        {
+          "courseId": "opencv-contours",
+          "lessonId": "outlines"
+        },
+        {
+          "courseId": "opencv-contours",
+          "lessonId": "measure"
+        },
+        {
+          "courseId": "opencv-contours",
+          "lessonId": "labels"
+        }
+      ]
+    },
+    {
+      "tutorialId": "opencv-histograms",
+      "topic": "Let the histogram choose the threshold",
+      "explanation": "A histogram counts how many pixels have each gray level. When a dim, low-contrast scene moves the lamp below a fixed threshold, Otsu's method searches every threshold and keeps the one that best separates two groups of pixels. Equalization spreads the levels apart, but it can also move other regions next to the target, so a wider histogram is not always a better mask.",
+      "observation": "Compare a fixed threshold with Otsu on the dim scene, then try global equalization and CLAHE and record each threshold and IoU.",
+      "readings": [
+        {
+          "courseId": "ee-signals",
+          "lessonId": "lesson-2"
+        },
+        {
+          "courseId": "opencv-histograms",
+          "lessonId": "histogram"
+        },
+        {
+          "courseId": "opencv-histograms",
+          "lessonId": "otsu"
+        },
+        {
+          "courseId": "opencv-histograms",
+          "lessonId": "equalize"
+        }
+      ]
+    },
+    {
+      "tutorialId": "opencv-perspective",
+      "topic": "Four corners define the view of a flat card",
+      "explanation": "A tilted camera makes the far edge of a flat card look shorter. Once the card's four corners are found and ordered, a homography maps them onto a square frame, and warpPerspective redraws every pixel through that mapping. The result only holds for a flat surface and an ideal lens; a missed corner or a wrong order produces a twisted image.",
+      "observation": "Record the ordered corners and the rectified card, then change the tilt and the threshold and note when the card is no longer found.",
+      "readings": [
+        {
+          "courseId": "opencv-perspective",
+          "lessonId": "corners"
+        },
+        {
+          "courseId": "opencv-perspective",
+          "lessonId": "homography"
+        },
+        {
+          "courseId": "opencv-perspective",
+          "lessonId": "limits"
+        }
+      ]
+    },
+    {
+      "tutorialId": "opencv-hough",
+      "topic": "Edge pixels vote for lines and circles",
+      "explanation": "The Hough transform lets every edge pixel vote for each line or circle that could pass through it, and shapes with enough votes win. Painted lanes produce two edges each, so the lab reports pairs of segments at matching angles. The accumulator threshold trades missed lines against false ones. A lane centre found this way can drive the same steering preview as a single line.",
+      "observation": "Pair each detected segment with a lane, move the lanes to see the steering sign, and raise the accumulator threshold until segments disappear.",
+      "readings": [
+        {
+          "courseId": "opencv-robotics",
+          "lessonId": "edges"
+        },
+        {
+          "courseId": "opencv-hough",
+          "lessonId": "voting"
+        },
+        {
+          "courseId": "opencv-hough",
+          "lessonId": "lanes"
+        },
+        {
+          "courseId": "opencv-robotics",
+          "lessonId": "steering"
+        }
+      ]
+    },
+    {
+      "tutorialId": "opencv-template",
+      "topic": "A template match is a score, not a recognition",
+      "explanation": "Template matching slides a reference image over the scene and scores every window. Normalized correlation removes uniform brightness changes, so a darker scene can still score 1. The method does not understand the pad: a different scale, an occluded target or mismatched preprocessing lowers the score, and minMaxLoc always returns a best window even when no pad is present.",
+      "observation": "Record the best score and location, then change brightness, scale and occlusion and check each score against the threshold.",
+      "readings": [
+        {
+          "courseId": "opencv-drone",
+          "lessonId": "centroid"
+        },
+        {
+          "courseId": "opencv-template",
+          "lessonId": "sliding"
+        },
+        {
+          "courseId": "opencv-template",
+          "lessonId": "normalized"
+        },
+        {
+          "courseId": "opencv-template",
+          "lessonId": "limits"
+        }
+      ]
+    },
+    {
       "tutorialId": "vision-transformers",
       "topic": "Tokens compare features and mix values",
       "explanation": "Patches divide an image into tokens. A query compares with keys to produce scores; softmax converts those scores into weights that sum to one, and the weighted values form a context. Smaller patches create more tokens and more pairwise comparisons. This lab computes one fixed attention head with hand-chosen features; its weights are not detection confidence or evidence of a trained classifier.",

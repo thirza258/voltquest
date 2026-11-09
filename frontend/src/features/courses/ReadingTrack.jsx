@@ -6,6 +6,7 @@ import { downloadText } from '../../lib/download.js'
 import { readCourseProgress, saveCourseProgress } from './progress.js'
 import CourseRewards from './CourseRewards.jsx'
 import Assessment from './Assessment.jsx'
+import LessonConnections from './LessonConnections.jsx'
 
 const panelClass = 'min-w-0 rounded-lg border border-line bg-white p-5 sm:p-6'
 const linkClass = 'rounded font-medium text-brand-700 underline decoration-brand-300 underline-offset-4 focus:outline-none focus:ring-2 focus:ring-brand-500'
@@ -41,11 +42,13 @@ function TrackHub({ track }) {
       <div className="mt-5 flex flex-wrap gap-3">
         <Link className="rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white focus:ring-2 focus:ring-brand-500" to={`${track.base}/${next.id}`}>{t(track.continueLabel)}</Link>
         <Link className="rounded-md border border-brand-600 px-4 py-2 text-sm font-semibold text-brand-700 focus:ring-2 focus:ring-brand-500" to={`${track.base}/${track.capstoneId}`}>{t(track.capstoneLabel)}</Link>
+        {track.benchHref && <Link className="rounded-md border border-brand-600 px-4 py-2 text-sm font-semibold text-brand-700 focus:ring-2 focus:ring-brand-500" to={track.benchHref}>{t(track.benchLabel)}</Link>}
       </div>
     </header>
     <section className={`${panelClass} mb-6`}>
       <p className="text-sm leading-6 text-slate-600">{t(track.disclosure)}</p>
     </section>
+    {track.hubExtra}
     <div className="mb-5 grid gap-4 sm:grid-cols-2">
       <label className="text-sm">{t(track.searchLabel)}<input type="search" value={query} className={`${fieldClass} mt-1`} onChange={event => filter('q', event.target.value)} /></label>
       <label className="text-sm">{t('Difficulty')}<select value={difficulty} className={`${fieldClass} mt-1`} onChange={event => filter('difficulty', event.target.value)}><option value="">{t('All difficulties')}</option>{track.difficulties.map(value => <option key={value} value={value}>{t(value)}</option>)}</select></label>
@@ -95,14 +98,14 @@ function TrackCourse({ track, course, previous, next }) {
       <p className="text-sm font-medium text-brand-700">{t(course.difficulty)} · {course.minutes} {t('min')} · {track.tag}</p>
       <h1 ref={heading} tabIndex={-1} className="mt-3 text-3xl font-semibold tracking-tight outline-none sm:text-4xl">{course.title}</h1>
       <p className="mt-4 leading-7 text-ink-secondary">{course.summary}</p>
-      <div className="mt-4 flex flex-wrap gap-4 text-sm"><a className={linkClass} href="#guided-lab">{t('Jump to the guided lab')}</a><a className={linkClass} href="#source">{t('View and download the source')}</a></div>
+      <div className="mt-4 flex flex-wrap gap-4 text-sm"><a className={linkClass} href="#guided-lab">{t('Jump to the guided lab')}</a>{course.code && <a className={linkClass} href="#source">{t('View and download the source')}</a>}</div>
     </header>
     <div className="grid items-start gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
       <aside className={`${panelClass} lg:sticky lg:top-6`} aria-label={t('Course outline')}>
         <h2 className="font-semibold">{t('In this course')}</h2>
         <nav className="mt-4 flex flex-col gap-3 text-sm" aria-label={t('Course sections')}>
           {course.lessons.map((section, index) => <a className={linkClass} href={`#${section.id}`} key={section.id}>{index + 1}. {section.title}{progress.read.includes(section.id) ? ' ✓' : ''}</a>)}
-          {[['guided-lab', 'Guided lab'], ['source', 'Downloadable source'], ['challenge', 'Applied challenge'], ['exam', 'Course exam']].map(([id, label]) => <a key={id} className={linkClass} href={`#${id}`}>{t(label)}</a>)}
+          {[['guided-lab', 'Guided lab'], ...(course.code ? [['source', 'Downloadable source']] : []), ['challenge', 'Applied challenge'], ['exam', 'Course exam']].map(([id, label]) => <a key={id} className={linkClass} href={`#${id}`}>{t(label)}</a>)}
         </nav>
         <div className="mt-5 space-y-2 border-t border-line pt-4 text-sm text-slate-600">
           <p>{t('{count} of {total} sections read', { count: progress.read.length, total: course.lessons.length })}</p>
@@ -128,11 +131,12 @@ function TrackCourse({ track, course, previous, next }) {
         </section>)}
         <section id="guided-lab" className={`${panelClass} scroll-mt-6`}>
           <h2 className="text-xl font-semibold">{t('Guided lab')}</h2>
-          <p className="mt-3 text-sm leading-6 text-slate-600">{t('Work through these steps in your own environment. Step checks record your own observations for this visit; they do not execute or verify code.')}</p>
+          <p className="mt-3 text-sm leading-6 text-slate-600">{t(track.labNote ?? 'Work through these steps in your own environment. Step checks record your own observations for this visit; they do not execute or verify code.')}</p>
           <ol className="mt-4 space-y-4">{course.steps.map((step, index) => <li key={step}><label className="flex items-start gap-3 text-sm leading-6"><input type="checkbox" aria-label={t('Lab step {number}', { number: index + 1 })} className="mt-1 h-4 w-4 shrink-0 accent-teal-700" checked={steps.includes(index)} onChange={() => setSteps(current => current.includes(index) ? current.filter(item => item !== index) : [...current, index])} /><span><strong>{index + 1}.</strong> {step}</span></label></li>)}</ol>
           <p className="mt-5 rounded-md bg-slate-50 p-4 text-sm leading-6"><strong>{t('Expected result')}: </strong>{course.expected}</p>
+          {track.Lab && <div className="mt-6"><track.Lab course={course} /></div>}
         </section>
-        <section id="source" className={`${panelClass} scroll-mt-6`}>
+        {course.code && <section id="source" className={`${panelClass} scroll-mt-6`}>
           <h2 className="text-xl font-semibold">{t('Downloadable source')}</h2>
           <p className="mt-3 text-sm leading-6 text-slate-600">{t(track.codeNote ?? 'Read, copy or download this complete program, then compile and run it in your own environment. VoltQuest does not compile or run it in the browser.')}</p>
           <div className="mt-4 flex flex-wrap gap-2">
@@ -141,7 +145,8 @@ function TrackCourse({ track, course, previous, next }) {
           </div>
           <p role="status" className="mt-2 text-sm text-brand-700">{notice && t(notice)}</p>
           <pre className={`${codeClass} mt-3 max-h-[32rem] overflow-auto`} tabIndex={0} aria-label={t('Lesson source code')}><code>{course.code}</code></pre>
-        </section>
+        </section>}
+        <LessonConnections href={`${track.base}/${course.id}`} />
         <section id="challenge" className={`${panelClass} scroll-mt-6`}><h2 className="text-xl font-semibold">{t('Applied challenge')}</h2><p className="mt-3 leading-7 text-ink-secondary">{course.challenge.task}</p><h3 className="mt-4 font-semibold">{t('Evidence to include')}</h3><ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6">{course.challenge.acceptance.map(item => <li key={item}>{item}</li>)}</ul></section>
         <section id="exam" className={`${panelClass} scroll-mt-6`}><h2 className="mb-4 text-xl font-semibold">{t('Course exam')}</h2><Assessment exam course={course} questions={course.exam.questions} passPercent={course.exam.passPercent} onResult={grade} /></section>
         <p className="text-sm leading-6 text-slate-600">{t('Section checks and exam scores are saved in this browser. Unsubmitted answers last for this visit. Self-study exams do not award campaign XP.')}</p>

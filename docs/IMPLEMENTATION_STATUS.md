@@ -1,5 +1,21 @@
 # PRD implementation verification
 
+### Networking track, network simulator, OpenCV expansion and security bridges (2026-11-09)
+
+| Request | Implementation | Evidence |
+| --- | --- | --- |
+| A network simulator "like a desktop network lab" | `engine/network/` plus `features/networking/NetworkLab.jsx`. It provides a topology, a CLI per router or switch, a desktop per host, a Simulation-mode frame replay, lab goals and an editable bench (`/sandbox?bench=network`). | `engine/network/network.test.js`, `features/networking/networkLab.test.jsx`, and a Chromium check at 390, 768 and 1440 px |
+| Networking courses | `/networking`: 10 courses, each with 4 checkpointed sections, an interactive lab with goals, a challenge, an exam and a certificate | `networkingContent.test.js`: every example replays as printed, and every lab fails at the start and passes with its solution |
+| Connected to the cybersecurity courses | `SECURITY_BRIDGES`: 5 course-level bridges, shown in the hub panel and on course pages of both tracks | `learningMap.test.jsx` |
+| More OpenCV courses | Vision grows from 6 to 12 courses, adding morphology, contours, histograms with Otsu, perspective, Hough and template matching on real OpenCV 4.12 | `vision.test.js` and `visionContent.test.js` (real OpenCV in Node), plus a Chromium run of all six modes |
+
+**Limits:**
+- The network model is a teaching model. It has no STP, IPv6 or timers, OSPF is a single area with
+  no elections, and TCP is four segments. Unsupported commands are rejected rather than imitated.
+- The labs cannot be checked against real equipment.
+- Networking and vision narratives are English, as the vision and cybersecurity narratives already
+  were; the interface is translated.
+
 ### CUDA track expanded to 10 advanced courses (2026-10-12)
 
 The CUDA C++ track grew from eight to ten courses to match the PyTorch track's depth with more advanced

@@ -128,6 +128,29 @@ labelled supported-board selector. The separate-tab lab link explicitly leaves t
 example in place until the learner pastes the copied sketch. Expected output is labelled as such;
 only the tutorial's Run action produces live output. Controls wrap at mobile widths.
 
+The **Connected learning map** is a white bordered card. On desktop the diagram sits in a 20 rem left
+column and the details sit on the right; on mobile they stack. The four applied topics are toggle
+buttons (`aria-pressed`) at the corners of a square, with decorative SVG lines underneath and a dashed
+foundations row below. Lines carry meaning: solid means one lab passes data between the two topics, dashed means
+"compare". The selected bridge uses the thick brand-700 line, its other incident lines brand-500, and
+the rest slate-300. A legend states the line meaning in text. Bridge cards show the flow in mono and a
+numbered route labelled by lesson kind. The "try it" exercise sits in a teal note. Non-combined bridges
+carry an amber badge that says so. Lesson pages use the compact "Connected courses" panel instead.
+
+The **network simulator** uses the light lab-notebook palette.
+- **Canvas:** white with a dot grid. Devices are original glyphs (a round router, a flat switch, a
+  monitor, a tower) with names in ink.
+- **Links:** each end is green (up) or red (down) and carries a port label. The selected device gets
+  a dashed teal ring.
+- **Terminals:** the only dark surface (slate-950, 12 px mono, teal prompt), so CLI output reads
+  like a console. The log region is polite and keeps 400 lines.
+- **Controls:** Realtime/Simulation and the desktop apps are segmented buttons with `aria-pressed`.
+- **Simulation mode:** the selected event's link is drawn thick teal with an amber envelope near its
+  target. The event table and the "Headers, outermost first" and "What … did" panels sit below.
+- **Goals:** ✓/✗ icons with text and a polite score status.
+- **Mobile:** the panels stack and the canvas scales. Device selection also works through a select.
+- **Branding:** never use Cisco or Packet Tracer names, icons or look.
+
 ## Modals
 Briefing (Chip + bubbles, Start). Dual breadboard prompt: title "This board covers all available pin rows.", body "Snap a second breadboard alongside it?", primary "Add second breadboard", secondary "Keep one board". Success: Stars animate one by one, XP counts up, star reasons for missed stars, "Level up! Unlocked: Neon wires" when applicable, buttons "Next level" (or "Back to map" on the last level) / "Replay" / "Open in Sandbox"; "Best ★★ · +0 XP (already earned)" when nothing new. Shortcuts modal (`?`) lists all keys with `Kbd`.
 

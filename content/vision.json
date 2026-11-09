@@ -230,7 +230,25 @@
         "patchSize": 16,
         "query": 36,
         "temperature": 1,
-        "positionWeight": 0.5
+        "positionWeight": 0.5,
+        "contrast": 1,
+        "speckle": 0,
+        "tilt": 0,
+        "scale": 1,
+        "morphOp": "open",
+        "kernel": 3,
+        "iterations": 1,
+        "minArea": 50,
+        "epsilon": 0.04,
+        "equalize": "none",
+        "clipLimit": 2,
+        "houghShape": "lines",
+        "houghThreshold": 30,
+        "minLineLength": 20,
+        "maxLineGap": 5,
+        "minRadius": 6,
+        "maxRadius": 30,
+        "matchThreshold": 0.6
       },
       "integrated": false
     },
@@ -460,7 +478,25 @@
         "patchSize": 16,
         "query": 36,
         "temperature": 1,
-        "positionWeight": 0.5
+        "positionWeight": 0.5,
+        "contrast": 1,
+        "speckle": 0,
+        "tilt": 0,
+        "scale": 1,
+        "morphOp": "open",
+        "kernel": 3,
+        "iterations": 1,
+        "minArea": 50,
+        "epsilon": 0.04,
+        "equalize": "none",
+        "clipLimit": 2,
+        "houghShape": "lines",
+        "houghThreshold": 30,
+        "minLineLength": 20,
+        "maxLineGap": 5,
+        "minRadius": 6,
+        "maxRadius": 30,
+        "matchThreshold": 0.6
       },
       "integrated": false
     },
@@ -695,15 +731,1569 @@
         "patchSize": 16,
         "query": 36,
         "temperature": 1,
-        "positionWeight": 0.5
+        "positionWeight": 0.5,
+        "contrast": 1,
+        "speckle": 0,
+        "tilt": 0,
+        "scale": 1,
+        "morphOp": "open",
+        "kernel": 3,
+        "iterations": 1,
+        "minArea": 50,
+        "epsilon": 0.04,
+        "equalize": "none",
+        "clipLimit": 2,
+        "houghShape": "lines",
+        "houghThreshold": 30,
+        "minLineLength": 20,
+        "maxLineGap": 5,
+        "minRadius": 6,
+        "maxRadius": 30,
+        "matchThreshold": 0.6
+      },
+      "integrated": false
+    },
+    {
+      "id": "opencv-morphology",
+      "version": 1,
+      "order": 4,
+      "title": "4. OpenCV morphology: clean up a noisy mask",
+      "summary": "Remove salt-and-pepper specks from a threshold mask with erosion, dilation, opening and closing, then measure what changed.",
+      "difficulty": "Easy",
+      "minutes": 30,
+      "lessons": [
+        {
+          "id": "kernels",
+          "title": "Erosion and dilation with a kernel",
+          "text": "Morphology edits a binary mask with a small shape: the structuring element, or kernel. This lab uses a square kernel of 3 × 3, 5 × 5 or 7 × 7 pixels. Erosion keeps a white pixel only when every pixel under the kernel is white: shapes shrink and smaller specks vanish. Dilation turns a pixel white when any pixel under the kernel is white: shapes grow and small gaps close. The speckled preset mask has 1158 pixels. A 3 × 3 erosion leaves 279; a 3 × 3 dilation spreads to 5564."
+        },
+        {
+          "id": "open-close",
+          "title": "Opening removes specks; closing fills holes",
+          "text": "Opening is an erosion followed by a dilation with the same kernel. The erosion deletes specks too small to hold the kernel; the dilation regrows the shapes that survive. Closing runs the other way. It fills small dark holes and gaps but keeps isolated white specks. The preset thresholds the lamp scene, with 8% salt-and-pepper specks, at 150. The plain mask has 537 connected components and IoU 0.416. A 3 × 3 opening leaves 1 component and IoU 0.878; a 3 × 3 closing leaves 416 components."
+        },
+        {
+          "id": "reading",
+          "title": "Read the counts and choose a kernel",
+          "text": "The lab counts pixels and connected components before and after the operation. A component is a group of white pixels joined through any of their 8 neighbours. After the 3 × 3 opening, all 454 selected pixels lie inside the 517-pixel lamp. The 63 it misses are 25 dark specks and pixels trimmed around them: opening cannot fill holes. Larger kernels cut the lamp: 5 × 5 splits it in 2 with IoU 0.716, and 7 × 7 gives 0.294. Real specks change every frame; these generated ones do not."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Erosion and dilation",
+          "equation": "erode(x,y) = min M(x+i, y+j);  dilate(x,y) = max M(x+i, y+j),  for (i, j) in B",
+          "symbols": "M: binary mask with values 0 or 255; B: the k × k kernel centred on the pixel; i, j: offsets inside B (px). On a binary mask, min means \"all white\" and max means \"any white\".",
+          "example": "A lone white pixel with a 3 × 3 kernel: erosion removes it, because its neighbours are black. Dilation grows it into a 3 × 3 block of 9 pixels."
+        },
+        {
+          "title": "Opening, closing and iterations",
+          "equation": "open(M) = dilate(erode(M));  close(M) = erode(dilate(M))",
+          "symbols": "Both steps use the same kernel B. With n iterations, an opening erodes n times and then dilates n times. For square kernels, two 3 × 3 passes reach as far as one 5 × 5 pass.",
+          "example": "Preset: a 3 × 3 opening turns 1158 pixels in 537 components into 454 pixels in 1 component, and IoU rises from 0.416 to 0.878."
+        }
+      ],
+      "steps": [
+        "Open the preset. Record pixels and connected components before and after the 3 × 3 opening, and the IoU.",
+        "Change the operation to close. Explain why the specks survive and more than 400 components remain.",
+        "Try erode, then dilate. Compare each selected-pixel count with the opened mask and explain how the lamp changes size.",
+        "Return to open and raise the kernel to 5 × 5, then 7 × 7. Record IoU each time, and compare the IoT bright_fraction with the clean lamp value of 0.0316."
+      ],
+      "practice": [
+        {
+          "id": "q0",
+          "prompt": "A lone white pixel meets a 3 × 3 erosion. What happens to it?",
+          "options": [
+            {
+              "id": "a",
+              "text": "It is removed"
+            },
+            {
+              "id": "b",
+              "text": "It grows into a 3 × 3 block"
+            },
+            {
+              "id": "c",
+              "text": "It stays, because erosion only changes large shapes"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Erosion keeps a pixel only when the whole kernel covers white pixels. A lone pixel has black neighbours.",
+          "lessonId": "kernels"
+        },
+        {
+          "id": "q1",
+          "prompt": "Which operation removes isolated white specks but keeps larger shapes?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Closing"
+            },
+            {
+              "id": "b",
+              "text": "Dilation"
+            },
+            {
+              "id": "c",
+              "text": "Opening"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "Opening erodes the specks away, then dilates the surviving shapes back toward their size.",
+          "lessonId": "open-close"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "q2",
+            "prompt": "Why does closing alone fail to clean the speckled preset?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Closing needs a color image"
+              },
+              {
+                "id": "b",
+                "text": "Closing fills dark holes and gaps, so isolated white specks survive"
+              },
+              {
+                "id": "c",
+                "text": "Closing deletes the lamp"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Dilation grows each white speck and erosion shrinks it back. 416 components remain after a 3 × 3 closing.",
+            "lessonId": "open-close"
+          },
+          {
+            "id": "q3",
+            "prompt": "Which 3 × 3 operation grew the speckled mask from 1158 to 5564 pixels?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Dilation"
+              },
+              {
+                "id": "b",
+                "text": "Erosion"
+              },
+              {
+                "id": "c",
+                "text": "Opening"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Dilation turns a pixel white when any pixel under the kernel is white, so every speck grows.",
+            "lessonId": "kernels"
+          },
+          {
+            "id": "q4",
+            "prompt": "After the 3 × 3 opening, IoU is 0.878, not 1. Why?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Opening adds background pixels"
+              },
+              {
+                "id": "b",
+                "text": "IoU cannot exceed 0.9"
+              },
+              {
+                "id": "c",
+                "text": "Dark specks inside the lamp leave holes that opening cannot fill"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "All 454 selected pixels lie inside the 517-pixel lamp. The 63 missing pixels sit at and around its dark specks.",
+            "lessonId": "reading"
+          },
+          {
+            "id": "q5",
+            "prompt": "What did raising the opening kernel from 3 × 3 to 7 × 7 do here?",
+            "options": [
+              {
+                "id": "a",
+                "text": "It raised IoU to 1"
+              },
+              {
+                "id": "b",
+                "text": "It trimmed the lamp itself, and IoU fell to 0.294"
+              },
+              {
+                "id": "c",
+                "text": "It brought the specks back"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Opening removes every region that cannot hold the kernel, including lamp pixels near its dark specks.",
+            "lessonId": "reading"
+          },
+          {
+            "id": "q6",
+            "prompt": "Before the opening, the mask has 537 connected components. What does that mean?",
+            "options": [
+              {
+                "id": "a",
+                "text": "537 pixels were removed"
+              },
+              {
+                "id": "b",
+                "text": "The lamp is 537 pixels wide"
+              },
+              {
+                "id": "c",
+                "text": "There are 537 separate white groups: the lamp and 536 specks"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Components count groups of touching white pixels. Here the specks hold 1 to 5 pixels each.",
+            "lessonId": "reading"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "OpenCV morphological transformations",
+          "url": "https://docs.opencv.org/4.x/d9/d61/tutorial_py_morphological_ops.html"
+        },
+        {
+          "title": "OpenCV eroding and dilating",
+          "url": "https://docs.opencv.org/4.x/db/df6/tutorial_erosion_dilatation.html"
+        },
+        {
+          "title": "OpenCV.js morphological transformations",
+          "url": "https://docs.opencv.org/4.x/d4/d76/tutorial_js_morphological_ops.html"
+        }
+      ],
+      "exampleIds": [
+        "opencv-morphology"
+      ],
+      "config": {
+        "kind": "vision",
+        "version": 1,
+        "theme": "iot",
+        "mode": "morphology",
+        "threshold": 150,
+        "edgeLow": 50,
+        "edgeHigh": 120,
+        "hueMin": 40,
+        "hueMax": 90,
+        "blur": 0,
+        "brightness": 1,
+        "offset": 0,
+        "noise": 0,
+        "occlusion": 0,
+        "patchSize": 16,
+        "query": 36,
+        "temperature": 1,
+        "positionWeight": 0.5,
+        "contrast": 1,
+        "speckle": 0.08,
+        "tilt": 0,
+        "scale": 1,
+        "morphOp": "open",
+        "kernel": 3,
+        "iterations": 1,
+        "minArea": 50,
+        "epsilon": 0.04,
+        "equalize": "none",
+        "clipLimit": 2,
+        "houghShape": "lines",
+        "houghThreshold": 30,
+        "minLineLength": 20,
+        "maxLineGap": 5,
+        "minRadius": 6,
+        "maxRadius": 30,
+        "matchThreshold": 0.6
+      },
+      "integrated": false
+    },
+    {
+      "id": "opencv-contours",
+      "version": 1,
+      "order": 5,
+      "title": "5. OpenCV contours and shape analysis",
+      "summary": "Trace object outlines, measure area, perimeter and circularity, and label simple shapes from their polygon corners.",
+      "difficulty": "Intermediate",
+      "minutes": 35,
+      "lessons": [
+        {
+          "id": "outlines",
+          "title": "From a mask to outlines",
+          "text": "findContours follows the border of each white region in a binary mask and returns the outline as a list of points. The lab first thresholds the shapes scene at 128. It asks for external outlines only, so holes inside a region are ignored. CHAIN_APPROX_SIMPLE keeps only the end points of straight runs. Every white region gets an outline, including specks: with 5% specks and a minimum area of 0, the lab lists 340 contours. A minimum area of 50 px² drops the specks and keeps the three shapes, sorted left to right."
+        },
+        {
+          "id": "measure",
+          "title": "Area, perimeter and circularity",
+          "text": "contourArea returns the area enclosed by the outline polygon, and arcLength returns its length. Both follow the centres of the border pixels, so the 25 × 25-pixel square reports area 576 (24 × 24) and perimeter 96. Circularity 4πA/P² is 1 for a perfect circle and π/4 ≈ 0.785 for any square. The pixel circle scores 0.859 and the triangle 0.523. The output outlines each kept shape in red with a blue bounding box. The mask fills them, so IoU is 1. The IoT preview sends only detection and area, never labels."
+        },
+        {
+          "id": "labels",
+          "title": "Approximate polygons and label shapes",
+          "text": "approxPolyDP simplifies an outline so that no original point lies farther than ε × perimeter from the new polygon. At ε = 0.04 even the circle drops to 4 corners, so the lab tests roundness before the four-corner rule. Three corners mean triangle; circularity of 0.83 or more means circle; 4 corners with width/height between 0.9 and 1.1 mean square. Specks roughen outlines: at 5% the circle scores 0.751 and becomes a polygon. Clean the mask first: in the companion script, a 3 × 3 closing then opening restores 0.873. These are hand-written rules, not a trained classifier."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Circularity",
+          "equation": "C = 4πA / P²",
+          "symbols": "A: area enclosed by the outline (px²); P: perimeter (px); C: dimensionless, 1 for a perfect circle and π/4 ≈ 0.785 for any square. A pixelated circle scores below 1: 0.859 here.",
+          "example": "The lab square has A = 576 px² and P = 96 px, so C = 4π × 576 / 96² ≈ 0.785."
+        },
+        {
+          "title": "Polygon tolerance and aspect ratio",
+          "equation": "dmax = ε × P;  aspect = w / h",
+          "symbols": "ε: lab setting, a fraction of the perimeter; P: perimeter (px); dmax: largest distance (px) allowed between the outline and its simplified polygon; w, h: bounding-box width and height (px).",
+          "example": "The circle perimeter is 77.3 px. At ε = 0.04, dmax ≈ 3.1 px and 4 corners remain. At ε = 0.01, dmax ≈ 0.77 px and 12 corners remain."
+        }
+      ],
+      "steps": [
+        "Open the preset. Read each shape's label, area, perimeter, corner count and circularity, and confirm IoU 1.",
+        "Lower ε to 0.01. Count the circle's corners and explain why its label stays circle.",
+        "Set specks to 5% and the minimum area to 0. Count the contours, then raise the minimum area to 50 and compare the circle's circularity and label.",
+        "Remove the specks and raise the minimum area to 450. Explain which shape disappears and why."
+      ],
+      "practice": [
+        {
+          "id": "q0",
+          "prompt": "What circularity does any perfect square have?",
+          "options": [
+            {
+              "id": "a",
+              "text": "1"
+            },
+            {
+              "id": "b",
+              "text": "π/4 ≈ 0.785"
+            },
+            {
+              "id": "c",
+              "text": "0.5"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "For side s: 4π s² / (4s)² = π/4.",
+          "lessonId": "measure"
+        },
+        {
+          "id": "q1",
+          "prompt": "With 5% specks and minimum area 0, why does the lab list 340 contours?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Every white speck gets its own outline"
+            },
+            {
+              "id": "b",
+              "text": "Each shape is split into 100 parts"
+            },
+            {
+              "id": "c",
+              "text": "The circle has 340 corners"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "findContours outlines every white region. The minimum-area filter is what removes the specks.",
+          "lessonId": "outlines"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "q2",
+            "prompt": "The 25 × 25-pixel square reports area 576. Why not 625?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Specks removed 49 pixels"
+              },
+              {
+                "id": "b",
+                "text": "The outline runs through border-pixel centres, enclosing 24 × 24"
+              },
+              {
+                "id": "c",
+                "text": "contourArea counts only corner pixels"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Contour points sit at pixel centres, so the enclosed polygon is one pixel narrower in each direction.",
+            "lessonId": "measure"
+          },
+          {
+            "id": "q3",
+            "prompt": "At ε = 0.04 the circle simplifies to 4 corners. Why is it still labelled circle?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The lab checks circularity ≥ 0.83 before the four-corner rule"
+              },
+              {
+                "id": "b",
+                "text": "Four corners always mean circle"
+              },
+              {
+                "id": "c",
+                "text": "Its bounding box is not square"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The circle's circularity is 0.859, so the roundness rule wins before the 4-corner rule.",
+            "lessonId": "labels"
+          },
+          {
+            "id": "q4",
+            "prompt": "Raising ε from 0.01 to 0.04 gives the circle's polygon…",
+            "options": [
+              {
+                "id": "a",
+                "text": "More corners"
+              },
+              {
+                "id": "b",
+                "text": "The same 12 corners"
+              },
+              {
+                "id": "c",
+                "text": "Fewer corners: 12 become 4"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "A larger tolerance lets the polygon skip more outline points.",
+            "lessonId": "labels"
+          },
+          {
+            "id": "q5",
+            "prompt": "What does the minimum-area setting do?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Skips outlines whose enclosed area is below the limit"
+              },
+              {
+                "id": "b",
+                "text": "Erases pixels inside each shape"
+              },
+              {
+                "id": "c",
+                "text": "Changes the binary threshold"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Filtering by area removes specks before measurement and labelling.",
+            "lessonId": "outlines"
+          },
+          {
+            "id": "q6",
+            "prompt": "With 5% specks and minimum area 50, the circle is labelled polygon. What changed?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Its area fell below 50 px²"
+              },
+              {
+                "id": "b",
+                "text": "Specks on its edge made the outline ragged, lowering circularity to 0.751"
+              },
+              {
+                "id": "c",
+                "text": "The circle moved off the image"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A longer, jagged perimeter lowers 4πA/P² below the 0.83 circle rule.",
+            "lessonId": "labels"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "OpenCV contours: getting started",
+          "url": "https://docs.opencv.org/4.x/d4/d73/tutorial_py_contours_begin.html"
+        },
+        {
+          "title": "OpenCV contour features",
+          "url": "https://docs.opencv.org/4.x/dd/d49/tutorial_py_contour_features.html"
+        },
+        {
+          "title": "OpenCV contour properties",
+          "url": "https://docs.opencv.org/4.x/d1/d32/tutorial_py_contour_properties.html"
+        }
+      ],
+      "exampleIds": [
+        "opencv-contours"
+      ],
+      "config": {
+        "kind": "vision",
+        "version": 1,
+        "theme": "shapes",
+        "mode": "contours",
+        "threshold": 128,
+        "edgeLow": 50,
+        "edgeHigh": 120,
+        "hueMin": 40,
+        "hueMax": 90,
+        "blur": 0,
+        "brightness": 1,
+        "offset": 0,
+        "noise": 0,
+        "occlusion": 0,
+        "patchSize": 16,
+        "query": 36,
+        "temperature": 1,
+        "positionWeight": 0.5,
+        "contrast": 1,
+        "speckle": 0,
+        "tilt": 0,
+        "scale": 1,
+        "morphOp": "open",
+        "kernel": 3,
+        "iterations": 1,
+        "minArea": 50,
+        "epsilon": 0.04,
+        "equalize": "none",
+        "clipLimit": 2,
+        "houghShape": "lines",
+        "houghThreshold": 30,
+        "minLineLength": 20,
+        "maxLineGap": 5,
+        "minRadius": 6,
+        "maxRadius": 30,
+        "matchThreshold": 0.6
+      },
+      "integrated": false
+    },
+    {
+      "id": "opencv-histograms",
+      "version": 1,
+      "order": 6,
+      "title": "6. OpenCV histograms, equalization and Otsu thresholds",
+      "summary": "Read an intensity histogram, let Otsu choose a threshold, and see when equalization helps or hurts segmentation.",
+      "difficulty": "Intermediate",
+      "minutes": 35,
+      "lessons": [
+        {
+          "id": "histogram",
+          "title": "Histograms show where intensities sit",
+          "text": "A histogram counts how many pixels have each intensity. The lab groups the 256 gray levels into 32 bins of 8 levels and reports spread, the standard deviation of intensity. The preset dims the lamp scene with brightness 0.7 and squeezes it toward mid-gray with contrast 0.4. Only three levels remain: 7835 background pixels at 85, 8032 board pixels at 92 and 517 lamp pixels at 144. Spread is 10.29. The lamp is still distinct, but a fixed threshold of 150 now selects nothing."
+        },
+        {
+          "id": "otsu",
+          "title": "Otsu chooses a threshold from the histogram",
+          "text": "Otsu's method tests every threshold and keeps the one with the largest between-class variance, so the two groups are as separate as possible. OpenCV returns that threshold, and THRESH_BINARY selects pixels above it. On the preset Otsu returns 92: background and board fall at or below it, the lamp above. The mask is the 517 lamp pixels, with IoU 1. The output panel shows the gray image after any equalization; the measurements describe the Otsu mask. Otsu always splits into two groups, so with three it must merge two of them."
+        },
+        {
+          "id": "equalize",
+          "title": "Global equalization versus CLAHE",
+          "text": "Global equalization remaps each level through the cumulative histogram to spread levels across 0–255. Here background becomes 0, board 240 and lamp 255; spread jumps from 10.29 to 120.37. Now the board sits next to the lamp, so Otsu returns 0 and selects both: 8549 pixels, IoU 0.060. The IoT preview still reports a detection, with bright_fraction 0.5218. CLAHE equalizes an 8 × 8 grid of tiles and clips each tile histogram first. At clip limit 2, spread only reaches 10.52, Otsu returns 97 and IoU stays 1. More contrast is not better segmentation."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Otsu's between-class variance",
+          "equation": "σB²(T) = ω₀ ω₁ (μ₀ − μ₁)²",
+          "symbols": "T: candidate threshold; ω₀, ω₁: fractions of pixels at or below T and above T; μ₀, μ₁: their mean intensities. Otsu returns the T with the largest σB².",
+          "example": "Preset at T = 92: ω₀ ≈ 0.968, ω₁ ≈ 0.032, μ₀ ≈ 88.5 and μ₁ = 144, so σB² ≈ 94. At T = 85, σB² ≈ 26, so 92 wins."
+        },
+        {
+          "title": "Global histogram equalization",
+          "equation": "v′ = round(255 × (cdf(v) − cdfmin) / (N − cdfmin))",
+          "symbols": "v: input level; cdf(v): number of pixels at or below v; cdfmin: count at the darkest occupied level; N: total pixels; v′: output level. This is the mapping OpenCV equalizeHist uses.",
+          "example": "Board level 92: cdf = 15867, cdfmin = 7835 and N = 16384, so v′ = round(255 × 8032 / 8549) = 240."
+        }
+      ],
+      "steps": [
+        "Open the preset. Read the histogram, spread and Otsu threshold, and confirm 517 selected pixels with IoU 1.",
+        "Switch the pipeline to grayscale threshold at 150 and confirm that the lamp disappears. Then return to the histogram pipeline.",
+        "Set equalization to global. Compare the histogram and spread before and after, then explain why Otsu returns 0 and IoU falls to 0.060.",
+        "Set equalization to CLAHE with clip limit 2, then 4. Record each Otsu threshold and IoU, and compare bright_fraction with the global case."
+      ],
+      "practice": [
+        {
+          "id": "q0",
+          "prompt": "The preset has gray levels 85, 92 and 144. Why does a fixed threshold of 150 select nothing?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Every level is at or below 150"
+            },
+            {
+              "id": "b",
+              "text": "Histograms delete bright pixels"
+            },
+            {
+              "id": "c",
+              "text": "The lamp moved out of view"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "THRESH_BINARY selects values above the threshold. The brightest level, the lamp, is 144.",
+          "lessonId": "histogram"
+        },
+        {
+          "id": "q1",
+          "prompt": "What does Otsu's method maximize?",
+          "options": [
+            {
+              "id": "a",
+              "text": "The number of white pixels"
+            },
+            {
+              "id": "b",
+              "text": "Image brightness"
+            },
+            {
+              "id": "c",
+              "text": "The between-class variance of the two groups"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "It picks the split that best separates the two group means, weighted by the group sizes.",
+          "lessonId": "otsu"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "q2",
+            "prompt": "Otsu returns 92 and the lab applies THRESH_BINARY. Which pixels are selected?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Levels above 92: the lamp at 144"
+              },
+              {
+                "id": "b",
+                "text": "Levels 92 and below"
+              },
+              {
+                "id": "c",
+                "text": "Exactly level 92"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "THRESH_BINARY keeps values strictly greater than the threshold.",
+            "lessonId": "otsu"
+          },
+          {
+            "id": "q3",
+            "prompt": "Global equalization raises spread from 10.29 to 120.37, but IoU falls to 0.060. Why?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Spread above 100 always breaks Otsu"
+              },
+              {
+                "id": "b",
+                "text": "Equalization deletes the lamp"
+              },
+              {
+                "id": "c",
+                "text": "It moves the board next to the lamp, so Otsu separates background from board plus lamp"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "The levels become 0, 240 and 255. The best two-group split now lies between 0 and 240.",
+            "lessonId": "equalize"
+          },
+          {
+            "id": "q4",
+            "prompt": "How does CLAHE differ from global equalization?",
+            "options": [
+              {
+                "id": "a",
+                "text": "It equalizes small tiles and clips histogram peaks to limit amplification"
+              },
+              {
+                "id": "b",
+                "text": "It converts the image to HSV"
+              },
+              {
+                "id": "c",
+                "text": "It applies a fixed threshold of 150"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The clip limit caps how far any tile can stretch; with clip limit 2, spread here only reaches 10.52.",
+            "lessonId": "equalize"
+          },
+          {
+            "id": "q5",
+            "prompt": "What does spread measure in this lab?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The number of histogram bins"
+              },
+              {
+                "id": "b",
+                "text": "The standard deviation of pixel intensity"
+              },
+              {
+                "id": "c",
+                "text": "The distance between two objects"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Spread is the square root of the mean squared difference between each pixel and the mean intensity.",
+            "lessonId": "histogram"
+          },
+          {
+            "id": "q6",
+            "prompt": "When can Otsu choose a split that misses your target?",
+            "options": [
+              {
+                "id": "a",
+                "text": "When the image has more than two intensity groups"
+              },
+              {
+                "id": "b",
+                "text": "Only when the image is square"
+              },
+              {
+                "id": "c",
+                "text": "Never; it always isolates the target"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "Otsu models two classes. With three, it must merge two, as the global-equalization case shows.",
+            "lessonId": "otsu"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "OpenCV image thresholding and Otsu's method",
+          "url": "https://docs.opencv.org/4.x/d7/d4d/tutorial_py_thresholding.html"
+        },
+        {
+          "title": "OpenCV histogram equalization and CLAHE",
+          "url": "https://docs.opencv.org/4.x/d5/daf/tutorial_py_histogram_equalization.html"
+        },
+        {
+          "title": "OpenCV histograms: find, plot, analyze",
+          "url": "https://docs.opencv.org/4.x/d1/db7/tutorial_py_histogram_begins.html"
+        }
+      ],
+      "exampleIds": [
+        "opencv-otsu"
+      ],
+      "config": {
+        "kind": "vision",
+        "version": 1,
+        "theme": "iot",
+        "mode": "histogram",
+        "threshold": 150,
+        "edgeLow": 50,
+        "edgeHigh": 120,
+        "hueMin": 40,
+        "hueMax": 90,
+        "blur": 0,
+        "brightness": 0.7,
+        "offset": 0,
+        "noise": 0,
+        "occlusion": 0,
+        "patchSize": 16,
+        "query": 36,
+        "temperature": 1,
+        "positionWeight": 0.5,
+        "contrast": 0.4,
+        "speckle": 0,
+        "tilt": 0,
+        "scale": 1,
+        "morphOp": "open",
+        "kernel": 3,
+        "iterations": 1,
+        "minArea": 50,
+        "epsilon": 0.04,
+        "equalize": "none",
+        "clipLimit": 2,
+        "houghShape": "lines",
+        "houghThreshold": 30,
+        "minLineLength": 20,
+        "maxLineGap": 5,
+        "minRadius": 6,
+        "maxRadius": 30,
+        "matchThreshold": 0.6
+      },
+      "integrated": false
+    },
+    {
+      "id": "opencv-perspective",
+      "version": 1,
+      "order": 7,
+      "title": "7. OpenCV perspective correction with four corners",
+      "summary": "Find a tilted card's four corners, compute a homography and warp the card onto a flat, front-on frame.",
+      "difficulty": "Intermediate",
+      "minutes": 35,
+      "lessons": [
+        {
+          "id": "corners",
+          "title": "Find and order four corners",
+          "text": "A camera tilted toward a flat card makes the far edge look shorter. The lab thresholds the document scene at 150, traces external contours and keeps the largest outline whose polygon has exactly 4 corners. At tilt 0.4 those corners are top-left (42, 34), top-right (86, 34), bottom-right (98, 98) and bottom-left (30, 98). Order matters. The smallest x + y is top-left and the largest is bottom-right; the smallest y − x is top-right and the largest is bottom-left. Swapped corners would mirror or twist the output."
+        },
+        {
+          "id": "homography",
+          "title": "A homography maps the card onto the frame",
+          "text": "For a flat surface and an ideal pinhole camera, a 3 × 3 homography maps card points to image points. It has 8 unknowns and each corner pair gives 2 equations, so getPerspectiveTransform solves it from 4 pairs. warpPerspective fills each output pixel by mapping it back into the source and interpolating. The lab sends the four detected corners to the corners of the 128 × 128 frame. The mapping divides by a scale that varies across the image: 16-pixel steps down the card's centre line become about 43, 34, 27 and 23 pixels."
+        },
+        {
+          "id": "limits",
+          "title": "Read the result and know its limits",
+          "text": "The lab reports whether a card was found, its ordered corners and its contour area: 3531 px² at tilt 0.4. The mask fills the card outline, so IoU is 1. The card is gray level 235: from threshold 235 up nothing passes, and the lab reports no card instead of guessing. The generator fakes tilt by linear interpolation, not a camera model, so the warped printed square sits low and is wider at the top. Real lenses bend straight lines: calibrate and undistort first. The IoT preview only reports an event; nothing reads the card."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Homography between two planes",
+          "equation": "s·[u, v, 1]ᵀ = H·[x, y, 1]ᵀ;  u = (h₁₁x + h₁₂y + h₁₃)/s,  v = (h₂₁x + h₂₂y + h₂₃)/s,  s = h₃₁x + h₃₂y + 1",
+          "symbols": "(x, y): source pixel; (u, v): output pixel; H: 3 × 3 homography with h₃₃ = 1, which leaves 8 unknowns; s: projective scale. Four corner pairs give the 8 equations.",
+          "example": "For the tilt-0.4 corners, s is about 1.41 along the card's top edge and 2.18 along its bottom edge, so the top is stretched more."
+        },
+        {
+          "title": "Ordering corners by sums and differences",
+          "equation": "TL = min(x + y);  BR = max(x + y);  TR = min(y − x);  BL = max(y − x)",
+          "symbols": "(x, y): corner coordinates in pixels, with y increasing downward. The rule assumes the card is not rotated close to 45°, where two corners tie.",
+          "example": "For (42, 34), (86, 34), (98, 98) and (30, 98), the sums are 76, 120, 196 and 128 and the differences are −8, −52, 0 and 68. So TL = (42, 34), TR = (86, 34), BR = (98, 98) and BL = (30, 98)."
+        }
+      ],
+      "steps": [
+        "Open the preset. Record the four ordered corners, the card area and IoU, and compare the source with the rectified output.",
+        "Set tilt to 0, then 0.6. Record how the top corners move and how the card area changes.",
+        "Raise the threshold to 240 and confirm that the lab reports no card. Lower it until the card returns and note the highest working value.",
+        "Move the card with the offset slider and confirm that the corners follow. Then explain why the printed square is not centred after the warp."
+      ],
+      "practice": [
+        {
+          "id": "q0",
+          "prompt": "How many corner pairs does getPerspectiveTransform need?",
+          "options": [
+            {
+              "id": "a",
+              "text": "2"
+            },
+            {
+              "id": "b",
+              "text": "4"
+            },
+            {
+              "id": "c",
+              "text": "8"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "A homography has 8 unknowns, and each point pair gives 2 equations.",
+          "lessonId": "homography"
+        },
+        {
+          "id": "q1",
+          "prompt": "Which corner has the smallest x + y?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Bottom-right"
+            },
+            {
+              "id": "b",
+              "text": "Top-right"
+            },
+            {
+              "id": "c",
+              "text": "Top-left"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "Image x grows rightward and y grows downward, so the top-left corner has the smallest sum.",
+          "lessonId": "corners"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "q2",
+            "prompt": "Corners (86, 34) and (30, 98) have y − x of −52 and 68. Which is top-right?",
+            "options": [
+              {
+                "id": "a",
+                "text": "(86, 34), the smaller y − x"
+              },
+              {
+                "id": "b",
+                "text": "(30, 98), the larger y − x"
+              },
+              {
+                "id": "c",
+                "text": "Neither; y − x cannot identify corners"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "A top-right corner has large x and small y, so its y − x is the smallest.",
+            "lessonId": "corners"
+          },
+          {
+            "id": "q3",
+            "prompt": "Why do equal 16-pixel steps down the tilted card not stay equal after the warp?",
+            "options": [
+              {
+                "id": "a",
+                "text": "warpPerspective adds noise"
+              },
+              {
+                "id": "b",
+                "text": "The homography divides by a scale that changes across the image"
+              },
+              {
+                "id": "c",
+                "text": "The card is cropped first"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The division makes the mapping non-linear, and the far edge is stretched most.",
+            "lessonId": "homography"
+          },
+          {
+            "id": "q4",
+            "prompt": "At threshold 240 the lab finds no card. What should a deployed pipeline do?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Report no card and skip the warp"
+              },
+              {
+                "id": "b",
+                "text": "Warp the whole image anyway"
+              },
+              {
+                "id": "c",
+                "text": "Guess corners at the image edges"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "A missing measurement should be reported, not replaced with an invented one.",
+            "lessonId": "limits"
+          },
+          {
+            "id": "q5",
+            "prompt": "What must come before a homography when a real lens bends straight lines?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Histogram equalization"
+              },
+              {
+                "id": "b",
+                "text": "Camera calibration and undistortion"
+              },
+              {
+                "id": "c",
+                "text": "Nothing; a homography removes all distortion"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "A homography keeps straight lines straight, so it cannot model lens distortion.",
+            "lessonId": "limits"
+          },
+          {
+            "id": "q6",
+            "prompt": "How does warpPerspective fill each output pixel?",
+            "options": [
+              {
+                "id": "a",
+                "text": "It copies the nearest card corner"
+              },
+              {
+                "id": "b",
+                "text": "It thresholds the pixel at 150"
+              },
+              {
+                "id": "c",
+                "text": "It maps the pixel back into the source and interpolates"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "The lab uses linear interpolation between the four nearest source pixels.",
+            "lessonId": "homography"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "OpenCV geometric transformations",
+          "url": "https://docs.opencv.org/4.x/da/d6e/tutorial_py_geometric_transformations.html"
+        },
+        {
+          "title": "OpenCV.js geometric transformations",
+          "url": "https://docs.opencv.org/4.x/dd/d52/tutorial_js_geometric_transformations.html"
+        },
+        {
+          "title": "OpenCV camera calibration",
+          "url": "https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html"
+        }
+      ],
+      "exampleIds": [
+        "opencv-perspective"
+      ],
+      "config": {
+        "kind": "vision",
+        "version": 1,
+        "theme": "document",
+        "mode": "perspective",
+        "threshold": 150,
+        "edgeLow": 50,
+        "edgeHigh": 120,
+        "hueMin": 40,
+        "hueMax": 90,
+        "blur": 0,
+        "brightness": 1,
+        "offset": 0,
+        "noise": 0,
+        "occlusion": 0,
+        "patchSize": 16,
+        "query": 36,
+        "temperature": 1,
+        "positionWeight": 0.5,
+        "contrast": 1,
+        "speckle": 0,
+        "tilt": 0.4,
+        "scale": 1,
+        "morphOp": "open",
+        "kernel": 3,
+        "iterations": 1,
+        "minArea": 50,
+        "epsilon": 0.04,
+        "equalize": "none",
+        "clipLimit": 2,
+        "houghShape": "lines",
+        "houghThreshold": 30,
+        "minLineLength": 20,
+        "maxLineGap": 5,
+        "minRadius": 6,
+        "maxRadius": 30,
+        "matchThreshold": 0.6
+      },
+      "integrated": false
+    },
+    {
+      "id": "opencv-hough",
+      "version": 1,
+      "order": 8,
+      "title": "8. OpenCV Hough transform: lane lines and round markers",
+      "summary": "Let edge pixels vote for straight lane edges and round lamps, then turn the segments into a robot steering preview.",
+      "difficulty": "Intermediate",
+      "minutes": 40,
+      "lessons": [
+        {
+          "id": "voting",
+          "title": "Edge pixels vote for lines",
+          "text": "The Hough transform describes a line by its distance ρ from the origin and the angle θ of its normal. Every edge pixel votes for all lines through it; lines with many votes win. The lab blurs the lanes scene with a 3 × 3 Gaussian, runs Canny, then calls HoughLinesP with 1-pixel ρ and 1° θ steps. The accumulator threshold sets the votes a line needs. Segments below the minimum length are dropped, and gaps up to the maximum gap are bridged. Results are segment end points, not infinite lines."
+        },
+        {
+          "id": "lanes",
+          "title": "From lane segments to a steering preview",
+          "text": "The preset finds 4 segments at about ±70°. Canny marks both edges of each painted lane, so each lane gives two segments. The reported angle is the segment direction, atan2(Δy, Δx), with y pointing down. The lab draws the segments 3 pixels wide into the mask, and the robot preview steers on that mask's centroid. Centred lanes give error 0.009. Offset 20 moves both lanes right: error 0.16, so angular.z = −0.16. Drawn lines are not a filled target, so IoU is not reported. At accumulator threshold 80, no line gets enough votes."
+        },
+        {
+          "id": "circles",
+          "title": "Circles, and what Hough cannot know",
+          "text": "HoughCircles with HOUGH_GRADIENT runs its own Canny step with the lab's high edge threshold, then votes for centres along gradient directions. The accumulator threshold sets the votes a centre needs; radii outside the set range are ignored. On the IoT lamp, threshold 15 finds one circle at (63.5, 63.5) with radius 12.5, close to the drawn lamp of radius 13 around (64, 64). Threshold 25 finds none. Occlusion 0.4 hides the lamp's top, so the fit moves to (65.5, 65.5) with radius 10.6. Hough votes for any straight or round edge; it does not know what a lane or a lamp is."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "A line in Hough space",
+          "equation": "ρ = x cos θ + y sin θ",
+          "symbols": "(x, y): edge pixel (px); θ: angle of the line's normal; ρ: signed distance from the image origin (px). Each edge pixel adds a vote to every (ρ, θ) cell it satisfies.",
+          "example": "The first left-lane segment runs from (22, 127) to (54, 40). With θ ≈ 20.2°, both end points give ρ ≈ 64.5 px, so they vote for the same cell."
+        },
+        {
+          "title": "Segment angle and length",
+          "equation": "angle = atan2(y₂ − y₁, x₂ − x₁);  length = √((x₂ − x₁)² + (y₂ − y₁)²)",
+          "symbols": "(x₁, y₁), (x₂, y₂): segment end points (px), with y increasing downward; angle in degrees. This is the segment direction that the lab reports, 90° away from the Hough θ.",
+          "example": "From (22, 127) to (54, 40): angle = atan2(−87, 32) ≈ −69.8° and length = √(32² + 87²) ≈ 92.7 px."
+        }
+      ],
+      "steps": [
+        "Open the preset. Read the four segments' end points, angles and lengths, and pair each segment with a painted lane.",
+        "Set the offset to 20. Record the normalized error and the angular.z request, and explain the sign.",
+        "Raise the accumulator threshold to 60, then 80, and count the segments each time. Return it to 30.",
+        "Switch to the IoT theme and circle detection with accumulator threshold 15. Record the circle, try threshold 25, then return to 15 and add occlusion 0.4."
+      ],
+      "practice": [
+        {
+          "id": "q0",
+          "prompt": "In ρ = x cos θ + y sin θ, what does one edge pixel do?",
+          "options": [
+            {
+              "id": "a",
+              "text": "Votes for every line that passes through it"
+            },
+            {
+              "id": "b",
+              "text": "Becomes a line segment on its own"
+            },
+            {
+              "id": "c",
+              "text": "Deletes nearby edge pixels"
+            }
+          ],
+          "answerId": "a",
+          "explanation": "Each (ρ, θ) cell collects votes, and cells where many pixels agree become lines.",
+          "lessonId": "voting"
+        },
+        {
+          "id": "q1",
+          "prompt": "Why does each painted lane give two segments?",
+          "options": [
+            {
+              "id": "a",
+              "text": "HoughLinesP always doubles its results"
+            },
+            {
+              "id": "b",
+              "text": "Canny marks both edges of the painted stripe"
+            },
+            {
+              "id": "c",
+              "text": "The lane has two colors"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "A stripe has a left and a right boundary, and each one is a straight edge.",
+          "lessonId": "lanes"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "q2",
+            "prompt": "Accumulator threshold 80 returns no segments on the lanes preset. Why?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The lanes are curved"
+              },
+              {
+                "id": "b",
+                "text": "Threshold 80 removes the blur"
+              },
+              {
+                "id": "c",
+                "text": "No (ρ, θ) cell collects 80 votes from the edge pixels"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "The accumulator threshold is a minimum vote count, and these lane edges never reach it.",
+            "lessonId": "voting"
+          },
+          {
+            "id": "q3",
+            "prompt": "With offset 20 the normalized error is 0.16. Which yaw rate does the preview request?",
+            "options": [
+              {
+                "id": "a",
+                "text": "+0.16 rad/s"
+              },
+              {
+                "id": "b",
+                "text": "−0.16 rad/s"
+              },
+              {
+                "id": "c",
+                "text": "0 rad/s"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "The robot adapter requests angular.z = −ex: a clockwise turn toward lanes on the right.",
+            "lessonId": "lanes"
+          },
+          {
+            "id": "q4",
+            "prompt": "What does HOUGH_GRADIENT use the lab's high edge threshold for?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The upper threshold of its internal Canny step"
+              },
+              {
+                "id": "b",
+                "text": "The minimum circle radius"
+              },
+              {
+                "id": "c",
+                "text": "The number of circles to return"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "OpenCV passes it as param1, the higher Canny threshold; the lower one is half of it.",
+            "lessonId": "circles"
+          },
+          {
+            "id": "q5",
+            "prompt": "Occlusion 0.4 hides the top of the lamp. What happens to the detected circle?",
+            "options": [
+              {
+                "id": "a",
+                "text": "It disappears from the image"
+              },
+              {
+                "id": "b",
+                "text": "Hough restores the hidden pixels"
+              },
+              {
+                "id": "c",
+                "text": "The fit shifts to (65.5, 65.5) and shrinks to radius 10.6"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Only the visible edge votes, so a partial outline pulls the centre and the radius.",
+            "lessonId": "circles"
+          },
+          {
+            "id": "q6",
+            "prompt": "Why is IoU not reported for Hough lines?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Lines always score IoU 1"
+              },
+              {
+                "id": "b",
+                "text": "The mask holds 3-pixel drawn lines, not a filled target region"
+              },
+              {
+                "id": "c",
+                "text": "Hough produces no pixels"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "An overlap score between thin drawn lines and filled lane paint would not be meaningful.",
+            "lessonId": "lanes"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "OpenCV Hough line transform",
+          "url": "https://docs.opencv.org/4.x/d6/d10/tutorial_py_houghlines.html"
+        },
+        {
+          "title": "OpenCV Hough circle transform",
+          "url": "https://docs.opencv.org/4.x/da/d53/tutorial_py_houghcircles.html"
+        },
+        {
+          "title": "OpenCV Hough line transform (C++ tutorial)",
+          "url": "https://docs.opencv.org/4.x/d9/db0/tutorial_hough_lines.html"
+        }
+      ],
+      "exampleIds": [
+        "opencv-hough"
+      ],
+      "config": {
+        "kind": "vision",
+        "version": 1,
+        "theme": "lanes",
+        "mode": "hough",
+        "threshold": 150,
+        "edgeLow": 50,
+        "edgeHigh": 120,
+        "hueMin": 40,
+        "hueMax": 90,
+        "blur": 3,
+        "brightness": 1,
+        "offset": 0,
+        "noise": 0,
+        "occlusion": 0,
+        "patchSize": 16,
+        "query": 36,
+        "temperature": 1,
+        "positionWeight": 0.5,
+        "contrast": 1,
+        "speckle": 0,
+        "tilt": 0,
+        "scale": 1,
+        "morphOp": "open",
+        "kernel": 3,
+        "iterations": 1,
+        "minArea": 50,
+        "epsilon": 0.04,
+        "equalize": "none",
+        "clipLimit": 2,
+        "houghShape": "lines",
+        "houghThreshold": 30,
+        "minLineLength": 20,
+        "maxLineGap": 5,
+        "minRadius": 6,
+        "maxRadius": 30,
+        "matchThreshold": 0.6
+      },
+      "integrated": false
+    },
+    {
+      "id": "opencv-template",
+      "version": 1,
+      "order": 9,
+      "title": "9. OpenCV template matching for a landing pad",
+      "summary": "Slide a pad template across the image, read the normalized correlation score, and test brightness, scale and occlusion.",
+      "difficulty": "Intermediate",
+      "minutes": 35,
+      "lessons": [
+        {
+          "id": "sliding",
+          "title": "Slide a template and score every position",
+          "text": "Template matching compares a small reference image with every same-sized window of the scene. The lab cuts a 48 × 48 template from the centre of a clean drone-pad scene at scale 1, converts both to grayscale and calls matchTemplate. A 128 × 128 image gives 81 × 81 = 6561 windows. minMaxLoc returns the best score and that window's top-left corner: 1.0 at (40, 40) here. At or above the 0.6 threshold, the window gets a green outline and fills the mask. Below it, the outline is red and the mask stays empty."
+        },
+        {
+          "id": "normalized",
+          "title": "Normalized correlation ignores brightness",
+          "text": "TM_CCOEFF_NORMED subtracts the mean from the template and from each window, then divides by both standard deviations. A uniform brightness gain or offset cancels if no pixel clips, and the score stays between −1 and 1. Brightness 0.5 still scores 1. The score is not a probability: 0.6 is a threshold you choose from tests. The box covers 2304 pixels and the pad 1849, so IoU is 0.803 even for a perfect match. The drone preview uses the box centre: offset 25 moves the match to x = 65 and normalized_x to 0.394."
+        },
+        {
+          "id": "limits",
+          "title": "Scale, occlusion and absent targets",
+          "text": "Plain template matching is not scale- or rotation-invariant. The template was cut at scale 1. Scale 0.8 still scores 0.631, but 0.7 scores 0.587 and 1.3 scores 0.416, below the threshold although the pad is visible. Occlusion 0.4 drops the score to 0.556. The IoT scene has no pad, yet minMaxLoc still returns a best window, with score 0.458; the threshold decides detection. A 3 × 3 blur on the scene alone lowers the score to 0.968, because the template is not blurred. Real systems search several scales or use feature-based methods."
+        }
+      ],
+      "formulas": [
+        {
+          "title": "Normalized correlation coefficient",
+          "equation": "R(x,y) = Σ T′(i,j)·I′(x+i, y+j) / √(Σ T′(i,j)² · Σ I′(x+i, y+j)²)",
+          "symbols": "T′: template minus its mean; I′: image window minus its mean; (x, y): window top-left corner (px); i, j: offsets inside the template; R: score from −1 to 1 (TM_CCOEFF_NORMED).",
+          "example": "If every window pixel equals a × template + b with a > 0, the mean and the scale cancel and R = 1. Brightness 0.5 in the lab still gives 1.0."
+        },
+        {
+          "title": "Search positions and box overlap",
+          "equation": "positions = (W − w + 1)(H − h + 1);  IoU = |box ∩ pad| / |box ∪ pad|",
+          "symbols": "W, H: image size (px); w, h: template size (px); box: the 48 × 48 match rectangle; pad: the true target pixels.",
+          "example": "(128 − 48 + 1)² = 6561 positions. A perfect match places the 1849-pixel pad inside the 2304-pixel box: IoU = 1849/2304 ≈ 0.803."
+        }
+      ],
+      "steps": [
+        "Open the preset. Record the score, the match location and IoU, and explain why IoU is 0.803 for a perfect match.",
+        "Lower brightness to 0.5, then set the offset to 25. Record the score, the new location and the drone preview's normalized_x.",
+        "Reset brightness and offset. Set scale to 0.8, 0.7 and then 1.3, and record which scales still pass the 0.6 threshold.",
+        "Return scale to 1. Add occlusion 0.4, then switch to the IoT theme, and compare each best score with the threshold."
+      ],
+      "practice": [
+        {
+          "id": "q0",
+          "prompt": "How many window positions does a 48 × 48 template have in a 128 × 128 image?",
+          "options": [
+            {
+              "id": "a",
+              "text": "16384"
+            },
+            {
+              "id": "b",
+              "text": "6561"
+            },
+            {
+              "id": "c",
+              "text": "2304"
+            }
+          ],
+          "answerId": "b",
+          "explanation": "(128 − 48 + 1)² = 81² = 6561.",
+          "lessonId": "sliding"
+        },
+        {
+          "id": "q1",
+          "prompt": "Why does brightness 0.5 still score 1?",
+          "options": [
+            {
+              "id": "a",
+              "text": "The template is re-cut from the dark scene"
+            },
+            {
+              "id": "b",
+              "text": "Scores above 0.6 are rounded up"
+            },
+            {
+              "id": "c",
+              "text": "Mean subtraction and normalization cancel a uniform brightness gain"
+            }
+          ],
+          "answerId": "c",
+          "explanation": "TM_CCOEFF_NORMED compares patterns after removing each patch's mean and scale.",
+          "lessonId": "normalized"
+        }
+      ],
+      "exam": {
+        "passPercent": 80,
+        "questions": [
+          {
+            "id": "q2",
+            "prompt": "The pad at scale 1.3 scores 0.416. What does that show?",
+            "options": [
+              {
+                "id": "a",
+                "text": "This matcher is not scale-invariant"
+              },
+              {
+                "id": "b",
+                "text": "The pad is missing"
+              },
+              {
+                "id": "c",
+                "text": "The brightness changed"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "The same pad at another size no longer lines up with the fixed-size template.",
+            "lessonId": "limits"
+          },
+          {
+            "id": "q3",
+            "prompt": "On the IoT scene, which has no pad, the lab still reports a best location. Why?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The lamp is a landing pad"
+              },
+              {
+                "id": "b",
+                "text": "minMaxLoc always returns a maximum; the threshold decides detection"
+              },
+              {
+                "id": "c",
+                "text": "Template matching cannot return low scores"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "Every image has a best window among the 6561. Its score of 0.458 is below 0.6, so nothing is detected.",
+            "lessonId": "limits"
+          },
+          {
+            "id": "q4",
+            "prompt": "Is a score of 0.9 a 90% probability that a pad is present?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Yes, always"
+              },
+              {
+                "id": "b",
+                "text": "Only at scale 1"
+              },
+              {
+                "id": "c",
+                "text": "No; it is a correlation score, and thresholds come from testing"
+              }
+            ],
+            "answerId": "c",
+            "explanation": "Correlation measures pattern similarity, not a calibrated probability.",
+            "lessonId": "normalized"
+          },
+          {
+            "id": "q5",
+            "prompt": "What does the reported match location mark?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The top-left corner of the best 48 × 48 window"
+              },
+              {
+                "id": "b",
+                "text": "The pad's centre"
+              },
+              {
+                "id": "c",
+                "text": "The image centre"
+              }
+            ],
+            "answerId": "a",
+            "explanation": "matchTemplate scores each window by its top-left corner; add 23.5 px to reach the window centre.",
+            "lessonId": "sliding"
+          },
+          {
+            "id": "q6",
+            "prompt": "Why is IoU 0.803 for a perfect match?",
+            "options": [
+              {
+                "id": "a",
+                "text": "The match is in the wrong place"
+              },
+              {
+                "id": "b",
+                "text": "The 48 × 48 box (2304 px) is larger than the 1849-pixel pad"
+              },
+              {
+                "id": "c",
+                "text": "IoU ignores the box"
+              }
+            ],
+            "answerId": "b",
+            "explanation": "IoU = 1849/2304 ≈ 0.803, because the box includes background around the pad.",
+            "lessonId": "normalized"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "title": "OpenCV template matching",
+          "url": "https://docs.opencv.org/4.x/d4/dc6/tutorial_py_template_matching.html"
+        },
+        {
+          "title": "OpenCV template matching (C++ tutorial)",
+          "url": "https://docs.opencv.org/4.x/de/da9/tutorial_template_matching.html"
+        },
+        {
+          "title": "OpenCV.js template matching",
+          "url": "https://docs.opencv.org/4.x/d8/dd1/tutorial_js_template_matching.html"
+        }
+      ],
+      "exampleIds": [
+        "opencv-template"
+      ],
+      "config": {
+        "kind": "vision",
+        "version": 1,
+        "theme": "drone",
+        "mode": "template",
+        "threshold": 150,
+        "edgeLow": 50,
+        "edgeHigh": 120,
+        "hueMin": 40,
+        "hueMax": 90,
+        "blur": 0,
+        "brightness": 1,
+        "offset": 0,
+        "noise": 0,
+        "occlusion": 0,
+        "patchSize": 16,
+        "query": 36,
+        "temperature": 1,
+        "positionWeight": 0.5,
+        "contrast": 1,
+        "speckle": 0,
+        "tilt": 0,
+        "scale": 1,
+        "morphOp": "open",
+        "kernel": 3,
+        "iterations": 1,
+        "minArea": 50,
+        "epsilon": 0.04,
+        "equalize": "none",
+        "clipLimit": 2,
+        "houghShape": "lines",
+        "houghThreshold": 30,
+        "minLineLength": 20,
+        "maxLineGap": 5,
+        "minRadius": 6,
+        "maxRadius": 30,
+        "matchThreshold": 0.6
       },
       "integrated": false
     },
     {
       "id": "vision-transformers",
       "version": 1,
-      "order": 4,
-      "title": "4. Vision transformers: patches, tokens and attention",
+      "order": 10,
+      "title": "10. Vision transformers: patches, tokens and attention",
       "summary": "Explore the mathematics behind ViT by changing patch size, query location and attention temperature.",
       "difficulty": "Intermediate",
       "minutes": 40,
@@ -929,15 +2519,33 @@
         "patchSize": 16,
         "query": 36,
         "temperature": 1,
-        "positionWeight": 0.5
+        "positionWeight": 0.5,
+        "contrast": 1,
+        "speckle": 0,
+        "tilt": 0,
+        "scale": 1,
+        "morphOp": "open",
+        "kernel": 3,
+        "iterations": 1,
+        "minArea": 50,
+        "epsilon": 0.04,
+        "equalize": "none",
+        "clipLimit": 2,
+        "houghShape": "lines",
+        "houghThreshold": 30,
+        "minLineLength": 20,
+        "maxLineGap": 5,
+        "minRadius": 6,
+        "maxRadius": 30,
+        "matchThreshold": 0.6
       },
       "integrated": false
     },
     {
       "id": "vision-deployment",
       "version": 1,
-      "order": 5,
-      "title": "5. Integrating OpenCV and trained vision models",
+      "order": 11,
+      "title": "11. Integrating OpenCV and trained vision models",
       "summary": "Design a perception interface, evaluate a pipeline and connect it to IoT, drone and robot software.",
       "difficulty": "Intermediate",
       "minutes": 40,
@@ -1164,15 +2772,33 @@
         "patchSize": 16,
         "query": 36,
         "temperature": 1,
-        "positionWeight": 0.5
+        "positionWeight": 0.5,
+        "contrast": 1,
+        "speckle": 0,
+        "tilt": 0,
+        "scale": 1,
+        "morphOp": "open",
+        "kernel": 3,
+        "iterations": 1,
+        "minArea": 50,
+        "epsilon": 0.04,
+        "equalize": "none",
+        "clipLimit": 2,
+        "houghShape": "lines",
+        "houghThreshold": 30,
+        "minLineLength": 20,
+        "maxLineGap": 5,
+        "minRadius": 6,
+        "maxRadius": 30,
+        "matchThreshold": 0.6
       },
       "integrated": false
     },
     {
       "id": "vision-integration",
       "version": 1,
-      "order": 6,
-      "title": "6. Capstone: connect vision, IoT, drones and robotics",
+      "order": 12,
+      "title": "12. Capstone: connect vision, IoT, drones and robotics",
       "summary": "Run one vision observation through three working simulated device adapters, then inspect failure cases.",
       "difficulty": "Intermediate",
       "minutes": 40,
@@ -1399,7 +3025,25 @@
         "patchSize": 16,
         "query": 36,
         "temperature": 1,
-        "positionWeight": 0.5
+        "positionWeight": 0.5,
+        "contrast": 1,
+        "speckle": 0,
+        "tilt": 0,
+        "scale": 1,
+        "morphOp": "open",
+        "kernel": 3,
+        "iterations": 1,
+        "minArea": 50,
+        "epsilon": 0.04,
+        "equalize": "none",
+        "clipLimit": 2,
+        "houghShape": "lines",
+        "houghThreshold": 30,
+        "minLineLength": 20,
+        "maxLineGap": 5,
+        "minRadius": 6,
+        "maxRadius": 30,
+        "matchThreshold": 0.6
       },
       "integrated": true
     }

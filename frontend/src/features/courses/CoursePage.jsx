@@ -12,6 +12,8 @@ import Assessment from './Assessment.jsx'
 import CourseTutorialFundamentals from './CourseTutorialFundamentals.jsx'
 import { fundamentalsForCourse } from './fundamentals.js'
 import CourseCodeExample from './CourseCodeExample.jsx'
+import LessonConnections from './LessonConnections.jsx'
+import { hasConnections } from './learningMap.js'
 
 const panelClass = 'min-w-0 rounded-lg border border-line bg-white p-5 sm:p-6'
 
@@ -77,6 +79,7 @@ function CourseSession({ course }) {
             {course.codeExample && <a href="#code-example" className={courseLinkClass}>{t('Code walkthrough and experiment')}</a>}
             <a href="#formulas" className={courseLinkClass}>{t('Theory and formulas')}</a>
             <a href="#application" className={courseLinkClass}>{t('Apply it to a device')}</a>
+            {hasConnections(`/courses/${course.id}`) && <a href="#connected-courses" className={courseLinkClass}>{t('Connected courses')}</a>}
             <a href="#practice" className={courseLinkClass}>{t('Practice questions')}</a>
             <a href="#exam" className={courseLinkClass}>{t('Course exam')}</a>
           </nav>
@@ -115,6 +118,7 @@ function CourseSession({ course }) {
             <h2 id="application-title" className="text-xl font-semibold text-ink">{t('Apply it to a device')}</h2><p className="mt-4 text-base leading-7 text-ink-secondary">{t(course.application)}</p>
             {[course.lab, ...(course.extraLabs ?? [])].map((lab, i) => <div key={lab.tutorialId} className="mt-5 rounded-lg border border-teal-200 bg-teal-50 p-4"><h3 className="flex items-center gap-2 font-semibold text-ink"><FlaskConical size={18} />{t('Related circuit lab')} {course.extraLabs?.length ? i + 1 : ''}</h3><p className="mt-2 text-sm leading-relaxed text-ink-secondary">{t(lab.task)}</p><Link to={`/tutorials/${lab.tutorialId}`} target="_blank" rel="noopener noreferrer" className={`${courseLinkClass} mt-3`}>{t('Open related lab in a new tab')}<ArrowRight size={14} /></Link><p className="mt-2 text-xs text-slate-600">{t('The lab opens separately so your current exam choices stay here. It practises selected concepts with prepared wiring.')}</p></div>)}
           </section>
+          <LessonConnections href={`/courses/${course.id}`} />
           <section id="practice" className={`${panelClass} scroll-mt-6`} aria-labelledby="practice-title"><h2 id="practice-title" className="mb-4 text-xl font-semibold text-ink">{t('Practice questions')}</h2><Assessment questions={course.practice} /></section>
           <section id="exam" className={`${panelClass} scroll-mt-6`} aria-labelledby="exam-title"><h2 id="exam-title" className="mb-4 text-xl font-semibold text-ink">{t('Course exam')}</h2><Assessment course={course} questions={course.exam.questions} exam passPercent={course.exam.passPercent} onResult={recordExam} /></section>
           {course.sources.length > 0 && <section className={panelClass} aria-labelledby="sources-title"><h2 id="sources-title" className="text-lg font-semibold text-ink">{t('Reference reading')}</h2><ul className="mt-3 space-y-3 text-sm">{course.sources.map(source => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer" className={courseLinkClass}>{source.title}</a></li>)}</ul></section>}
