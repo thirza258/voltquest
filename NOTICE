@@ -1,0 +1,8 @@
+VoltQuest
+Copyright 2026 Nevatal
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+This product includes OpenCV.js (@techstark/opencv-js), licensed under the
+Apache License, Version 2.0. Its license is included at
+frontend/public/licenses/opencv.txt.

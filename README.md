@@ -314,4 +314,5 @@ a database that is not ready — the compose files already gate the API on the d
 
 ## License
 
-No license has been chosen yet; add one before distributing.
+VoltQuest is licensed under the [Apache License, Version 2.0](LICENSE). See [NOTICE](NOTICE) for
+attribution, including the bundled OpenCV.js license.
