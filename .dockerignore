@@ -6,7 +6,7 @@
 backend/.venv
 backend/tests
 backend/*.db
-frontend/dist
+# frontend/dist
 frontend/test-results
 frontend/playwright-report
 frontend/.vite
