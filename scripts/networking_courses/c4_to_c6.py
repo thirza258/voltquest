@@ -1029,7 +1029,7 @@ COURSE_6 = {
     ),
     "challenge": {
         "task": (
-            "Course labs cannot be edited, so use \"Open a sandbox copy in a new tab\" under the lab and work in the copy. "
+            "You can work directly in the lab using the device shelf and cable tool (or open a sandbox copy). "
             "Add VLAN 40 PRINTERS: create it on S1, connect a stand-in PC on Fa0/5 with 192.168.40.10/24 and "
             "gateway 192.168.40.1, and add the matching subinterface on R1. Then explain why GUEST can reach the "
             "printer too, and what would stop it."

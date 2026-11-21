@@ -150,7 +150,7 @@
       ],
       "expected": "Both PCs show their new addresses in `ipconfig`. Pings succeed in both directions with TTL=128, `arp -a` on PC1 lists 192.168.1.11 with a MAC address that starts with 00-60, and PC1's browser shows Server1's page.",
       "challenge": {
-        "task": "Course labs cannot be edited, so use \"Open a sandbox copy in a new tab\" under the lab and work in the copy. Connect a third PC to a free port on S1 and give it 192.168.1.12/24. Prove that it reaches every other host. Then change its address to 192.168.2.12/24 and explain why the same cable and switch no longer get it any replies from PC1.",
+        "task": "You can work directly in the lab using the device shelf and cable tool (or open a sandbox copy). Connect a third PC to a free port on S1 and give it 192.168.1.12/24. Prove that it reaches every other host. Then change its address to 192.168.2.12/24 and explain why the same cable and switch no longer get it any replies from PC1.",
         "acceptance": [
           "PC3 is cabled to a free S1 port and pings PC1, PC2 and Server1 with TTL=128",
           "With 192.168.2.12/24, PC3's ping to 192.168.1.10 fails",
@@ -545,7 +545,7 @@
       ],
       "expected": "All four PCs match the plan. Pings between LAN A and LAN B succeed with TTL=127 (the first one may lose a packet to ARP), and PC1's `tracert 192.168.20.11` lists 192.168.10.1 and then 192.168.20.11.",
       "challenge": {
-        "task": "Course labs cannot be edited, so use \"Open a sandbox copy in a new tab\" under the lab and work in the copy. A new lab room with 25 hosts needs its own subnet. Carve the smallest subnet that fits out of the unused range 192.168.20.64 to 192.168.20.127, give R1 Gi0/2 the first usable address of it, and connect a test PC that reaches PC1.",
+        "task": "You can work directly in the lab using the device shelf and cable tool (or open a sandbox copy). A new lab room with 25 hosts needs its own subnet. Carve the smallest subnet that fits out of the unused range 192.168.20.64 to 192.168.20.127, give R1 Gi0/2 the first usable address of it, and connect a test PC that reaches PC1.",
         "acceptance": [
           "The new subnet is 192.168.20.64/27 (30 usable hosts) and does not overlap 192.168.20.0/26",
           "R1 Gi0/2 has 192.168.20.65 255.255.255.224 and shows up/up after `no shutdown`",
@@ -1007,7 +1007,7 @@
       ],
       "expected": "After `no shutdown` on S1 Fa0/2 and S2 Gi0/1, every host pings every other host with TTL=128. `show mac address-table` on S1 lists PC1 on Fa0/1, PC2 on Fa0/2 and the two S2 hosts on Gi0/1, and their MAC addresses match `arp -a` on PC1.",
       "challenge": {
-        "task": "Course labs cannot be edited, so use \"Open a sandbox copy in a new tab\" under the lab and work in the copy. Add a second cable between S1 Gi0/2 and S2 Gi0/2, clear the MAC tables on both switches, and ping PC3 from PC1. Use the step-by-step view and `show mac address-table` to explain what happens, then remove the extra cable.",
+        "task": "You can work directly in the lab using the device shelf and cable tool (or open a sandbox copy). Add a second cable between S1 Gi0/2 and S2 Gi0/2, clear the MAC tables on both switches, and ping PC3 from PC1. Use the step-by-step view and `show mac address-table` to explain what happens, then remove the extra cable.",
         "acceptance": [
           "The step-by-step view shows frames flooded around the loop and dropped after crossing 24 switches",
           "`show mac address-table` on S1 shows host MAC addresses learned on the uplinks instead of their access ports, and the ping fails",
@@ -2390,7 +2390,7 @@
       ],
       "expected": "R1 lists GigabitEthernet0/0.10, 0/0.20 and 0/0.30 up/up with the three gateway addresses, and `show interfaces trunk` on S1 lists Gi0/2. PC1 reaches PC2 and Server1 with TTL=127, and the intranet page loads in PC1's browser.",
       "challenge": {
-        "task": "Course labs cannot be edited, so use \"Open a sandbox copy in a new tab\" under the lab and work in the copy. Add VLAN 40 PRINTERS: create it on S1, connect a stand-in PC on Fa0/5 with 192.168.40.10/24 and gateway 192.168.40.1, and add the matching subinterface on R1. Then explain why GUEST can reach the printer too, and what would stop it.",
+        "task": "You can work directly in the lab using the device shelf and cable tool (or open a sandbox copy). Add VLAN 40 PRINTERS: create it on S1, connect a stand-in PC on Fa0/5 with 192.168.40.10/24 and gateway 192.168.40.1, and add the matching subinterface on R1. Then explain why GUEST can reach the printer too, and what would stop it.",
         "acceptance": [
           "VLAN 40 exists on S1 with Fa0/5 assigned, and R1 g0/0.40 uses `encapsulation dot1Q 40` with 192.168.40.1/24",
           "PC1 pings 192.168.40.10 across R1",
@@ -3403,7 +3403,7 @@
       ],
       "expected": "The first lease in each LAN is .21, because .1 to .20 are excluded. `show ip dhcp binding` lists three bindings, `nslookup` answers 192.168.10.5 on PC1 and PC3, and all three PCs open the intranet by name, PC3 across R1.",
       "challenge": {
-        "task": "Course labs cannot be edited, so use \"Open a sandbox copy in a new tab\" under the lab and work in the copy. Add a GUEST LAN on R1 g0/2: cable a new switch and PC to it, give g0/2 the address 192.168.30.1/24, exclude .1 to .20, and create a GUEST pool that hands out gateway 192.168.30.1 and DNS server 192.168.10.5. Prove that the new PC leases an address and opens the intranet by name.",
+        "task": "You can work directly in the lab using the device shelf and cable tool (or open a sandbox copy). Add a GUEST LAN on R1 g0/2: cable a new switch and PC to it, give g0/2 the address 192.168.30.1/24, exclude .1 to .20, and create a GUEST pool that hands out gateway 192.168.30.1 and DNS server 192.168.10.5. Prove that the new PC leases an address and opens the intranet by name.",
         "acceptance": [
           "R1 g0/2 is up with 192.168.30.1/24, and a third pool covers 192.168.30.0/24",
           "The new PC's `ipconfig /all` shows 192.168.30.21, gateway 192.168.30.1 and DNS server 192.168.10.5",

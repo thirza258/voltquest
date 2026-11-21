@@ -50,12 +50,12 @@ export default function TutorialsPage() {
               {t("Small circuits. Big discoveries.")}
             </h1>
             <p className="mt-4 text-base leading-relaxed text-ink-secondary">
-              {t("Learn by making something work. Explore ")}{TUTORIALS.length}{t(" guided tutorials with ready-wired circuits, editable code, and experiments for Arduino Uno, ESP32, and Raspberry Pi 4 / 5 alongside 10 comprehensive engineering courses.")}
+              {t("Learn by making something work. Explore ")}{TUTORIALS.length}{t(" guided tutorials with ready-wired circuits, editable code, and experiments for Arduino Uno, ESP32, and Raspberry Pi 4 / 5 alongside 21 comprehensive engineering courses covering 270+ lessons.")}
             </p>
             <div className="mt-5 flex flex-wrap gap-2">
               <Badge tone="brand"><BookOpen size={12} /> {TUTORIALS.length} {t("tutorials")}</Badge>
               <Badge tone="info"><Cpu size={12} /> {t("6 boards")}</Badge>
-              <Badge tone="brand"><Layers size={12} /> {t("10 course tracks")}</Badge>
+              <Badge tone="brand"><Layers size={12} /> {t("21 course tracks · 270+ courses")}</Badge>
               <Badge>{t("Runs in your browser")}</Badge>
             </div>
 
@@ -67,7 +67,7 @@ export default function TutorialsPage() {
                 className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface-subtle px-3 py-1.5 text-ink hover:border-brand-500 hover:text-brand-700 transition-colors"
               >
                 <BookOpen size={13} className="text-brand-700" />
-                {t("All Courses & Curricula (10)")}
+                {t("All Courses & Curricula (21)")}
               </a>
               <a
                 href="#interactive-tutorials-title"

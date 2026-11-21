@@ -110,3 +110,74 @@ it('builds a network on the bench, cables it and saves it in this browser', () =
   expect(screen.getByText('Network loaded.')).toBeTruthy()
   expect(within(screen.getByLabelText('Selected device')).getAllByRole('option')).toHaveLength(6)
 })
+
+it('opens Packet Tracer device window and configures a router via Config tab and CLI', () => {
+  lab()
+  choose('R1')
+  fireEvent.click(screen.getByRole('button', { name: 'Configure R1' }))
+  const modal = screen.getByRole('dialog', { name: /R1 - Cisco 1941 ISR Router/ })
+  expect(modal).toBeTruthy()
+
+  // Physical tab
+  fireEvent.click(within(modal).getByRole('button', { name: 'Physical' }))
+  expect(within(modal).getByText(/VoltQuest Network Systems · Cisco 1941 ISR Router/)).toBeTruthy()
+
+  // Config tab
+  fireEvent.click(within(modal).getByRole('button', { name: 'Config' }))
+  expect(within(modal).getByText('Global Settings')).toBeTruthy()
+
+  // Select Gi0/0 in Config tab
+  const gi0Btn = within(modal).getAllByRole('button', { name: 'Gi0/0' })[0]
+  fireEvent.click(gi0Btn)
+  expect(within(modal).getByText('Port Status: [On]')).toBeTruthy()
+
+  // Toggle port status
+  const checkbox = within(modal).getByRole('checkbox', { name: /Port Status/i })
+  expect(checkbox.checked).toBe(false)
+  fireEvent.click(checkbox)
+
+  // Configure IP in Config tab
+  fireEvent.change(within(modal).getByPlaceholderText('192.168.1.1'), { target: { value: '192.168.10.1' } })
+  fireEvent.click(within(modal).getByRole('button', { name: 'Apply IP Address' }))
+
+  // Switch to CLI tab inside modal
+  fireEvent.click(within(modal).getByRole('button', { name: 'CLI' }))
+  const log = within(modal).getByRole('log', { name: 'R1 command line' }).textContent
+  expect(log).toContain('R1(config-if)#ip address 192.168.10.1 255.255.255.0')
+  expect(log).toContain('R1(config-if)#no shutdown')
+
+  // Close modal
+  fireEvent.click(within(modal).getByRole('button', { name: 'Close' }))
+  expect(screen.queryByRole('dialog')).toBeNull()
+})
+
+it('uses Packet Tracer shelf categories and tools to add devices and cable lines', () => {
+  lab({ editable: true })
+
+  // Switch to End Devices shelf category
+  fireEvent.click(screen.getByRole('button', { name: 'End Devices' }))
+  expect(screen.getAllByText('PC-PT').length).toBeGreaterThanOrEqual(1)
+  expect(screen.getAllByText('Server-PT').length).toBeGreaterThanOrEqual(1)
+
+  // Add PC using shelf button
+  fireEvent.click(screen.getByRole('button', { name: 'Add PC' }))
+  expect(screen.getByLabelText('Selected device').value).toBe('pc3')
+
+  // Switch to Connections category
+  fireEvent.click(screen.getByRole('button', { name: 'Connections' }))
+  expect(screen.getAllByText('Auto Connect').length).toBeGreaterThanOrEqual(1)
+  expect(screen.getByText('Copper Straight-Through')).toBeTruthy()
+
+  // Connect using Auto-Connect tool
+  fireEvent.click(screen.getAllByRole('button', { name: 'Auto Connect' })[0])
+  expect(screen.getByText(/Auto-Connect Mode/)).toBeTruthy()
+
+  // Click PC3 on canvas
+  fireEvent.pointerDown(screen.getByRole('button', { name: 'PC3, PC' }), { button: 0 })
+  // Click S1 on canvas
+  fireEvent.pointerDown(screen.getByRole('button', { name: 'S1, Switch' }), { button: 0 })
+
+  // Cable connected!
+  expect(screen.getByText(/Cables \(5\)/)).toBeTruthy()
+  expect(screen.getByText(/PC3 Fa0 — S1/)).toBeTruthy()
+})

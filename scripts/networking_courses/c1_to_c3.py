@@ -221,7 +221,7 @@ COURSE_1 = {
     ),
     "challenge": {
         "task": (
-            "Course labs cannot be edited, so use \"Open a sandbox copy in a new tab\" under the lab and work in the copy. "
+            "You can work directly in the lab using the device shelf and cable tool (or open a sandbox copy). "
             "Connect a third PC to a free port on S1 and give it 192.168.1.12/24. Prove that it reaches every "
             "other host. Then change its address to 192.168.2.12/24 and explain why the same cable and switch "
             "no longer get it any replies from PC1."
@@ -549,7 +549,7 @@ COURSE_2 = {
     ),
     "challenge": {
         "task": (
-            "Course labs cannot be edited, so use \"Open a sandbox copy in a new tab\" under the lab and work in the copy. "
+            "You can work directly in the lab using the device shelf and cable tool (or open a sandbox copy). "
             "A new lab room with 25 hosts needs its own subnet. Carve the smallest subnet that fits out of the "
             "unused range 192.168.20.64 to 192.168.20.127, give R1 Gi0/2 the first usable address of it, and "
             "connect a test PC that reaches PC1."
@@ -881,7 +881,7 @@ COURSE_3 = {
     ),
     "challenge": {
         "task": (
-            "Course labs cannot be edited, so use \"Open a sandbox copy in a new tab\" under the lab and work in the copy. "
+            "You can work directly in the lab using the device shelf and cable tool (or open a sandbox copy). "
             "Add a second cable between S1 Gi0/2 and S2 Gi0/2, clear the MAC tables on both switches, and ping "
             "PC3 from PC1. Use the step-by-step view and `show mac address-table` to explain what happens, then "
             "remove the extra cable."

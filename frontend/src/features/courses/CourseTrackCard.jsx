@@ -12,6 +12,7 @@ import {
   Monitor,
   Network,
   Shield,
+  Table,
   Zap,
 } from 'lucide-react'
 import { Badge } from '../../ui/index.js'
@@ -28,6 +29,7 @@ const ICONS = {
   Compass,
   Eye,
   Network,
+  Table,
 }
 
 const TONE_CLASSES = {

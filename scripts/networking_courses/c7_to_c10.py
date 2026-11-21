@@ -639,7 +639,7 @@ COURSE_8 = {
     ),
     "challenge": {
         "task": (
-            "Course labs cannot be edited, so use \"Open a sandbox copy in a new tab\" under the lab and work in the copy. "
+            "You can work directly in the lab using the device shelf and cable tool (or open a sandbox copy). "
             "Add a GUEST LAN on R1 g0/2: cable a new switch and PC to it, give g0/2 the address 192.168.30.1/24, "
             "exclude .1 to .20, and create a GUEST pool that hands out gateway 192.168.30.1 and DNS server "
             "192.168.10.5. Prove that the new PC leases an address and opens the intranet by name."

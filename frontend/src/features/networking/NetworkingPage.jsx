@@ -28,7 +28,7 @@ function CourseLab({ course }) {
     <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">{t('Interactive lab')}</p>
     <h3 className="text-lg font-semibold text-ink">{course.lab.title}</h3>
     <p className="text-sm leading-6 text-ink-secondary">{course.lab.brief}</p>
-    <NetworkLab key={course.id} initialProject={project} lab={course.lab} />
+    <NetworkLab key={course.id} initialProject={project} lab={course.lab} editable />
     <p className="text-sm"><Link className="font-medium text-brand-700 underline" to={`/sandbox?bench=network&lesson=${course.id}`} target="_blank" rel="noopener noreferrer">{t('Open a sandbox copy in a new tab')}</Link></p>
   </div>
 }
