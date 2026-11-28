@@ -181,3 +181,60 @@ it('uses Packet Tracer shelf categories and tools to add devices and cable lines
   expect(screen.getByText(/Cables \(5\)/)).toBeTruthy()
   expect(screen.getByText(/PC3 Fa0 — S1/)).toBeTruthy()
 })
+
+it('opens device modal for switch and configures switchport without error', () => {
+  lab()
+  choose('S1')
+  fireEvent.click(screen.getByRole('button', { name: 'Configure S1' }))
+  const modal = screen.getByRole('dialog', { name: /S1 - Cisco Catalyst 2960-24TT Switch/ })
+  expect(modal).toBeTruthy()
+
+  // Config tab
+  fireEvent.click(within(modal).getByRole('button', { name: 'Config' }))
+  const fa1Btn = within(modal).getAllByRole('button', { name: 'Fa0/1' })[0]
+  fireEvent.click(fa1Btn)
+  expect(within(modal).getByText('Switchport Settings')).toBeTruthy()
+
+  // Switch to CLI tab
+  fireEvent.click(within(modal).getByRole('button', { name: 'CLI' }))
+  expect(within(modal).getByRole('log', { name: 'S1 command line' })).toBeTruthy()
+
+  fireEvent.click(within(modal).getByRole('button', { name: 'Close' }))
+  expect(screen.queryByRole('dialog')).toBeNull()
+})
+
+it('opens device modal for host (PC and Server) and accesses desktop applications', () => {
+  lab()
+  choose('PC1')
+  fireEvent.click(screen.getByRole('button', { name: 'Configure PC1' }))
+  const pcModal = screen.getByRole('dialog', { name: /PC1 - PC-PT/ })
+  expect(pcModal).toBeTruthy()
+
+  // Default opens in Command Prompt; click Back to Desktop
+  fireEvent.click(within(pcModal).getByRole('button', { name: /Back to Desktop/i }))
+
+  // Desktop tab with icons
+  expect(within(pcModal).getByRole('button', { name: /IP Configuration/ })).toBeTruthy()
+  expect(within(pcModal).getByRole('button', { name: /Command Prompt/ })).toBeTruthy()
+  expect(within(pcModal).getByRole('button', { name: /Terminal/ })).toBeTruthy()
+
+  // Click Terminal icon
+  fireEvent.click(within(pcModal).getByRole('button', { name: /Terminal/ }))
+  expect(within(pcModal).getByText('Terminal')).toBeTruthy()
+  expect(within(pcModal).getByRole('log', { name: 'PC1 terminal' })).toBeTruthy()
+
+  fireEvent.click(within(pcModal).getByRole('button', { name: 'Close' }))
+  expect(screen.queryByRole('dialog')).toBeNull()
+
+  // Server services tab
+  choose('Server1')
+  fireEvent.click(screen.getByRole('button', { name: 'Configure Server1' }))
+  const srvModal = screen.getByRole('dialog', { name: /Server1 - Server-PT/ })
+  expect(srvModal).toBeTruthy()
+  fireEvent.click(within(srvModal).getByRole('button', { name: 'Services' }))
+  expect(within(srvModal).getByText('HTTP')).toBeTruthy()
+  expect(within(srvModal).getByText('DNS')).toBeTruthy()
+
+  fireEvent.click(within(srvModal).getByRole('button', { name: 'Close' }))
+  expect(screen.queryByRole('dialog')).toBeNull()
+})

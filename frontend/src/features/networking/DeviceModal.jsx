@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import {
   Globe,
+  Layers,
   Maximize2,
   Minimize2,
   Monitor,
@@ -10,7 +11,6 @@ import {
   Settings,
   Terminal as TerminalIcon,
   Trash2,
-  Wifi,
   X,
 } from 'lucide-react'
 import { useI18n } from '../../i18n/index.jsx'
@@ -21,12 +21,11 @@ import Terminal from './Terminal.jsx'
 
 const fieldClass = 'block w-full min-w-0 rounded border border-slate-300 bg-white px-2.5 py-1 font-mono text-xs focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 disabled:bg-slate-100 disabled:text-slate-400'
 const btnClass = 'rounded bg-sky-700 px-3 py-1 text-xs font-semibold text-white hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500'
-const btnSecClass = 'rounded border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500'
 
 export default function DeviceModal({
   device,
   project,
-  session,
+  session: _session,
   log,
   isOpen,
   onClose,
@@ -654,13 +653,13 @@ export default function DeviceModal({
                     </span>
                   </div>
                   <div className="flex-1 min-h-0">
-                    {desktopApp === 'prompt' && (
+                    {(desktopApp === 'prompt' || desktopApp === 'terminal') && (
                       <Terminal
-                        label={t('{device} command prompt', { device: device.name })}
-                        prompt="C:\>"
+                        label={t(desktopApp === 'terminal' ? '{device} terminal' : '{device} command prompt', { device: device.name })}
+                        prompt={desktopApp === 'terminal' ? 'Router>' : 'C:\\>'}
                         lines={log}
-                        onSubmit={onPromptSubmit}
-                        placeholder="ping 192.168.1.1"
+                        onSubmit={desktopApp === 'terminal' ? onCliSubmit : onPromptSubmit}
+                        placeholder={desktopApp === 'terminal' ? 'enable' : 'ping 192.168.1.1'}
                       />
                     )}
                     {desktopApp === 'ip' && (
@@ -716,7 +715,7 @@ export default function DeviceModal({
 
                   <button
                     type="button"
-                    onClick={() => setDesktopApp('prompt')}
+                    onClick={() => setDesktopApp('terminal')}
                     className="flex flex-col items-center justify-center rounded-lg border-2 border-slate-200 bg-slate-50/80 p-4 shadow-xs transition-all hover:border-sky-500 hover:bg-sky-50/50 hover:shadow-md cursor-pointer group"
                   >
                     <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-xs group-hover:bg-indigo-700">

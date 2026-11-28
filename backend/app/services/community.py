@@ -172,7 +172,7 @@ def _filters(category: str, board: str, project: str, q: str) -> list:
         where.append(
             or_(
                 func.lower(DiscussionThread.title).like(pattern),
-                func.lower(DiscussionThread.body).like(pattern),
+                (DiscussionThread.is_deleted.is_(False)) & func.lower(DiscussionThread.body).like(pattern),
             )
         )
     return where

@@ -197,6 +197,13 @@ def test_filters_search_sorting_and_pagination(client, guest):
     assert client.get("/api/community/threads", params={"sort": "loudest"}).status_code == 422
     assert client.get("/api/community/threads", params={"board": "pico"}).status_code == 422
 
+    # A withdrawn question with replies hides its body; search does not match the withdrawn body.
+    del_thread = _new_thread(client, headers, title="Withdrawn title question", body="Confidential text to hide", category="help")
+    client.post(f"/api/community/threads/{del_thread['id']}/replies", json={"body": "Still here."}, headers=other)
+    client.delete(f"/api/community/threads/{del_thread['id']}", headers=headers)
+    assert client.get("/api/community/threads", params={"q": "Confidential"}).json()["total"] == 0, "withdrawn body is not searchable"
+    assert client.get("/api/community/threads", params={"q": "Withdrawn"}).json()["total"] == 1, "title remains searchable"
+
 
 def test_input_rules_reject_unusable_posts(client, guest):
     headers, _ = guest

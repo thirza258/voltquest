@@ -74,8 +74,6 @@ export function variablesOf(value) {
   return [...String(value ?? '').matchAll(VARIABLE)].map(match => match[1])
 }
 
-function isTrue(value) { return value === 'true' }
-
 /**
  * @returns {{ ok: boolean, rejections: object[], warnings: object[], objects: object[], controls: object[],
  *   relations: string[], dataKeys: string[], unsupported: string[], root: object|null }}

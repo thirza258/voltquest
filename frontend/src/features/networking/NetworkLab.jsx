@@ -1,28 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
-  Activity,
   ArrowRight,
   Clock,
-  Download,
-  FolderOpen,
-  Globe,
-  Layers,
   Monitor,
   MousePointer,
   Network,
-  Play,
-  Plus,
-  Power,
-  RotateCcw,
-  Save,
   Search,
   Server,
   Settings,
-  Terminal as TerminalIcon,
   Trash2,
-  Upload,
-  Wifi,
-  X,
   Zap,
 } from 'lucide-react'
 import { useI18n } from '../../i18n/index.jsx'

@@ -64,6 +64,8 @@ function PlayerSummary({ player, totals }) {
  * @param {string[]} [props.order] LEVEL_ORDER
  * @param {object} [props.progress] playerStore progress (defaults to the store)
  */
+const EMPTY_PROGRESS = {}
+
 export function CampaignMap({
   worlds = WORLDS,
   levels = LEVELS,
@@ -81,7 +83,7 @@ export function CampaignMap({
   const hasSeen = usePlayerStore((s) => s.hasSeen)
   const markSeen = usePlayerStore((s) => s.markSeen)
 
-  const progress = progressProp ?? storeProgress ?? {}
+  const progress = progressProp ?? storeProgress ?? EMPTY_PROGRESS
   const player = playerProp ?? storePlayer
 
   const openLevel = onOpenLevel ?? ((levelId) => navigate(`/play/${levelId}`))
